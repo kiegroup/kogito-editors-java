@@ -19,11 +19,18 @@ package org.drools.workbench.screens.scenariosimulation.kogito.client.editor;
 import java.util.List;
 import java.util.function.Supplier;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.PopupPanel;
+import elemental2.dom.CSSProperties;
+import elemental2.dom.DomGlobal;
+import elemental2.dom.Element;
+import elemental2.dom.HTMLCollection;
+import elemental2.dom.HTMLDivElement;
+import elemental2.dom.HTMLTableElement;
 import elemental2.promise.Promise;
 import jsinterop.base.Js;
 import org.drools.scenariosimulation.api.model.AbstractScesimData;
@@ -131,6 +138,23 @@ public class ScenarioSimulationEditorKogitoWrapper extends MultiPageEditorContai
         this.scenarioSimulationKogitoCreationPopupPresenter = scenarioSimulationKogitoCreationPopupPresenter;
         this.scenarioSimulationKogitoDocksHandler = scenarioSimulationKogitoDocksHandler;
         this.scenarioSimulationKogitoDMNMarshallerService = scenarioSimulationKogitoDMNMarshallerService;
+    }
+
+    @PostConstruct
+    public void init() {
+        scenarioSimulationEditorPresenter.getView().onResize();
+        HTMLCollection<Element> elements = DomGlobal.document.getElementsByClassName("tab-content");
+        if(elements.length == 1) {
+            HTMLDivElement element = (HTMLDivElement) elements.getAt(0);
+            HTMLTableElement header = (HTMLTableElement) element.parentElement.firstElementChild;
+            element.style.height = CSSProperties.HeightUnionType.of("calc(100vh - " + header.clientHeight +"px)");
+        }
+
+        DomGlobal.document.body.onresize = p0 -> {
+            scenarioSimulationEditorPresenter.getView().onResize();
+            return null;
+        };
+
     }
 
     @Override
