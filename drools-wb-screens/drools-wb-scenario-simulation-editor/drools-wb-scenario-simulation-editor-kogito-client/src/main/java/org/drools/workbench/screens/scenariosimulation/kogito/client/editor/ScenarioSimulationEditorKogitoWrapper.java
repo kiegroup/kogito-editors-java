@@ -30,7 +30,6 @@ import elemental2.dom.DomGlobal;
 import elemental2.dom.Element;
 import elemental2.dom.HTMLCollection;
 import elemental2.dom.HTMLDivElement;
-import elemental2.dom.HTMLTableElement;
 import elemental2.promise.Promise;
 import jsinterop.base.Js;
 import org.drools.scenariosimulation.api.model.AbstractScesimData;
@@ -146,8 +145,7 @@ public class ScenarioSimulationEditorKogitoWrapper extends MultiPageEditorContai
         HTMLCollection<Element> elements = DomGlobal.document.getElementsByClassName("tab-content");
         if(elements.length == 1) {
             HTMLDivElement element = (HTMLDivElement) elements.getAt(0);
-            HTMLTableElement header = (HTMLTableElement) element.parentElement.firstElementChild;
-            element.style.height = CSSProperties.HeightUnionType.of("calc(100vh - " + header.clientHeight +"px)");
+            element.style.height = CSSProperties.HeightUnionType.of("calc(100vh - 36px)");
         }
 
         DomGlobal.document.body.onresize = p0 -> {
