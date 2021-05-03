@@ -147,12 +147,6 @@ public class ScenarioSimulationEditorKogitoWrapper extends MultiPageEditorContai
             HTMLDivElement element = (HTMLDivElement) elements.getAt(0);
             element.style.height = CSSProperties.HeightUnionType.of("calc(100vh - 36px)");
         }
-
-        DomGlobal.document.body.onresize = p0 -> {
-            scenarioSimulationEditorPresenter.getView().onResize();
-            return null;
-        };
-
     }
 
     @Override
