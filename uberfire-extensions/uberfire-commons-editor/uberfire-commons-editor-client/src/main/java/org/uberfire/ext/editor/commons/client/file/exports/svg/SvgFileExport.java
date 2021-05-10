@@ -24,7 +24,7 @@ import elemental2.dom.BlobPropertyBag;
 import jsinterop.base.Js;
 import org.uberfire.ext.editor.commons.client.file.exports.AbstractFileExport;
 
-import static elemental2.dom.Blob.*;
+import static elemental2.dom.Blob.ConstructorBlobPartsArrayUnionType;
 
 /**
  * Exports an {@link IContext2D} to a serialized SVG file.
@@ -41,9 +41,7 @@ public class SvgFileExport extends AbstractFileExport<IContext2D> {
     @Override
     protected Optional<Blob> getContent(IContext2D entity) {
         Object value = entity.getSerializedSvg();
-        final Blob blob = new Blob(new ConstructorBlobPartsArrayUnionType[] {ConstructorBlobPartsArrayUnionType.of(value) });
-
-        //final Blob blob = new Blob(new ConstructorBlobPartsArrayUnionType[]{ConstructorBlobPartsArrayUnionType.of(entity.getSerializedSvg())});
+        final Blob blob = new Blob(new ConstructorBlobPartsArrayUnionType[]{ConstructorBlobPartsArrayUnionType.of(value)});
         return Optional.of(blob);
     }
 }
