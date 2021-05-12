@@ -157,8 +157,8 @@
 
     <!-- Properties from ERRAI parent POM -->
     <!-- The version from kie-parent is not compatible with errai-validation -->
-    <version.javax.validation>1.0.0.GA</version.javax.validation>
-    <gwtArgs></gwtArgs>
+    <version.javax.validation>1.1.0.Final</version.javax.validation>
+    <gwtArgs/>
     <argLine>-Dgwt.args="${gwtArgs}"</argLine>
     <illegaltransitivereportonly>false</illegaltransitivereportonly>
 
@@ -449,8 +449,7 @@
             <phase>process-resources</phase>
             <configuration>
               <target>
-                <copy todir="${project.build.directory}/classes"
-                      includeemptydirs="false" failonerror="false" quiet="true">
+                <copy todir="${project.build.directory}/classes" includeemptydirs="false" failonerror="false" quiet="true">
                   <fileset dir="${project.build.directory}/classes"/>
                   <globmapper from="*Constants.properties" to="*Constants_default.properties"/>
                 </copy>
