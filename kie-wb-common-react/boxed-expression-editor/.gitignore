@@ -1,0 +1,9 @@
+**/node_modules
+**/build
+dist
+yarn-error.log
+stats.json
+.DS_Store
+.idea
+/coverage/
+react-app-env.d.ts
