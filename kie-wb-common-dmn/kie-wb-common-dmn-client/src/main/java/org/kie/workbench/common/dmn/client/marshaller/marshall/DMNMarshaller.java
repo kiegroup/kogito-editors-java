@@ -207,9 +207,16 @@ public class DMNMarshaller {
                 if (viewDefinition instanceof DRGElement) {
                     final DRGElement drgElement = (DRGElement) viewDefinition;
                     if (!drgElement.isAllowOnlyVisualChange()) {
-                        nodes.put(drgElement.getId().getValue(),
-                                  stunnerToDMN(withIncludedModels(node, definitionsStunnerPojo),
-                                               componentWidthsConsumer));
+                        if (nodes.containsKey(drgElement.getId().getValue())) {
+                            final JSITDRGElement currentValue = nodes.get(drgElement.getId().getValue());
+                            mergeNodeRequirements(stunnerToDMN(withIncludedModels(node, definitionsStunnerPojo),
+                                                               componentWidthsConsumer),
+                                                  currentValue);
+                        } else {
+                            nodes.put(drgElement.getId().getValue(),
+                                      stunnerToDMN(withIncludedModels(node, definitionsStunnerPojo),
+                                                   componentWidthsConsumer));
+                        }
                     }
                     final String namespaceURI = definitionsStunnerPojo.getDefaultNamespace();
                     diagram.addDMNDiagramElement(WrapperUtils.getWrappedJSIDMNShape(diagram,
