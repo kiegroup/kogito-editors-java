@@ -14,16 +14,12 @@
  * limitations under the License.
  */
 
+import "../../__mocks__/ReactWithSupervisor";
 import { render } from "@testing-library/react";
 import { checkEntryContent, contextEntry, usingTestingBoxedExpressionI18nContext } from "../test-utils";
 import { DataType, LogicType } from "../../../api";
 import * as React from "react";
 import { InvocationExpression } from "../../../components/InvocationExpression";
-
-jest.mock("../../../api", () => ({
-  ...(jest.requireActual("../../../api") as Record<string, unknown>),
-  getHandlerConfiguration: jest.fn(),
-}));
 
 describe("InvocationExpression tests", () => {
   test("should show a table with two levels visible header, with one row and two columns", () => {
@@ -97,3 +93,8 @@ describe("InvocationExpression tests", () => {
     checkEntryContent(contextEntry(container, 2), secondEntry.entryInfo);
   });
 });
+
+jest.mock("../../../api", () => ({
+  ...(jest.requireActual("../../../api") as Record<string, unknown>),
+  getHandlerConfiguration: jest.fn(),
+}));

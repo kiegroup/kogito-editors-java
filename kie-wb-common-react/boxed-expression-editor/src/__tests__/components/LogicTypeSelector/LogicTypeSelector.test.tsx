@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import "../../__mocks__/ReactWithSupervisor";
 import { DataType, LogicType } from "../../../api";
 import { fireEvent, render } from "@testing-library/react";
 import { flushPromises, usingTestingBoxedExpressionI18nContext } from "../test-utils";
@@ -21,8 +22,6 @@ import { act } from "react-dom/test-utils";
 import * as React from "react";
 import { LogicTypeSelector } from "../../../components/LogicTypeSelector";
 import * as _ from "lodash";
-
-jest.useFakeTimers();
 
 describe("LogicTypeSelector tests", () => {
   test("should have the clear action disabled on startup", async () => {
@@ -121,3 +120,5 @@ const triggerContextMenu = async (container: HTMLElement, selector: string) => {
     jest.runAllTimers();
   });
 };
+
+jest.useFakeTimers();

@@ -14,6 +14,23 @@
  * limitations under the License.
  */
 
-export * from "./Resizer";
-export * from "./ResizerSupervisor";
-export * from "./common";
+import "./Resizer.css";
+import * as React from "react";
+import { applyDOMSupervisor } from "./dom";
+import { useEffect, useContext } from "react";
+import { BoxedExpressionGlobalContext } from "../../context";
+
+export interface ResizerSupervisorProps {
+  children?: React.ReactElement;
+}
+
+export const ResizerSupervisor: React.FunctionComponent<ResizerSupervisorProps> = ({ children }) => {
+  const { supervisorHash } = useContext(BoxedExpressionGlobalContext);
+
+  useEffect(() => {
+    const id = setTimeout(applyDOMSupervisor, 0);
+    return () => clearTimeout(id);
+  }, [supervisorHash]);
+
+  return <>{children}</>;
+};

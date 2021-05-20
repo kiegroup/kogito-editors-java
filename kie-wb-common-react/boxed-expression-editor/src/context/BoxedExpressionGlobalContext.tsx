@@ -17,6 +17,8 @@
 import * as React from "react";
 
 export interface BoxedExpressionGlobalContextProps {
+  supervisorHash: string;
+  setSupervisorHash: (hash: string) => void;
   boxedExpressionEditorRef: React.RefObject<HTMLDivElement>;
   currentlyOpenedHandlerCallback: React.Dispatch<React.SetStateAction<boolean>>;
   setCurrentlyOpenedHandlerCallback: React.Dispatch<

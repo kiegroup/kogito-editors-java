@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import "../../__mocks__/ReactWithSupervisor";
 import { fireEvent, render } from "@testing-library/react";
 import {
   activateSelector,
@@ -26,8 +27,6 @@ import * as React from "react";
 import { DataType, EntryInfo, FunctionKind, FunctionProps, LogicType } from "../../../api";
 import { act } from "react-dom/test-utils";
 import * as _ from "lodash";
-
-jest.useFakeTimers();
 
 describe("FunctionExpression tests", () => {
   test("should show a table with two levels visible header, with one row and one column", () => {
@@ -82,6 +81,7 @@ describe("FunctionExpression tests", () => {
       functionKind: "FEEL",
       logicType: "Function",
       name: "p-1",
+      parametersWidth: 370,
       uid: undefined,
     });
   });
@@ -242,6 +242,7 @@ describe("FunctionExpression tests", () => {
         functionKind: "FEEL",
         logicType: "Function",
         name: "p-1",
+        parametersWidth: 370,
         uid: undefined,
       });
     }
@@ -376,3 +377,5 @@ describe("FunctionExpression tests", () => {
     });
   }
 });
+
+jest.useFakeTimers();
