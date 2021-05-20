@@ -84,56 +84,48 @@ public class BPMNCreateNodeActionTest {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void testbuildConnectionBetweenGatewayAndTask() {
         connection.buildConnectionBetween(gatewayNode, taskNode);
         verify(connection, times(1)).getMagnetConnectionFixed(gatewayNode, taskNode);
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void testbuildConnectionBetweenGatewayAndEvent() {
         connection.buildConnectionBetween(gatewayNode, eventNode);
         verify(connection, times(1)).getMagnetConnectionFixed(gatewayNode, eventNode);
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void testbuildConnectionBetweenTaskAndGateway() {
         connection.buildConnectionBetween(taskNode, gatewayNode);
         verify(connection, times(1)).getMagnetConnectionFixed(taskNode, gatewayNode);
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void testbuildConnectionBetweenEventAndGateway() {
         connection.buildConnectionBetween(eventNode, gatewayNode);
         verify(connection, times(1)).getMagnetConnectionFixed(eventNode, gatewayNode);
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void testbuildConnectionBetweenGatewayAndGateway() {
         connection.buildConnectionBetween(gatewayNode, gatewayNode);
         verify(connection, times(1)).getMagnetConnectionFixed(gatewayNode, gatewayNode);
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void testbuildConnectionBetweenTaskAndTask() {
         connection.buildConnectionBetween(taskNode, taskNode);
         verify(connection, times(1)).getMagnetConnectionCenter(taskNode, taskNode);
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void testbuildConnectionBetweenTaskAndEvent() {
         connection.buildConnectionBetween(taskNode, eventNode);
         verify(connection, times(1)).getMagnetConnectionCenter(taskNode, eventNode);
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void testbuildConnectionBetweenEventAndEvent() {
         connection.buildConnectionBetween(eventNode, eventNode);
         verify(connection, times(1)).getMagnetConnectionCenter(eventNode, eventNode);
