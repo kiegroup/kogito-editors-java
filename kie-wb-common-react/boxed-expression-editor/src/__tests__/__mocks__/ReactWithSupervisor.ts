@@ -14,6 +14,20 @@
  * limitations under the License.
  */
 
-export * from "./Resizer";
-export * from "./ResizerSupervisor";
-export * from "./common";
+jest.mock("react", () => {
+  const actualReact = jest.requireActual("react");
+
+  function useContext<T>(context: React.Context<T>) {
+    return {
+      ...actualReact.useContext(context),
+      ...{
+        setSupervisorHash: (hash: number) => hash,
+      },
+    };
+  }
+
+  return {
+    ...actualReact,
+    useContext: useContext,
+  };
+});

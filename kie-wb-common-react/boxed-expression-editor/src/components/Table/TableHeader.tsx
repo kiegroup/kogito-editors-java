@@ -21,7 +21,7 @@ import * as _ from "lodash";
 import { Column, ColumnInstance, DataRecord, HeaderGroup, TableInstance } from "react-table";
 import { EditExpressionMenu } from "../EditExpressionMenu";
 import { DataType, TableHeaderVisibility } from "../../api";
-import { DRAWER_SPLITTER_ELEMENT } from "../Resizer";
+import { DEFAULT_MIN_WIDTH, Resizer } from "../Resizer";
 
 export interface TableHeaderProps {
   /** Table instance */
@@ -110,38 +110,60 @@ export const TableHeader: React.FunctionComponent<TableHeaderProps> = ({
     []
   );
 
+  const onHorizontalResizeStop = useCallback(
+    (columnIndex, columnWidth) => {
+      tableColumns.current[columnIndex].width = columnWidth;
+      onColumnsUpdate(tableColumns.current);
+    },
+    [onColumnsUpdate, tableColumns]
+  );
+
   const renderResizableHeaderCell = useCallback(
-    (column, columnIndex) => (
-      <Th
-        {...column.getHeaderProps()}
-        {...tableInstance.getThProps(column, columnIndex)}
-        className={`resizable-column ${!column.dataType ? "no-clickable-cell" : null}`}
-        key={`${getColumnKey(column)}-${columnIndex}`}
-      >
-        <div className="header-cell" data-ouia-component-type="expression-column-header">
-          {column.dataType ? (
-            <EditExpressionMenu
-              title={editColumnLabel}
-              selectedExpressionName={column.label}
-              selectedDataType={column.dataType}
-              onExpressionUpdate={onColumnNameOrDataTypeUpdate(columnIndex)}
-              key={`${getColumnKey(column)}-${columnIndex}`}
-            >
-              {renderHeaderCellInfo(column)}
-            </EditExpressionMenu>
-          ) : (
-            renderHeaderCellInfo(column)
-          )}
-          <div
-            className={`pf-c-drawer ${!column.canResize ? "resizer-disabled" : ""}`}
-            {...(column.canResize ? column.getResizerProps() : {})}
+    (column, columnIndex) => {
+      const headerProps = {
+        ...column.getHeaderProps(),
+        style: {},
+      };
+      const thProps = tableInstance.getThProps(column, columnIndex);
+      const width = column.width || DEFAULT_MIN_WIDTH;
+      return (
+        <Th
+          {...headerProps}
+          {...thProps}
+          className={`resizable-column ${!column.dataType ? "no-clickable-cell" : null}`}
+          key={`${getColumnKey(column)}-${columnIndex}`}
+        >
+          <Resizer
+            width={width}
+            onHorizontalResizeStop={(columnWidth) => onHorizontalResizeStop(columnIndex, columnWidth)}
           >
-            {DRAWER_SPLITTER_ELEMENT}
-          </div>
-        </div>
-      </Th>
-    ),
-    [editColumnLabel, getColumnKey, onColumnNameOrDataTypeUpdate, renderHeaderCellInfo, tableInstance]
+            <div className="header-cell" data-ouia-component-type="expression-column-header">
+              {column.dataType ? (
+                <EditExpressionMenu
+                  title={editColumnLabel}
+                  selectedExpressionName={column.label}
+                  selectedDataType={column.dataType}
+                  onExpressionUpdate={onColumnNameOrDataTypeUpdate(columnIndex)}
+                  key={`${getColumnKey(column)}-${columnIndex}`}
+                >
+                  {renderHeaderCellInfo(column)}
+                </EditExpressionMenu>
+              ) : (
+                renderHeaderCellInfo(column)
+              )}
+            </div>
+          </Resizer>
+        </Th>
+      );
+    },
+    [
+      editColumnLabel,
+      getColumnKey,
+      onColumnNameOrDataTypeUpdate,
+      onHorizontalResizeStop,
+      renderHeaderCellInfo,
+      tableInstance,
+    ]
   );
 
   const renderColumn = useCallback(
@@ -159,11 +181,16 @@ export const TableHeader: React.FunctionComponent<TableHeaderProps> = ({
 
   const renderHeaderGroups = useMemo(
     () =>
-      getHeaderGroups(tableInstance).map((headerGroup: HeaderGroup) => (
-        <Tr key={headerGroup.getHeaderGroupProps().key} {...headerGroup.getHeaderGroupProps()}>
-          {headerGroup.headers.map((column: ColumnInstance, columnIndex: number) => renderColumn(column, columnIndex))}
-        </Tr>
-      )),
+      getHeaderGroups(tableInstance).map((headerGroup: HeaderGroup) => {
+        const { key, ...props } = { ...headerGroup.getHeaderGroupProps(), style: {} };
+        return (
+          <Tr key={key} {...props}>
+            {headerGroup.headers.map((column: ColumnInstance, columnIndex: number) =>
+              renderColumn(column, columnIndex)
+            )}
+          </Tr>
+        );
+      }),
     [getHeaderGroups, renderColumn, tableInstance]
   );
 

@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import "../../__mocks__/ReactWithSupervisor";
 import { render } from "@testing-library/react";
 import {
   checkEntryContent,
@@ -25,11 +26,6 @@ import {
 import { ContextExpression } from "../../../components/ContextExpression";
 import * as React from "react";
 import { DataType, LogicType } from "../../../api";
-
-jest.mock("../../../api", () => ({
-  ...(jest.requireActual("../../../api") as Record<string, unknown>),
-  getHandlerConfiguration: jest.fn(),
-}));
 
 describe("ContextExpression tests", () => {
   const name = "contextName";
@@ -109,3 +105,8 @@ describe("ContextExpression tests", () => {
     checkEntryStyle(contextEntry(container, 3), "logic-type-not-present");
   });
 });
+
+jest.mock("../../../api", () => ({
+  ...(jest.requireActual("../../../api") as Record<string, unknown>),
+  getHandlerConfiguration: jest.fn(),
+}));

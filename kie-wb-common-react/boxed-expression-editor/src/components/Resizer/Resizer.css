@@ -21,4 +21,39 @@
     with the !important card
     */
   height: 100% !important;
+  position: relative;
+}
+
+.expression-container .pf-c-drawer {
+  opacity: 0.3;
+  width: 5px;
+}
+
+.expression-container .pf-c-drawer__splitter::after {
+  border: none;
+}
+
+.expression-container .pf-c-drawer .pf-c-drawer__splitter-handle::after {
+  border-left: none;
+  position: absolute;
+  left: -1px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.expression-container
+  .react-resizable
+  table
+  td:last-child
+  > .react-resizable
+  > .pf-c-drawer
+  .pf-c-drawer__splitter-handle::after,
+.expression-container
+  .react-resizable
+  table
+  th:last-child
+  > .react-resizable
+  > .pf-c-drawer
+  .pf-c-drawer__splitter-handle::after {
+  opacity: 0;
 }

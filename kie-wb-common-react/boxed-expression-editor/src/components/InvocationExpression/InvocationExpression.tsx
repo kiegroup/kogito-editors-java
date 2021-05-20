@@ -16,7 +16,7 @@
 
 import "./InvocationExpression.css";
 import * as React from "react";
-import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useContext, useMemo, useRef, useState } from "react";
 import {
   ContextEntries,
   ContextEntryRecord,
@@ -36,6 +36,8 @@ import { useBoxedExpressionEditorI18n } from "../../i18n";
 import { ColumnInstance, DataRecord } from "react-table";
 import { ContextEntryExpressionCell, ContextEntryInfoCell } from "../ContextExpression";
 import * as _ from "lodash";
+import { BoxedExpressionGlobalContext } from "../../context";
+import { hashfy } from "../Resizer";
 
 const DEFAULT_PARAMETER_NAME = "p-1";
 const DEFAULT_PARAMETER_DATA_TYPE = DataType.Undefined;
@@ -54,7 +56,6 @@ export const InvocationExpression: React.FunctionComponent<InvocationProps> = ({
   uid,
 }: InvocationProps) => {
   const { i18n } = useBoxedExpressionEditorI18n();
-
   const [rows, setRows] = useState(
     bindingEntries || [
       {
@@ -68,13 +69,12 @@ export const InvocationExpression: React.FunctionComponent<InvocationProps> = ({
     ]
   );
 
-  const functionDefinition = useRef<string>(invokedFunction);
+  const [infoWidth, setInfoWidth] = useState(entryInfoWidth);
+  const [expressionWidth, setExpressionWidth] = useState(entryExpressionWidth);
+  const [functionName, setFunctionName] = useState(invokedFunction);
+  const { setSupervisorHash } = useContext(BoxedExpressionGlobalContext);
 
-  const infoWidth = useRef<number>(entryInfoWidth);
-
-  const expressionWidth = useRef<number>(entryExpressionWidth);
-
-  const spreadInvocationExpressionDefinition = useCallback(() => {
+  useEffect(() => {
     const [expressionColumn] = columns.current;
 
     const updatedDefinition: InvocationProps = {
@@ -83,24 +83,34 @@ export const InvocationExpression: React.FunctionComponent<InvocationProps> = ({
       name: expressionColumn.accessor,
       dataType: expressionColumn.dataType,
       bindingEntries: rows as ContextEntries,
-      invokedFunction: functionDefinition.current,
-      ...(infoWidth.current > DEFAULT_ENTRY_INFO_MIN_WIDTH ? { entryInfoWidth: infoWidth.current } : {}),
-      ...(expressionWidth.current > DEFAULT_ENTRY_EXPRESSION_MIN_WIDTH
-        ? { entryExpressionWidth: expressionWidth.current }
-        : {}),
+      invokedFunction: functionName,
+      entryInfoWidth: infoWidth,
+      entryExpressionWidth: expressionWidth,
     };
-    isHeadless
-      ? onUpdatingRecursiveExpression?.(_.omit(updatedDefinition, ["name", "dataType"]))
-      : window.beeApi?.broadcastInvocationExpressionDefinition?.(updatedDefinition);
-  }, [functionDefinition, isHeadless, logicType, onUpdatingRecursiveExpression, rows, uid]);
 
-  const onFunctionDefinitionChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    functionDefinition.current = e.target.value;
+    const expression = _.omit(updatedDefinition, ["name", "dataType"]);
+
+    if (isHeadless) {
+      onUpdatingRecursiveExpression?.(expression);
+    } else {
+      setSupervisorHash(hashfy(expression));
+      window.beeApi?.broadcastInvocationExpressionDefinition?.(updatedDefinition);
+    }
+  }, [
+    expressionWidth,
+    functionName,
+    infoWidth,
+    isHeadless,
+    logicType,
+    onUpdatingRecursiveExpression,
+    rows,
+    setSupervisorHash,
+    uid,
+  ]);
+
+  const onBlurCallback = useCallback((event) => {
+    setFunctionName(event.target.value);
   }, []);
-
-  const onFunctionDefinitionBlur = useCallback(() => {
-    spreadInvocationExpressionDefinition();
-  }, [spreadInvocationExpressionDefinition]);
 
   const headerCellElement = (
     <div className="function-definition-container">
@@ -108,14 +118,13 @@ export const InvocationExpression: React.FunctionComponent<InvocationProps> = ({
         className="function-definition pf-u-text-truncate"
         type="text"
         placeholder={i18n.enterFunction}
-        onChange={onFunctionDefinitionChange}
-        onBlur={onFunctionDefinitionBlur}
-        defaultValue={functionDefinition.current}
+        defaultValue={functionName}
+        onBlur={onBlurCallback}
       />
     </div>
   );
 
-  const columns = useRef<ColumnInstance[]>([
+  const columns = useRef([
     {
       label: name,
       accessor: name,
@@ -130,35 +139,33 @@ export const InvocationExpression: React.FunctionComponent<InvocationProps> = ({
             {
               accessor: "entryInfo",
               disableHandlerOnHeader: true,
-              canResizeOnCell: true,
-              width: infoWidth.current,
+              width: infoWidth,
+              setWidth: setInfoWidth,
               minWidth: DEFAULT_ENTRY_INFO_MIN_WIDTH,
             },
             {
               accessor: "entryExpression",
               disableHandlerOnHeader: true,
-              canResizeOnCell: true,
-              width: expressionWidth.current,
+              width: expressionWidth,
+              setWidth: setExpressionWidth,
               minWidth: DEFAULT_ENTRY_EXPRESSION_MIN_WIDTH,
             },
           ],
         },
       ],
     },
-  ] as ColumnInstance[]);
+  ]);
 
   const onColumnsUpdate = useCallback(
     ([expressionColumn]: [ColumnInstance]) => {
       onUpdatingNameAndDataType?.(expressionColumn.label as string, expressionColumn.dataType);
-      infoWidth.current = _.find(expressionColumn.columns, { accessor: "entryInfo" })?.width as number;
-      expressionWidth.current = _.find(expressionColumn.columns, { accessor: "entryExpression" })?.width as number;
+
       const [updatedExpressionColumn] = columns.current;
-      updatedExpressionColumn.label = expressionColumn.label;
+      updatedExpressionColumn.label = expressionColumn.label as string;
       updatedExpressionColumn.accessor = expressionColumn.accessor;
       updatedExpressionColumn.dataType = expressionColumn.dataType;
-      spreadInvocationExpressionDefinition();
     },
-    [onUpdatingNameAndDataType, spreadInvocationExpressionDefinition]
+    [onUpdatingNameAndDataType]
   );
 
   const onRowAdding = useCallback(
@@ -180,28 +187,40 @@ export const InvocationExpression: React.FunctionComponent<InvocationProps> = ({
     return isHeadless ? TableHeaderVisibility.SecondToLastLevel : TableHeaderVisibility.Full;
   }, [isHeadless]);
 
-  useEffect(() => {
-    /** Everytime the list of items or the function definition change, we need to spread expression's updated definition */
-    spreadInvocationExpressionDefinition();
-  }, [rows, spreadInvocationExpressionDefinition]);
+  const setRowsCallback = useCallback((entries) => setRows(entries), []);
+  const getRowKeyCallback = useCallback((row) => getEntryKey(row), []);
+  const resetEntryCallback = useCallback((row) => resetEntry(row), []);
 
-  return (
-    <div className={`invocation-expression ${uid}`}>
-      <Table
-        tableId={uid}
-        headerLevels={2}
-        headerVisibility={getHeaderVisibility()}
-        skipLastHeaderGroup
-        defaultCell={{ entryInfo: ContextEntryInfoCell, entryExpression: ContextEntryExpressionCell }}
-        columns={columns.current}
-        rows={rows as DataRecord[]}
-        onColumnsUpdate={onColumnsUpdate}
-        onRowAdding={onRowAdding}
-        onRowsUpdate={setRows}
-        handlerConfiguration={getHandlerConfiguration(i18n, i18n.parameters)}
-        getRowKey={useCallback(getEntryKey, [])}
-        resetRowCustomFunction={useCallback(resetEntry, [])}
-      />
-    </div>
+  return useMemo(
+    () => (
+      <div className={`invocation-expression ${uid}`}>
+        <Table
+          tableId={uid}
+          headerLevels={2}
+          headerVisibility={getHeaderVisibility()}
+          skipLastHeaderGroup
+          defaultCell={{ entryInfo: ContextEntryInfoCell, entryExpression: ContextEntryExpressionCell }}
+          columns={columns.current}
+          rows={rows as DataRecord[]}
+          onColumnsUpdate={onColumnsUpdate}
+          onRowAdding={onRowAdding}
+          onRowsUpdate={setRowsCallback}
+          handlerConfiguration={getHandlerConfiguration(i18n, i18n.parameters)}
+          getRowKey={getRowKeyCallback}
+          resetRowCustomFunction={resetEntryCallback}
+        />
+      </div>
+    ),
+    [
+      getHeaderVisibility,
+      getRowKeyCallback,
+      i18n,
+      onColumnsUpdate,
+      onRowAdding,
+      resetEntryCallback,
+      rows,
+      setRowsCallback,
+      uid,
+    ]
   );
 };

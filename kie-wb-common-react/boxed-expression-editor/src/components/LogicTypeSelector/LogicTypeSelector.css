@@ -23,7 +23,12 @@
   display: -webkit-flex;
   min-width: 15em;
   min-height: 4em;
-  overflow-x: auto;
+  overflow: hidden;
+  transition: background-color 0.1s ease;
+}
+
+.expression-container .logic-type-selector:hover {
+  background-color: #eff5f8;
 }
 
 .expression-container .logic-type-selector.logic-type-not-present {
@@ -33,5 +38,5 @@
 
 .expression-container .logic-type-selector.logic-type-selected {
   cursor: default;
-  padding: .5em;
+  padding: 0.5em;
 }

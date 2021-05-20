@@ -16,49 +16,190 @@
 
 import "./Resizer.css";
 import * as React from "react";
-import { useCallback, useMemo } from "react";
+import { useCallback, useContext, useMemo, useState, useLayoutEffect } from "react";
 import { ResizableBox } from "react-resizable";
+import { v4 as uuid } from "uuid";
+import * as _ from "lodash";
+import { Cell, DOMSession } from "./dom";
+import { DEFAULT_MIN_WIDTH, widthValue as commonWidthValue } from "./common";
+import { BoxedExpressionGlobalContext } from "../../context";
 
 export interface ResizerProps {
   width: number;
-  height: number | "100%";
-  minWidth: number;
-  minHeight?: number;
-  onHorizontalResizeStop: (width: number) => void;
+  height?: number | "100%";
+  minWidth?: number;
+  onHorizontalResizeStop?: (width: number) => void;
   children?: React.ReactElement;
 }
 
-export const DRAWER_SPLITTER_ELEMENT = (
-  <div className="pf-c-drawer__splitter pf-m-vertical">
-    <div className="pf-c-drawer__splitter-handle" />
-  </div>
-);
-
 export const Resizer: React.FunctionComponent<ResizerProps> = ({
   children,
-  height,
-  minHeight = 0,
+  height = "100%",
   minWidth,
   onHorizontalResizeStop,
   width,
 }) => {
-  const targetHeight = height === "100%" ? 0 : height;
+  /*
+   * States
+   */
 
-  const resizerHandler = useMemo(() => <div className="pf-c-drawer">{DRAWER_SPLITTER_ELEMENT}</div>, []);
+  const [resizerWidth, setResizerWidth] = useState(width);
+  const [initalResizerWidth, setInitialResizerWidth] = useState(0);
+  const [cells, setCells] = useState<Cell[]>([]);
+  const { setSupervisorHash } = useContext(BoxedExpressionGlobalContext);
 
-  const onResizeStop = useCallback((e, data) => onHorizontalResizeStop(data.size.width), [onHorizontalResizeStop]);
+  /*
+   * Memos
+   */
 
-  return (
-    <ResizableBox
-      className={`${height === "100%" ? "height-based-on-content" : ""}`}
-      width={width}
-      height={targetHeight}
-      minConstraints={[minWidth, minHeight]}
-      axis="x"
-      onResizeStop={onResizeStop}
-      handle={resizerHandler}
-    >
-      {children}
-    </ResizableBox>
+  const id = useMemo(() => {
+    return `uuid-${uuid()}`;
+  }, []);
+
+  const resizerMinWidth = useMemo(() => {
+    return minWidth ?? DEFAULT_MIN_WIDTH;
+  }, [minWidth]);
+
+  const resizerClassName = useMemo(() => {
+    const heightClass = height === "100%" ? "height-based-on-content" : "";
+    return `${heightClass} ${id}`;
+  }, [height, id]);
+
+  /*
+   * Effects
+   */
+
+  useLayoutEffect(() => {
+    function listener(event: CustomEvent) {
+      const width = Math.round(event.detail.width);
+      setResizerWidth(width);
+      onHorizontalResizeStop?.(width);
+    }
+
+    document.addEventListener(id, listener);
+    return () => {
+      document.removeEventListener(id, listener);
+    };
+  }, [id, onHorizontalResizeStop, resizerWidth]);
+
+  /*
+   * Callbacks
+   */
+
+  const widthValue = useCallback(commonWidthValue, []);
+
+  const getApplicableCells = useCallback((allCells: Cell[], currentCell: Cell) => {
+    const applicableCells: Cell[] = [];
+    const parent = currentCell.element.closest("table");
+    const currentRect = currentCell.getRect();
+
+    const hasSameParent = (cell: Cell) => parent?.contains(cell.element);
+    const isCellParent = (cell: Cell) => cell.element?.contains(currentCell.element);
+    const containsCurrent = (cell: Cell) => {
+      const cellRect = cell.getRect();
+      return cellRect.x <= currentRect.x && cellRect.right >= currentRect.right;
+    };
+
+    if (currentCell.isLastColumn()) {
+      allCells
+        .filter((cell) => cell.isLastColumn())
+        .forEach((cell) => {
+          applicableCells.push(cell);
+        });
+    } else {
+      let hasSomeLastColumn = false;
+
+      allCells.forEach((cell) => {
+        if ((hasSameParent(cell) || isCellParent(cell)) && containsCurrent(cell)) {
+          applicableCells.push(cell);
+          if (cell.isLastColumn()) {
+            hasSomeLastColumn = true;
+          }
+        }
+      });
+
+      if (hasSomeLastColumn) {
+        allCells
+          .filter((cell) => {
+            return cell.isLastColumn() && !hasSameParent(cell);
+          })
+          .forEach((cell) => {
+            applicableCells.push(cell);
+          });
+      }
+    }
+
+    applicableCells.forEach((cell) => {
+      cell.element.dataset.initialWidth = cell.element.style.width;
+    });
+
+    return _.uniqBy(applicableCells, (cell) => cell.getId());
+  }, []);
+
+  const onResizeStart = useCallback(() => {
+    const allCells = new DOMSession().getCells();
+    const currentCell = allCells.find((c) => c.getId() === id)!;
+    const applicableCells = getApplicableCells(allCells, currentCell);
+    const initialWidth = widthValue(currentCell.getRect().width);
+
+    setCells(applicableCells);
+    setInitialResizerWidth(initialWidth);
+  }, [getApplicableCells, id, widthValue]);
+
+  const onResize = useCallback(
+    (_, data) => {
+      const newResizerWidth = parseInt(data.size.width + "");
+      cells.forEach((cell) => {
+        const delta = newResizerWidth - initalResizerWidth;
+        const celllElement = cell.element;
+        const isSameCell = cell.getId() === id;
+
+        if (!isSameCell) {
+          const cellInitialWidth = parseInt(celllElement.dataset.initialWidth + "");
+          celllElement.style.width = cellInitialWidth + delta + "px";
+        }
+      });
+    },
+    [cells, id, initalResizerWidth]
   );
+
+  const onResizeStop = useCallback(
+    (_, data) => {
+      const newResizerWidth = widthValue(data.size.width);
+
+      cells.forEach((cell) => {
+        const delta = newResizerWidth - initalResizerWidth;
+        const cellInitialWidth = widthValue(cell.element.dataset.initialWidth);
+        cell.setWidth(cellInitialWidth + delta);
+      });
+
+      setSupervisorHash("-");
+    },
+    [cells, initalResizerWidth, setSupervisorHash, widthValue]
+  );
+
+  return useMemo(() => {
+    return (
+      <ResizableBox
+        className={resizerClassName}
+        width={resizerWidth}
+        minConstraints={[resizerMinWidth, 0]}
+        height={0}
+        axis="x"
+        onResize={onResize}
+        onResizeStop={onResizeStop}
+        onResizeStart={onResizeStart}
+        handle={
+          <div className="pf-c-drawer">
+            <div className="pf-c-drawer__splitter pf-m-vertical">
+              <div className="pf-c-drawer__splitter-handle"></div>
+            </div>
+          </div>
+        }
+      >
+        {children}
+      </ResizableBox>
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resizerClassName, onResize, onResizeStop, onResizeStart, children]);
 };
