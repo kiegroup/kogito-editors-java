@@ -41,6 +41,7 @@ import * as _ from "lodash";
 import { BoxedExpressionGlobalContext } from "../../context";
 import { FunctionKindSelector } from "./FunctionKindSelector";
 import { EditParameters } from "./EditParameters";
+import { hashfy } from "../Resizer";
 
 export const DEFAULT_FIRST_PARAM_NAME = "p-1";
 
@@ -51,9 +52,11 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (props
   const functionKind = props.functionKind === undefined ? FunctionKind.Feel : props.functionKind;
   const name = props.name === undefined ? DEFAULT_FIRST_PARAM_NAME : props.name;
 
+  const [width, setWidth] = useState(parametersWidth);
+
   const { i18n } = useBoxedExpressionEditorI18n();
 
-  const globalContext = useContext(BoxedExpressionGlobalContext);
+  const { boxedExpressionEditorRef, setSupervisorHash } = useContext(BoxedExpressionGlobalContext);
 
   const [parameters, setParameters] = useState(formalParameters);
 
@@ -61,7 +64,7 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (props
     () => (
       <PopoverMenu
         title={i18n.editParameters}
-        appendTo={globalContext.boxedExpressionEditorRef?.current ?? undefined}
+        appendTo={boxedExpressionEditorRef?.current ?? undefined}
         className="parameters-editor-popover"
         minWidth="400px"
         body={<EditParameters parameters={parameters} setParameters={setParameters} />}
@@ -78,29 +81,28 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (props
         </div>
       </PopoverMenu>
     ),
-    [globalContext.boxedExpressionEditorRef, i18n.editParameters, parameters]
+    [boxedExpressionEditorRef, i18n.editParameters, parameters]
   );
 
   const evaluateColumns = useCallback(
-    () =>
-      [
-        {
-          label: name,
-          accessor: name,
-          dataType: props.dataType,
-          disableHandlerOnHeader: true,
-          columns: [
-            {
-              headerCellElement,
-              accessor: "parameters",
-              disableHandlerOnHeader: true,
-              width: width.current,
-              minWidth: DEFAULT_ENTRY_EXPRESSION_MIN_WIDTH,
-            },
-          ],
-        },
-      ] as ColumnInstance[],
-    [props.dataType, headerCellElement, name]
+    () => [
+      {
+        label: name,
+        accessor: name,
+        dataType: props.dataType,
+        disableHandlerOnHeader: true,
+        columns: [
+          {
+            headerCellElement,
+            accessor: "parameters",
+            disableHandlerOnHeader: true,
+            width: width,
+            minWidth: DEFAULT_ENTRY_EXPRESSION_MIN_WIDTH,
+          },
+        ],
+      },
+    ],
+    [name, props.dataType, headerCellElement, width]
   );
 
   const extractContextEntriesFromJavaProps = useCallback(
@@ -158,7 +160,6 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (props
     [extractContextEntriesFromJavaProps, props]
   );
 
-  const width = useRef<number>(parametersWidth);
   const columns = useRef(evaluateColumns());
   const [selectedFunctionKind, setSelectedFunctionKind] = useState(functionKind);
   const [rows, setRows] = useState(evaluateRows(selectedFunctionKind));
@@ -196,14 +197,18 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (props
         dataType: expressionColumn.dataType,
         functionKind: selectedFunctionKind,
         formalParameters: parameters,
-        ...(width.current > DEFAULT_ENTRY_EXPRESSION_MIN_WIDTH ? { parametersWidth: width.current } : {}),
+        parametersWidth: width,
       },
       selectedFunctionKind
     );
-    props.isHeadless
-      ? props.onUpdatingRecursiveExpression?.(_.omit(updatedDefinition, ["name", "dataType"]))
-      : window.beeApi?.broadcastFunctionExpressionDefinition?.(updatedDefinition);
-  }, [extendDefinitionBasedOnFunctionKind, parameters, props, selectedFunctionKind]);
+
+    if (props.isHeadless) {
+      props.onUpdatingRecursiveExpression?.(_.omit(updatedDefinition, ["name", "dataType"]));
+    } else {
+      setSupervisorHash(hashfy(rows));
+      window.beeApi?.broadcastFunctionExpressionDefinition?.(updatedDefinition);
+    }
+  }, [extendDefinitionBasedOnFunctionKind, setSupervisorHash, parameters, props, selectedFunctionKind, rows, width]);
 
   const getHeaderVisibility = useCallback(() => {
     return props.isHeadless ? TableHeaderVisibility.LastLevel : TableHeaderVisibility.Full;
@@ -226,9 +231,10 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (props
   const onColumnsUpdate = useCallback(
     ([expressionColumn]: [ColumnInstance]) => {
       props.onUpdatingNameAndDataType?.(expressionColumn.label as string, expressionColumn.dataType);
-      width.current = _.find(expressionColumn.columns, { accessor: "parameters" })?.width as number;
+      setWidth(expressionColumn.width as number);
+
       const [updatedExpressionColumn] = columns.current;
-      updatedExpressionColumn.label = expressionColumn.label;
+      updatedExpressionColumn.label = expressionColumn.label as string;
       updatedExpressionColumn.accessor = expressionColumn.accessor;
       updatedExpressionColumn.dataType = expressionColumn.dataType;
       spreadFunctionExpressionDefinition();

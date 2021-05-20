@@ -105,6 +105,8 @@ export interface Column {
   dataType: DataType;
   /** Column width */
   width?: string | number;
+  /** Set column width */
+  setWidth?: (width: string | number) => void;
 }
 
 export type Columns = Column[];

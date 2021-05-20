@@ -33,7 +33,6 @@ export const LiteralExpression: React.FunctionComponent<LiteralExpressionProps> 
   width,
 }: LiteralExpressionProps) => {
   const HEADER_WIDTH = 250;
-  const HEADER_HEIGHT = 40;
 
   const [expressionName, setExpressionName] = useState<string>(name);
   const [expressionDataType, setExpressionDataType] = useState<DataType>(dataType);
@@ -86,9 +85,7 @@ export const LiteralExpression: React.FunctionComponent<LiteralExpressionProps> 
     (element) => (
       <Resizer
         width={literalExpressionWidth.current}
-        height={HEADER_HEIGHT}
         minWidth={HEADER_WIDTH}
-        minHeight={HEADER_HEIGHT}
         onHorizontalResizeStop={onHorizontalResizeStop}
       >
         {element}
