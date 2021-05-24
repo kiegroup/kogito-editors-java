@@ -77,7 +77,7 @@ public class NodeConnector {
 
     private final FactoryManager factoryManager;
 
-    private static final double CENTRE_TOLERANCE = 1.0;
+    static final double CENTRE_TOLERANCE = 1.0;
 
     private static final String INFO_REQ_ID = getDefinitionId(InformationRequirement.class);
 
@@ -386,7 +386,7 @@ public class NodeConnector {
         } else if (existingEdge.isPresent()) {
             // Connect existing edge
             final JSIDMNEdge edge = Js.uncheckedCast(existingEdge.get());
-            final Node requiredNode = getSourceNode(edge, nodeEntries);
+            final Optional<Node> requiredNode = getSourceNode(edge, nodeEntries);
             final String id = edge.getDmnElementRef().getLocalPart();
             final String currentNodeId = ((DRGElement) ((Definition) currentNode.getContent()).getDefinition()).getContentDefinitionId();
 
@@ -395,7 +395,7 @@ public class NodeConnector {
                 connectWbEdge(connectorTypeId,
                               diagramId,
                               currentNode,
-                              requiredNode,
+                              requiredNode.get(),
                               edge,
                               id);
             }
@@ -405,9 +405,11 @@ public class NodeConnector {
     boolean isEdgeConnectedWithNode(final JSIDMNEdge edge,
                                     final Node currentNode,
                                     final List<NodeEntry> nodeEntries) {
-        final Node targetNode = getTargetNode(edge, nodeEntries);
-        final Node sourceNode = getSourceNode(edge, nodeEntries);
-        return Objects.equals(targetNode, currentNode) || Objects.equals(sourceNode, currentNode);
+        final Optional<Node> targetNode = getTargetNode(edge, nodeEntries);
+        final Optional<Node> sourceNode = getSourceNode(edge, nodeEntries);
+
+        return (targetNode.isPresent() && Objects.equals(targetNode.get(), currentNode))
+                || (sourceNode.isPresent() && Objects.equals(sourceNode.get(), currentNode));
     }
 
     private Optional<JSIDMNEdge> findExistingEdge(final JSITDMNElement dmnElement,
@@ -531,11 +533,11 @@ public class NodeConnector {
                 Math.abs((viewHeight / 2) - magnetRelativeY) < CENTRE_TOLERANCE;
     }
 
-    Node getSourceNode(final JSIDMNEdge jsidmnEdge,
-                       final List<NodeEntry> entries) {
+    Optional<Node> getSourceNode(final JSIDMNEdge jsidmnEdge,
+                                 final List<NodeEntry> entries) {
 
         if (entries.size() == 1) {
-            return entries.get(0).getNode();
+            return Optional.of(entries.get(0).getNode());
         }
 
         final JSIPoint jsiSource = Js.uncheckedCast(jsidmnEdge.getWaypoint().get(0));
@@ -548,23 +550,23 @@ public class NodeConnector {
         return new Point2D(point.getX(), point.getY());
     }
 
-    Node getTargetNode(final JSIDMNEdge jsidmnEdge,
-                       final List<NodeEntry> entries) {
+    Optional<Node> getTargetNode(final JSIDMNEdge jsidmnEdge,
+                                 final List<NodeEntry> entries) {
 
         if (entries.size() == 1) {
-            return entries.get(0).getNode();
+            return Optional.of(entries.get(0).getNode());
         }
 
         final JSIPoint jsiTarget = Js.uncheckedCast(jsidmnEdge.getWaypoint().get(1));
-        final Point2D source = new Point2D(jsiTarget.getX(), jsiTarget.getY());
+        final Point2D source = createPoint(jsiTarget);
 
         return getNodeFromPoint(source, entries);
     }
 
-    Node getNodeFromPoint(final Point2D point,
-                          final List<NodeEntry> entries) {
+    Optional<Node> getNodeFromPoint(final Point2D point,
+                                    final List<NodeEntry> entries) {
         if (entries.size() == 1) {
-            return entries.get(0).getNode();
+            return Optional.of(entries.get(0).getNode());
         }
 
         final Map<Point2D, NodeEntry> entriesByPoint2D = new HashMap<>();
@@ -582,7 +584,23 @@ public class NodeConnector {
             return distance1.compareTo(distance2);
         });
 
-        return entriesByPoint2D.get(nearest).getNode();
+        if (!isPointInsideNode(entriesByPoint2D.get(nearest), point)) {
+            return Optional.empty();
+        }
+        return Optional.of(entriesByPoint2D.get(nearest).getNode());
+    }
+
+    boolean isPointInsideNode(final NodeEntry node,
+                              final Point2D point) {
+
+        final JSIBounds bounds = node.getDmnShape().getBounds();
+        final double width = bounds.getX() + bounds.getWidth();
+        final double height = bounds.getY() + bounds.getHeight();
+
+        return point.getX() <= width + CENTRE_TOLERANCE
+                && point.getX() >= bounds.getX() - CENTRE_TOLERANCE
+                && point.getY() <= height + CENTRE_TOLERANCE
+                && point.getY() >= bounds.getY() - CENTRE_TOLERANCE;
     }
 
     String uuid() {

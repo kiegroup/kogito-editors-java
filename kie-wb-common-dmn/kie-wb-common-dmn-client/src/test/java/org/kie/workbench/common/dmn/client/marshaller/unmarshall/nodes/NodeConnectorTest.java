@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.xml.namespace.QName;
 
@@ -31,10 +32,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.definition.model.DRGElement;
 import org.kie.workbench.common.dmn.api.definition.model.InformationRequirement;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dc.JSIBounds;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dc.JSIPoint;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDMNElement;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDMNElementReference;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmndi12.JSIDMNEdge;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmndi12.JSIDMNShape;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Element;
@@ -51,6 +54,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.kie.workbench.common.dmn.client.marshaller.common.IdUtils.AUTO_SOURCE_CONNECTION;
 import static org.kie.workbench.common.dmn.client.marshaller.common.IdUtils.AUTO_TARGET_CONNECTION;
+import static org.kie.workbench.common.dmn.client.marshaller.unmarshall.nodes.NodeConnector.CENTRE_TOLERANCE;
 import static org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils.getDefinitionId;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -147,7 +151,7 @@ public class NodeConnectorTest {
         when(drgElement.getContentDefinitionId()).thenReturn(contentDefinitionId);
 
         doReturn(true).when(nodeConnector).isEdgeConnectedWithNode(eq(existingEdge), eq(currentNode), eq(list));
-        doReturn(requiredNode).when(nodeConnector).getSourceNode(eq(existingEdge), any());
+        doReturn(Optional.of(requiredNode)).when(nodeConnector).getSourceNode(eq(existingEdge), any());
         doNothing().when(nodeConnector).connectWbEdge(any(), any(), any(), any(), any(), any());
 
         entriesById.put(contentDefinitionId, list);
@@ -177,7 +181,7 @@ public class NodeConnectorTest {
         when(drgElement.getContentDefinitionId()).thenReturn(contentDefinitionId);
 
         doReturn(false).when(nodeConnector).isEdgeConnectedWithNode(eq(existingEdge), eq(currentNode), eq(list));
-        doReturn(requiredNode).when(nodeConnector).getSourceNode(eq(existingEdge), any());
+        doReturn(Optional.of(requiredNode)).when(nodeConnector).getSourceNode(eq(existingEdge), any());
         doNothing().when(nodeConnector).connectWbEdge(any(), any(), any(), any(), any(), any());
 
         entriesById.put(contentDefinitionId, list);
@@ -343,11 +347,11 @@ public class NodeConnectorTest {
         final Node targetNode = mock(Node.class);
         final Node sourceNode = mock(Node.class);
 
-        doReturn(targetNode).when(nodeConnector).getTargetNode(jsiDMNEdge,
-                                                               nodeEntries);
+        doReturn(Optional.of(targetNode)).when(nodeConnector).getTargetNode(jsiDMNEdge,
+                                                                            nodeEntries);
 
-        doReturn(sourceNode).when(nodeConnector).getSourceNode(jsiDMNEdge,
-                                                               nodeEntries);
+        doReturn(Optional.of(sourceNode)).when(nodeConnector).getSourceNode(jsiDMNEdge,
+                                                                            nodeEntries);
 
         assertFalse(nodeConnector.isEdgeConnectedWithNode(jsiDMNEdge,
                                                           currentNode,
@@ -361,11 +365,11 @@ public class NodeConnectorTest {
         final List nodeEntries = mock(List.class);
         final Node targetNode = mock(Node.class);
 
-        doReturn(targetNode).when(nodeConnector).getTargetNode(jsiDMNEdge,
-                                                               nodeEntries);
+        doReturn(Optional.of(targetNode)).when(nodeConnector).getTargetNode(jsiDMNEdge,
+                                                                            nodeEntries);
 
-        doReturn(currentNode).when(nodeConnector).getSourceNode(jsiDMNEdge,
-                                                                nodeEntries);
+        doReturn(Optional.of(currentNode)).when(nodeConnector).getSourceNode(jsiDMNEdge,
+                                                                             nodeEntries);
 
         assertTrue(nodeConnector.isEdgeConnectedWithNode(jsiDMNEdge,
                                                          currentNode,
@@ -379,11 +383,11 @@ public class NodeConnectorTest {
         final List nodeEntries = mock(List.class);
         final Node sourceNode = mock(Node.class);
 
-        doReturn(currentNode).when(nodeConnector).getTargetNode(jsiDMNEdge,
-                                                                nodeEntries);
+        doReturn(Optional.of(currentNode)).when(nodeConnector).getTargetNode(jsiDMNEdge,
+                                                                             nodeEntries);
 
-        doReturn(sourceNode).when(nodeConnector).getSourceNode(jsiDMNEdge,
-                                                               nodeEntries);
+        doReturn(Optional.of(sourceNode)).when(nodeConnector).getSourceNode(jsiDMNEdge,
+                                                                            nodeEntries);
 
         assertTrue(nodeConnector.isEdgeConnectedWithNode(jsiDMNEdge,
                                                          currentNode,
@@ -400,9 +404,10 @@ public class NodeConnectorTest {
 
         when(nodeEntry.getNode()).thenReturn(node);
 
-        final Node targetNode = nodeConnector.getTargetNode(jsiDMNEdge, nodeEntries);
+        Optional<Node> targetNode = nodeConnector.getTargetNode(jsiDMNEdge, nodeEntries);
 
-        assertEquals(targetNode, node);
+        assertTrue(targetNode.isPresent());
+        assertEquals(targetNode.get(), node);
     }
 
     @Test
@@ -415,9 +420,10 @@ public class NodeConnectorTest {
 
         when(nodeEntry.getNode()).thenReturn(node);
 
-        final Node sourceNode = nodeConnector.getSourceNode(jsiDMNEdge, nodeEntries);
+        Optional<Node> sourceNode = nodeConnector.getSourceNode(jsiDMNEdge, nodeEntries);
 
-        assertEquals(sourceNode, node);
+        assertTrue(sourceNode.isPresent());
+        assertEquals(sourceNode.get(), node);
     }
 
     @Test
@@ -434,7 +440,7 @@ public class NodeConnectorTest {
 
         when(jsiDMNEdge.getWaypoint()).thenReturn(waypoints);
 
-        doReturn(mock(Node.class)).when(nodeConnector).getNodeFromPoint(sourcePoint2D, nodeEntries);
+        doReturn(Optional.of(mock(Node.class))).when(nodeConnector).getNodeFromPoint(sourcePoint2D, nodeEntries);
 
         nodeConnector.getSourceNode(jsiDMNEdge, nodeEntries);
 
@@ -455,11 +461,180 @@ public class NodeConnectorTest {
 
         when(jsiDMNEdge.getWaypoint()).thenReturn(waypoints);
 
-        doReturn(mock(Node.class)).when(nodeConnector).getNodeFromPoint(targetPoint2D, nodeEntries);
+        doReturn(Optional.of(mock(Node.class))).when(nodeConnector).getNodeFromPoint(targetPoint2D, nodeEntries);
 
         nodeConnector.getTargetNode(jsiDMNEdge, nodeEntries);
 
         verify(nodeConnector).getNodeFromPoint(targetPoint2D, nodeEntries);
+    }
+
+    @Test
+    public void testIsPointInsideNode() {
+
+        final double height = 100;
+        final double width = 50;
+        final double x = 0;
+        final double y = 300;
+        final Point2D point = new Point2D(10, 320);
+        final NodeEntry nodeEntry = createNodeEntryWithBounds(x, y, width, height);
+
+        final boolean isInsideNode = nodeConnector.isPointInsideNode(nodeEntry, point);
+
+        assertTrue(isInsideNode);
+    }
+
+    @Test
+    public void testIsPointInsideNode_WithXUnderTolerance() {
+
+        final double height = 100;
+        final double width = 50;
+        final double x = 0;
+        final double y = 300;
+        final Point2D point = new Point2D(x - CENTRE_TOLERANCE, 320);
+        final NodeEntry nodeEntry = createNodeEntryWithBounds(x, y, width, height);
+
+        final boolean isInsideNode = nodeConnector.isPointInsideNode(nodeEntry, point);
+
+        assertTrue(isInsideNode);
+    }
+
+    @Test
+    public void testIsPointInsideNode_WithXOverTolerance() {
+
+        final double height = 100;
+        final double width = 50;
+        final double x = 70;
+        final double y = 300;
+        final Point2D point = new Point2D(x + width + CENTRE_TOLERANCE, 320);
+        final NodeEntry nodeEntry = createNodeEntryWithBounds(x, y, width, height);
+
+        final boolean isInsideNode = nodeConnector.isPointInsideNode(nodeEntry, point);
+
+        assertTrue(isInsideNode);
+    }
+
+    @Test
+    public void testIsPointInsideNode_WithYUnderTolerance() {
+
+        final double height = 100;
+        final double width = 50;
+        final double x = 0;
+        final double y = 300;
+        final Point2D point = new Point2D(10, y - CENTRE_TOLERANCE);
+        final NodeEntry nodeEntry = createNodeEntryWithBounds(x, y, width, height);
+
+        final boolean isInsideNode = nodeConnector.isPointInsideNode(nodeEntry, point);
+
+        assertTrue(isInsideNode);
+    }
+
+    @Test
+    public void testIsPointInsideNode_WithYOverTolerance() {
+
+        final double height = 100;
+        final double width = 50;
+        final double x = 0;
+        final double y = 300;
+        final Point2D point = new Point2D(10, y + height + CENTRE_TOLERANCE);
+        final NodeEntry nodeEntry = createNodeEntryWithBounds(x, y, width, height);
+
+        final boolean isInsideNode = nodeConnector.isPointInsideNode(nodeEntry, point);
+
+        assertTrue(isInsideNode);
+    }
+
+    @Test
+    public void testIsPointInsideNode_WhenXIsOverBounds() {
+
+        final double height = 100;
+        final double width = 50;
+        final double x = 0;
+        final double y = 300;
+        final Point2D point = new Point2D(1000, 320);
+        final NodeEntry nodeEntry = createNodeEntryWithBounds(x, y, width, height);
+
+        final boolean isInsideNode = nodeConnector.isPointInsideNode(nodeEntry, point);
+
+        assertFalse(isInsideNode);
+    }
+
+    @Test
+    public void testIsPointInsideNode_WhenYIsOverBounds() {
+
+        final double height = 100;
+        final double width = 50;
+        final double x = 0;
+        final double y = 300;
+        final Point2D point = new Point2D(10, 1320);
+        final NodeEntry nodeEntry = createNodeEntryWithBounds(x, y, width, height);
+
+        final boolean isInsideNode = nodeConnector.isPointInsideNode(nodeEntry, point);
+
+        assertFalse(isInsideNode);
+    }
+
+    @Test
+    public void testIsPointInsideNode_WhenXAndYAreOverBounds() {
+
+        final double height = 100;
+        final double width = 50;
+        final double x = 0;
+        final double y = 300;
+        final Point2D point = new Point2D(1000, 1320);
+        final NodeEntry nodeEntry = createNodeEntryWithBounds(x, y, width, height);
+
+        final boolean isInsideNode = nodeConnector.isPointInsideNode(nodeEntry, point);
+
+        assertFalse(isInsideNode);
+    }
+
+    @Test
+    public void testIsPointInsideNode_WhenXIsUnderBounds() {
+
+        final double width = 50;
+        final double height = 100;
+        final double x = 10;
+        final double y = 300;
+        final Point2D point = new Point2D(8.0, 320.0);
+        final NodeEntry nodeEntry = createNodeEntryWithBounds(x, y, width, height);
+
+        final boolean isInsideNode = nodeConnector.isPointInsideNode(nodeEntry, point);
+
+        assertFalse(isInsideNode);
+    }
+
+    @Test
+    public void testIsPointInsideNode_WhenYIsUnderBounds() {
+
+        final double height = 100;
+        final double width = 50;
+        final double x = 0;
+        final double y = 300;
+        final Point2D point = new Point2D(10, 290);
+        final NodeEntry nodeEntry = createNodeEntryWithBounds(x, y, width, height);
+
+        final boolean isInsideNode = nodeConnector.isPointInsideNode(nodeEntry, point);
+
+        assertFalse(isInsideNode);
+    }
+
+    NodeEntry createNodeEntryWithBounds(final double x,
+                                        final double y,
+                                        final double width,
+                                        final double height) {
+
+        final NodeEntry nodeEntry = mock(NodeEntry.class);
+        final JSIDMNShape shape = mock(JSIDMNShape.class);
+        final JSIBounds bounds = mock(JSIBounds.class);
+
+        when(bounds.getHeight()).thenReturn(height);
+        when(bounds.getWidth()).thenReturn(width);
+        when(bounds.getX()).thenReturn(x);
+        when(bounds.getY()).thenReturn(y);
+        when(nodeEntry.getDmnShape()).thenReturn(shape);
+        when(shape.getBounds()).thenReturn(bounds);
+
+        return nodeEntry;
     }
 
     private JSIPoint createPoint(final double x, final double y) {
