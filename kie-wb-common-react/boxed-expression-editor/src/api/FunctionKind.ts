@@ -15,6 +15,7 @@
  */
 
 import { ExpressionProps } from "./ExpressionProps";
+import { EntryInfo } from "./ContextEntry";
 
 export enum FunctionKind {
   Feel = "FEEL",
@@ -38,11 +39,21 @@ export interface JavaFunctionProps {
   method?: string;
 }
 
+interface PMMLParam {
+  document: string;
+  modelsFromDocument?: {
+    model: string;
+    parametersFromModel?: EntryInfo[];
+  }[];
+}
+
+export type PMMLParams = PMMLParam[];
+
 export interface PmmlFunctionProps {
   /** Pmml Function */
   functionKind: FunctionKind.Pmml;
-  /** PMML document */
+  /** Selected PMML document */
   document?: string;
-  /** PMML model */
+  /** Selected PMML model */
   model?: string;
 }

@@ -15,13 +15,13 @@
  */
 
 import * as React from "react";
-import { useRef, useState, useMemo } from "react";
+import { useMemo, useRef, useState } from "react";
 import "@patternfly/react-core/dist/styles/base-no-reset.css";
 import "@patternfly/react-styles/css/components/Drawer/drawer.css";
 import "./BoxedExpressionEditor.css";
 import { I18nDictionariesProvider } from "@kogito-tooling/i18n/dist/react-components";
 import { ExpressionContainer, ExpressionContainerProps } from "../ExpressionContainer";
-import { ResizerSupervisor, hashfy } from "../Resizer";
+import { hashfy, ResizerSupervisor } from "../Resizer";
 import {
   boxedExpressionEditorDictionaries,
   BoxedExpressionEditorI18nContext,
@@ -29,10 +29,13 @@ import {
 } from "../../i18n";
 import { BoxedExpressionGlobalContext } from "../../context";
 import * as _ from "lodash";
+import { PMMLParams } from "../../api";
 
 export interface BoxedExpressionEditorProps {
   /** All expression properties used to define it */
   expressionDefinition: ExpressionContainerProps;
+  /** PMML parameters */
+  pmmlParams?: PMMLParams;
 }
 
 const BoxedExpressionEditor: (props: BoxedExpressionEditorProps) => JSX.Element = (
@@ -52,6 +55,7 @@ const BoxedExpressionEditor: (props: BoxedExpressionEditorProps) => JSX.Element 
       >
         <BoxedExpressionGlobalContext.Provider
           value={{
+            pmmlParams: props.pmmlParams,
             supervisorHash,
             setSupervisorHash,
             boxedExpressionEditorRef,

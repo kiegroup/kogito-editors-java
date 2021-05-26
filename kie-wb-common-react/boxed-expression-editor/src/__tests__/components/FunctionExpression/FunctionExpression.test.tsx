@@ -27,8 +27,14 @@ import * as React from "react";
 import { DataType, EntryInfo, FunctionKind, FunctionProps, LogicType } from "../../../api";
 import { act } from "react-dom/test-utils";
 import * as _ from "lodash";
+import { BoxedExpressionGlobalContext } from "../../../context";
 
 describe("FunctionExpression tests", () => {
+  const documentName = "document";
+  const model = "model";
+  const parametersFromModel: EntryInfo[] = [{ name: "p-1", dataType: DataType.Number }];
+  const modelsFromDocument = [{ model, parametersFromModel }];
+
   test("should show a table with two levels visible header, with one row and one column", () => {
     const { container } = render(
       usingTestingBoxedExpressionI18nContext(
@@ -73,7 +79,7 @@ describe("FunctionExpression tests", () => {
     await clearTableRow(container, baseElement);
 
     expect(mockedBroadcastDefinition).toHaveBeenLastCalledWith({
-      dataType: undefined,
+      dataType: DataType.Undefined,
       expression: {
         uid: "id1",
       },
@@ -94,7 +100,9 @@ describe("FunctionExpression tests", () => {
     test("should render no parameter, if passed property is empty array", async () => {
       const { container, baseElement } = render(
         usingTestingBoxedExpressionI18nContext(
-          <FunctionExpression logicType={LogicType.Function} functionKind={FunctionKind.Feel} formalParameters={[]} />
+          wrapComponentInContext(
+            <FunctionExpression logicType={LogicType.Function} functionKind={FunctionKind.Feel} formalParameters={[]} />
+          )
         ).wrapper
       );
       await activateSelector(container as HTMLElement, ".parameters-list");
@@ -110,11 +118,13 @@ describe("FunctionExpression tests", () => {
 
       const { container, baseElement } = render(
         usingTestingBoxedExpressionI18nContext(
-          <FunctionExpression
-            logicType={LogicType.Function}
-            functionKind={FunctionKind.Feel}
-            formalParameters={[{ name: paramName, dataType: paramDataType }]}
-          />
+          wrapComponentInContext(
+            <FunctionExpression
+              logicType={LogicType.Function}
+              functionKind={FunctionKind.Feel}
+              formalParameters={[{ name: paramName, dataType: paramDataType }]}
+            />
+          )
         ).wrapper
       );
       await activateSelector(container as HTMLElement, ".parameters-list");
@@ -131,11 +141,13 @@ describe("FunctionExpression tests", () => {
 
       const { container, baseElement } = render(
         usingTestingBoxedExpressionI18nContext(
-          <FunctionExpression
-            logicType={LogicType.Function}
-            functionKind={FunctionKind.Feel}
-            formalParameters={[{ name: "param", dataType: DataType.Any }]}
-          />
+          wrapComponentInContext(
+            <FunctionExpression
+              logicType={LogicType.Function}
+              functionKind={FunctionKind.Feel}
+              formalParameters={[{ name: "param", dataType: DataType.Any }]}
+            />
+          )
         ).wrapper
       );
       await activateSelector(container as HTMLElement, ".parameters-list");
@@ -159,11 +171,13 @@ describe("FunctionExpression tests", () => {
 
       const { container, baseElement } = render(
         usingTestingBoxedExpressionI18nContext(
-          <FunctionExpression
-            logicType={LogicType.Function}
-            functionKind={FunctionKind.Feel}
-            formalParameters={[{ name: "param", dataType: DataType.Undefined }]}
-          />
+          wrapComponentInContext(
+            <FunctionExpression
+              logicType={LogicType.Function}
+              functionKind={FunctionKind.Feel}
+              formalParameters={[{ name: "param", dataType: DataType.Undefined }]}
+            />
+          )
         ).wrapper
       );
       await activateSelector(container as HTMLElement, ".parameters-list");
@@ -190,7 +204,9 @@ describe("FunctionExpression tests", () => {
 
       const { container, baseElement } = render(
         usingTestingBoxedExpressionI18nContext(
-          <FunctionExpression logicType={LogicType.Function} functionKind={FunctionKind.Feel} formalParameters={[]} />
+          wrapComponentInContext(
+            <FunctionExpression logicType={LogicType.Function} functionKind={FunctionKind.Feel} formalParameters={[]} />
+          )
         ).wrapper
       );
       await activateSelector(container as HTMLElement, ".parameters-list");
@@ -212,16 +228,18 @@ describe("FunctionExpression tests", () => {
 
       const { container, baseElement } = render(
         usingTestingBoxedExpressionI18nContext(
-          <FunctionExpression
-            logicType={LogicType.Function}
-            functionKind={FunctionKind.Feel}
-            formalParameters={[
-              {
-                dataType: DataType.Undefined,
-                name: DEFAULT_FIRST_PARAM_NAME,
-              },
-            ]}
-          />
+          wrapComponentInContext(
+            <FunctionExpression
+              logicType={LogicType.Function}
+              functionKind={FunctionKind.Feel}
+              formalParameters={[
+                {
+                  dataType: DataType.Undefined,
+                  name: DEFAULT_FIRST_PARAM_NAME,
+                },
+              ]}
+            />
+          )
         ).wrapper
       );
       await activateSelector(container as HTMLElement, ".parameters-list");
@@ -234,7 +252,7 @@ describe("FunctionExpression tests", () => {
 
     function checkFormalParameters(mockedBroadcastDefinition: jest.Mock, formalParameters: EntryInfo[]) {
       expect(mockedBroadcastDefinition).toHaveBeenCalledWith({
-        dataType: undefined,
+        dataType: DataType.Undefined,
         expression: {
           logicType: "Literal expression",
         },
@@ -298,23 +316,7 @@ describe("FunctionExpression tests", () => {
         ).wrapper
       );
 
-      expect(container.querySelector(".function-expression table tbody td.data-cell")).toBeVisible();
-      expect(container.querySelector(".function-expression table tbody td.data-cell .context-expression")).toBeTruthy();
-      expect(
-        container.querySelectorAll(
-          ".function-expression table tbody td.data-cell .context-expression .context-entry-info-cell"
-        )
-      ).toHaveLength(2);
-      expect(
-        container.querySelectorAll(
-          ".function-expression table tbody td.data-cell .context-expression .context-entry-info-cell"
-        )[0]
-      ).toContainHTML("class");
-      expect(
-        container.querySelectorAll(
-          ".function-expression table tbody td.data-cell .context-expression .context-entry-info-cell"
-        )[1]
-      ).toContainHTML("method");
+      checkContextEntries(container, "class", "method");
     });
 
     test("should show an entry corresponding to the passed class and method values", () => {
@@ -333,23 +335,80 @@ describe("FunctionExpression tests", () => {
         ).wrapper
       );
 
-      expect(
-        container.querySelectorAll(
-          ".function-expression table tbody td.data-cell .context-expression .context-entry-expression-cell"
-        )
-      ).toHaveLength(2);
-      expect(
-        container.querySelectorAll(
-          ".function-expression table tbody td.data-cell .context-expression .context-entry-expression-cell"
-        )[0]
-      ).toContainHTML(classValue);
-      expect(
-        container.querySelectorAll(
-          ".function-expression table tbody td.data-cell .context-expression .context-entry-expression-cell"
-        )[1]
-      ).toContainHTML(methodValue);
+      checkContextEntries(container, classValue, methodValue, true);
     });
   });
+
+  describe("PMML Function Kind", () => {
+    test("should show, by default, an entry with a context table, containing two entries: document and model", () => {
+      const { container } = render(
+        usingTestingBoxedExpressionI18nContext(
+          <FunctionExpression logicType={LogicType.Function} functionKind={FunctionKind.Pmml} formalParameters={[]} />
+        ).wrapper
+      );
+
+      checkContextEntries(container, "document", "model");
+    });
+
+    test("should show an entry corresponding to the passed document and model values", () => {
+      const document = "document";
+      const model = "model";
+
+      const { container } = render(
+        usingTestingBoxedExpressionI18nContext(
+          <FunctionExpression
+            logicType={LogicType.Function}
+            functionKind={FunctionKind.Pmml}
+            formalParameters={[]}
+            document={document}
+            model={model}
+          />
+        ).wrapper
+      );
+
+      checkContextEntries(container, document, model, true);
+    });
+
+    test("should populate parameters list with parameters related to selected PMML model", async () => {
+      const mockedBroadcastDefinition = jest.fn();
+      mockBroadcastDefinition(mockedBroadcastDefinition);
+
+      const { baseElement, container } = render(
+        usingTestingBoxedExpressionI18nContext(
+          wrapComponentInContext(
+            <FunctionExpression logicType={LogicType.Function} functionKind={FunctionKind.Pmml} formalParameters={[]} />
+          )
+        ).wrapper
+      );
+      await openPMMLLiteralExpressionSelector(container, 0);
+      await selectPMMLElement(baseElement, documentName);
+      await openPMMLLiteralExpressionSelector(container, 1);
+      await selectPMMLElement(baseElement, model);
+
+      expect(mockedBroadcastDefinition).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          formalParameters: parametersFromModel,
+        })
+      );
+    });
+  });
+
+  function wrapComponentInContext(component: JSX.Element) {
+    return (
+      <BoxedExpressionGlobalContext.Provider
+        value={{
+          pmmlParams: [{ document: documentName, modelsFromDocument }],
+          supervisorHash: "",
+          setSupervisorHash: jest.fn,
+          boxedExpressionEditorRef: { current: document.body as HTMLDivElement },
+          currentlyOpenedHandlerCallback: jest.fn,
+          setCurrentlyOpenedHandlerCallback: jest.fn,
+        }}
+      >
+        {component}
+      </BoxedExpressionGlobalContext.Provider>
+    );
+  }
 
   function mockBroadcastDefinition(mockedBroadcastDefinition: jest.Mock) {
     window.beeApi = _.extend(window.beeApi || {}, {
@@ -374,6 +433,33 @@ describe("FunctionExpression tests", () => {
       );
       await flushPromises();
       await jest.runAllTimers();
+    });
+  }
+
+  function checkContextEntries(container: Element, firstEntry: string, secondEntry: string, checkExpression = false) {
+    const specificClassToCheck = checkExpression ? ".context-entry-expression-cell" : ".context-entry-info-cell";
+    const entriesSelector = `.function-expression table tbody td.data-cell .context-expression ${specificClassToCheck}`;
+
+    expect(container.querySelector(".function-expression table tbody td.data-cell")).toBeVisible();
+    expect(container.querySelector(".function-expression table tbody td.data-cell .context-expression")).toBeTruthy();
+    expect(container.querySelectorAll(entriesSelector)).toHaveLength(2);
+    expect(container.querySelectorAll(entriesSelector)[0]).toContainHTML(firstEntry);
+    expect(container.querySelectorAll(entriesSelector)[1]).toContainHTML(secondEntry);
+  }
+
+  async function openPMMLLiteralExpressionSelector(container: Element, position: number) {
+    await act(async () => {
+      (container.querySelectorAll(".pmml-literal-expression button")[position]! as HTMLElement).click();
+      await flushPromises();
+      jest.runAllTimers();
+    });
+  }
+
+  async function selectPMMLElement(baseElement: Element, element: string) {
+    await act(async () => {
+      (baseElement.querySelector(`[data-ouia-component-id='${element}']`) as HTMLButtonElement).click();
+      await flushPromises();
+      jest.runAllTimers();
     });
   }
 });
