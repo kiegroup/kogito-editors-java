@@ -15,3 +15,4 @@
  */
 
 export * from "./LiteralExpression";
+export * from "./PMMLLiteralExpression";

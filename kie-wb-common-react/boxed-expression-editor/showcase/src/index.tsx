@@ -39,6 +39,34 @@ export const App: React.FunctionComponent = () => {
     dataType: DataType.Undefined,
   };
 
+  const pmmlParams = [
+    {
+      document: "mining pmml",
+      modelsFromDocument: [
+        {
+          model: "MiningModelSum",
+          parametersFromModel: [
+            { name: "input1", dataType: DataType.Any },
+            { name: "input2", dataType: DataType.Any },
+            { name: "input3", dataType: DataType.Any },
+          ],
+        },
+      ],
+    },
+    {
+      document: "regression pmml",
+      modelsFromDocument: [
+        {
+          model: "RegressionLinear",
+          parametersFromModel: [
+            { name: "i1", dataType: DataType.Number },
+            { name: "i2", dataType: DataType.Number },
+          ],
+        },
+      ],
+    },
+  ];
+
   const [updatedExpression, setUpdatedExpression] = useState(selectedExpression);
 
   const expressionDefinition: ExpressionContainerProps = { selectedExpression };
@@ -57,7 +85,7 @@ export const App: React.FunctionComponent = () => {
   return (
     <div className="showcase">
       <div className="boxed-expression">
-        <BoxedExpressionEditor expressionDefinition={expressionDefinition} />
+        <BoxedExpressionEditor expressionDefinition={expressionDefinition} pmmlParams={pmmlParams} />
       </div>
       <div className="updated-json">
         <p className="disclaimer">
