@@ -20,6 +20,7 @@ import org.kie.workbench.common.stunner.core.client.shape.Lifecycle;
 import org.kie.workbench.common.stunner.core.client.shape.MutationContext;
 import org.kie.workbench.common.stunner.core.client.shape.NodeShape;
 import org.kie.workbench.common.stunner.core.client.shape.ShapeState;
+import org.kie.workbench.common.stunner.core.client.shape.view.HasControlPoints;
 import org.kie.workbench.common.stunner.core.client.shape.view.ShapeView;
 import org.kie.workbench.common.stunner.core.definition.shape.ShapeViewDef;
 import org.kie.workbench.common.stunner.core.graph.Edge;
@@ -66,5 +67,13 @@ public class NodeShapeImpl<W, D extends ShapeViewDef<W, V>, V extends ShapeView>
     @Override
     public void applyState(final ShapeState shapeState) {
         getShape().applyState(shapeState);
+        ShapeView shape = getShapeView();
+        if (!isSelected() && shape instanceof HasControlPoints) {
+            ((HasControlPoints<Object>)shape).hideControlPoints();
+        }
+    }
+
+    private boolean isSelected() {
+        return ShapeState.SELECTED.equals(getShape().getShapeStateHandler().getShapeState());
     }
 }
