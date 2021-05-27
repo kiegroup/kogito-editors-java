@@ -93,11 +93,11 @@ jobs:
       - name: "kogito-tooling :: Setup Node"
         uses: actions/setup-node@v1
         with:
-          node-version: 12.16.3
+          node-version: 16.2.0
 
       - name: "kogito-tooling :: Setup Yarn"
         run: |
-          npm install -g yarn@1.19.1
+          npm install -g yarn@1.22.10
           yarn config set network-timeout 1000000
 
       - name: "kogito-tooling :: Start Xvfb"
