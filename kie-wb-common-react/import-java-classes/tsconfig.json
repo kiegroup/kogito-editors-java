@@ -1,0 +1,20 @@
+{
+  "include": ["src"],
+  "exclude": ["./**/node_modules", "./**/test-setup"],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "lib": ["es6", "dom", "es2018.promise"],
+    "target": "es5",
+    "declaration": true,
+    "sourceMap": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "strictNullChecks": true,
+    "experimentalDecorators": true,
+    "downlevelIteration": true,
+    "jsx": "react",
+    "outDir": "dist",
+    "skipLibCheck": true,
+    "isolatedModules": false
+  }
+}
