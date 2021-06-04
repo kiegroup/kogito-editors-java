@@ -15,7 +15,7 @@
  */
 
 import * as React from "react";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { Button, Wizard, WizardStep } from "@patternfly/react-core";
 
 export interface ModalWizardProps {
@@ -42,7 +42,7 @@ export const ModalWizard: React.FunctionComponent<ModalWizardProps> = ({
   wizardSteps,
 }: ModalWizardProps) => {
   const [isOpen, setOpen] = useState(false);
-  const handleModalToggle = () => setOpen(!isOpen);
+  const handleModalToggle = useCallback(() => setOpen(!isOpen), [isOpen]);
 
   return (
     <>
