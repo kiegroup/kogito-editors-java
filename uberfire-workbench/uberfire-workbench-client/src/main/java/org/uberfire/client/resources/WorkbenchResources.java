@@ -17,7 +17,6 @@ package org.uberfire.client.resources;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ClientBundle;
-import com.google.gwt.resources.client.CssResource;
 
 /**
  * All GWT managed resources for Workbench
@@ -27,5 +26,5 @@ public interface WorkbenchResources extends ClientBundle {
     WorkbenchResources INSTANCE = GWT.create(WorkbenchResources.class);
 
     @Source("css/workbench.css")
-    CssResource CSS();
+    WorkbenchCss CSS();
 }

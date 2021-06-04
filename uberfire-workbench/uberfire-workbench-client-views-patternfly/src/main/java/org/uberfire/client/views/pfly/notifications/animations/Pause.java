@@ -1,5 +1,5 @@
-/**
- * Copyright (C) 2016 Red Hat, Inc. and/or its affiliates.
+/*
+ * Copyright 2015 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,23 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package org.jboss.errai.common.client.dom;
-
-import jsinterop.annotations.JsProperty;
-import jsinterop.annotations.JsType;
+package org.uberfire.client.views.pfly.notifications.animations;
 
 /**
- * @deprecated Use Elemental 2 for new development
- *
- * @author Max Barkley <mbarkley@redhat.com>
- * @see <a href="https://developer.mozilla.org/en-US/docs/Web/API/File">Web API</a>
+ * A pause (in between animations). Does nothing.
  */
-@JsType(isNative = true)
-@Deprecated
-public interface File extends Blob {
+public class Pause extends SequencedAnimation {
 
-  @JsProperty Date getLastModifiedDate();
-  @JsProperty String getName();
-
+    @Override
+    public void onUpdate(double progress) {
+        //Do nothing. This animation simply acts as a delay
+    }
 }

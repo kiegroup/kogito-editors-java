@@ -1,5 +1,5 @@
-/**
- * Copyright (C) 2016 Red Hat, Inc. and/or its affiliates.
+/*
+ * Copyright 2015 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,26 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.uberfire.client.resources;
 
-package org.jboss.errai.common.client.dom;
-
-import jsinterop.annotations.JsProperty;
-import jsinterop.annotations.JsType;
+import com.google.gwt.resources.client.CssResource;
 
 /**
- * @deprecated Use Elemental 2 for new development
- *
- * @author Max Barkley <mbarkley@redhat.com>
- * @see <a href="https://developer.mozilla.org/en-US/docs/Web/API/DataTransferItem">Web API</a>
+ * GWT managed CSS for Workbench
  */
-@JsType(isNative = true)
-@Deprecated
-public interface DataTransferItem {
+public interface WorkbenchCss extends CssResource {
 
-  @JsProperty String getKind();
-  @JsProperty String getType();
-
-  File getAsFile();
-  String getAsString();
-
+    String notification();
 }
