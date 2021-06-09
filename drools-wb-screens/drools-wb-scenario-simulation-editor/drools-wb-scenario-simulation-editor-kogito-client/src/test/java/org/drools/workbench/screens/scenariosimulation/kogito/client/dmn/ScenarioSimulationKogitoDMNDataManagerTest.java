@@ -1037,7 +1037,7 @@ public class ScenarioSimulationKogitoDMNDataManagerTest {
     public void createTopLevelFactModelTreeSimpleNoCollection() {
         // Single property retrieve
         ClientDMNType simpleString = getSimpleNoCollection();
-        FactModelTree retrieved = scenarioSimulationKogitoDMNDataManagerSpy.createTopLevelFactModelTree("testPath", simpleString, new TreeMap<>(), FactModelTree.Type.INPUT);
+        FactModelTree retrieved = scenarioSimulationKogitoDMNDataManagerSpy.createTopLevelFactModelTree("testPath", null, simpleString, new TreeMap<>(), FactModelTree.Type.INPUT);
         Assert.assertNotNull(retrieved);
         assertEquals("testPath", retrieved.getFactName());
         assertEquals(1, retrieved.getSimpleProperties().size());
@@ -1046,6 +1046,7 @@ public class ScenarioSimulationKogitoDMNDataManagerTest {
         assertFalse(retrieved.getSimpleProperties().get(VALUE).getBaseTypeName().isPresent());
         assertEquals(simpleString.getName(), retrieved.getSimpleProperties().get(VALUE).getPropertyTypeNameToVisualize());
         assertTrue(retrieved.getGenericTypesMap().isEmpty());
+        assertNull(retrieved.getImportPrefix());
     }
 
     @Test
@@ -1053,7 +1054,7 @@ public class ScenarioSimulationKogitoDMNDataManagerTest {
         // Single property collection retrieve
         ClientDMNType simpleCollectionString = getSimpleCollection();
         TreeMap<String, FactModelTree> hiddenFactSimpleCollection = new TreeMap<>();
-        FactModelTree retrieved = scenarioSimulationKogitoDMNDataManagerSpy.createTopLevelFactModelTree("testPath", simpleCollectionString, hiddenFactSimpleCollection, FactModelTree.Type.INPUT);
+        FactModelTree retrieved = scenarioSimulationKogitoDMNDataManagerSpy.createTopLevelFactModelTree("testPath", null, simpleCollectionString, hiddenFactSimpleCollection, FactModelTree.Type.INPUT);
         Assert.assertNotNull(retrieved);
         assertEquals("testPath", retrieved.getFactName());
         assertEquals(1, retrieved.getSimpleProperties().size());
@@ -1066,13 +1067,14 @@ public class ScenarioSimulationKogitoDMNDataManagerTest {
         Assert.assertNotNull(retrieved.getGenericTypesMap().get(VALUE));
         assertEquals(1, retrieved.getGenericTypesMap().get(VALUE).size());
         assertEquals(simpleCollectionString.getName(), retrieved.getGenericTypesMap().get(VALUE).get(0));
+        assertNull(retrieved.getImportPrefix());
     }
 
     @Test
     public void createTopLevelFactModelTreeCompositeNoCollectionBaseType() {
         // Single property retrieve
         ClientDMNType composite = getSingleCompositeWithBaseTypeField();
-        FactModelTree retrieved = scenarioSimulationKogitoDMNDataManagerSpy.createTopLevelFactModelTree("testPath", composite, new TreeMap<>(), FactModelTree.Type.INPUT);
+        FactModelTree retrieved = scenarioSimulationKogitoDMNDataManagerSpy.createTopLevelFactModelTree("testPath", null, composite, new TreeMap<>(), FactModelTree.Type.INPUT);
         assertNotNull(retrieved);
         assertEquals("testPath", retrieved.getFactName());
         assertEquals(2, retrieved.getSimpleProperties().size());
@@ -1087,13 +1089,14 @@ public class ScenarioSimulationKogitoDMNDataManagerTest {
         assertEquals("string", retrieved.getSimpleProperties().get("gender").getPropertyTypeNameToVisualize());
         assertTrue(retrieved.getExpandableProperties().isEmpty());
         assertTrue(retrieved.getGenericTypesMap().isEmpty());
+        assertNull(retrieved.getImportPrefix());
     }
 
     @Test
     public void createTopLevelFactModelTreeCompositeNoCollection() {
         // Single property retrieve
         ClientDMNType compositePerson = getSingleCompositeWithSimpleCollection();
-        FactModelTree retrieved = scenarioSimulationKogitoDMNDataManagerSpy.createTopLevelFactModelTree("testPath", compositePerson, new TreeMap<>(), FactModelTree.Type.INPUT);
+        FactModelTree retrieved = scenarioSimulationKogitoDMNDataManagerSpy.createTopLevelFactModelTree("testPath", null, compositePerson, new TreeMap<>(), FactModelTree.Type.INPUT);
         Assert.assertNotNull(retrieved);
         assertEquals("testPath", retrieved.getFactName());
         assertEquals(2, retrieved.getSimpleProperties().size());
@@ -1105,6 +1108,7 @@ public class ScenarioSimulationKogitoDMNDataManagerTest {
         assertEquals(TYPE_NAME, retrieved.getSimpleProperties().get("name").getTypeName());
         assertFalse(retrieved.getSimpleProperties().get("name").getBaseTypeName().isPresent());
         assertEquals(TYPE_NAME, retrieved.getSimpleProperties().get("name").getPropertyTypeNameToVisualize());
+        assertNull(retrieved.getImportPrefix());
         //
         assertEquals(1, retrieved.getGenericTypesMap().size());
         assertTrue(retrieved.getGenericTypesMap().containsKey("friends"));
@@ -1122,7 +1126,7 @@ public class ScenarioSimulationKogitoDMNDataManagerTest {
         // Single property collection retrieve
         ClientDMNType compositePerson = getCompositeCollection();
         TreeMap<String, FactModelTree> hiddenFactSimpleCollection = new TreeMap<>();
-        FactModelTree retrieved = scenarioSimulationKogitoDMNDataManagerSpy.createTopLevelFactModelTree("testPath", compositePerson, hiddenFactSimpleCollection, FactModelTree.Type.INPUT);
+        FactModelTree retrieved = scenarioSimulationKogitoDMNDataManagerSpy.createTopLevelFactModelTree("testPath", null, compositePerson, hiddenFactSimpleCollection, FactModelTree.Type.INPUT);
         Assert.assertNotNull(retrieved);
         assertEquals("testPath", retrieved.getFactName());
         assertEquals(1, retrieved.getSimpleProperties().size());
@@ -1135,6 +1139,7 @@ public class ScenarioSimulationKogitoDMNDataManagerTest {
         Assert.assertNotNull(retrieved.getGenericTypesMap().get(VALUE));
         assertEquals(1, retrieved.getGenericTypesMap().get(VALUE).size());
         assertEquals(compositePerson.getName(), retrieved.getGenericTypesMap().get(VALUE).get(0));
+        assertNull(retrieved.getImportPrefix());
     }
 
     private ClientDMNType getSimpleNoCollection() {
