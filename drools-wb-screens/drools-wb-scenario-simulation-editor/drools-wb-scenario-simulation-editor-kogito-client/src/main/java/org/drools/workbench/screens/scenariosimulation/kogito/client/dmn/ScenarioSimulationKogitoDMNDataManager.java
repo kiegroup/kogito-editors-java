@@ -29,9 +29,9 @@ import java.util.TreeSet;
 
 import javax.xml.namespace.QName;
 
-import com.google.gwt.core.client.GWT;
 import jsinterop.base.Js;
 import org.drools.workbench.screens.scenariosimulation.kogito.client.dmn.feel.BuiltInType;
+import org.drools.workbench.screens.scenariosimulation.kogito.client.dmn.model.KogitoDMNModel;
 import org.drools.workbench.screens.scenariosimulation.model.typedescriptor.FactModelTree;
 import org.drools.workbench.screens.scenariosimulation.model.typedescriptor.FactModelTuple;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDMNElement;
@@ -51,41 +51,59 @@ public class ScenarioSimulationKogitoDMNDataManager {
     protected static final String WRONG_DMN_MESSAGE = "Wrong DMN Type";
     protected static final QName TYPEREF_QNAME = new QName("", "typeRef", "");
 
-    public FactModelTuple getFactModelTuple(final JSITDefinitions jsitDefinitions) {
+    public FactModelTuple getFactModelTuple(final KogitoDMNModel kogitoDMNModel) {
         SortedMap<String, FactModelTree> visibleFacts = new TreeMap<>();
         SortedMap<String, FactModelTree> hiddenFacts = new TreeMap<>();
         ErrorHolder errorHolder = new ErrorHolder();
+
+        JSITDefinitions jsitDefinitions = kogitoDMNModel.getJsitDefinitions();
+        Map<String, JSITDefinitions> importedDefinitions = kogitoDMNModel.getImportsDefinitions();
+        Map<String, ClientDMNType> dmnTypesMap = new HashMap<>();
         Map<String, String> importedModelsMap = new HashMap<>();
 
         for (int i = 0; i < jsitDefinitions.getImport().size(); i++) {
-            JSITImport imported = Js.uncheckedCast(jsitDefinitions.getImport().get(i));
-            importedModelsMap.put(imported.getNamespace(), imported.getName());
+            JSITImport importItem = Js.uncheckedCast(jsitDefinitions.getImport().get(i));
+            importedModelsMap.put(importItem.getNamespace(), importItem.getName());
         }
 
-        importedModelsMap.keySet().forEach(a ->  GWT.log(a));
+        importedDefinitions.forEach((namespace, definition) ->
+                                            dmnTypesMap.putAll(getDMNDataTypesMap(definition.getItemDefinition(), namespace)));
+        dmnTypesMap.putAll(getDMNDataTypesMap(jsitDefinitions.getItemDefinition(), jsitDefinitions.getNamespace()));
 
-        Map<String, ClientDMNType> dmnTypesMap = getDMNDataTypesMap(jsitDefinitions.getItemDefinition(), jsitDefinitions.getNamespace());
-        final List<JSITDRGElement> jsitdrgElements = jsitDefinitions.getDrgElement();
-        for (int i = 0; i < jsitdrgElements.size(); i++) {
-            final JSITDRGElement jsitdrgElement = Js.uncheckedCast(jsitdrgElements.get(i));
-            if (isJSITInputData(jsitdrgElement)) {
-                JSITInputData jsitInputData = Js.uncheckedCast(jsitdrgElement);
-                final JSITInformationItem jsitInputDataVariable = jsitInputData.getVariable();
-                ClientDMNType type = getDMNTypeFromMaps(dmnTypesMap, getOtherAttributesMap(jsitInputDataVariable));
-                checkTypeSupport(type, errorHolder, jsitInputData.getName());
-                visibleFacts.put(jsitInputData.getName(), createTopLevelFactModelTree(jsitInputData.getName(), "", type, hiddenFacts, FactModelTree.Type.INPUT));
-            } else if (isJSITDecision(jsitdrgElement)) {
-                JSITDecision jsitDecision = Js.uncheckedCast(jsitdrgElement);
-                final JSITInformationItem jsitDecisionVariable = jsitDecision.getVariable();
-                ClientDMNType type = getDMNTypeFromMaps(dmnTypesMap, getOtherAttributesMap(jsitDecisionVariable));
-                checkTypeSupport(type, errorHolder, jsitDecision.getName());
-                visibleFacts.put(jsitDecision.getName(), createTopLevelFactModelTree(jsitDecision.getName(), "", type, hiddenFacts, FactModelTree.Type.DECISION));
-            }
-        }
+        importedDefinitions.forEach((namespace, definition) ->
+                                            populateFacts(visibleFacts, hiddenFacts, errorHolder, dmnTypesMap, definition.getDrgElement(), importedModelsMap.get(namespace)));
+        populateFacts(visibleFacts, hiddenFacts, errorHolder, dmnTypesMap, jsitDefinitions.getDrgElement(), null);
+
         FactModelTuple toReturn = new FactModelTuple(visibleFacts, hiddenFacts);
         errorHolder.getMultipleNestedCollection().forEach(toReturn::addMultipleNestedCollectionError);
         errorHolder.getMultipleNestedObject().forEach(toReturn::addMultipleNestedObjectError);
         return toReturn;
+    }
+
+    private void populateFacts(final SortedMap<String, FactModelTree> visibleFacts,
+                               final SortedMap<String, FactModelTree> hiddenFacts,
+                               final ErrorHolder errorHolder,
+                               final Map<String, ClientDMNType> dmnTypesMap,
+                               final List<JSITDRGElement> jsitdrgElements,
+                               final String importPrefix) {
+        for (int i = 0; i < jsitdrgElements.size(); i++) {
+            final JSITDRGElement jsitdrgElement = Js.uncheckedCast(jsitdrgElements.get(i));
+            if (isJSITInputData(jsitdrgElement)) {
+                final JSITInputData jsitInputData = Js.uncheckedCast(jsitdrgElement);
+                final JSITInformationItem jsitInputDataVariable = jsitInputData.getVariable();
+                final ClientDMNType type = getDMNTypeFromMaps(dmnTypesMap, getOtherAttributesMap(jsitInputDataVariable));
+                final String name = importPrefix != null ? importPrefix + "." + jsitInputData.getName() : jsitInputData.getName();
+                checkTypeSupport(type, errorHolder, name);
+                visibleFacts.put(name, createTopLevelFactModelTree(name, importPrefix, type, hiddenFacts, FactModelTree.Type.INPUT));
+            } else if (isJSITDecision(jsitdrgElement)) {
+                final JSITDecision jsitDecision = Js.uncheckedCast(jsitdrgElement);
+                final JSITInformationItem jsitDecisionVariable = jsitDecision.getVariable();
+                final ClientDMNType type = getDMNTypeFromMaps(dmnTypesMap, getOtherAttributesMap(jsitDecisionVariable));
+                final String name = importPrefix != null ? importPrefix + "." + jsitDecision.getName() : jsitDecision.getName();
+                checkTypeSupport(type, errorHolder, name);
+                visibleFacts.put(name, createTopLevelFactModelTree(name, importPrefix, type, hiddenFacts, FactModelTree.Type.DECISION));
+            }
+        }
     }
 
     /**
