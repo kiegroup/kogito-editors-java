@@ -90,6 +90,11 @@ public final class LienzoCore {
 
     private ImageSelectionMode m_imageSelectionMode = ImageSelectionMode.SELECT_NON_TRANSPARENT;
 
+    public static HTMLCanvasElement createCanvas() {
+        return Js.uncheckedCast(DomGlobal.document.createElement("canvas"));
+
+    }
+
     private static boolean isCanvasSupported() {
 
         HTMLCanvasElement canvas = Js.uncheckedCast(DomGlobal.document.createElement("canvas"));

@@ -19,7 +19,6 @@ package com.ait.lienzo.client.core.util;
 import com.ait.lienzo.client.core.Context2D;
 import com.ait.lienzo.client.core.config.LienzoCore;
 import com.ait.lienzo.shared.core.types.DataURLType;
-import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLCanvasElement;
 import elemental2.dom.HTMLImageElement;
 
@@ -39,7 +38,7 @@ public final class ScratchPad {
         m_high = high;
 
         if (LienzoCore.IS_CANVAS_SUPPORTED) {
-            m_element = (HTMLCanvasElement) DomGlobal.document.createElement("canvas");
+            m_element = LienzoCore.createCanvas();
 
             m_element.width = wide;
 
@@ -126,8 +125,10 @@ public final class ScratchPad {
     }
 
     private static final String toDataURL(final HTMLCanvasElement element) {
-        return element.toDataURL(null);
+        return element.toDataURL(null); // @FIXME Make sure this accepts null (mdp)
     }
+
+    // TODO other arguments, e.g. for image/jpeg The second argument, if it is a number in the range 0.0 to 1.0 inclusive, must be treated as the desired quality level. If it is not a number or is outside that range, the user agent must use its default value, as if the argument had been omitted.
 
     private static final String toDataURL(HTMLCanvasElement element, String mimetype, double quality) {
         return element.toDataURL(mimetype, quality);

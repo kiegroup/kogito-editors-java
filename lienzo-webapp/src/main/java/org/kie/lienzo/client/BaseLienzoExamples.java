@@ -55,6 +55,10 @@ public class BaseLienzoExamples {
                     new ImageStripExample("Image Strip Example"),
                     new AsteroidsGameExample("Asteroids Game")
         );
+
+        JsLienzoExamples jsLienzoExamples = new JsLienzoExamples();
+        jsLienzoExamples.examples = this;
+        setupJsLienzoTypes(jsLienzoExamples);
     }
 
     public void createTests(Example... tests) {
@@ -62,6 +66,11 @@ public class BaseLienzoExamples {
             createTest(test);
         }
     }
+
+    // TODO: Move to J2CL impl
+    public static native void setupJsLienzoTypes(Object jsLienzoExamples) /*-{
+        $wnd.jsLienzoExamples = jsLienzoExamples;
+    }-*/;
 
     public void createTest(Example test) {
         HTMLDivElement e1 = (HTMLDivElement) document.createElement("div");
@@ -83,6 +92,10 @@ public class BaseLienzoExamples {
         if (this.test != null) {
             this.test.destroy();
             this.test = null;
+        }
+        if (null != panelDiv) {
+            panelDiv.remove();
+            panelDiv = null;
         }
 
         panelDiv = (HTMLDivElement) document.createElement("div");
