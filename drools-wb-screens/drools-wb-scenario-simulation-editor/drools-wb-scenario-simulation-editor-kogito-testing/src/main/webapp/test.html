@@ -28,6 +28,9 @@
         function loadDiagram(diagram) {
             console.log('loadDiagram ' + diagram);
             window.frames.editorFrame.contentWindow.gwtEditorBeans.get("ScenarioSimulationEditor").get().setContent('', diagram);
+
+            //window.frames.editorFrame.contentWindow.loadFile();
+            //document.getElementById("download_btn").disabled = false;
         }
 
         function importDMN() {
@@ -64,7 +67,7 @@
 
 </head>
 <body>
-w
+
 <div id="editor">
     Wait until the editor is loaded to open a SCESIM file:<br>
     Create new diagram <input type="button" id="new_diag_btn" value="Create new diagram" onclick="newDiagram()" />
