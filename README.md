@@ -29,6 +29,41 @@ Requirements
 - [Maven](https://maven.apache.org/) 3.6.2 or later
 - [Java](https://openjdk.java.net/install/) 11 or later (devel package)
 
+
+Build from source
+-----------------
+
+1. Check out the source:
+
+   ```
+   git clone git@github.com:kiegroup/kogito-editors-java.git
+   ```
+
+   > If you don't have a GitHub account use this command instead:
+   >
+   > ```
+   > git clone https://github.com/kiegroup/kogito-editors-java.git
+   > ```
+
+1. Build with Maven:
+
+   ```bash
+   cd kogito-editors-java
+
+   # Build the repository
+   mvn clean install -Dgwt.compiler.skip
+
+   # Build the editor web applications with GWT compilation
+   # For DMN
+   cd kie-wb-common-dmn/kie-wb-common-dmn-webapp-kogito-runtime/
+   mvn clean install
+
+   # For BPMN
+   cd kie-wb-common-stunner/kie-wb-common-stunner-sets/kie-wb-common-stunner-bpmn/kie-wb-common-stunner-bpmn-kogito-runtime/
+   mvn clean install
+
+   ```
+
 Getting Started
 ---------------
 
