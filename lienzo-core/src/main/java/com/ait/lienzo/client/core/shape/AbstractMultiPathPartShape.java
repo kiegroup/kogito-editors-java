@@ -1086,7 +1086,6 @@ public abstract class AbstractMultiPathPartShape<T extends AbstractMultiPathPart
         @Override
         public void onNodeDragEnd(final NodeDragEndEvent event) {
             if ((m_handle.isActive()) && (m_chlist.isActive())) {
-                updateRatiosIfFlip(event);
 
                 // reset boxstart
                 resetBoundingBoxBackToStartXY();
