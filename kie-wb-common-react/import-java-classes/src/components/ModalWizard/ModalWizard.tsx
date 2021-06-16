@@ -46,7 +46,7 @@ export const ModalWizard: React.FunctionComponent<ModalWizardProps> = ({
 
   return (
     <>
-      <Button variant={buttonStyle} icon={buttonIcon} onClick={handleModalToggle}>
+      <Button variant={buttonStyle} icon={buttonIcon} onClick={handleModalToggle} data-testid={"modal-wizard-button"}>
         {buttonText}
       </Button>
       <Wizard

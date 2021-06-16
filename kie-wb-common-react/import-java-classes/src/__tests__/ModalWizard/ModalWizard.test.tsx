@@ -15,7 +15,7 @@
  */
 
 import * as React from "react";
-import {fireEvent, render, screen} from "@testing-library/react";
+import { render } from "@testing-library/react";
 import { ModalWizard } from "../../components/ModalWizard";
 import { WizardStep } from "@patternfly/react-core";
 import { ImportIcon } from "@patternfly/react-icons";
@@ -26,16 +26,18 @@ describe("ModalWizard component tests", () => {
 
         test("should render ModalWizard Button component", () => {
             const wizardSteps: WizardStep[] = [];
-
-            const { container } = render(<ModalWizard buttonStyle={"primary"} buttonText={"bText"} wizardDescription={"wDescription"} wizardSteps={wizardSteps} wizardTitle={"wTitle"} />);
+            const { container } = render(<ModalWizard buttonStyle={"primary"} buttonText={"bText"}
+                                                      wizardDescription={"wDescription"} wizardSteps={wizardSteps}
+                                                      wizardTitle={"wTitle"} />);
 
             expect(container).toMatchSnapshot();
         });
 
         test("should render ModalWizard Button component with Icon", () => {
             const wizardSteps: WizardStep[] = [];
-
-            const { container } = render(<ModalWizard buttonStyle={"primary"} buttonText={"bText"} wizardDescription={"wDescription"} wizardSteps={wizardSteps} wizardTitle={"wTitle"} buttonIcon={<ImportIcon />} />)
+            const { container } = render(<ModalWizard buttonStyle={"primary"} buttonText={"bText"}
+                                                      wizardDescription={"wDescription"} wizardSteps={wizardSteps}
+                                                      wizardTitle={"wTitle"} buttonIcon={<ImportIcon />} />)
 
             expect(container).toMatchSnapshot();
         });
@@ -43,19 +45,21 @@ describe("ModalWizard component tests", () => {
 
     describe("ModalWizard Wizard tests", () => {
 
-        test("should render ModalWizard Button component and open the Wizard", async () => {
+        test("should render ModalWizard Button component and open the Wizard", () => {
+            const setState = jest.fn();
+            const useStateMock: any = (initState: boolean) => [initState, setState];
+            jest.spyOn(React, "useState").mockImplementation(useStateMock);
+
             const wizardSteps: WizardStep[] = [];
 
-            const { findByText } = render(<ModalWizard buttonStyle={"primary"} buttonText={"bText"}
-                                                     wizardDescription={"wDescription"} wizardSteps={wizardSteps}
-                                                     wizardTitle={"wTitle"}/>);
+            const { getByTestId } = render(<ModalWizard buttonStyle={"primary"} buttonText={"bText"}
+                                                        wizardDescription={"wDescription"} wizardSteps={wizardSteps}
+                                                        wizardTitle={"wTitle"} />);
 
-            fireEvent.click(screen.getByText("bText"));
-            //console.log(container.innerHTML)
-            //fireEvent.click(container.querySelector("button")! as HTMLButtonElement);
-            //(container.querySelector("button") as HTMLButtonElement)!.click();
-
+            const modalWizardButton = getByTestId("modal-wizard-button")! as HTMLButtonElement;
+            modalWizardButton.click();
+            expect(setState).toBeCalledTimes(1);
         });
-    });
 
+    });
 });
