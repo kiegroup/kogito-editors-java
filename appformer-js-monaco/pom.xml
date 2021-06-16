@@ -23,8 +23,8 @@
         <configuration>
           <installDirectory>${project.build.directory}</installDirectory>
           <nodeVersion>v16.2.0</nodeVersion>
-            <npmVersion>7.15.1</npmVersion>
-            <yarnVersion>v1.22.10</yarnVersion>
+          <npmVersion>7.15.1</npmVersion>
+          <yarnVersion>v1.22.10</yarnVersion>
         </configuration>
         <executions>
           <execution>
