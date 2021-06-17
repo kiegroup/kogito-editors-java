@@ -25,7 +25,9 @@ export const importJavaClassesWizardI18nDefaults: I18nDefaults<ImportJavaClasses
   locale: "en",
   dictionary: en,
 };
-export const importJavaClassesWizardI18nDictionaries: I18nDictionaries<ImportJavaClassesWizardI18n> = new Map([["en", en]]);
+export const importJavaClassesWizardI18nDictionaries: I18nDictionaries<ImportJavaClassesWizardI18n> = new Map([
+  ["en", en],
+]);
 export const ImportJavaClassesWizardI18nContext = React.createContext<I18nContextType<ImportJavaClassesWizardI18n>>(
   {} as never
 );
