@@ -25,41 +25,62 @@ describe("ModalWizard component tests", () => {
     describe("ModalWizard Button component tests", () => {
 
         test("should render ModalWizard Button component", () => {
-            const wizardSteps: WizardStep[] = [];
             const { container } = render(<ModalWizard buttonStyle={"primary"} buttonText={"bText"}
-                                                      wizardDescription={"wDescription"} wizardSteps={wizardSteps}
+                                                      wizardDescription={"wDescription"} wizardSteps={[]}
                                                       wizardTitle={"wTitle"} />);
 
             expect(container).toMatchSnapshot();
         });
 
         test("should render ModalWizard Button component with Icon", () => {
-            const wizardSteps: WizardStep[] = [];
             const { container } = render(<ModalWizard buttonStyle={"primary"} buttonText={"bText"}
-                                                      wizardDescription={"wDescription"} wizardSteps={wizardSteps}
+                                                      wizardDescription={"wDescription"} wizardSteps={[]}
                                                       wizardTitle={"wTitle"} buttonIcon={<ImportIcon />} />)
 
             expect(container).toMatchSnapshot();
         });
-    });
 
-    describe("ModalWizard Wizard tests", () => {
+        test("Should show Modal after clicking on the button", () => {
+            const wizardSteps: WizardStep[] = [
+                {
+                    name: "Ciao",
+                    component: <p>Step 1 content</p>,
+                    enableNext: false,
+                    canJumpTo: false,
+                    hideBackButton: true,
+                }];
 
-        test("should render ModalWizard Button component and open the Wizard", () => {
-            const setState = jest.fn();
-            const useStateMock: any = (initState: boolean) => [initState, setState];
-            jest.spyOn(React, "useState").mockImplementation(useStateMock);
-
-            const wizardSteps: WizardStep[] = [];
-
-            const { getByTestId } = render(<ModalWizard buttonStyle={"primary"} buttonText={"bText"}
-                                                        wizardDescription={"wDescription"} wizardSteps={wizardSteps}
-                                                        wizardTitle={"wTitle"} />);
+            const { baseElement, getByTestId } = render(<ModalWizard buttonStyle={"primary"} buttonText={"bText"}
+                                                                     wizardDescription={"wDescription"}
+                                                                     wizardSteps={wizardSteps}
+                                                                     wizardTitle={"wTitle"} />);
 
             const modalWizardButton = getByTestId("modal-wizard-button")! as HTMLButtonElement;
             modalWizardButton.click();
-            expect(setState).toBeCalledTimes(1);
+            expect(baseElement).toMatchSnapshot();
         });
 
+        test("Should close Modal after opening it and clicking on the close button", () => {
+            const wizardSteps: WizardStep[] = [
+                {
+                    name: "Ciao",
+                    component: <p>Step 1 content</p>,
+                    enableNext: false,
+                    canJumpTo: false,
+                    hideBackButton: true,
+                }];
+
+            const { baseElement, getByTestId, getByText} = render(<ModalWizard buttonStyle={"primary"}
+                                                                               buttonText={"bText"}
+                                                                               wizardDescription={"wDescription"}
+                                                                               wizardSteps={wizardSteps}
+                                                                               wizardTitle={"wTitle"} />);
+
+            const modalWizardButton = getByTestId("modal-wizard-button")! as HTMLButtonElement;
+            modalWizardButton.click();
+            const cancelButton = getByText("Cancel") as HTMLButtonElement;
+            cancelButton.click();
+            expect(baseElement).toMatchSnapshot();
+        });
     });
 });
