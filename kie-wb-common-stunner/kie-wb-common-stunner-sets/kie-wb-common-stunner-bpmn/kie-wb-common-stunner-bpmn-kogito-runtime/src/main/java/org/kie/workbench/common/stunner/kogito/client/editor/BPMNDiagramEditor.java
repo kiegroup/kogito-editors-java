@@ -24,8 +24,12 @@ import java.util.Map;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import com.ait.lienzo.client.core.types.JsLienzo;
+import com.ait.lienzo.client.widget.panel.LienzoBoundsPanel;
 import com.google.gwt.user.client.ui.IsWidget;
 import elemental2.promise.Promise;
+import org.kie.workbench.common.stunner.client.lienzo.canvas.LienzoCanvas;
+import org.kie.workbench.common.stunner.client.lienzo.canvas.LienzoPanel;
 import org.kie.workbench.common.stunner.client.widgets.editor.EditorSessionCommands;
 import org.kie.workbench.common.stunner.client.widgets.editor.StunnerEditor;
 import org.kie.workbench.common.stunner.client.widgets.presenters.session.SessionPresenter;
@@ -220,7 +224,25 @@ public class BPMNDiagramEditor {
         metadata.setPath(path);
         commands.bind(stunnerEditor.getSession());
         docksOpen();
+        initLienzoType();
     }
+
+    // TODO: PoC
+    public JsLienzo jsLienzo;
+
+    // TODO: PoC
+    private void initLienzoType() {
+        LienzoCanvas canvas = (LienzoCanvas) stunnerEditor.getCanvasHandler().getCanvas();
+        LienzoPanel panel = (LienzoPanel) canvas.getView().getPanel();
+        LienzoBoundsPanel lienzoPanel = panel.getView();
+        jsLienzo = new JsLienzo(lienzoPanel, lienzoPanel.getLayer());
+        setupJsLienzoType(jsLienzo);
+    }
+
+    // TODO: PoC - Move to J2CL impl
+    private static native void setupJsLienzoType(Object jsLienzo) /*-{
+        $wnd.jsLienzo = jsLienzo;
+    }-*/;
 
     void docksInit() {
         diagramPropertiesDock.init();

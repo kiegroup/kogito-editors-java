@@ -14,30 +14,30 @@
  * limitations under the License.
  */
 
-package com.ait.lienzo.client.core.shape.wires.types;
+package com.ait.lienzo.client.core.types;
 
-import com.ait.lienzo.client.core.shape.IPrimitive;
-import com.ait.lienzo.client.core.shape.wires.WiresConnection;
+import com.ait.lienzo.client.core.shape.wires.WiresShape;
+import elemental2.dom.DomGlobal;
 import jsinterop.annotations.JsType;
 
 @JsType
-public class JsWiresConnection {
+public class JsLienzoLogger {
 
-    WiresConnection connection;
+    private JsLienzo lienzo;
 
-    public JsWiresConnection(WiresConnection connection) {
-        this.connection = connection;
+    public JsLienzoLogger(JsLienzo lienzo) {
+        this.lienzo = lienzo;
     }
 
-    public IPrimitive<?> getControl() {
-        return connection.getControl();
+    public void logWiresShapes() {
+        WiresShape[] shapes = lienzo.getWiresManager().getShapes();
+        for (int i = 0; i < shapes.length; i++) {
+            WiresShape shape = shapes[i];
+            log("WiresShape[" + i + "] ==> " + shape.getID() + " / " + shape.uuid());
+        }
     }
 
-    public JsWiresMagnet getMagnet() {
-        return new JsWiresMagnet(connection.getMagnet());
-    }
-
-    public JsWiresConnector getConnector() {
-        return new JsWiresConnector(connection.getConnector());
+    private static void log(String message) {
+        DomGlobal.console.log(message);
     }
 }

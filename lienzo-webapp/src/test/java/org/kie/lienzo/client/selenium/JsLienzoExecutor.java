@@ -23,25 +23,26 @@ public class JsLienzoExecutor {
     final JavascriptExecutor executor;
     static final String RETURN = "return ";
     static final String JS_LIENZO = "window.jsLienzo";
+    static final String JS_LIENZO_EVENTS = JS_LIENZO + ".events()";
 
     public JsLienzoExecutor(JavascriptExecutor executor) {
         this.executor = executor;
     }
 
     public JsLienzoExecutor doubleClickAt(double x, double y) {
-        executor.executeScript(JS_LIENZO + ".doubleClickAt(arguments[0], arguments[1])",
+        executor.executeScript(JS_LIENZO_EVENTS + ".doubleClickAt(arguments[0], arguments[1])",
                                x, y);
         return this;
     }
 
     public JsLienzoExecutor clickAt(double x, double y) {
-        executor.executeScript(JS_LIENZO + ".clickAt(arguments[0], arguments[1])",
+        executor.executeScript(JS_LIENZO_EVENTS + ".clickAt(arguments[0], arguments[1])",
                                x, y);
         return this;
     }
 
     public JsLienzoExecutor startDrag(double sx, double sy, double tx, double ty, int timeout) {
-        executor.executeAsyncScript(JS_LIENZO + ".startDrag(arguments[0], arguments[1], arguments[2], arguments[3], arguments[4], arguments[5])",
+        executor.executeAsyncScript(JS_LIENZO_EVENTS + ".startDrag(arguments[0], arguments[1], arguments[2], arguments[3], arguments[4], arguments[5])",
                                     sx, sy,
                                     ty, ty);
         return this;

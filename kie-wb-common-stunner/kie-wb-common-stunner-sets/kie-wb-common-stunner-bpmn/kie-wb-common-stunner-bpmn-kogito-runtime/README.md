@@ -70,3 +70,11 @@ It provides buttons for creating new processes, opening an existing process and 
 
         // Get the actual process' content
         window.frames.editorFrame.contentWindow.gwtEditorBeans.get("BPMNDiagramEditor").get().getContent()
+
+        // Lienzo API
+        var jsl = window.frames.editorFrame.contentWindow.jsLienzo
+        jsl.log().logWiresShapes()
+        jsl.getShape('redRectangle')
+        jsl.getWiresShape('redRectangle')
+        jsl.events().click(jsl.getShape('redRectangle'))
+        jsl.events().drag(jsl.getShape('redRectangle'), 400, 400, () => console.log('DONE DRAG'))

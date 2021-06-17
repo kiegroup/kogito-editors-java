@@ -22,6 +22,7 @@ import com.ait.lienzo.client.core.shape.Shape;
 import com.ait.lienzo.client.core.shape.wires.ControlHandleList;
 import com.ait.lienzo.client.core.shape.wires.IControlHandle;
 import com.ait.lienzo.client.core.shape.wires.WiresShapeControlHandleList;
+import jsinterop.annotations.JsProperty;
 import org.kie.workbench.common.stunner.client.lienzo.shape.view.ViewEventHandlerManager;
 import org.kie.workbench.common.stunner.client.lienzo.shape.view.wires.WiresScalableContainer;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasSize;
@@ -50,6 +51,7 @@ public class DecoratedShapeView<T extends WiresShapeViewExt>
         extends WiresShapeViewExt<T>
         implements HasSize<T> {
 
+    @JsProperty
     private final Shape<?> theShape;
     private final WiresScalableContainer scalableContainer;
 

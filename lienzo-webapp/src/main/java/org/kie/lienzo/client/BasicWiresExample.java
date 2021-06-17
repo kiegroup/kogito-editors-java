@@ -44,7 +44,6 @@ public class BasicWiresExample extends BaseExample implements Example {
     @Override
     public void run() {
         wiresManager = WiresManager.get(layer);
-        jsLienzo.wiresManager = wiresManager;
         wiresManager.enableSelectionManager();
         wiresManager.setContainmentAcceptor(CONTAINMENT_ACCEPTOR);
         wiresManager.setDockingAcceptor(DOCKING_ACCEPTOR);

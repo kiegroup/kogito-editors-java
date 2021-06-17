@@ -72,7 +72,7 @@ public class JsLienzoDriver extends JsLienzoExecutor {
 
     public void closeTest() {
         sleep(1000);
-        // driver.close();
+        // TODO driver.close();
     }
 
     private WebDriverWait waitOperation(long seconds) {

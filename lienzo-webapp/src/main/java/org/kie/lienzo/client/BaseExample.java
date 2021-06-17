@@ -71,9 +71,7 @@ public abstract class BaseExample implements Example {
         MousePanMediator pan = new MousePanMediator(EventFilter.META);
         this.panel.getViewport().pushMediator(pan);
 
-        jsLienzo = new JsLienzo();
-        jsLienzo.panel = this.panel;
-        jsLienzo.layer = this.layer;
+        jsLienzo = new JsLienzo(this.panel, this.layer);
         setupJsLienzoTypes(jsLienzo);
     }
 

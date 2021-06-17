@@ -17,8 +17,10 @@
 package com.ait.lienzo.client.core.shape.wires.types;
 
 import com.ait.lienzo.client.core.shape.Group;
+import com.ait.lienzo.client.core.shape.MultiPath;
 import com.ait.lienzo.client.core.shape.wires.MagnetManager;
 import com.ait.lienzo.client.core.shape.wires.WiresContainer;
+import com.ait.lienzo.client.core.shape.wires.WiresLayer;
 import com.ait.lienzo.client.core.shape.wires.WiresMagnet;
 import com.ait.lienzo.client.core.shape.wires.WiresShape;
 import com.ait.lienzo.client.core.types.Point2D;
@@ -27,7 +29,11 @@ import jsinterop.annotations.JsType;
 @JsType
 public class JsWiresShape {
 
-    public WiresShape shape;
+    WiresShape shape;
+
+    public JsWiresShape(WiresShape shape) {
+        this.shape = shape;
+    }
 
     public String getID() {
         return shape.getID();
@@ -35,10 +41,8 @@ public class JsWiresShape {
 
     public JsWiresShape getParent() {
         WiresContainer parent = shape.getParent();
-        if (null != parent) {
-            JsWiresShape wiresParent = new JsWiresShape();
-            wiresParent.shape = (WiresShape) parent;
-            return wiresParent;
+        if (null != parent && !isWiresLayer(parent)) {
+            return new JsWiresShape((WiresShape) parent);
         }
         return null;
     }
@@ -56,6 +60,10 @@ public class JsWiresShape {
         return shape.getComputedLocation();
     }
 
+    public MultiPath getPath() {
+        return shape.getPath();
+    }
+
     public int getMagnetsSize() {
         int size = 0;
         MagnetManager.Magnets magnets = shape.getMagnets();
@@ -67,12 +75,14 @@ public class JsWiresShape {
 
     public JsWiresMagnet getMagnet(int index) {
         WiresMagnet magnet = shape.getMagnets().getMagnet(index);
-        JsWiresMagnet jsWiresMagnet = new JsWiresMagnet();
-        jsWiresMagnet.magnet = magnet;
-        return jsWiresMagnet;
+        return new JsWiresMagnet(magnet);
     }
 
     public Group asGroup() {
         return shape.getGroup();
+    }
+
+    private static boolean isWiresLayer(WiresContainer parent) {
+        return parent instanceof WiresLayer;
     }
 }

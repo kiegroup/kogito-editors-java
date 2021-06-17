@@ -25,7 +25,11 @@ import jsinterop.annotations.JsType;
 @JsType
 public class JsWiresMagnet {
 
-    public WiresMagnet magnet;
+    WiresMagnet magnet;
+
+    public JsWiresMagnet(WiresMagnet magnet) {
+        this.magnet = magnet;
+    }
 
     public IPrimitive<?> getControl() {
         return magnet.getControl();
@@ -42,9 +46,6 @@ public class JsWiresMagnet {
 
     public JsWiresConnection getConnection(int index) {
         WiresConnection wiresConnection = magnet.getConnections().get(index);
-        JsWiresConnection jsWiresConnection = new JsWiresConnection();
-        jsWiresConnection.connection = wiresConnection;
-        jsWiresConnection.connection = wiresConnection;
-        return jsWiresConnection;
+        return new JsWiresConnection(wiresConnection);
     }
 }

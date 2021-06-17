@@ -22,17 +22,17 @@ import jsinterop.annotations.JsType;
 @JsType
 public class JsWiresConnector {
 
-    public WiresConnector connector;
+    WiresConnector connector;
+
+    public JsWiresConnector(WiresConnector connector) {
+        this.connector = connector;
+    }
 
     public JsWiresConnection getHeadConnection() {
-        JsWiresConnection jsWiresConnection = new JsWiresConnection();
-        jsWiresConnection.connection = connector.getHeadConnection();
-        return jsWiresConnection;
+        return new JsWiresConnection(connector.getHeadConnection());
     }
 
     public JsWiresConnection getTailConnection() {
-        JsWiresConnection jsWiresConnection = new JsWiresConnection();
-        jsWiresConnection.connection = connector.getTailConnection();
-        return jsWiresConnection;
+        return new JsWiresConnection(connector.getTailConnection());
     }
 }
