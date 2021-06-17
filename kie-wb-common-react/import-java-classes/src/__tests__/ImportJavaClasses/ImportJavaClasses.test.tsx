@@ -27,10 +27,10 @@ describe("ImportJavaClasses component tests", () => {
     });
 
     test("Should show Modal after clicking on the button", () => {
-        const { baseElement, getByTestId } = render(<ImportJavaClasses />);
-
-        const modalWizardButton = getByTestId("modal-wizard-button")! as HTMLButtonElement;
+        const { baseElement, getByText } = render(<ImportJavaClasses />);
+        const modalWizardButton = getByText("Import Java classes")! as HTMLButtonElement;
         modalWizardButton.click();
+
         expect(baseElement).toMatchSnapshot();
     });
 
@@ -43,6 +43,5 @@ describe("ImportJavaClasses component tests", () => {
 
         expect(baseElement).toMatchSnapshot();
     });
-
 
 });
