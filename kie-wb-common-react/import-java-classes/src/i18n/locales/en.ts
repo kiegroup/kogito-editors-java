@@ -18,30 +18,31 @@ import { ImportJavaClassesWizardI18n } from "..";
 import { en as en_common } from "@kogito-tooling/i18n-common-dictionary";
 
 export const en: ImportJavaClassesWizardI18n = {
-    ...en_common,
-    modalButton: {
-        text: "Import Java classes"
+  ...en_common,
+  modalButton: {
+    text: "Import Java classes",
+  },
+  modalWizard: {
+    title: "Import Java classes",
+    description:
+      "It converts your java assets to DMN type. This is a one-time import action: if the Java class get updated, you will need to reimport it",
+    firstStep: {
+      stepName: "Select Java classes",
+      input: {
+        label: "Search",
+        placeholder: "Search a class name ...",
+      },
+      emptyState: {
+        title: "No Java classes selected",
+        body: "Type the Java class name or part of the name to find Java classes you want to import",
+      },
     },
-    modalWizard: {
-        title: "Import Java classes",
-        description: "It converts your java assets to DMN type. This is a one-time import action: if the Java class get updated, you will need to reimport it",
-        firstStep: {
-            stepName: "Select Java classes",
-            input: {
-                label: "Search",
-                placeholder: "Search a class name ..."
-            },
-            emptyState: {
-                title: "No Java classes selected",
-                body: "Type the Java class name or part of the name to find Java classes you want to import"
-            }
-        },
-        secondStep: {
-            stepName: "Cherry-pick fields"
-        },
-        thirdStep: {
-            stepName: "Review",
-            nextButtonText: "Import",
-        }
-    }
-}
+    secondStep: {
+      stepName: "Cherry-pick fields",
+    },
+    thirdStep: {
+      stepName: "Review",
+      nextButtonText: "Import",
+    },
+  },
+};

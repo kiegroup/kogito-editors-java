@@ -18,31 +18,31 @@ import { ReferenceDictionary } from "@kogito-tooling/i18n/dist/core";
 import { CommonI18n } from "@kogito-tooling/i18n-common-dictionary";
 
 interface ImportJavaClassesWizardDictionary extends ReferenceDictionary<ImportJavaClassesWizardDictionary> {
-    modalButton: {
-        text: string;
-    }
-    modalWizard: {
+  modalButton: {
+    text: string;
+  };
+  modalWizard: {
+    title: string;
+    description: string;
+    firstStep: {
+      stepName: string;
+      input: {
+        label: string;
+        placeholder: string;
+      };
+      emptyState: {
         title: string;
-        description: string;
-        firstStep: {
-            stepName: string;
-            input: {
-                label: string;
-                placeholder: string;
-            }
-            emptyState: {
-                title: string;
-                body: string;
-            }
-        }
-        secondStep: {
-            stepName: string;
-        }
-        thirdStep: {
-            stepName: string;
-            nextButtonText: string;
-        }
-    }
+        body: string;
+      };
+    };
+    secondStep: {
+      stepName: string;
+    };
+    thirdStep: {
+      stepName: string;
+      nextButtonText: string;
+    };
+  };
 }
 
-export interface ImportJavaClassesWizardI18n extends ImportJavaClassesWizardDictionary, CommonI18n { }
+export interface ImportJavaClassesWizardI18n extends ImportJavaClassesWizardDictionary, CommonI18n {}
