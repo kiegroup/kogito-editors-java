@@ -86,7 +86,7 @@
 
 .expression-container .table-component table thead th,
 .expression-container .table-component table tbody td {
-  border: 1px solid #ccc;
+  border: 1px solid var(--pf-global--palette--black-300);
 }
 
 /** Table Body rules */
@@ -97,7 +97,7 @@
 }
 
 .expression-container .table-component table tbody td {
-  border-style: ridge;
+  border-style: solid;
   padding: 1.1em 0;
   text-align: center;
   overflow: hidden;
@@ -160,12 +160,8 @@
 /** Text-area used as a cell */
 
 .expression-container .table-component table tbody td textarea {
-  padding: 0.125em;
-  margin: 0;
-  border: 0;
-  width: 100%;
-  height: 100%;
   resize: none;
+  border: none;
 }
 
 /** Row-remainder section */

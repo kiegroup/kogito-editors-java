@@ -21,6 +21,7 @@
   font-weight: var(--pf-global--FontWeight--normal);
   line-height: var(--pf-global--LineHeight--md);
   text-align: left;
+  user-select: none;
 }
 
 .boxed-expression-editor *,
