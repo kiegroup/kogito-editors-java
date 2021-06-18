@@ -16,9 +16,7 @@
 
 import * as React from "react";
 import { fireEvent, render } from "@testing-library/react";
-import {ImportJavaClasses} from "../../components";
-import { Simulate } from "react-dom/test-utils";
-import input = Simulate.input;
+import { ImportJavaClasses } from "../../components";
 
 describe("ImportJavaClasses component tests", () => {
 
