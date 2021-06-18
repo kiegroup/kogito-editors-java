@@ -19,6 +19,7 @@ import * as React from "react";
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import {
   ContextEntryRecord,
+  DataType,
   ExpressionProps,
   ListProps,
   LiteralExpressionProps,
@@ -34,6 +35,7 @@ import { DataRecord, Row } from "react-table";
 import * as _ from "lodash";
 import { hashfy } from "../Resizer";
 import { BoxedExpressionGlobalContext } from "../../context";
+import nextId from "react-id-generator";
 
 const LIST_EXPRESSION_MIN_WIDTH = 430;
 
@@ -68,7 +70,14 @@ export const ListExpression: React.FunctionComponent<ListProps> = ({
   );
 
   const generateLiteralExpression = useCallback(
-    () => ({ logicType: LogicType.LiteralExpression } as LiteralExpressionProps),
+    () =>
+      ({
+        uid: nextId(),
+        name: "",
+        dataType: DataType.Undefined,
+        logicType: LogicType.LiteralExpression,
+        content: "",
+      } as LiteralExpressionProps),
     []
   );
 
