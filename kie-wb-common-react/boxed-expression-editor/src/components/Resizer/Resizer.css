@@ -24,11 +24,6 @@
   position: relative;
 }
 
-.expression-container .pf-c-drawer {
-  opacity: 0.3;
-  width: 5px;
-}
-
 .expression-container .pf-c-drawer__splitter::after {
   border: none;
 }
@@ -38,6 +33,7 @@
   position: absolute;
   left: -1px;
   top: 50%;
+  border-color: var(--pf-global--palette--black-300);
   transform: translateY(-50%);
 }
 

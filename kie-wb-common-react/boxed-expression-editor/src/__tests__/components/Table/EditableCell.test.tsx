@@ -17,24 +17,90 @@
 import { fireEvent, render } from "@testing-library/react";
 import { usingTestingBoxedExpressionI18nContext } from "../test-utils";
 import * as React from "react";
-import { EditableCell } from "../../../components/Table";
+import { EditableCell, EDIT_MODE, READ_MODE } from "../../../components/Table";
 import * as _ from "lodash";
+import { before } from "lodash";
 
-describe("EditableCell tests", () => {
-  test("should render the initial value", () => {
+describe("EditableCell", () => {
+  const CELL_SELECTOR = ".editable-cell";
+
+  let container: Element;
+
+  describe("when it renders", () => {
     const initialValue = "INITIAL_VALUE";
 
-    const { container } = render(
-      usingTestingBoxedExpressionI18nContext(
-        <EditableCell value={initialValue} row={{ index: 0 }} column={{ id: "col1" }} onCellUpdate={_.identity} />
-      ).wrapper
-    );
+    beforeEach(() => {
+      container = render(
+        usingTestingBoxedExpressionI18nContext(
+          <EditableCell value={initialValue} row={{ index: 0 }} column={{ id: "col1" }} onCellUpdate={_.identity} />
+        ).wrapper
+      ).container;
+    });
 
-    expect(container.querySelector("textarea")).toBeTruthy();
-    expect((container.querySelector("textarea") as HTMLTextAreaElement).value).toBe(initialValue);
+    it("renders the initial value", () => {
+      expect(container.querySelector("textarea")).toBeTruthy();
+      expect((container.querySelector("textarea") as HTMLTextAreaElement).value).toBe(initialValue);
+    });
+
+    it("renders on read mode", () => {
+      expect(container.querySelector(CELL_SELECTOR)?.classList.contains(READ_MODE)).toBeTruthy();
+    });
   });
 
-  test("should trigger onCellUpdate function when the user changes its value", () => {
+  describe("when the user double-click on it", () => {
+    beforeEach(() => {
+      container = render(
+        usingTestingBoxedExpressionI18nContext(
+          <EditableCell value={"value"} row={{ index: 0 }} column={{ id: "col1" }} onCellUpdate={_.identity} />
+        ).wrapper
+      ).container;
+
+      fireEvent.doubleClick(container.querySelector(CELL_SELECTOR) as Element);
+    });
+
+    it("renders on edit mode", () => {
+      expect(container.querySelector(CELL_SELECTOR)?.classList.contains(EDIT_MODE)).toBeTruthy();
+    });
+  });
+
+  describe("when the user presses Enter with the cell selected", () => {
+    beforeEach(() => {
+      container = render(
+        usingTestingBoxedExpressionI18nContext(
+          <EditableCell value={"value"} row={{ index: 0 }} column={{ id: "col1" }} onCellUpdate={_.identity} />
+        ).wrapper
+      ).container;
+
+      fireEvent.click(container.querySelector(CELL_SELECTOR) as Element);
+      fireEvent.keyPress(container.querySelector("textarea") as Element, { key: "Enter", keyCode: 13 });
+    });
+
+    it("renders on edit mode", () => {
+      expect(container.querySelector(CELL_SELECTOR)?.classList.contains(EDIT_MODE)).toBeTruthy();
+    });
+  });
+
+  describe("when the user click on it", () => {
+    beforeEach(() => {
+      container = render(
+        usingTestingBoxedExpressionI18nContext(
+          <EditableCell value={"value"} row={{ index: 0 }} column={{ id: "col1" }} onCellUpdate={_.identity} />
+        ).wrapper
+      ).container;
+
+      fireEvent.click(container.querySelector(CELL_SELECTOR) as Element);
+    });
+
+    it("focus on the text area", () => {
+      expect(document.querySelector("textarea")).toEqual(document.activeElement);
+    });
+
+    it("enable the selected style", () => {
+      expect(container.querySelector(CELL_SELECTOR)?.classList.contains("editable-cell--selected")).toBeTruthy();
+    });
+  });
+
+  describe("when the user changes a value", () => {
     const value = "value";
     const newValue = "changed";
     const rowIndex = 0;
@@ -44,21 +110,25 @@ describe("EditableCell tests", () => {
     };
     const mockedOnCellUpdate = jest.fn(onCellUpdate);
 
-    const { container } = render(
-      usingTestingBoxedExpressionI18nContext(
-        <EditableCell
-          value={value}
-          row={{ index: rowIndex }}
-          column={{ id: columnId }}
-          onCellUpdate={mockedOnCellUpdate}
-        />
-      ).wrapper
-    );
+    beforeEach(() => {
+      container = render(
+        usingTestingBoxedExpressionI18nContext(
+          <EditableCell
+            value={value}
+            row={{ index: rowIndex }}
+            column={{ id: columnId }}
+            onCellUpdate={mockedOnCellUpdate}
+          />
+        ).wrapper
+      ).container;
 
-    fireEvent.change(container.querySelector("textarea") as HTMLTextAreaElement, { target: { value: newValue } });
-    fireEvent.blur(container.querySelector("textarea") as HTMLTextAreaElement);
+      fireEvent.change(container.querySelector("textarea") as HTMLTextAreaElement, { target: { value: newValue } });
+      fireEvent.blur(container.querySelector("textarea") as HTMLTextAreaElement);
+    });
 
-    expect(mockedOnCellUpdate).toHaveBeenCalled();
-    expect(mockedOnCellUpdate).toHaveBeenCalledWith(rowIndex, columnId, newValue);
+    it("triggers the onCellUpdate function ", () => {
+      expect(mockedOnCellUpdate).toHaveBeenCalled();
+      expect(mockedOnCellUpdate).toHaveBeenCalledWith(rowIndex, columnId, newValue);
+    });
   });
 });
