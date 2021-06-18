@@ -1,5 +1,26 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`ImportJavaClasses component tests Should close Modal after opening it and clicking on the Cancel button 1`] = `
+<body
+  class=""
+>
+  <div>
+    <button
+      aria-disabled="false"
+      class="pf-c-button pf-m-secondary"
+      data-ouia-component-id="OUIA-Generated-Button-secondary-4"
+      data-ouia-component-type="PF4/Button"
+      data-ouia-safe="true"
+      data-testid="modal-wizard-button"
+      type="button"
+    >
+      Import Java classes
+    </button>
+  </div>
+  <div />
+</body>
+`;
+
 exports[`ImportJavaClasses component tests Should show Modal after clicking on the button 1`] = `
 <body
   class="pf-c-backdrop__open"
@@ -292,27 +313,6 @@ exports[`ImportJavaClasses component tests Should show Modal after clicking on t
       </div>
     </div>
   </div>
-</body>
-`;
-
-exports[`ImportJavaClasses component tests Should show Modal after clicking on the button 2`] = `
-<body
-  class=""
->
-  <div>
-    <button
-      aria-disabled="false"
-      class="pf-c-button pf-m-secondary"
-      data-ouia-component-id="OUIA-Generated-Button-secondary-3"
-      data-ouia-component-type="PF4/Button"
-      data-ouia-safe="true"
-      data-testid="modal-wizard-button"
-      type="button"
-    >
-      Import Java classes
-    </button>
-  </div>
-  <div />
 </body>
 `;
 

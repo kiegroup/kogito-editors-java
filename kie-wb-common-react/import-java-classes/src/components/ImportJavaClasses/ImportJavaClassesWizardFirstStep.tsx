@@ -18,14 +18,13 @@ import * as React from "react";
 import { EmptyState, EmptyStateIcon, EmptyStateBody, Title, SearchInput } from "@patternfly/react-core";
 import CubesIcon from "@patternfly/react-icons/dist/js/icons/cubes-icon";
 import { useImportJavaClassesWizardI18n } from "../../i18n";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 export const ImportJavaClassesWizardFirstStepContent: React.FunctionComponent = () => {
+  const EMPTY_SEARCH_VALUE = "";
   const { i18n } = useImportJavaClassesWizardI18n();
-  const [searchValue, setSearchValue] = useState("");
-  const onSearchValueChange = (value: string) => {
-    setSearchValue(value);
-  };
+  const [searchValue, setSearchValue] = useState(EMPTY_SEARCH_VALUE);
+  const onSearchValueChange = useCallback((value: string) => setSearchValue(value), [searchValue]);
 
   return (
     <>
@@ -36,7 +35,7 @@ export const ImportJavaClassesWizardFirstStepContent: React.FunctionComponent = 
         placeholder={i18n.modalWizard.firstStep.input.placeholder}
         value={searchValue}
         onChange={onSearchValueChange}
-        onClear={() => onSearchValueChange("")}
+        onClear={() => onSearchValueChange(EMPTY_SEARCH_VALUE)}
         autoFocus
       />
       <EmptyState>
