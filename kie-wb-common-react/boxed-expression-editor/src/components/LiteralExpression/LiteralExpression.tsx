@@ -21,6 +21,7 @@ import { DataType, ExpressionProps, LiteralExpressionProps, LogicType } from "..
 import { TextArea } from "@patternfly/react-core";
 import { EditExpressionMenu, EXPRESSION_NAME } from "../EditExpressionMenu";
 import { Resizer } from "../Resizer";
+import { EditableCell } from "../Table";
 
 export const LiteralExpression: React.FunctionComponent<LiteralExpressionProps> = ({
   uid,
@@ -66,8 +67,8 @@ export const LiteralExpression: React.FunctionComponent<LiteralExpressionProps> 
   );
 
   const onContentChange = useCallback(
-    (event) => {
-      literalExpressionContent.current = event.target.value;
+    (value: string) => {
+      literalExpressionContent.current = value;
       spreadLiteralExpressionDefinition();
     },
     [spreadLiteralExpressionDefinition]
@@ -115,10 +116,11 @@ export const LiteralExpression: React.FunctionComponent<LiteralExpressionProps> 
 
   const getBodyContent = useMemo(
     () => (
-      <TextArea
-        defaultValue={literalExpressionContent.current}
-        onBlur={onContentChange}
-        aria-label="literal-expression-content"
+      <EditableCell
+        value={literalExpressionContent.current}
+        row={{ index: 0 }}
+        column={{ id: uid ?? "-" }}
+        onCellUpdate={(_number, _columnId, value) => onContentChange(value)}
       />
     ),
     [onContentChange]

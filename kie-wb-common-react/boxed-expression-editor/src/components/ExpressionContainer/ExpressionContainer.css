@@ -16,8 +16,8 @@
 
 .expression-container .expression-container-box {
   display: inline-block;
-  border-style: ridge;
-  border-color: #39A5DC;
+  border: 2px solid var(--pf-global--palette--black-300);
+  margin-top: 5px;
 }
 
 .expression-container .context-menu-container {

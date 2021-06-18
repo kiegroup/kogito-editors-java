@@ -28,6 +28,9 @@
 
 .expression-container .literal-expression {
   width: 100%;
+  color: var(--pf-global--Color--100);
+  background-color: var(--pf-global--BackgroundColor--100);
+  font-style: normal;
 }
 
 .literal-expression .literal-expression-header .expression-info {
@@ -45,7 +48,7 @@
   flex-wrap: wrap;
   position: relative;
   padding: 0.5em 0.1em 0.5em 0.5em;
-  border-style: ridge;
+  border: 1px solid var(--pf-global--palette--black-300);
   background-color: #def3ff;
   color: black;
 }
@@ -57,11 +60,10 @@
 .literal-expression .literal-expression-body {
   height: 4em;
   width: 100%;
-  border: 1px solid #eaeaea;
+  border: 1px solid var(--pf-global--palette--black-300);
 }
 
 .literal-expression .literal-expression-body textarea {
-  border-style: groove;
   font-style: normal;
   padding: 0.5em 0.5em 0 0.5em;
   width: 100%;
