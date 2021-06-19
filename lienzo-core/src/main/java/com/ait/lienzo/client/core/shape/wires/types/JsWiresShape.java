@@ -17,19 +17,22 @@
 package com.ait.lienzo.client.core.shape.wires.types;
 
 import com.ait.lienzo.client.core.shape.Group;
+import com.ait.lienzo.client.core.shape.IPrimitive;
 import com.ait.lienzo.client.core.shape.MultiPath;
+import com.ait.lienzo.client.core.shape.Shape;
 import com.ait.lienzo.client.core.shape.wires.MagnetManager;
 import com.ait.lienzo.client.core.shape.wires.WiresContainer;
 import com.ait.lienzo.client.core.shape.wires.WiresLayer;
 import com.ait.lienzo.client.core.shape.wires.WiresMagnet;
 import com.ait.lienzo.client.core.shape.wires.WiresShape;
 import com.ait.lienzo.client.core.types.Point2D;
+import com.ait.lienzo.tools.client.collection.NFastArrayList;
 import jsinterop.annotations.JsType;
 
 @JsType
 public class JsWiresShape {
 
-    WiresShape shape;
+    protected WiresShape shape;
 
     public JsWiresShape(WiresShape shape) {
         this.shape = shape;
@@ -76,6 +79,15 @@ public class JsWiresShape {
     public JsWiresMagnet getMagnet(int index) {
         WiresMagnet magnet = shape.getMagnets().getMagnet(index);
         return new JsWiresMagnet(magnet);
+    }
+
+    public Shape<?> getChild(int index) {
+        Shape<?> child = null;
+        NFastArrayList<IPrimitive<?>> childNodes = shape.getContainer().getChildNodes();
+        if (null != childNodes && (index < childNodes.size())) {
+            child = (Shape<?>) childNodes.get(index);
+        }
+        return child;
     }
 
     public Group asGroup() {
