@@ -12,3 +12,7 @@
     var r = window.jsLienzo.getShape('r');
     window.jsLienzo.click(r);
     window.jsLienzo.move(r, 100, 100);
+
+    // Create shapes
+    new com.ait.lienzo.client.core.shape.Rectangle(100, 100)
+    var s = new com.ait.lienzo.client.core.shape.Text("Hello World", null, null, -1)
