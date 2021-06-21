@@ -17,6 +17,7 @@
 package com.ait.lienzo.client.core.shape.wires.types;
 
 import com.ait.lienzo.client.core.shape.Group;
+import com.ait.lienzo.client.core.shape.IContainer;
 import com.ait.lienzo.client.core.shape.IPrimitive;
 import com.ait.lienzo.client.core.shape.MultiPath;
 import com.ait.lienzo.client.core.shape.Shape;
@@ -25,8 +26,10 @@ import com.ait.lienzo.client.core.shape.wires.WiresContainer;
 import com.ait.lienzo.client.core.shape.wires.WiresLayer;
 import com.ait.lienzo.client.core.shape.wires.WiresMagnet;
 import com.ait.lienzo.client.core.shape.wires.WiresShape;
+import com.ait.lienzo.client.core.types.BoundingBox;
 import com.ait.lienzo.client.core.types.Point2D;
 import com.ait.lienzo.tools.client.collection.NFastArrayList;
+import elemental2.core.JsArray;
 import jsinterop.annotations.JsType;
 
 @JsType
@@ -63,6 +66,10 @@ public class JsWiresShape {
         return shape.getComputedLocation();
     }
 
+    public BoundingBox getBoundingBox() {
+        return asGroup().getBoundingBox();
+    }
+
     public MultiPath getPath() {
         return shape.getPath();
     }
@@ -81,13 +88,37 @@ public class JsWiresShape {
         return new JsWiresMagnet(magnet);
     }
 
-    public Shape<?> getChild(int index) {
-        Shape<?> child = null;
+    public IPrimitive<?> getChild(int index) {
+        IPrimitive<?> child = null;
         NFastArrayList<IPrimitive<?>> childNodes = shape.getContainer().getChildNodes();
         if (null != childNodes && (index < childNodes.size())) {
-            child = (Shape<?>) childNodes.get(index);
+            child = childNodes.get(index);
         }
         return child;
+    }
+
+    public Shape<?> getShape(int index) {
+        return flatShapes().getAt(index);
+    }
+
+    public JsArray<Shape> flatShapes() {
+        return toFlatShapes(shape.getContainer());
+    }
+
+    @SuppressWarnings("all")
+    private static JsArray<Shape> toFlatShapes(IContainer container) {
+        JsArray<Shape> shapes = new JsArray<Shape>();
+        NFastArrayList<IPrimitive<?>> childNodes = container.getChildNodes();
+        for (int i = 0; i < childNodes.size(); i++) {
+            IPrimitive<?> child = childNodes.get(i);
+            if (child instanceof IContainer) {
+                JsArray<Shape> children = toFlatShapes((IContainer) child);
+                shapes.push(children.asArray(new Shape[children.length]));
+            } else {
+                shapes.push((Shape) child);
+            }
+        }
+        return shapes;
     }
 
     public Group asGroup() {

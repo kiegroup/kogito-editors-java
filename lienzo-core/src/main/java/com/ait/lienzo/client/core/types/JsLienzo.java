@@ -19,7 +19,11 @@ public class JsLienzo {
 
     LienzoPanel panel;
     Layer layer;
+    // TODO: Static?
     JsLienzoEvents events;
+    // TODO: Static?
+    JsLienzoAnimations animations;
+    // TODO: Static?
     JsLienzoLogger logger;
 
     public JsLienzo(LienzoPanel panel, Layer layer) {
@@ -52,6 +56,13 @@ public class JsLienzo {
             events = new JsLienzoEvents(this);
         }
         return events;
+    }
+
+    public JsLienzoAnimations animations() {
+        if (null == animations) {
+            animations = new JsLienzoAnimations();
+        }
+        return animations;
     }
 
     public JsLienzoLogger log() {

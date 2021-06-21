@@ -19,15 +19,13 @@ package com.ait.lienzo.client.core.shape;
 import com.ait.lienzo.client.core.shape.storage.IStorageEngine;
 import com.ait.lienzo.client.core.shape.storage.PrimitiveFastArrayStorageEngine;
 import com.ait.lienzo.shared.core.types.GroupType;
+import jsinterop.annotations.JsType;
 
+@JsType
 public class Group extends GroupOf<IPrimitive<?>, Group> {
 
     public Group() {
         super(GroupType.GROUP, new PrimitiveFastArrayStorageEngine());
-    }
-
-    public Group(final IStorageEngine<IPrimitive<?>> storage) {
-        super(GroupType.GROUP, storage);
     }
 
     @Override

@@ -13,6 +13,24 @@
     window.jsLienzo.click(r);
     window.jsLienzo.move(r, 100, 100);
 
-    // Create shapes
-    new com.ait.lienzo.client.core.shape.Rectangle(100, 100)
-    var s = new com.ait.lienzo.client.core.shape.Text("Hello World", null, null, -1)
+    // Create badge
+    var jsl = window.jsLienzo;
+    var badge = new com.ait.lienzo.client.core.shape.Group();
+    badge.listening = false;
+    badge.alpha = 0;
+    var text = new com.ait.lienzo.client.core.shape.Text("100", "arial", "italic", 12);
+    badge.add(text);
+    var bb = text.getBoundingBox();
+    var decorator = new com.ait.lienzo.client.core.shape.Rectangle(bb.getWidth() + 10, bb.getHeight() + 10);
+    decorator.x = bb.getX() - 5;
+    decorator.y = bb.getY() - 5;
+    decorator.fillAlpha = 0;
+    decorator.strokeAlpha = 1;
+    decorator.strokeColor = 'red';
+    decorator.strokeWitrh = 2;
+    decorator.cornerRadius = 5;
+    badge.add(decorator);
+    badge.x = 100;
+    badge.y = 100;
+    jsl.add(badge);
+    jsl.animations().alpha(badge, 1, 1500);
