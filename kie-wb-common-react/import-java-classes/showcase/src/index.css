@@ -10,8 +10,20 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
-} 
+}
 
 :root {
-  padding: 50px;
+  padding: 20px;
+}
+
+.status-changes-buttons {
+  margin: 5px;
+}
+
+.status-changes-buttons button {
+  margin: 2px;
+}
+
+.import-java-classes {
+  margin: 100px;
 }

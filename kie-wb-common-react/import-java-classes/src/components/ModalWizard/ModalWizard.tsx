@@ -25,6 +25,10 @@ export interface ModalWizardProps {
   buttonStyle: "primary" | "secondary" | "tertiary" | "danger" | "warning" | "link" | "plain" | "control";
   /** Icon to apply to the Modal button */
   buttonIcon?: React.ReactNode;
+  /** Button disabled status */
+  buttonDisabledStatus: boolean;
+  /** Button hidden status */
+  buttonHiddenStatus: boolean;
   /** Title of the Modal Wizard */
   wizardTitle: string;
   /** Title of the Modal Wizard */
@@ -37,6 +41,8 @@ export const ModalWizard: React.FunctionComponent<ModalWizardProps> = ({
   buttonText,
   buttonStyle,
   buttonIcon,
+  buttonDisabledStatus,
+  buttonHiddenStatus,
   wizardTitle,
   wizardDescription,
   wizardSteps,
@@ -46,7 +52,14 @@ export const ModalWizard: React.FunctionComponent<ModalWizardProps> = ({
 
   return (
     <>
-      <Button variant={buttonStyle} icon={buttonIcon} onClick={handleModalToggle} data-testid={"modal-wizard-button"}>
+      <Button
+        variant={buttonStyle}
+        icon={buttonIcon}
+        onClick={handleModalToggle}
+        isDisabled={buttonDisabledStatus}
+        style={{ display: buttonHiddenStatus ? "none" : "block" }}
+        data-testid={"modal-wizard-button"}
+      >
         {buttonText}
       </Button>
       <Wizard

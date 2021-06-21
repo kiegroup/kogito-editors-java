@@ -24,7 +24,7 @@ export const ImportJavaClassesWizardFirstStepContent: React.FunctionComponent = 
   const EMPTY_SEARCH_VALUE = "";
   const { i18n } = useImportJavaClassesWizardI18n();
   const [searchValue, setSearchValue] = useState(EMPTY_SEARCH_VALUE);
-  const onSearchValueChange = useCallback((value: string) => setSearchValue(value), [searchValue]);
+  const onSearchValueChange = useCallback((value: string) => setSearchValue(value), []);
 
   return (
     <>

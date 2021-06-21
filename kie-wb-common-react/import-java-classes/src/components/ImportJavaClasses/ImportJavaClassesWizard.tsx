@@ -19,7 +19,17 @@ import { ModalWizard } from "../ModalWizard";
 import { useImportJavaClassesWizardI18n } from "../../i18n";
 import { ImportJavaClassesWizardFirstStepContent } from "./ImportJavaClassesWizardFirstStep";
 
-export const ImportJavaClassesWizard: React.FunctionComponent = () => {
+export interface ImportJavaClassesWizardProps {
+  /** Button disabled status */
+  buttonDisabledStatus: boolean;
+  /** Button hidden status */
+  buttonHiddenStatus: boolean;
+}
+
+export const ImportJavaClassesWizard: React.FunctionComponent<ImportJavaClassesWizardProps> = ({
+  buttonDisabledStatus,
+  buttonHiddenStatus,
+}: ImportJavaClassesWizardProps) => {
   const { i18n } = useImportJavaClassesWizardI18n();
   const steps = [
     {
@@ -47,6 +57,8 @@ export const ImportJavaClassesWizard: React.FunctionComponent = () => {
     <ModalWizard
       buttonStyle="secondary"
       buttonText={i18n.modalButton.text}
+      buttonDisabledStatus={buttonDisabledStatus}
+      buttonHiddenStatus={buttonHiddenStatus}
       wizardTitle={i18n.modalWizard.title}
       wizardDescription={i18n.modalWizard.description}
       wizardSteps={steps}

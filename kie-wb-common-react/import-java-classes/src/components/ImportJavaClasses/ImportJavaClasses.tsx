@@ -23,7 +23,17 @@ import {
 import { I18nDictionariesProvider } from "@kogito-tooling/i18n/dist/react-components";
 import { ImportJavaClassesWizard } from "./ImportJavaClassesWizard";
 
-export const ImportJavaClasses: React.FunctionComponent = () => {
+export interface ImportJavaClassesProps {
+  /** Button disabled status */
+  buttonDisabledStatus: boolean;
+  /** Button hidden status */
+  buttonHiddenStatus: boolean;
+}
+
+export const ImportJavaClasses: React.FunctionComponent<ImportJavaClassesProps> = ({
+  buttonDisabledStatus,
+  buttonHiddenStatus,
+}: ImportJavaClassesProps) => {
   return (
     <I18nDictionariesProvider
       defaults={importJavaClassesWizardI18nDefaults}
@@ -31,7 +41,7 @@ export const ImportJavaClasses: React.FunctionComponent = () => {
       initialLocale={navigator.language}
       ctx={ImportJavaClassesWizardI18nContext}
     >
-      <ImportJavaClassesWizard />
+      <ImportJavaClassesWizard buttonDisabledStatus={buttonDisabledStatus} buttonHiddenStatus={buttonHiddenStatus} />
     </I18nDictionariesProvider>
   );
 };

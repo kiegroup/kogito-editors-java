@@ -15,9 +15,30 @@
  */
 
 import "@patternfly/react-core/dist/styles/base.css";
-import React from "react";
+import React, { useState } from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
 import { ImportJavaClasses } from "./import_java_classes";
 
-ReactDOM.render(<ImportJavaClasses />, document.getElementById("root"));
+export const Showcase: React.FunctionComponent = () => {
+  const [buttonStatus, setButtonStatus] = useState("disable");
+  const toBeDisabled = buttonStatus === "disable";
+  const toBeHidden = buttonStatus === "hidden";
+  return (
+    <div className="showcase">
+      <div className="status-changes-buttons">
+        <p>Import Java classes button state</p>
+        <select onChange={(event) => setButtonStatus(event.target.value)}>
+          <option value="disable">Disabled</option>
+          <option value="enabled">Enabled</option>
+          <option value="hidden">Hidden</option>
+        </select>
+      </div>
+      <div className="import-java-classes">
+        <ImportJavaClasses buttonDisabledStatus={toBeDisabled} buttonHiddenStatus={toBeHidden} />
+      </div>
+    </div>
+  );
+};
+
+ReactDOM.render(<Showcase />, document.getElementById("root"));
