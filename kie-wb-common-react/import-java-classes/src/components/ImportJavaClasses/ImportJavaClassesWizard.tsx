@@ -17,13 +17,14 @@
 import * as React from "react";
 import { ModalWizard } from "../ModalWizard";
 import { useImportJavaClassesWizardI18n } from "../../i18n";
+import { ImportJavaClassesWizardFirstStepContent } from "./ImportJavaClassesWizardFirstStep";
 
 export const ImportJavaClassesWizard: React.FunctionComponent = () => {
   const { i18n } = useImportJavaClassesWizardI18n();
   const steps = [
     {
       name: i18n.modalWizard.firstStep.stepName,
-      component: <p>Step 1 content</p>,
+      component: <ImportJavaClassesWizardFirstStepContent />,
       enableNext: false,
       canJumpTo: false,
       hideBackButton: true,
