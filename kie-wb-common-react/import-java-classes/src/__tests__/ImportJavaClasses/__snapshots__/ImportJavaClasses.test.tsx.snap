@@ -1,5 +1,26 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`ImportJavaClasses component tests Should close Modal after opening it and clicking on the Cancel button 1`] = `
+<body
+  class=""
+>
+  <div>
+    <button
+      aria-disabled="false"
+      class="pf-c-button pf-m-secondary"
+      data-ouia-component-id="OUIA-Generated-Button-secondary-4"
+      data-ouia-component-type="PF4/Button"
+      data-ouia-safe="true"
+      data-testid="modal-wizard-button"
+      type="button"
+    >
+      Import Java classes
+    </button>
+  </div>
+  <div />
+</body>
+`;
+
 exports[`ImportJavaClasses component tests Should show Modal after clicking on the button 1`] = `
 <body
   class="pf-c-backdrop__open"
@@ -78,7 +99,7 @@ exports[`ImportJavaClasses component tests Should show Modal after clicking on t
                 class="pf-c-wizard__description"
                 id="pf-wizard-description-1"
               >
-                It converts your java assets to DMN type. This is a one-time import action: if the Java class get updated, you will need to reimport it
+                It converts your Java assets to DMN types. This is a one-time import action: if the Java class get updated, you will need to reimport it
               </p>
             </div>
             <button
@@ -177,9 +198,83 @@ exports[`ImportJavaClasses component tests Should show Modal after clicking on t
                   <div
                     class="pf-c-wizard__main-body"
                   >
-                    <p>
-                      Step 1 content
-                    </p>
+                    <h6
+                      class="pf-c-title pf-m-md"
+                    >
+                      Search:
+                    </h6>
+                    <div
+                      class="pf-c-search-input"
+                    >
+                      <div
+                        class="pf-c-input-group"
+                      >
+                        <div
+                          class="pf-c-search-input__bar"
+                        >
+                          <span
+                            class="pf-c-search-input__text"
+                          >
+                            <span
+                              class="pf-c-search-input__icon"
+                            >
+                              <svg
+                                aria-hidden="true"
+                                fill="currentColor"
+                                height="1em"
+                                role="img"
+                                style="vertical-align: -0.125em;"
+                                viewBox="0 0 512 512"
+                                width="1em"
+                              >
+                                <path
+                                  d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"
+                                />
+                              </svg>
+                            </span>
+                            <input
+                              aria-label="Search input"
+                              class="pf-c-search-input__text-input"
+                              placeholder="Search a class name ..."
+                              value=""
+                            />
+                          </span>
+                          
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="pf-c-empty-state"
+                    >
+                      <div
+                        class="pf-c-empty-state__content"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="pf-c-empty-state__icon"
+                          fill="currentColor"
+                          height="1em"
+                          role="img"
+                          style="vertical-align: -0.125em;"
+                          viewBox="0 0 512 512"
+                          width="1em"
+                        >
+                          <path
+                            d="M488.6 250.2L392 214V105.5c0-15-9.3-28.4-23.4-33.7l-100-37.5c-8.1-3.1-17.1-3.1-25.3 0l-100 37.5c-14.1 5.3-23.4 18.7-23.4 33.7V214l-96.6 36.2C9.3 255.5 0 268.9 0 283.9V394c0 13.6 7.7 26.1 19.9 32.2l100 50c10.1 5.1 22.1 5.1 32.2 0l103.9-52 103.9 52c10.1 5.1 22.1 5.1 32.2 0l100-50c12.2-6.1 19.9-18.6 19.9-32.2V283.9c0-15-9.3-28.4-23.4-33.7zM358 214.8l-85 31.9v-68.2l85-37v73.3zM154 104.1l102-38.2 102 38.2v.6l-102 41.4-102-41.4v-.6zm84 291.1l-85 42.5v-79.1l85-38.8v75.4zm0-112l-102 41.4-102-41.4v-.6l102-38.2 102 38.2v.6zm240 112l-85 42.5v-79.1l85-38.8v75.4zm0-112l-102 41.4-102-41.4v-.6l102-38.2 102 38.2v.6z"
+                          />
+                        </svg>
+                        <h6
+                          class="pf-c-title pf-m-md"
+                        >
+                          No Java classes selected
+                        </h6>
+                        <div
+                          class="pf-c-empty-state__body"
+                        >
+                          Type the Java class name or part of the name to find the one you want to import
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </main>
               </div>
@@ -218,27 +313,6 @@ exports[`ImportJavaClasses component tests Should show Modal after clicking on t
       </div>
     </div>
   </div>
-</body>
-`;
-
-exports[`ImportJavaClasses component tests Should show Modal after clicking on the button 2`] = `
-<body
-  class=""
->
-  <div>
-    <button
-      aria-disabled="false"
-      class="pf-c-button pf-m-secondary"
-      data-ouia-component-id="OUIA-Generated-Button-secondary-3"
-      data-ouia-component-type="PF4/Button"
-      data-ouia-safe="true"
-      data-testid="modal-wizard-button"
-      type="button"
-    >
-      Import Java classes
-    </button>
-  </div>
-  <div />
 </body>
 `;
 
