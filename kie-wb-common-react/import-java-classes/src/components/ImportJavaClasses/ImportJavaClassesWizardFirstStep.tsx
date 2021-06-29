@@ -20,11 +20,11 @@ import CubesIcon from "@patternfly/react-icons/dist/js/icons/cubes-icon";
 import { useImportJavaClassesWizardI18n } from "../../i18n";
 import { useCallback, useState } from "react";
 
-export const ImportJavaClassesWizardFirstStepContent: React.FunctionComponent = () => {
+export const ImportJavaClassesWizardFirstStep: React.FunctionComponent = () => {
   const EMPTY_SEARCH_VALUE = "";
   const { i18n } = useImportJavaClassesWizardI18n();
   const [searchValue, setSearchValue] = useState(EMPTY_SEARCH_VALUE);
-  const onSearchValueChange = useCallback((value: string) => setSearchValue(value), [searchValue]);
+  const onSearchValueChange = useCallback((value: string) => setSearchValue(value), []);
 
   return (
     <>

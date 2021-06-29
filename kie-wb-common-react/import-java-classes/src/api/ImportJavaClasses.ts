@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,15 +14,10 @@
  * limitations under the License.
  */
 
-import * as React from "react";
-import * as ReactDOM from "react-dom";
-import { ImportJavaClasses } from "./components";
+export {};
 
-export * from "./components";
-
-window.renderImportJavaClasses = (selector: string, buttonDisabledStatus: boolean, buttonTooltipMessage?: string) => {
-  ReactDOM.render(
-    <ImportJavaClasses buttonDisabledStatus={buttonDisabledStatus} buttonTooltipMessage={buttonTooltipMessage} />,
-    document.getElementById(selector)
-  );
-};
+declare global {
+  interface Window {
+    renderImportJavaClasses: (selector: string, buttonDisabledStatus: boolean, buttonTooltipMessage?: string) => void,
+  }
+}

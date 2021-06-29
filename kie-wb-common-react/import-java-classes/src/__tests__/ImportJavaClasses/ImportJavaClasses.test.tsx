@@ -21,13 +21,13 @@ import { ImportJavaClasses } from "../../components";
 describe("ImportJavaClasses component tests", () => {
 
     test("should render ImportJavaClasses Button component", () => {
-        const { container } = render(<ImportJavaClasses />);
+        const { container } = render(<ImportJavaClasses buttonDisabledStatus={false} />);
 
         expect(container).toMatchSnapshot();
     });
 
     test("Should show Modal after clicking on the button", () => {
-        const { baseElement, getByText } = render(<ImportJavaClasses />);
+        const { baseElement, getByText } = render(<ImportJavaClasses buttonDisabledStatus={false} />);
         const modalWizardButton = getByText("Import Java classes")! as HTMLButtonElement;
         modalWizardButton.click();
 
@@ -35,7 +35,7 @@ describe("ImportJavaClasses component tests", () => {
     });
 
     test("Should search box works", () => {
-      const { baseElement, getByText } = render(<ImportJavaClasses />);
+      const { baseElement, getByText } = render(<ImportJavaClasses buttonDisabledStatus={false} />);
       const modalWizardButton = getByText("Import Java classes")! as HTMLButtonElement;
       modalWizardButton.click();
       const inputElement = baseElement.querySelector('[aria-label="Search input"]')! as HTMLInputElement;
@@ -50,7 +50,7 @@ describe("ImportJavaClasses component tests", () => {
     });
 
     test("Should close Modal after opening it and clicking on the Cancel button", () => {
-        const { baseElement, getByText } = render(<ImportJavaClasses />);
+        const { baseElement, getByText } = render(<ImportJavaClasses buttonDisabledStatus={false} />);
         const modalWizardButton = getByText("Import Java classes")! as HTMLButtonElement;
         modalWizardButton.click();
         const cancelButton = getByText("Cancel") as HTMLButtonElement;
