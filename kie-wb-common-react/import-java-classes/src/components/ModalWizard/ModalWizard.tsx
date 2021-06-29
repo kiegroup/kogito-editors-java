@@ -16,7 +16,7 @@
 
 import * as React from "react";
 import { useState, useCallback } from "react";
-import { Button, Wizard, WizardStep } from "@patternfly/react-core";
+import { Button, Tooltip, Wizard, WizardStep } from "@patternfly/react-core";
 
 export interface ModalWizardProps {
   /** Text to apply to the Modal button */
@@ -25,6 +25,10 @@ export interface ModalWizardProps {
   buttonStyle: "primary" | "secondary" | "tertiary" | "danger" | "warning" | "link" | "plain" | "control";
   /** Icon to apply to the Modal button */
   buttonIcon?: React.ReactNode;
+  /** Button disabled status */
+  buttonDisabledStatus: boolean;
+  /** Button tooltip message */
+  buttonTooltipMessage?: string;
   /** Title of the Modal Wizard */
   wizardTitle: string;
   /** Title of the Modal Wizard */
@@ -37,18 +41,46 @@ export const ModalWizard: React.FunctionComponent<ModalWizardProps> = ({
   buttonText,
   buttonStyle,
   buttonIcon,
+  buttonDisabledStatus,
+  buttonTooltipMessage,
   wizardTitle,
   wizardDescription,
   wizardSteps,
 }: ModalWizardProps) => {
   const [isOpen, setOpen] = useState(false);
   const handleModalToggle = useCallback(() => setOpen(!isOpen), [isOpen]);
+  const WizardButton: React.FunctionComponent = () => {
+    return (
+      <Button
+        variant={buttonStyle}
+        icon={buttonIcon}
+        onClick={handleModalToggle}
+        isDisabled={buttonDisabledStatus}
+        data-testid={"modal-wizard-button"}
+      >
+        {buttonText}
+      </Button>
+    );
+  };
+  const WizardButtonWithTooltip: React.FunctionComponent = () => {
+    return (
+      <Tooltip content={buttonTooltipMessage}>
+        <Button
+          variant={buttonStyle}
+          icon={buttonIcon}
+          onClick={handleModalToggle}
+          isAriaDisabled={buttonDisabledStatus}
+          data-testid={"modal-wizard-button"}
+        >
+          {buttonText}
+        </Button>
+      </Tooltip>
+    );
+  };
 
   return (
     <>
-      <Button variant={buttonStyle} icon={buttonIcon} onClick={handleModalToggle} data-testid={"modal-wizard-button"}>
-        {buttonText}
-      </Button>
+      {buttonTooltipMessage ? <WizardButtonWithTooltip /> : <WizardButton />}
       <Wizard
         title={wizardTitle}
         description={wizardDescription}

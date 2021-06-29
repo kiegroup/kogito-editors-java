@@ -10,8 +10,17 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
-} 
+}
 
 :root {
-  padding: 50px;
+  padding: 20px;
+}
+
+.menu {
+  display: inline-grid;
+  margin: 5px;
+}
+
+.import-java-classes {
+  margin: 100px;
 }
