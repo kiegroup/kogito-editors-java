@@ -298,9 +298,15 @@ public abstract class AbstractCanvasInlineTextEditorControl
     }
 
     private boolean isPositionXValid(final double floatingViewPositionX) {
-        final elemental2.dom.Element editorPanel = DomGlobal.document.getElementById("canvasPanel");
-        final int canvasWidth = editorPanel.clientWidth;
-        return (canvasPosition.getX() + paletteOffsetX + canvasWidth + scrollBarOffset >= floatingViewPositionX);
+        final boolean atLeft = (canvasPosition.getX() + paletteOffsetX <= floatingViewPositionX);
+        boolean isValid = atLeft;
+        if (DomGlobal.window != null) {
+            final elemental2.dom.Element editorPanel = DomGlobal.document.getElementById("canvasPanel");
+            final double canvasWidth = editorPanel.clientWidth;
+            isValid = isValid && (canvasPosition.getX() + paletteOffsetX + canvasWidth + scrollBarOffset >= floatingViewPositionX);
+        }
+
+        return isValid;
     }
 
     private boolean isPositionYValid(final double floatingViewPositionY) {
