@@ -14,13 +14,6 @@
  * limitations under the License.
  */
 
-const {
-  override,
-  removeModuleScopePlugin,
-  addWebpackResolve,
-} = require("customize-cra");
+const { override, removeModuleScopePlugin, addWebpackResolve } = require("customize-cra");
 
-module.exports = override(
-  removeModuleScopePlugin(),
-  addWebpackResolve({ symlinks: false })
-);
+module.exports = override(removeModuleScopePlugin(), addWebpackResolve({ symlinks: false }));

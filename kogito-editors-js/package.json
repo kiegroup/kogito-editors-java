@@ -14,8 +14,10 @@
     "new-component": "node ./scripts/new-component.js",
     "bootstrap": "yarn run init && lerna bootstrap",
     "build:dev": "rm -rf dist && lerna run build:dev --stream",
-    "build:prod": "rm -rf dist && lerna run build:prod --stream",
-    "gwt:wire": "lerna run build:dev && lerna run build:watch --parallel"
+    "build:prod": "rm -rf dist && yarn format:check && lerna run build:prod --stream",
+    "gwt:wire": "lerna run build:dev && lerna run build:watch --parallel",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
     "css-loader": "^5.2.6",
@@ -35,6 +37,7 @@
     "customize-cra": "^1.0.0",
     "fs-extra": "^9.1.0",
     "lerna": "^4.0.0",
+    "prettier": "^2.3.2",
     "prompts": "^2.4.0",
     "react-app-rewired": "^2.1.8",
     "react-scripts": "^4.0.3",

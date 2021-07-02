@@ -40,10 +40,7 @@ const copyTemplateDirectory = (componentName) => {
 
 const renameTemplateComponent = (componentName) => {
   const replaceComponentName = (file) => {
-    const fileName = path.resolve(
-      __dirname,
-      `../packages/${componentName}/${file}`
-    );
+    const fileName = path.resolve(__dirname, `../packages/${componentName}/${file}`);
 
     fse.readFile(fileName, "utf8", (error, data) => {
       if (error) {

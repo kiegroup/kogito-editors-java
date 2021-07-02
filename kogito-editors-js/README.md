@@ -31,6 +31,14 @@ yarn build:dev
 yarn build:prod
 ```
 
+### Prettier
+
+Do not forget to format your code, either from your favourite IDE or by running
+
+```bash
+yarn format
+```
+
 ## Development
 
 Follow these guides to develop React components with GWT editors smoothly:

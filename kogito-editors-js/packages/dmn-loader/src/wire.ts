@@ -24,10 +24,9 @@ declare global {
 }
 
 export const setupWire = () => {
-
   const linkElement = (href: string) => {
-    const link = document.createElement('link');
-    link.rel = 'stylesheet';
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
     link.href = href;
     return link;
   };
