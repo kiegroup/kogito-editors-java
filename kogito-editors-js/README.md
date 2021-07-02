@@ -1,6 +1,6 @@
 # Kogito editors JS
 
-**Kogito editors JS** module holds the next generation of JavaScript/TypeScript/React components for the **DMN** and **BPMN** editors.
+**Kogito editors JS** module holds the next generation of JavaScript/TypeScript/React components for the **BPMN**, **DMN**, and **Scenario Simulation** editors.
 
 It is, in essence, an NPM module with dependencies managed by `package.json`. Still, the `pom.xml` is present to wrap static bundles into a web jar consumable by GWT editors.
 
@@ -33,7 +33,7 @@ yarn build:prod
 
 ### Prettier
 
-Do not forget to format your code, either from your favourite IDE or by running
+You may format the code with Prettier on your IDE or even by running:
 
 ```bash
 yarn format

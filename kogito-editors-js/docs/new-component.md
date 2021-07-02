@@ -4,7 +4,7 @@ All Kogito editor React components live in the `packages` directory and follow t
 
 - **Components** - all elements an editor may be a marshaller, a dialog, a Boxed Expression editor, or even a FEEL editor.
 
-- **Loaders** - this is more specific. It teaches how each editor (DMN or BPMN) may load their components.
+- **Loaders** - this is more specific. It teaches how each editor (BPMN, DMN, or Scenario Simulation) may load their components.
 
 In this guide, we will create a **component** and add it to GWT in 5 steps.
 
@@ -45,7 +45,7 @@ yarn start
 
 ### 3. Expose with the a Loader
 
-Now, we need to get this component in some loader. So, your GWT editor (DMN or BPMN) will be able to render it.
+Now, we need to get this component in some loader. So, your GWT editor (BPMN, DMN, or Scenario Simulation) will be able to render it.
 
 In this example, I will use the `dmn-loader`. Thus, we may:
 
@@ -54,10 +54,10 @@ In this example, I will use the `dmn-loader`. Thus, we may:
 - And, finally, add the following snippet in the `src/index.tsx` file:
 
 ```typescript
-import { FeelDialog } from "feel-dialog-component";
+import { ItWorks } from "feel-dialog-component";
 
 const renderFeelDialog = (selector: string) => {
-  ReactDOM.render(<FeelDialog />, document.querySelector(selector));
+  ReactDOM.render(<ItWorks />, document.querySelector(selector));
 };
 
 export { renderFeelDialog };
