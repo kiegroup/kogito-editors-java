@@ -15,9 +15,34 @@
  */
 
 import "@patternfly/react-core/dist/styles/base.css";
-import React from "react";
+import React, { useCallback, useState } from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
 import { ImportJavaClasses } from "./import_java_classes";
 
-ReactDOM.render(<ImportJavaClasses />, document.getElementById("root"));
+const Showcase: React.FunctionComponent = () => {
+  const LSP_SERVER_NOT_AVAILABLE = "Java LSP Server is not available. Please install Java Extension";
+  const [buttonDisableStatus, setButtonDisableStatus] = useState(true);
+  const [buttonTooltipMessage, setButtonTooltipMessage] = useState(LSP_SERVER_NOT_AVAILABLE);
+  const onSelectChange = useCallback((event) => setButtonDisableStatus(event.target.value === "true"), []);
+  const onInputChange = useCallback((event) => setButtonTooltipMessage(event.target.value), []);
+
+  return (
+    <div className="showcase">
+      <div className="menu">
+        <h1>Import Java classes button state</h1>
+        <select onChange={onSelectChange}>
+          <option value="true">Disabled</option>
+          <option value="false">Enabled</option>
+        </select>
+        <h1>Tooltip Message (Optional)</h1>
+        <input value={buttonTooltipMessage} onChange={onInputChange} />
+      </div>
+      <div className="import-java-classes">
+        <ImportJavaClasses buttonDisabledStatus={buttonDisableStatus} buttonTooltipMessage={buttonTooltipMessage} />
+      </div>
+    </div>
+  );
+};
+
+ReactDOM.render(<Showcase />, document.getElementById("root"));

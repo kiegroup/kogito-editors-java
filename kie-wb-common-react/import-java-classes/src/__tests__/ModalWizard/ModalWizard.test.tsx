@@ -15,7 +15,7 @@
  */
 
 import * as React from "react";
-import { render } from "@testing-library/react";
+import { fireEvent, render } from "@testing-library/react";
 import { ModalWizard } from "../../components/ModalWizard";
 import { WizardStep } from "@patternfly/react-core";
 import { ImportIcon } from "@patternfly/react-icons";
@@ -27,7 +27,7 @@ describe("ModalWizard component tests", () => {
         test("should render ModalWizard Button component", () => {
             const { container } = render(<ModalWizard buttonStyle={"primary"} buttonText={"bText"}
                                                       wizardDescription={"wDescription"} wizardSteps={[]}
-                                                      wizardTitle={"wTitle"} />);
+                                                      wizardTitle={"wTitle"} buttonDisabledStatus={false} />);
 
             expect(container).toMatchSnapshot();
         });
@@ -35,10 +35,30 @@ describe("ModalWizard component tests", () => {
         test("should render ModalWizard Button component with Icon", () => {
             const { container } = render(<ModalWizard buttonStyle={"primary"} buttonText={"bText"}
                                                       wizardDescription={"wDescription"} wizardSteps={[]}
-                                                      wizardTitle={"wTitle"} buttonIcon={<ImportIcon />} />)
+                                                      wizardTitle={"wTitle"} buttonIcon={<ImportIcon />}
+                                                      buttonDisabledStatus={false} />)
 
             expect(container).toMatchSnapshot();
         });
+
+      test("should render disabled ModalWizard Button component", () => {
+        const { container } = render(<ModalWizard buttonStyle={"primary"} buttonText={"bText"}
+                                                  wizardDescription={"wDescription"} wizardSteps={[]}
+                                                  wizardTitle={"wTitle"} buttonDisabledStatus={true} />);
+
+        expect(container).toMatchSnapshot();
+      });
+
+      test("should render disabled ModalWizard with tooltip Button component", async () => {
+        const { baseElement, getByTestId } = render(<ModalWizard buttonStyle={"primary"} buttonText={"bText"}
+                                                               wizardDescription={"wDescription"} wizardSteps={[]}
+                                                               wizardTitle={"wTitle"} buttonDisabledStatus={true}
+                                                               buttonTooltipMessage={"TooltipMessage"}/>);
+        const modalWizardButton = getByTestId("modal-wizard-button")! as HTMLButtonElement;
+        await fireEvent.mouseOver(modalWizardButton);
+
+        expect(baseElement).toMatchSnapshot();
+      });
 
         test("Should show Modal after clicking on the button", () => {
             const wizardSteps: WizardStep[] = [
@@ -52,6 +72,7 @@ describe("ModalWizard component tests", () => {
 
             const { baseElement, getByTestId } = render(<ModalWizard buttonStyle={"primary"} buttonText={"bText"}
                                                                      wizardDescription={"wDescription"}
+                                                                     buttonDisabledStatus={false}
                                                                      wizardSteps={wizardSteps}
                                                                      wizardTitle={"wTitle"} />);
 
@@ -73,6 +94,7 @@ describe("ModalWizard component tests", () => {
             const { baseElement, getByTestId, getByText} = render(<ModalWizard buttonStyle={"primary"}
                                                                                buttonText={"bText"}
                                                                                wizardDescription={"wDescription"}
+                                                                               buttonDisabledStatus={false}
                                                                                wizardSteps={wizardSteps}
                                                                                wizardTitle={"wTitle"} />);
 

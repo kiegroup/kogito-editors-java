@@ -17,13 +17,24 @@
 import * as React from "react";
 import { ModalWizard } from "../ModalWizard";
 import { useImportJavaClassesWizardI18n } from "../../i18n";
+import { ImportJavaClassesWizardFirstStep } from "./ImportJavaClassesWizardFirstStep";
 
-export const ImportJavaClassesWizard: React.FunctionComponent = () => {
+export interface ImportJavaClassesWizardProps {
+  /** Button disabled status */
+  buttonDisabledStatus: boolean;
+  /** Button tooltip message */
+  buttonTooltipMessage?: string;
+}
+
+export const ImportJavaClassesWizard: React.FunctionComponent<ImportJavaClassesWizardProps> = ({
+  buttonDisabledStatus,
+  buttonTooltipMessage,
+}: ImportJavaClassesWizardProps) => {
   const { i18n } = useImportJavaClassesWizardI18n();
   const steps = [
     {
       name: i18n.modalWizard.firstStep.stepName,
-      component: <p>Step 1 content</p>,
+      component: <ImportJavaClassesWizardFirstStep />,
       enableNext: false,
       canJumpTo: false,
       hideBackButton: true,
@@ -46,6 +57,8 @@ export const ImportJavaClassesWizard: React.FunctionComponent = () => {
     <ModalWizard
       buttonStyle="secondary"
       buttonText={i18n.modalButton.text}
+      buttonDisabledStatus={buttonDisabledStatus}
+      buttonTooltipMessage={buttonTooltipMessage}
       wizardTitle={i18n.modalWizard.title}
       wizardDescription={i18n.modalWizard.description}
       wizardSteps={steps}
