@@ -64,7 +64,7 @@ export const DecisionTableExpression: React.FunctionComponent<DecisionTableProps
 }) => {
   const { i18n } = useBoxedExpressionEditorI18n();
 
-  const getColumnPrefix = useCallback((groupType: string) => {
+  const getColumnPrefix = useCallback((groupType?: string) => {
     switch (groupType) {
       case DecisionTableColumnType.InputClause:
         return "input-";

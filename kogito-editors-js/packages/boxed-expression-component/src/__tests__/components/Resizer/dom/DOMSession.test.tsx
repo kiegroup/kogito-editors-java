@@ -16,7 +16,7 @@
 
 import { render } from "@testing-library/react";
 import * as React from "react";
-import { Cell, DOMSession } from "src/components/Resizer/dom";
+import { Cell, DOMSession } from "../../../../components/Resizer/dom";
 
 describe("DOMSession", () => {
   let session: DOMSession;

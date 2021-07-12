@@ -13,7 +13,9 @@ exports[`PopoverMenu tests should render PopoverMenu component 1`] = `
         aria-modal="true"
         class="pf-c-popover popover-menu-selector pf-m-bottom"
         data-ouia-component-id="expression-popover-menu"
+        data-popper-escaped="true"
         data-popper-placement="bottom"
+        data-popper-reference-hidden="true"
         role="dialog"
         style="opacity: 1; transition: opacity 300ms cubic-bezier(.54, 1.5, .38, 1.11); position: absolute; left: 0px; top: 0px; z-index: 9999; transform: translate(0px, 0px);"
       >

@@ -17,7 +17,7 @@
 import "./RelationExpression.css";
 import * as React from "react";
 import { useCallback, useEffect, useRef } from "react";
-import "@patternfly/patternfly/utilities/Text/text.css";
+import "@patternfly/react-styles/css/utilities/Text/text.css";
 import { Column as RelationColumn, DataType, RelationProps, Row, TableOperation } from "../../api";
 import { Table } from "../Table";
 import { useBoxedExpressionEditorI18n } from "../../i18n";

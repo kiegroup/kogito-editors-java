@@ -150,7 +150,7 @@ export const LogicTypeSelector: React.FunctionComponent<LogicTypeSelectorProps> 
   }, [getArrowPlacement, globalContext.boxedExpressionEditorRef]);
 
   const onLogicTypeSelect = useCallback(
-    (event: MouseEvent, itemId: string) => {
+    (event?: React.MouseEvent, itemId?: string | number) => {
       setLogicTypeSelected(true);
       const selectedLogicType = itemId as LogicType;
       onLogicTypeUpdating(selectedLogicType);

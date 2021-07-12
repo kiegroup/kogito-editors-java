@@ -161,9 +161,9 @@ export const TableHandler: React.FunctionComponent<TableHandlerProps> = ({
       const children = (_.find(tableColumns.current, getColumnSearchPredicate(selectedColumn)) as ColumnInstance)
         .columns;
       if (operation === insertBefore) {
-        children.unshift(generateNextAvailableColumn());
+        children!.unshift(generateNextAvailableColumn());
       } else if (operation === insertAfter) {
-        children.push(generateNextAvailableColumn());
+        children!.push(generateNextAvailableColumn());
       }
     },
     [generateNextAvailableColumn, selectedColumn, tableColumns]
@@ -173,7 +173,7 @@ export const TableHandler: React.FunctionComponent<TableHandlerProps> = ({
     if (selectedColumn.parent) {
       const parent = _.find(tableColumns.current, getColumnSearchPredicate(selectedColumn.parent)) as ColumnInstance;
       parent.columns = operation(
-        parent.columns,
+        parent.columns!,
         _.findIndex(parent.columns, getColumnSearchPredicate(selectedColumn)),
         generateNextAvailableColumn()
       );

@@ -39,7 +39,7 @@ export const FunctionKindSelector: React.FunctionComponent<FunctionKindSelectorP
   const globalContext = useContext(BoxedExpressionGlobalContext);
 
   const functionKindSelectionCallback = useCallback(
-    (hide: () => void) => (event: MouseEvent, itemId: string) => {
+    (hide: () => void) => (event?: React.MouseEvent, itemId?: string | number) => {
       onFunctionKindSelect(itemId as FunctionKind);
       hide();
     },

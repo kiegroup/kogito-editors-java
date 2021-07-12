@@ -38,7 +38,7 @@ export const TableHandlerMenu: React.FunctionComponent<TableHandlerMenuProps> = 
     <Menu
       ouiaId="expression-table-handler-menu"
       className="table-handler-menu"
-      onSelect={(event, itemId) => onOperation(itemId)}
+      onSelect={(event, itemId) => onOperation(itemId as TableOperation)}
     >
       {handlerConfiguration.map((groupOperation) => (
         <MenuGroup

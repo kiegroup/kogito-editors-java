@@ -17,7 +17,7 @@
 import "../../__mocks__/ReactWithSupervisor";
 import { fireEvent, render, waitFor } from "@testing-library/react";
 import * as React from "react";
-import { Resizer } from "src/components/Resizer";
+import { Resizer } from "../../../components/Resizer";
 
 describe("Resizer", () => {
   describe("when users drag the dragabble element", () => {
