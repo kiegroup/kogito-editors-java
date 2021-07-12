@@ -186,7 +186,7 @@ public class BPMNClientDiagramService extends AbstractKogitoClientDiagramService
         return diagram;
     }
 
-    private static final String ROOT_PATH = "default://master@system/stunner/diagrams";
+    private static final String ROOT_PATH = "default://main@system/stunner/diagrams";
 
     private Metadata createMetadata() {
         return new MetadataImpl.MetadataImplBuilder(BPMNClientMarshalling.getDefinitionSetId(),

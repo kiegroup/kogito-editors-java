@@ -94,7 +94,7 @@ public abstract class AbstractDMNDiagramEditorTest {
 
     protected static final String CONTENT = "content";
 
-    protected static final String ROOT = "default://master@system/stunner/diagrams";
+    protected static final String ROOT = "default://main@system/stunner/diagrams";
 
     @Mock
     protected AbstractCanvasHandler canvasHandler;

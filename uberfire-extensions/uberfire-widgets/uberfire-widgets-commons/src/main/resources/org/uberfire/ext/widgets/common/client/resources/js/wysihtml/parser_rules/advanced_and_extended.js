@@ -39,13 +39,13 @@ var wysihtmlParserRulesDefaults = {
 
 var wysihtmlParserRules = {
     /**
-     * CSS Class white-list
+     * CSS Class allow-list
      * Following CSS classes won't be removed when parsed by the wysihtml HTML parser
      * If all classes should pass "any" as classes value. Ex: "classes": "any"
      */
     "classes": "any",
 
-    /* blacklist of classes is only available if classes is set to any */
+    /* denylist of classes is only available if classes is set to any */
     "classes_blacklist": {
         "Apple-interchange-newline": 1,
         "MsoNormal": 1,
@@ -242,7 +242,7 @@ var wysihtmlParserRules = {
         },
         "a": {
             "check_attributes": {
-                "href": "href", // if you compiled master manually then change this from 'url' to 'href'
+                "href": "href", // if you compiled main manually then change this from 'url' to 'href'
                 "rel": "any",
                 "target": "any",
                 "id": "any"
@@ -255,7 +255,7 @@ var wysihtmlParserRules = {
             "check_attributes": {
                 "width": "dimension",
                 "alt": "alt",
-                "src": "src", // if you compiled master manually then change this from 'url' to 'src'
+                "src": "src", // if you compiled main manually then change this from 'url' to 'src'
                 "height": "dimension",
                 "id": "any"
             },

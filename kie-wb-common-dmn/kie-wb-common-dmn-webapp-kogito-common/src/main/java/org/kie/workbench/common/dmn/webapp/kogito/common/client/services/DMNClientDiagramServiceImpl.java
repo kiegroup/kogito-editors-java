@@ -44,7 +44,7 @@ import org.uberfire.commons.UUID;
 public class DMNClientDiagramServiceImpl extends AbstractKogitoClientDiagramService {
 
     //This path is needed by DiagramsNavigatorImpl's use of AbstractClientDiagramService.lookup(..) to retrieve a list of diagrams
-    private static final String ROOT = "default://master@system/stunner/diagrams";
+    private static final String ROOT = "default://main@system/stunner/diagrams";
 
     private FactoryManager factoryManager;
 

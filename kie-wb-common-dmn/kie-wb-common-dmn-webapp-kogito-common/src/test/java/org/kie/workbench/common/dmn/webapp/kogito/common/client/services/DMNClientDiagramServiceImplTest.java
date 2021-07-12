@@ -138,8 +138,8 @@ public class DMNClientDiagramServiceImplTest {
 
         final Metadata metadata = service.buildMetadataInstance(fileName);
 
-        assertEquals("default://master@system/stunner/diagrams", metadata.getRoot().toURI());
-        assertEquals("default://master@system/stunner/diagrams/file.dmn", metadata.getPath().toURI());
+        assertEquals("default://main@system/stunner/diagrams", metadata.getRoot().toURI());
+        assertEquals("default://main@system/stunner/diagrams/file.dmn", metadata.getPath().toURI());
     }
 
     @Test

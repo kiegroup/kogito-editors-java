@@ -67,7 +67,7 @@ import org.uberfire.client.promise.Promises;
 @Dependent
 public class DMNMarshallerService {
 
-    private static final String ROOT = "default://master@system/stunner/diagrams";
+    private static final String ROOT = "default://main@system/stunner/diagrams";
 
     private final DMNUnmarshaller dmnUnmarshaller;
 
