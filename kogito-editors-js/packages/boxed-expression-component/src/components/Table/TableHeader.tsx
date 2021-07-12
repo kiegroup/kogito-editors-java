@@ -93,7 +93,7 @@ export const TableHeader: React.FunctionComponent<TableHeaderProps> = ({
         const prevColumnName = column.label as string;
         let columnToUpdate = tableColumns.current[columnIndex] as ColumnInstance;
         if (column.depth > 0) {
-          const parentName = column.parent.id;
+          const parentName = column.parent!.id;
           const parentColumns = (_.find(tableColumns.current, { accessor: parentName }) as ColumnInstance).columns;
           columnToUpdate = _.find(parentColumns, { accessor: prevColumnName })!;
         }

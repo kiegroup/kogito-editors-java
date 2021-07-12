@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { applyDOMSupervisor, Cell } from "src/components/Resizer/dom";
+import { applyDOMSupervisor, Cell } from "../../../../components/Resizer/dom";
 
 const fakeCells = [fakeCell(0), fakeCell(2), fakeCell(4), fakeCell(8)];
 

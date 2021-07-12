@@ -151,9 +151,8 @@ describe("FunctionExpression tests", () => {
       );
       await activateSelector(container as HTMLElement, ".parameters-list");
       await act(async () => {
-        (baseElement.querySelector(".parameter-name") as HTMLInputElement)!.value = newParamName;
-        (baseElement.querySelector(".parameter-name") as HTMLInputElement)!.dispatchEvent(new Event("change"));
-        (baseElement.querySelector(".parameter-name") as HTMLInputElement)!.dispatchEvent(new Event("blur"));
+        const input = baseElement.querySelector(".parameter-name") as HTMLInputElement;
+        fireEvent.blur(input, { target: { value: newParamName } });
       });
 
       checkFormalParameters(mockedBroadcastDefinition, [

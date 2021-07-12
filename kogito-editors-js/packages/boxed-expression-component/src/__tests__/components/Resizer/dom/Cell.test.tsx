@@ -15,13 +15,13 @@
  */
 
 import "../../../__mocks__/ReactWithSupervisor";
-import { Cell, CELL_CSS_SELECTOR } from "src/components/Resizer/dom";
-import { Resizer } from "src/components/Resizer";
+import { Cell, CELL_CSS_SELECTOR } from "../../../../components/Resizer/dom";
+import { Resizer } from "../../../../components/Resizer";
 import { render } from "@testing-library/react";
 import { usingTestingBoxedExpressionI18nContext } from "../../test-utils";
 import * as React from "react";
-import { ContextExpression } from "src/components/ContextExpression";
-import { ContextProps } from "src/api";
+import { ContextExpression } from "../../../../components/ContextExpression";
+import { ContextProps } from "../../../../api";
 import { act } from "react-dom/test-utils";
 
 let cell: Cell;

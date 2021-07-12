@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { render } from "@testing-library/react";
+import { fireEvent, render } from "@testing-library/react";
 import { usingTestingBoxedExpressionI18nContext } from "../test-utils";
 import * as React from "react";
 import { EditExpressionMenu } from "../../../components/EditExpressionMenu";
@@ -195,9 +195,8 @@ describe("EditExpressionMenu tests", () => {
 
     await activatePopover(container as HTMLElement);
 
-    (container.querySelector("#expression-name") as HTMLInputElement)!.value = "changed";
-    (container.querySelector("#expression-name") as HTMLInputElement)!.dispatchEvent(new Event("change"));
-    (container.querySelector("#expression-name") as HTMLInputElement)!.dispatchEvent(new Event("blur"));
+    const input = container.querySelector("#expression-name") as HTMLInputElement;
+    fireEvent.blur(input, { target: { value: "changed" } });
 
     expect(mockedOnExpressionUpdate).toHaveBeenCalled();
     expect(mockedOnExpressionUpdate).toHaveBeenCalledWith({

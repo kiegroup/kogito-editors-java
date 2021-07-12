@@ -45,10 +45,10 @@ export const getColumnsAtLastLevel: (columns: ColumnInstance[] | Column[], depth
 ) =>
   _.flatMap(columns, (column: ColumnInstance) => {
     if (_.has(column, "columns")) {
-      return depth > 0 ? getColumnsAtLastLevel(column.columns, depth - 1) : column.columns;
+      return depth > 0 ? getColumnsAtLastLevel(column.columns!, depth - 1) : column.columns;
     }
     return column;
-  });
+  }) as ColumnInstance[];
 
 export const getColumnSearchPredicate: (column: ColumnInstance) => (columnToCompare: ColumnInstance) => boolean = (
   column
@@ -102,7 +102,9 @@ export const Table: React.FunctionComponent<TableProps> = ({
           ],
         });
 
-        generateNumberOfRowsSubColumnRecursively(column.columns[0], headerLevels - 1);
+        if (column?.columns?.length) {
+          generateNumberOfRowsSubColumnRecursively(column.columns[0], headerLevels - 1);
+        }
       }
     },
     [currentControllerCell, headerVisibility]

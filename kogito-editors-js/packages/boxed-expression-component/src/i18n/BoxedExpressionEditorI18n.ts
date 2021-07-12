@@ -17,7 +17,7 @@
 import { ReferenceDictionary } from "@kogito-tooling/i18n/dist/core";
 import { CommonI18n } from "@kogito-tooling/i18n-common-dictionary";
 
-interface BoxedExpressionEditorDictionary extends ReferenceDictionary<BoxedExpressionEditorDictionary> {
+interface BoxedExpressionEditorDictionary extends ReferenceDictionary<BoxedExpressionEditorDictionary | unknown> {
   addParameter: string;
   builtInAggregator: string;
   choose: string;
