@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2021 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-const { override, removeModuleScopePlugin, addWebpackResolve } = require('customize-cra');
+const { override, removeModuleScopePlugin, addWebpackResolve } = require("customize-cra");
 
-module.exports = override(
-  removeModuleScopePlugin(),
-  addWebpackResolve({ symlinks: false })
-);
+module.exports = override(removeModuleScopePlugin(), addWebpackResolve({ symlinks: false }));

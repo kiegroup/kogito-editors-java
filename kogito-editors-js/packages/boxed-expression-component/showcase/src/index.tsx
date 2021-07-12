@@ -31,7 +31,7 @@ import {
   ListProps,
   LiteralExpressionProps,
   RelationProps,
-} from "./boxed_expression_editor";
+} from "./lib";
 
 export const App: React.FunctionComponent = () => {
   //This definition comes directly from the decision node
