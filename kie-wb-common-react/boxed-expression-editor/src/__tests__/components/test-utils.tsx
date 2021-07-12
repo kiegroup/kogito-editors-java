@@ -25,6 +25,8 @@ import {
 import { act } from "react-dom/test-utils";
 import { fireEvent } from "@testing-library/react";
 import { resetId } from "react-id-generator";
+import { BoxedExpressionGlobalContext } from "../../context";
+import { DataType } from "../../api";
 
 global.console = { ...global.console, warn: jest.fn() };
 
@@ -53,6 +55,28 @@ export function usingTestingBoxedExpressionI18nContext(
       </I18nDictionariesProvider>
     ),
   };
+}
+
+export function wrapComponentInContext(component: JSX.Element): JSX.Element {
+  return (
+    <BoxedExpressionGlobalContext.Provider
+      value={{
+        pmmlParams: [
+          {
+            document: "document",
+            modelsFromDocument: [{ model: "model", parametersFromModel: [{ name: "p-1", dataType: DataType.Number }] }],
+          },
+        ],
+        supervisorHash: "",
+        setSupervisorHash: jest.fn,
+        boxedExpressionEditorRef: { current: document.body as HTMLDivElement },
+        currentlyOpenedHandlerCallback: jest.fn,
+        setCurrentlyOpenedHandlerCallback: jest.fn,
+      }}
+    >
+      {component}
+    </BoxedExpressionGlobalContext.Provider>
+  );
 }
 
 export async function activateSelector(container: HTMLElement, query: string): Promise<void> {

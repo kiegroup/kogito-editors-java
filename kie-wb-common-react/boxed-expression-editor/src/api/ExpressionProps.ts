@@ -20,7 +20,7 @@ import { Columns, Rows } from "./Table";
 import { ContextEntries, EntryInfo } from "./ContextEntry";
 import { HitPolicy } from "./HitPolicy";
 import { BuiltinAggregation } from "./BuiltinAggregation";
-import { Clause, DecisionTableRule } from "./DecisionTableRule";
+import { Annotation, Clause, DecisionTableRule } from "./DecisionTableRule";
 import { FeelFunctionProps, JavaFunctionProps, PmmlFunctionProps } from "./FunctionKind";
 
 export interface ExpressionProps {
@@ -96,13 +96,13 @@ export interface DecisionTableProps extends ExpressionProps {
   /** Aggregation policy, when the hit policy supports it */
   aggregation?: BuiltinAggregation;
   /** Annotation columns names */
-  annotations: string[];
+  annotations?: Annotation[];
   /** Input columns definition */
-  input: Clause[];
+  input?: Clause[];
   /** Output columns definition */
-  output: Clause[];
+  output?: Clause[];
   /** Rules represent rows values */
-  rules: DecisionTableRule[];
+  rules?: DecisionTableRule[];
 }
 
 export interface ListProps extends ExpressionProps {

@@ -21,6 +21,15 @@ export interface Clause {
   name: string;
   /** Clause data type */
   dataType: DataType;
+  /** Clause width */
+  width?: number | string;
+}
+
+export interface Annotation {
+  /** Annotation name */
+  name: string;
+  /** Annotation width */
+  width?: number | string;
 }
 
 export interface DecisionTableRule {

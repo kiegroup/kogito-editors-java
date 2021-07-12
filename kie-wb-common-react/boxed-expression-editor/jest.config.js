@@ -20,7 +20,7 @@ module.exports = {
   moduleFileExtensions: ["js", "jsx", "ts", "tsx"],
   modulePathIgnorePatterns: ["<rootDir>/showcase/", "<rootDir>/dist/"],
   testRegex: "/__tests__/.*\\.test\\.(jsx?|tsx?)$",
-  setupFilesAfterEnv: ["./src/__tests__/test-setup.ts"],
+  setupFilesAfterEnv: ["jest-extended", "./src/__tests__/test-setup.ts"],
   transform: {
     "^.+\\.jsx?$": "babel-jest",
     "^.+\\.tsx?$": "ts-jest"

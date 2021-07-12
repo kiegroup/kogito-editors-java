@@ -26,7 +26,7 @@
   height: 100%;
 }
 
-.expression-container .invocation-expression .table-component table th.no-clickable-cell .header-cell-info {
+.expression-container .invocation-expression > .table-component > table > thead > tr > th.no-clickable-cell .header-cell-info {
   width: 90%;
 }
 

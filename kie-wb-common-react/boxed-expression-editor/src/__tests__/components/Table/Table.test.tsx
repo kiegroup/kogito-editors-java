@@ -71,7 +71,6 @@ describe("Table tests", () => {
       const { container } = render(
         usingTestingBoxedExpressionI18nContext(
           <Table
-            columnPrefix="column-"
             columns={[]}
             rows={[]}
             onColumnsUpdate={_.identity}
@@ -88,7 +87,6 @@ describe("Table tests", () => {
       const { container } = render(
         usingTestingBoxedExpressionI18nContext(
           <Table
-            columnPrefix="column-"
             columns={[]}
             rows={[]}
             onColumnsUpdate={_.identity}
@@ -105,7 +103,6 @@ describe("Table tests", () => {
       const { container } = render(
         usingTestingBoxedExpressionI18nContext(
           <Table
-            columnPrefix="column-"
             columns={[{ accessor: columnName, label: columnName, dataType: DataType.Undefined } as ColumnInstance]}
             rows={[]}
             onColumnsUpdate={_.identity}
@@ -125,7 +122,6 @@ describe("Table tests", () => {
       const { container } = render(
         usingTestingBoxedExpressionI18nContext(
           <Table
-            columnPrefix="column-"
             columns={[
               {
                 accessor: columnName,
@@ -148,7 +144,6 @@ describe("Table tests", () => {
       const { container } = render(
         usingTestingBoxedExpressionI18nContext(
           <Table
-            columnPrefix="column-"
             columns={[]}
             rows={[]}
             onColumnsUpdate={_.identity}
@@ -171,7 +166,6 @@ describe("Table tests", () => {
       const { container } = render(
         usingTestingBoxedExpressionI18nContext(
           <Table
-            columnPrefix="column-"
             columns={[{ accessor: columnName, dataType: DataType.Undefined } as ColumnInstance]}
             rows={rows}
             onColumnsUpdate={_.identity}
@@ -195,7 +189,6 @@ describe("Table tests", () => {
       const { container, baseElement } = render(
         usingTestingBoxedExpressionI18nContext(
           <Table
-            columnPrefix="column-"
             editColumnLabel={editRelationLabel}
             columns={[{ label: columnName, accessor: columnName, dataType: DataType.Boolean } as ColumnInstance]}
             rows={[]}
@@ -226,7 +219,6 @@ describe("Table tests", () => {
       const { container, baseElement } = render(
         usingTestingBoxedExpressionI18nContext(
           <Table
-            columnPrefix="column-"
             columns={[{ label: columnName, accessor: columnName, dataType: DataType.Boolean } as ColumnInstance]}
             rows={[]}
             onColumnsUpdate={mockedOnColumnUpdate}
@@ -263,7 +255,6 @@ describe("Table tests", () => {
       const { container, baseElement } = render(
         usingTestingBoxedExpressionI18nContext(
           <Table
-            columnPrefix="column-"
             columns={[{ label: columnName, accessor: columnName, dataType: DataType.Boolean } as ColumnInstance]}
             rows={[row]}
             onColumnsUpdate={_.identity}
@@ -300,7 +291,6 @@ describe("Table tests", () => {
       const { container } = render(
         usingTestingBoxedExpressionI18nContext(
           <Table
-            columnPrefix="column-"
             columns={[{ label: columnName, accessor: columnName, dataType: DataType.Boolean } as ColumnInstance]}
             rows={[row]}
             onColumnsUpdate={_.identity}
@@ -331,7 +321,6 @@ describe("Table tests", () => {
       const { container, baseElement } = render(
         usingTestingBoxedExpressionI18nContext(
           <Table
-            columnPrefix="column-"
             columns={[firstColumn]}
             rows={[]}
             onColumnsUpdate={mockedOnColumnUpdate}
@@ -362,7 +351,6 @@ describe("Table tests", () => {
       const { container, baseElement } = render(
         usingTestingBoxedExpressionI18nContext(
           <Table
-            columnPrefix="column-"
             columns={[firstColumn]}
             rows={[]}
             onColumnsUpdate={mockedOnColumnUpdate}
@@ -393,7 +381,6 @@ describe("Table tests", () => {
       const { container, baseElement } = render(
         usingTestingBoxedExpressionI18nContext(
           <Table
-            columnPrefix="column-"
             columns={[firstColumn, secondColumn]}
             rows={[]}
             onColumnsUpdate={mockedOnColumnUpdate}
@@ -428,7 +415,6 @@ describe("Table tests", () => {
       const { container, baseElement } = render(
         usingTestingBoxedExpressionI18nContext(
           <Table
-            columnPrefix="column-"
             columns={[firstColumn, secondColumn]}
             rows={[row]}
             onColumnsUpdate={mockedOnColumnUpdate}
@@ -459,7 +445,6 @@ describe("Table tests", () => {
       const { container, baseElement } = render(
         usingTestingBoxedExpressionI18nContext(
           <Table
-            columnPrefix="column-"
             columns={[{ label: columnName, accessor: columnName, dataType: DataType.Undefined } as ColumnInstance]}
             rows={[row]}
             onColumnsUpdate={_.identity}
@@ -490,7 +475,6 @@ describe("Table tests", () => {
       const { container, baseElement } = render(
         usingTestingBoxedExpressionI18nContext(
           <Table
-            columnPrefix="column-"
             columns={[{ label: columnName, accessor: columnName, dataType: DataType.Undefined } as ColumnInstance]}
             rows={[row]}
             onColumnsUpdate={_.identity}
@@ -523,7 +507,6 @@ describe("Table tests", () => {
       const { container, baseElement } = render(
         usingTestingBoxedExpressionI18nContext(
           <Table
-            columnPrefix="column-"
             columns={[{ label: columnName, accessor: columnName, dataType: DataType.Undefined } as ColumnInstance]}
             rows={[firstRow, secondRow]}
             onColumnsUpdate={_.identity}
@@ -559,7 +542,7 @@ async function selectMenuEntryIfNotDisabled(baseElement: Element, menuEntry: str
   });
 }
 
-async function openContextMenu(element: Element) {
+export async function openContextMenu(element: Element): Promise<void> {
   await act(async () => {
     fireEvent.contextMenu(element);
     await flushPromises();

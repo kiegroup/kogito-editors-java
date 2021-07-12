@@ -19,6 +19,7 @@ export * from "./BuiltinAggregation";
 export * from "./ContextEntry";
 export * from "./DataType";
 export * from "./DecisionTableRule";
+export * from "./EnumUtils";
 export * from "./ExpressionProps";
 export * from "./FunctionKind";
 export * from "./HitPolicy";

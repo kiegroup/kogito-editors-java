@@ -16,7 +16,7 @@
 
 import "./InvocationExpression.css";
 import * as React from "react";
-import { useCallback, useEffect, useContext, useMemo, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import {
   ContextEntries,
   ContextEntryRecord,
@@ -56,6 +56,7 @@ export const InvocationExpression: React.FunctionComponent<InvocationProps> = ({
   uid,
 }: InvocationProps) => {
   const { i18n } = useBoxedExpressionEditorI18n();
+
   const [rows, setRows] = useState(
     bindingEntries || [
       {
@@ -63,8 +64,12 @@ export const InvocationExpression: React.FunctionComponent<InvocationProps> = ({
           name: DEFAULT_PARAMETER_NAME,
           dataType: DEFAULT_PARAMETER_DATA_TYPE,
         },
-        entryExpression: {},
+        entryExpression: {
+          name: DEFAULT_PARAMETER_NAME,
+          dataType: DEFAULT_PARAMETER_DATA_TYPE,
+        },
         editInfoPopoverLabel: i18n.editParameter,
+        nameAndDataTypeSynchronized: true,
       } as DataRecord,
     ]
   );
@@ -168,20 +173,24 @@ export const InvocationExpression: React.FunctionComponent<InvocationProps> = ({
     [onUpdatingNameAndDataType]
   );
 
-  const onRowAdding = useCallback(
-    () => ({
+  const onRowAdding = useCallback(() => {
+    const generatedName = generateNextAvailableEntryName(
+      _.map(rows, (row: ContextEntryRecord) => row.entryInfo) as EntryInfo[],
+      "p"
+    );
+    return {
       entryInfo: {
-        name: generateNextAvailableEntryName(
-          _.map(rows, (row: ContextEntryRecord) => row.entryInfo) as EntryInfo[],
-          "p"
-        ),
+        name: generatedName,
         dataType: DEFAULT_PARAMETER_DATA_TYPE,
       },
-      entryExpression: {},
+      entryExpression: {
+        name: generatedName,
+        dataType: DEFAULT_PARAMETER_DATA_TYPE,
+      },
       editInfoPopoverLabel: i18n.editParameter,
-    }),
-    [i18n.editParameter, rows]
-  );
+      nameAndDataTypeSynchronized: true,
+    };
+  }, [i18n.editParameter, rows]);
 
   const getHeaderVisibility = useCallback(() => {
     return isHeadless ? TableHeaderVisibility.SecondToLastLevel : TableHeaderVisibility.Full;

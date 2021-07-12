@@ -50,6 +50,7 @@ jest.mock("src/components/Resizer/dom", () => {
     Cell: jest.fn(() => ({
       refreshWidthAsParent: () => ({}),
       refreshWidthAsLastColumn: () => ({}),
+      refreshWidthAsLastGroupColumn: () => ({}),
     })),
   };
 });

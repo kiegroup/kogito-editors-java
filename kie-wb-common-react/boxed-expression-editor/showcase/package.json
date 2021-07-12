@@ -1,5 +1,4 @@
 {
-  "homepage": "http://vpellegrino.github.io/kogito-editors-java",
   "name": "boxed-expression-editor-showcase",
   "private": true,
   "scripts": {
