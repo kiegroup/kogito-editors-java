@@ -16,24 +16,22 @@
 
 <!DOCTYPE html>
 <html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <title>Boxed Expression Editor - Showcase</title>
+    <meta id="appName" name="application-name" content="Boxed Expression Editor" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="./favicon.png" />
+    <base href="/" />
+    <!-- Issue workaround for React v16. -->
+    <script>
+      // See https://github.com/facebook/react/issues/20829#issuecomment-802088260
+      if (!crossOriginIsolated) SharedArrayBuffer = ArrayBuffer;
+    </script>
+  </head>
 
-<head>
-  <meta charset="utf-8">
-  <title>Boxed Expression Editor - Showcase</title>
-  <meta id="appName" name="application-name" content="Boxed Expression Editor">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" type="image/svg+xml" href="./favicon.png">
-  <base href="/">
-  <!-- Issue workaround for React v16. -->
-  <script>
-    // See https://github.com/facebook/react/issues/20829#issuecomment-802088260
-    if (!crossOriginIsolated) SharedArrayBuffer = ArrayBuffer;
-  </script>
-</head>
-
-<body>
-  <noscript>Enabling JavaScript is required to run this app.</noscript>
-  <div id="root"></div>
-</body>
-
+  <body>
+    <noscript>Enabling JavaScript is required to run this app.</noscript>
+    <div id="root"></div>
+  </body>
 </html>

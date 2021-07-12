@@ -180,9 +180,9 @@ describe("FunctionExpression tests", () => {
       );
       await activateSelector(container as HTMLElement, ".parameters-list");
       await act(async () => {
-        (baseElement.querySelector(
-          "[data-ouia-component-id='edit-expression-data-type'] button"
-        ) as HTMLButtonElement).click();
+        (
+          baseElement.querySelector("[data-ouia-component-id='edit-expression-data-type'] button") as HTMLButtonElement
+        ).click();
         await flushPromises();
         jest.runAllTimers();
         (baseElement.querySelector(`[data-ouia-component-id='${DataType.Boolean}']`) as HTMLButtonElement).click();
@@ -275,9 +275,11 @@ describe("FunctionExpression tests", () => {
       expect(container.querySelector(".function-expression table tbody td.data-cell")).toBeVisible();
       expect(container.querySelector(".function-expression table tbody td.data-cell .literal-expression")).toBeTruthy();
       expect(
-        (container.querySelector(
-          ".function-expression table tbody td.data-cell .literal-expression textarea"
-        ) as HTMLTextAreaElement).value
+        (
+          container.querySelector(
+            ".function-expression table tbody td.data-cell .literal-expression textarea"
+          ) as HTMLTextAreaElement
+        ).value
       ).toBe("");
     });
 

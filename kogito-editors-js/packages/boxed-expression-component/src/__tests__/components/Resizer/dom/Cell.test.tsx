@@ -176,7 +176,7 @@ function createContext() {
   container = render(
     usingTestingBoxedExpressionI18nContext(
       <ContextExpression
-        {...(({
+        {...({
           uid: "id1",
           logicType: "Context",
           name: "Expression Name",
@@ -232,7 +232,7 @@ function createContext() {
           },
           entryInfoWidth: 150,
           entryExpressionWidth: 1468,
-        } as unknown) as ContextProps)}
+        } as unknown as ContextProps)}
       />
     ).wrapper
   ).container;
