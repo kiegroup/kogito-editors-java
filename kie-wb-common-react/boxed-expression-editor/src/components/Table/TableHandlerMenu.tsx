@@ -17,12 +17,12 @@
 import "./TableHandlerMenu.css";
 import * as React from "react";
 import { Menu, MenuGroup, MenuItem, MenuList } from "@patternfly/react-core";
-import { AllowedOperations, TableHandlerConfiguration, TableOperation } from "../../api";
+import { AllowedOperations, GroupOperations, TableOperation } from "../../api";
 import * as _ from "lodash";
 
 export interface TableHandlerMenuProps {
   /** Handler menu groups and items */
-  handlerConfiguration: TableHandlerConfiguration;
+  handlerConfiguration: GroupOperations[];
   /** Dynamic Allowed operations */
   allowedOperations: AllowedOperations;
   /** Function to be executed when an operation gets selected */

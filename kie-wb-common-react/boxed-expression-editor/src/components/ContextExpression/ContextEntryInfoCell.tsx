@@ -16,9 +16,10 @@
 
 import { CellProps, ContextEntries } from "../../api";
 import * as React from "react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { DataRecord } from "react-table";
 import { ContextEntryInfo } from "./ContextEntryInfo";
+import * as _ from "lodash";
 
 export interface ContextEntryInfoCellProps extends CellProps {
   data: ContextEntries;
@@ -32,15 +33,24 @@ export const ContextEntryInfoCell: React.FunctionComponent<ContextEntryInfoCellP
 }) => {
   const contextEntry = data[index];
 
-  const [entryInfo, setEntryInfo] = useState(contextEntry.entryInfo);
+  const entryInfo = useRef(contextEntry.entryInfo);
+  const entryExpression = useRef(contextEntry.entryExpression);
 
   useEffect(() => {
-    setEntryInfo(contextEntry.entryInfo);
+    entryInfo.current = contextEntry.entryInfo;
   }, [contextEntry.entryInfo]);
+  useEffect(() => {
+    entryExpression.current = contextEntry.entryExpression;
+  }, [contextEntry.entryExpression]);
 
   const onContextEntryUpdate = useCallback(
     (name, dataType) => {
-      onRowUpdate(index, { ...contextEntry, entryInfo: { name, dataType } });
+      const updatedExpression = { ...entryExpression.current };
+      if (contextEntry.nameAndDataTypeSynchronized && _.size(name) && _.size(dataType)) {
+        updatedExpression.name = name;
+        updatedExpression.dataType = dataType;
+      }
+      onRowUpdate(index, { ...contextEntry, entryExpression: updatedExpression, entryInfo: { name, dataType } });
     },
     [contextEntry, index, onRowUpdate]
   );
@@ -48,8 +58,8 @@ export const ContextEntryInfoCell: React.FunctionComponent<ContextEntryInfoCellP
   return (
     <div className="context-entry-info-cell">
       <ContextEntryInfo
-        name={entryInfo.name}
-        dataType={entryInfo.dataType}
+        name={entryInfo.current.name}
+        dataType={entryInfo.current.dataType}
         onContextEntryUpdate={onContextEntryUpdate}
         editInfoPopoverLabel={contextEntry.editInfoPopoverLabel}
       />

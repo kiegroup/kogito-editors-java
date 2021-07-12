@@ -66,11 +66,52 @@ export class Cell {
       return;
     }
 
-    const parentRect = this.getParentRow()?.getBoundingClientRect();
+    const parentRect = this.getParentRow()!.getBoundingClientRect();
 
     if (parentRect) {
       this.setWidth(Math.round(parentRect.right) - Math.round(this.getRect().x) - BORDER);
     }
+  }
+
+  refreshWidthAsLastGroupColumn(): void {
+    if (!this.isColSpanHeader()) {
+      return;
+    }
+
+    const refSibling = this.getParent()?.parentElement?.nextSibling;
+
+    if (!refSibling) {
+      return;
+    }
+
+    const children = [].slice.call((refSibling as HTMLElement).querySelectorAll(`.${this.getHeaderType()}`));
+    const childrenRects = children.map((c: HTMLElement) => c.getBoundingClientRect());
+    const x = Math.min(...childrenRects.map((c: DOMRect) => c.x));
+    const right = Math.max(...childrenRects.map((c: DOMRect) => c.right));
+
+    this.setWidth(right - x - BORDER * 2);
+  }
+
+  isColSpanHeader(): boolean {
+    return this.getParent()?.classList.contains("colspan-header") || false;
+  }
+
+  private getHeaderType() {
+    const cssClasses = (this.getParent()?.classList || []) as DOMTokenList;
+
+    if (cssClasses.contains("input")) {
+      return "input";
+    }
+
+    if (cssClasses.contains("output")) {
+      return "output";
+    }
+
+    return "annotation";
+  }
+
+  private getParent() {
+    return this.element.parentElement;
   }
 
   private getParentRow() {

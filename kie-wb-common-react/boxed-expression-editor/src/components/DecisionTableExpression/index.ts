@@ -15,3 +15,4 @@
  */
 
 export * from "./DecisionTableExpression";
+export * from "./HitPolicySelector";
