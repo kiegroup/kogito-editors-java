@@ -47,7 +47,7 @@ export const TableBody: React.FunctionComponent<TableBodyProps> = ({
   const renderCell = useCallback(
     (cellIndex: number, cell: Cell, rowIndex: number) => {
       const cellType = cellIndex === 0 ? "counter-cell" : "data-cell";
-      const column = (tableInstance.allColumns[cellIndex] as unknown) as IColumn;
+      const column = tableInstance.allColumns[cellIndex] as unknown as IColumn;
 
       const getWidth = (): number => {
         if (typeof column?.width === "number") {

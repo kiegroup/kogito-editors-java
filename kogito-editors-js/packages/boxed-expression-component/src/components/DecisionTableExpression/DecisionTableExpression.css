@@ -83,6 +83,11 @@
   background-color: #ffffff;
 }
 
-.expression-container .decision-table-expression table thead th.annotation.decision-table--annotation .header-cell-info {
+.expression-container
+  .decision-table-expression
+  table
+  thead
+  th.annotation.decision-table--annotation
+  .header-cell-info {
   width: 95%;
 }

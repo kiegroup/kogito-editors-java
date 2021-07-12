@@ -261,10 +261,9 @@ export const TableHeader: React.FunctionComponent<TableHeaderProps> = ({
   const renderAtLevelInHeaderGroups = useCallback(
     (level: number) => (
       <Tr>
-        {_.nth(
-          tableInstance.headerGroups as HeaderGroup[],
-          level
-        )!.headers.map((column: ColumnInstance, columnIndex: number) => renderColumn(column, columnIndex))}
+        {_.nth(tableInstance.headerGroups as HeaderGroup[], level)!.headers.map(
+          (column: ColumnInstance, columnIndex: number) => renderColumn(column, columnIndex)
+        )}
       </Tr>
     ),
     [renderColumn, tableInstance.headerGroups]

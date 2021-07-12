@@ -1,12 +1,7 @@
 {
   "extends": "../tsconfig.json",
-  "exclude": [
-    "./**/node_modules",
-    "./**/test-setup"
-  ],
-  "include": [
-    "src"
-  ],
+  "exclude": ["./**/node_modules", "./**/test-setup"],
+  "include": ["src"],
   "compilerOptions": {
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
