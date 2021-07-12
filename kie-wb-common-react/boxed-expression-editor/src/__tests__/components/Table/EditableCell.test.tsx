@@ -17,9 +17,8 @@
 import { fireEvent, render } from "@testing-library/react";
 import { usingTestingBoxedExpressionI18nContext } from "../test-utils";
 import * as React from "react";
-import { EditableCell, EDIT_MODE, READ_MODE } from "../../../components/Table";
+import { EDIT_MODE, EditableCell, READ_MODE } from "../../../components/Table";
 import * as _ from "lodash";
-import { before } from "lodash";
 
 describe("EditableCell", () => {
   const CELL_SELECTOR = ".editable-cell";

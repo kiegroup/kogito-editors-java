@@ -16,20 +16,27 @@
 
 import * as React from "react";
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { DataType, TableHandlerConfiguration, TableOperation } from "../../api";
+import {
+  DataType,
+  GroupOperations,
+  GroupOperationsByColumnType,
+  TableHandlerConfiguration,
+  TableOperation,
+} from "../../api";
 import * as _ from "lodash";
 import { Column, ColumnInstance, DataRecord } from "react-table";
 import { Popover } from "@patternfly/react-core";
 import { TableHandlerMenu } from "./TableHandlerMenu";
 import { BoxedExpressionGlobalContext } from "../../context";
+import { getColumnsAtLastLevel, getColumnSearchPredicate } from "./Table";
 
 export interface TableHandlerProps {
-  /** The prefix to be used for the column name */
-  columnPrefix: string;
+  /** Gets the prefix to be used for the next column name */
+  getColumnPrefix: (groupType?: string) => string;
   /** Columns instance */
   tableColumns: React.MutableRefObject<Column[]>;
-  /** Last selected column index */
-  lastSelectedColumnIndex: number;
+  /** Last selected column */
+  lastSelectedColumn: ColumnInstance;
   /** Last selected row index */
   lastSelectedRowIndex: number;
   /** Rows instance */
@@ -55,9 +62,9 @@ export interface TableHandlerProps {
 }
 
 export const TableHandler: React.FunctionComponent<TableHandlerProps> = ({
-  columnPrefix,
+  getColumnPrefix,
   tableColumns,
-  lastSelectedColumnIndex,
+  lastSelectedColumn,
   lastSelectedRowIndex,
   tableRows,
   onRowsUpdate,
@@ -72,81 +79,129 @@ export const TableHandler: React.FunctionComponent<TableHandlerProps> = ({
 }) => {
   const globalContext = useContext(BoxedExpressionGlobalContext);
 
-  const [selectedColumnIndex, setSelectedColumnIndex] = useState(lastSelectedColumnIndex);
+  const [selectedColumn, setSelectedColumn] = useState(lastSelectedColumn.placeholderOf || lastSelectedColumn);
   const [selectedRowIndex, setSelectedRowIndex] = useState(lastSelectedRowIndex);
 
   useEffect(() => {
-    setSelectedColumnIndex(lastSelectedColumnIndex);
-  }, [lastSelectedColumnIndex]);
+    setSelectedColumn(lastSelectedColumn.placeholderOf || lastSelectedColumn);
+  }, [lastSelectedColumn]);
 
   useEffect(() => {
     setSelectedRowIndex(lastSelectedRowIndex);
   }, [lastSelectedRowIndex]);
 
-  const insertBefore = <T extends unknown>(elements: T[], index: number, element: T) => {
-    return [...elements.slice(0, index), element, ...elements.slice(index)];
-  };
+  const insertBefore = <T extends unknown>(elements: T[], index: number, element: T) => [
+    ...elements.slice(0, index),
+    element,
+    ...elements.slice(index),
+  ];
 
-  const insertAfter = <T extends unknown>(elements: T[], index: number, element: T) => {
-    return [...elements.slice(0, index + 1), element, ...elements.slice(index + 1)];
-  };
+  const insertAfter = <T extends unknown>(elements: T[], index: number, element: T) => [
+    ...elements.slice(0, index + 1),
+    element,
+    ...elements.slice(index + 1),
+  ];
 
-  const deleteAt = <T extends unknown>(elements: T[], index: number) => {
-    return [...elements.slice(0, index), ...elements.slice(index + 1)];
-  };
+  const duplicateAfter = <T extends unknown>(elements: T[], index: number) => [
+    ...elements.slice(0, index + 1),
+    _.cloneDeep(elements[index]),
+    ...elements.slice(index + 1),
+  ];
 
-  const clearAt = <T extends unknown>(elements: T[], index: number) => {
-    return [
-      ...elements.slice(0, index),
-      resetRowCustomFunction(elements[index] as DataRecord),
-      ...elements.slice(index + 1),
-    ];
-  };
+  const deleteAt = <T extends unknown>(elements: T[], index: number) => [
+    ...elements.slice(0, index),
+    ...elements.slice(index + 1),
+  ];
 
-  const generateNextAvailableColumnName: (lastIndex: number) => string = useCallback(
-    (lastIndex) => {
-      const candidateName = `${columnPrefix}${lastIndex}`;
-      const columnWithCandidateName = _.find(tableColumns.current, { accessor: candidateName });
-      return columnWithCandidateName ? generateNextAvailableColumnName(lastIndex + 1) : candidateName;
+  const clearAt = <T extends unknown>(elements: T[], index: number) => [
+    ...elements.slice(0, index),
+    resetRowCustomFunction(elements[index] as DataRecord),
+    ...elements.slice(index + 1),
+  ];
+
+  const generateNextAvailableColumnName: (lastIndex: number, groupType?: string) => string = useCallback(
+    (lastIndex, groupType) => {
+      const candidateName = `${getColumnPrefix(groupType)}${lastIndex}`;
+      const columnWithCandidateName = _.find(getColumnsAtLastLevel(tableColumns.current), { accessor: candidateName });
+      return columnWithCandidateName ? generateNextAvailableColumnName(lastIndex + 1, groupType) : candidateName;
     },
-    [columnPrefix, tableColumns]
+    [getColumnPrefix, tableColumns]
   );
 
-  const generateNextAvailableColumn = useCallback(
-    (columns: Column[]) => {
-      return {
-        accessor: generateNextAvailableColumnName(columns.length),
-        label: generateNextAvailableColumnName(columns.length),
-        dataType: DataType.Undefined,
-      } as ColumnInstance;
-    },
-    [generateNextAvailableColumnName]
-  );
+  const getLengthOfColumnsByGroupType = useCallback((columns: Column[], groupType: string) => {
+    const columnsByGroupType = _.groupBy(columns, (column: ColumnInstance) => column.groupType);
+    return columnsByGroupType[groupType]?.length;
+  }, []);
+
+  const generateNextAvailableColumn = useCallback(() => {
+    const groupType = selectedColumn.groupType;
+    const cssClasses = selectedColumn.cssClasses;
+    const columns = getColumnsAtLastLevel(tableColumns.current);
+    const columnsLength = groupType ? getLengthOfColumnsByGroupType(columns, groupType) + 1 : columns.length;
+    const nextAvailableColumnName = generateNextAvailableColumnName(columnsLength, groupType);
+
+    return {
+      accessor: nextAvailableColumnName,
+      label: nextAvailableColumnName,
+      ...(selectedColumn.dataType ? { dataType: DataType.Undefined } : {}),
+      inlineEditable: selectedColumn.inlineEditable,
+      groupType,
+      cssClasses,
+    } as ColumnInstance;
+  }, [generateNextAvailableColumnName, getLengthOfColumnsByGroupType, selectedColumn, tableColumns]);
 
   /** These column operations have impact also on the collection of cells */
-  const updateColumnsThenRows = useCallback(
-    (columns) => {
-      onColumnsUpdate(columns);
-      onRowsUpdate(tableRows.current);
+  const updateColumnsThenRows = useCallback(() => {
+    onColumnsUpdate([...tableColumns.current]);
+    onRowsUpdate([...tableRows.current]);
+  }, [onColumnsUpdate, onRowsUpdate, tableColumns, tableRows]);
+
+  const appendOnColumnChildren = useCallback(
+    (operation: <T extends unknown>(elements: T[], index: number, element: T) => T[]) => {
+      const children = (_.find(tableColumns.current, getColumnSearchPredicate(selectedColumn)) as ColumnInstance)
+        .columns;
+      if (operation === insertBefore) {
+        children.unshift(generateNextAvailableColumn());
+      } else if (operation === insertAfter) {
+        children.push(generateNextAvailableColumn());
+      }
     },
-    [onColumnsUpdate, onRowsUpdate, tableRows]
+    [generateNextAvailableColumn, selectedColumn, tableColumns]
   );
+
+  const updateTargetColumns = (operation: <T extends unknown>(elements: T[], index: number, element: T) => T[]) => {
+    if (selectedColumn.parent) {
+      const parent = _.find(tableColumns.current, getColumnSearchPredicate(selectedColumn.parent)) as ColumnInstance;
+      parent.columns = operation(
+        parent.columns,
+        _.findIndex(parent.columns, getColumnSearchPredicate(selectedColumn)),
+        generateNextAvailableColumn()
+      );
+    } else {
+      if (selectedColumn.appendColumnsOnChildren && _.isArray(selectedColumn.columns)) {
+        appendOnColumnChildren(operation);
+      } else {
+        tableColumns.current = operation(
+          tableColumns.current,
+          _.findIndex(tableColumns.current, getColumnSearchPredicate(selectedColumn)),
+          generateNextAvailableColumn()
+        );
+      }
+    }
+    updateColumnsThenRows();
+  };
 
   const handlingOperation = useCallback(
     (tableOperation: TableOperation) => {
       switch (tableOperation) {
         case TableOperation.ColumnInsertLeft:
-          updateColumnsThenRows(
-            insertBefore(tableColumns.current, selectedColumnIndex, generateNextAvailableColumn(tableColumns.current))
-          );
+          updateTargetColumns(insertBefore);
           break;
         case TableOperation.ColumnInsertRight:
-          updateColumnsThenRows(
-            insertAfter(tableColumns.current, selectedColumnIndex, generateNextAvailableColumn(tableColumns.current))
-          );
+          updateTargetColumns(insertAfter);
           break;
         case TableOperation.ColumnDelete:
-          updateColumnsThenRows(deleteAt(tableColumns.current, selectedColumnIndex));
+          updateTargetColumns(deleteAt);
           break;
         case TableOperation.RowInsertAbove:
           onRowsUpdate(insertBefore(tableRows.current, selectedRowIndex, onRowAdding()));
@@ -160,6 +215,8 @@ export const TableHandler: React.FunctionComponent<TableHandlerProps> = ({
         case TableOperation.RowClear:
           onRowsUpdate(clearAt(tableRows.current, selectedRowIndex));
           break;
+        case TableOperation.RowDuplicate:
+          onRowsUpdate(duplicateAfter(tableRows.current, selectedRowIndex));
       }
       setShowTableHandler(false);
     },
@@ -169,13 +226,23 @@ export const TableHandler: React.FunctionComponent<TableHandlerProps> = ({
       updateColumnsThenRows,
       onRowAdding,
       onRowsUpdate,
-      selectedColumnIndex,
       selectedRowIndex,
       setShowTableHandler,
       tableColumns,
       tableRows,
     ]
   );
+
+  const groupOperationsDoNotDependOnColumn = (
+    handlerConfiguration: GroupOperations[] | GroupOperationsByColumnType
+  ): handlerConfiguration is GroupOperations[] => _.isArray(handlerConfiguration);
+
+  const getHandlerConfiguration = useMemo(() => {
+    if (groupOperationsDoNotDependOnColumn(handlerConfiguration)) {
+      return handlerConfiguration;
+    }
+    return handlerConfiguration[selectedColumn?.groupType || ""];
+  }, [handlerConfiguration, selectedColumn?.groupType]);
 
   return useMemo(
     () => (
@@ -192,7 +259,7 @@ export const TableHandler: React.FunctionComponent<TableHandlerProps> = ({
         appendTo={globalContext.boxedExpressionEditorRef?.current ?? undefined}
         bodyContent={
           <TableHandlerMenu
-            handlerConfiguration={handlerConfiguration}
+            handlerConfiguration={getHandlerConfiguration}
             allowedOperations={tableHandlerAllowedOperations}
             onOperation={handlingOperation}
           />
@@ -202,7 +269,7 @@ export const TableHandler: React.FunctionComponent<TableHandlerProps> = ({
     [
       showTableHandler,
       globalContext.boxedExpressionEditorRef,
-      handlerConfiguration,
+      getHandlerConfiguration,
       tableHandlerAllowedOperations,
       handlingOperation,
       setShowTableHandler,

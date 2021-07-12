@@ -15,4 +15,5 @@
  */
 
 export * from "./DataTypeSelector";
+export * from "./EditTextInline";
 export * from "./EditExpressionMenu";

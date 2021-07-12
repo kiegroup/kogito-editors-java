@@ -23,6 +23,7 @@
 .expression-container .context-menu-container {
   position: fixed;
   z-index: 10000;
+  font-style: initial;
 }
 
 .expression-container > .expression-container-box,

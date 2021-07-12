@@ -22,12 +22,14 @@ export function useContextMenuHandler(): {
   contextMenuYPos: string;
   contextMenuVisibility: boolean;
   setContextMenuVisibility: (value: ((prevState: boolean) => boolean) | boolean) => void;
+  targetElement?: EventTarget;
 } {
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   const [xPos, setXPos] = useState("0px");
   const [yPos, setYPos] = useState("0px");
   const [contextMenuVisible, setContextMenuVisible] = useState(false);
+  const eventTarget = useRef<EventTarget>();
 
   const hideContextMenu = useCallback(() => {
     contextMenuVisible && setContextMenuVisible(false);
@@ -37,6 +39,7 @@ export function useContextMenuHandler(): {
     (event: MouseEvent) => {
       if (wrapperRef.current && wrapperRef.current === event.target) {
         event.preventDefault();
+        eventTarget.current = event.target;
         setXPos(`${event.pageX}px`);
         setYPos(`${event.pageY}px`);
         setContextMenuVisible(true);
@@ -62,5 +65,6 @@ export function useContextMenuHandler(): {
     contextMenuYPos: yPos,
     contextMenuVisibility: contextMenuVisible,
     setContextMenuVisibility: setContextMenuVisible,
+    targetElement: eventTarget.current,
   };
 }

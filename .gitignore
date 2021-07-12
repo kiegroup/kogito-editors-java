@@ -52,3 +52,6 @@ dependency-reduced-pom.xml
 # Cypress tests recordings
 **/videos/**
 *.mp4
+
+# Local Netlify folder
+.netlify

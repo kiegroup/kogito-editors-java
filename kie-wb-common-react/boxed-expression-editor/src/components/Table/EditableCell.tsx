@@ -16,7 +16,7 @@
 
 import "./EditableCell.css";
 import * as React from "react";
-import { ChangeEvent, useCallback, useState, useEffect, useRef, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { CellProps } from "../../api";
 
 export const READ_MODE = "editable-cell--read-mode";
@@ -67,7 +67,7 @@ export const EditableCell: React.FunctionComponent<EditableCellProps> = ({
     textarea.current?.setSelectionRange(value.length, value.length);
   }, [value]);
 
-  const onDoubleClick = useCallback((_event) => {
+  const onDoubleClick = useCallback(() => {
     setMode(EDIT_MODE);
   }, []);
 
@@ -118,6 +118,6 @@ export const EditableCell: React.FunctionComponent<EditableCellProps> = ({
         </div>
       </>
     ),
-    [value, isSelected, mode]
+    [onDoubleClick, onSelect, cssClass, value, onKeyPress, onChange, onBlur]
   );
 };

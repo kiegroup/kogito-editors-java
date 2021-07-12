@@ -36,10 +36,9 @@ import { RelationExpression } from "../RelationExpression";
 import { ContextExpression } from "../ContextExpression";
 import { useBoxedExpressionEditorI18n } from "../../i18n";
 import { PopoverMenu } from "../PopoverMenu";
-import { Button, ButtonVariant, Menu, MenuItem, MenuList } from "@patternfly/react-core";
+import { Menu, MenuGroup, MenuItem, MenuList } from "@patternfly/react-core";
 import * as _ from "lodash";
 import { useContextMenuHandler } from "../../hooks";
-import { NO_TABLE_CONTEXT_MENU_CLASS } from "../Table";
 import nextId from "react-id-generator";
 import { BoxedExpressionGlobalContext } from "../../context";
 import { DecisionTableExpression } from "../DecisionTableExpression";
@@ -98,6 +97,7 @@ export const LogicTypeSelector: React.FunctionComponent<LogicTypeSelectorProps> 
     contextMenuYPos,
     contextMenuVisibility,
     setContextMenuVisibility,
+    targetElement,
   } = useContextMenuHandler();
 
   const renderExpression = useMemo(() => {
@@ -191,29 +191,36 @@ export const LogicTypeSelector: React.FunctionComponent<LogicTypeSelectorProps> 
           left: contextMenuXPos,
         }}
       >
-        <Button
-          isDisabled={!logicTypeSelected}
-          isSmall={true}
-          variant={ButtonVariant.primary}
-          onClick={executeClearAction}
-        >
-          {i18n.clear}
-        </Button>
+        <Menu className="table-handler-menu">
+          <MenuGroup label={(expression?.logicType ?? LogicType.Undefined).toLocaleUpperCase()}>
+            <MenuList>
+              <MenuItem isDisabled={!logicTypeSelected} onClick={executeClearAction}>
+                {i18n.clear}
+              </MenuItem>
+            </MenuList>
+          </MenuGroup>
+        </Menu>
       </div>
     ),
-    [logicTypeSelected, contextMenuXPos, contextMenuYPos, executeClearAction, i18n.clear]
+    [contextMenuYPos, contextMenuXPos, expression.logicType, logicTypeSelected, executeClearAction, i18n.clear]
   );
+
+  const shouldClearContextMenuBeOpened = useMemo(() => {
+    const notClickedOnTable = _.isNil((targetElement as HTMLElement)?.closest("table"));
+    const clickedOnTableRemainderContent = !_.isNil((targetElement as HTMLElement)?.closest(".row-remainder-content"));
+    const clickedOnAllowedTableSection = notClickedOnTable || clickedOnTableRemainderContent;
+
+    return !selectedExpression.noClearAction && contextMenuVisibility && clickedOnAllowedTableSection;
+  }, [contextMenuVisibility, selectedExpression.noClearAction, targetElement]);
 
   return (
     <div
-      className={`logic-type-selector ${NO_TABLE_CONTEXT_MENU_CLASS} ${
-        logicTypeSelected ? "logic-type-selected" : "logic-type-not-present"
-      }`}
+      className={`logic-type-selector ${logicTypeSelected ? "logic-type-selected" : "logic-type-not-present"}`}
       ref={contextMenuRef}
     >
       {logicTypeSelected ? renderExpression : i18n.selectExpression}
       {!logicTypeSelected ? buildLogicSelectorMenu() : null}
-      {!selectedExpression.noClearAction && contextMenuVisibility ? buildContextMenu() : null}
+      {shouldClearContextMenuBeOpened ? buildContextMenu() : null}
     </div>
   );
 };

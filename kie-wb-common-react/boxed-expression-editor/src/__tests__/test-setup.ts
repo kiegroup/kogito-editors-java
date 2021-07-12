@@ -14,5 +14,6 @@
  * limitations under the License.
  */
 
+import "jest-extended";
 import "jest-webextension-mock";
 import "@testing-library/jest-dom";

@@ -23,6 +23,8 @@ import * as React from "react";
 import { LogicTypeSelector } from "../../../components/LogicTypeSelector";
 import * as _ from "lodash";
 
+jest.useFakeTimers();
+
 describe("LogicTypeSelector tests", () => {
   test("should have the clear action disabled on startup", async () => {
     const expression = { name: "Test", dataType: DataType.Undefined };
@@ -40,8 +42,8 @@ describe("LogicTypeSelector tests", () => {
 
     await triggerContextMenu(baseElement as HTMLElement, ".logic-type-selector");
 
-    expect(baseElement.querySelector(".context-menu-container button.pf-m-disabled")).toBeTruthy();
-    expect(baseElement.querySelector(".context-menu-container button.pf-m-disabled")!.innerHTML).toBe("Clear");
+    expect(baseElement.querySelector(".context-menu-container button")).toBeDisabled();
+    expect(baseElement.querySelector(".context-menu-container button")).toHaveTextContent("Clear");
   });
 
   test("should have the clear action enabled, when logic type is selected", async () => {
@@ -60,9 +62,9 @@ describe("LogicTypeSelector tests", () => {
 
     await triggerContextMenu(baseElement as HTMLElement, ".logic-type-selector");
 
-    expect(baseElement.querySelector(".context-menu-container button.pf-m-disabled")).toBeFalsy();
+    expect(baseElement.querySelector(".context-menu-container button")).not.toBeDisabled();
     expect(baseElement.querySelector(".context-menu-container button")).toBeTruthy();
-    expect(baseElement.querySelector(".context-menu-container button")!.innerHTML).toBe("Clear");
+    expect(baseElement.querySelector(".context-menu-container button")).toHaveTextContent("Clear");
   });
 });
 
@@ -120,5 +122,3 @@ const triggerContextMenu = async (container: HTMLElement, selector: string) => {
     jest.runAllTimers();
   });
 };
-
-jest.useFakeTimers();

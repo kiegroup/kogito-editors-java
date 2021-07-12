@@ -34,6 +34,8 @@ export interface ContextEntryRecord {
   entryExpression: ExpressionProps;
   /** Label used for the popover triggered when editing info section */
   editInfoPopoverLabel?: string;
+  /** True, for synchronizing name and dataType parameters, between entryInfo and entryExpression */
+  nameAndDataTypeSynchronized?: boolean;
   /** Callback to be invoked on expression resetting */
   onExpressionResetting?: () => void;
 }
@@ -68,7 +70,10 @@ export const generateNextAvailableEntryName = (
   return entryWithCandidateName ? generateNextAvailableEntryName(entryInfos, namePrefix, lastIndex + 1) : candidateName;
 };
 
-export const getEntryKey = (row: Row): string => (row.original as ContextEntryRecord).entryInfo.name;
+export const getEntryKey = (row: Row): string => {
+  const entryRecord = row.original as ContextEntryRecord;
+  return entryRecord.entryInfo.name + entryRecord.entryInfo.dataType;
+};
 
 export const resetEntry = (row: DataRecord): DataRecord => ({
   ...row,

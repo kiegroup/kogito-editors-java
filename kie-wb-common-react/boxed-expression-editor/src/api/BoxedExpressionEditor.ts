@@ -16,6 +16,7 @@
 
 import {
   ContextProps,
+  DecisionTableProps,
   ExpressionProps,
   FunctionProps,
   InvocationProps,
@@ -38,6 +39,7 @@ declare global {
       broadcastListExpressionDefinition: (definition: ListProps) => void;
       broadcastInvocationExpressionDefinition: (definition: InvocationProps) => void;
       broadcastFunctionExpressionDefinition: (definition: FunctionProps) => void;
+      broadcastDecisionTableExpressionDefinition: (definition: DecisionTableProps) => void;
     };
   }
 }

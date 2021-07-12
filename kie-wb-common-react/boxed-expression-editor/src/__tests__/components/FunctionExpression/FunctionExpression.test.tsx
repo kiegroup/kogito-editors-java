@@ -21,19 +21,18 @@ import {
   EDIT_EXPRESSION_DATA_TYPE,
   flushPromises,
   usingTestingBoxedExpressionI18nContext,
+  wrapComponentInContext,
 } from "../test-utils";
 import { DEFAULT_FIRST_PARAM_NAME, FunctionExpression } from "../../../components/FunctionExpression";
 import * as React from "react";
 import { DataType, EntryInfo, FunctionKind, FunctionProps, LogicType } from "../../../api";
 import { act } from "react-dom/test-utils";
 import * as _ from "lodash";
-import { BoxedExpressionGlobalContext } from "../../../context";
 
 describe("FunctionExpression tests", () => {
   const documentName = "document";
   const model = "model";
   const parametersFromModel: EntryInfo[] = [{ name: "p-1", dataType: DataType.Number }];
-  const modelsFromDocument = [{ model, parametersFromModel }];
 
   test("should show a table with two levels visible header, with one row and one column", () => {
     const { container } = render(
@@ -392,23 +391,6 @@ describe("FunctionExpression tests", () => {
       );
     });
   });
-
-  function wrapComponentInContext(component: JSX.Element) {
-    return (
-      <BoxedExpressionGlobalContext.Provider
-        value={{
-          pmmlParams: [{ document: documentName, modelsFromDocument }],
-          supervisorHash: "",
-          setSupervisorHash: jest.fn,
-          boxedExpressionEditorRef: { current: document.body as HTMLDivElement },
-          currentlyOpenedHandlerCallback: jest.fn,
-          setCurrentlyOpenedHandlerCallback: jest.fn,
-        }}
-      >
-        {component}
-      </BoxedExpressionGlobalContext.Provider>
-    );
-  }
 
   function mockBroadcastDefinition(mockedBroadcastDefinition: jest.Mock) {
     window.beeApi = _.extend(window.beeApi || {}, {

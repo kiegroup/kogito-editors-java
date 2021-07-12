@@ -23,6 +23,7 @@ import {
   BoxedExpressionEditor,
   ContextProps,
   DataType,
+  DecisionTableProps,
   ExpressionContainerProps,
   ExpressionProps,
   FunctionProps,
@@ -80,6 +81,7 @@ export const App: React.FunctionComponent = () => {
     broadcastListExpressionDefinition: (definition: ListProps) => setUpdatedExpression(definition),
     broadcastInvocationExpressionDefinition: (definition: InvocationProps) => setUpdatedExpression(definition),
     broadcastFunctionExpressionDefinition: (definition: FunctionProps) => setUpdatedExpression(definition),
+    broadcastDecisionTableExpressionDefinition: (definition: DecisionTableProps) => setUpdatedExpression(definition),
   };
 
   return (
@@ -88,10 +90,6 @@ export const App: React.FunctionComponent = () => {
         <BoxedExpressionEditor expressionDefinition={expressionDefinition} pmmlParams={pmmlParams} />
       </div>
       <div className="updated-json">
-        <p className="disclaimer">
-          ⚠ Currently, JSON gets updated only for literal expression, relation, context, list, invocation and function
-          logic types
-        </p>
         <pre>{JSON.stringify(updatedExpression, null, 2)}</pre>
       </div>
     </div>

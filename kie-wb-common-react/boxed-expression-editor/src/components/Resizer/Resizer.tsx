@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-import "./Resizer.css";
+import * as _ from "lodash";
 import * as React from "react";
-import { useCallback, useContext, useMemo, useState, useLayoutEffect } from "react";
+import { useCallback, useContext, useLayoutEffect, useMemo, useState } from "react";
 import { ResizableBox } from "react-resizable";
 import { v4 as uuid } from "uuid";
-import * as _ from "lodash";
-import { Cell, DOMSession } from "./dom";
-import { DEFAULT_MIN_WIDTH, widthValue as commonWidthValue } from "./common";
 import { BoxedExpressionGlobalContext } from "../../context";
+import { DEFAULT_MIN_WIDTH, widthValue as commonWidthValue } from "./common";
+import { Cell, DOMSession } from "./dom";
+import "./Resizer.css";
 
 export interface ResizerProps {
   width: number;
@@ -99,6 +99,12 @@ export const Resizer: React.FunctionComponent<ResizerProps> = ({
       const cellRect = cell.getRect();
       return cellRect.x <= currentRect.x && cellRect.right >= currentRect.right;
     };
+    const isLastGroupColumn = (cell: Cell) => {
+      if (!currentCell.isColSpanHeader()) {
+        return false;
+      }
+      return cell.getRect().right === currentRect.right;
+    };
 
     if (currentCell.isLastColumn()) {
       allCells
@@ -110,7 +116,9 @@ export const Resizer: React.FunctionComponent<ResizerProps> = ({
       let hasSomeLastColumn = false;
 
       allCells.forEach((cell) => {
-        if ((hasSameParent(cell) || isCellParent(cell)) && containsCurrent(cell)) {
+        const hasParentRelationship = hasSameParent(cell) || isCellParent(cell);
+        const shareSamePosition = containsCurrent(cell) || isLastGroupColumn(cell);
+        if (hasParentRelationship && shareSamePosition) {
           applicableCells.push(cell);
           if (cell.isLastColumn()) {
             hasSomeLastColumn = true;
