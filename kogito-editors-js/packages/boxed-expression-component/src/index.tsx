@@ -24,7 +24,7 @@ export * from "./api";
 
 window.renderBoxedExpressionEditor = (selector: string, definition: ExpressionProps) => {
   ReactDOM.render(
-    <BoxedExpressionEditor expressionDefinition={{ selectedExpression: definition }} />,
+    <BoxedExpressionEditor expressionDefinition={definition} />,
     document.getElementById(selector)
   );
 };
