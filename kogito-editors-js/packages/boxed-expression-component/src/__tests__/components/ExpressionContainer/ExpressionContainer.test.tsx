@@ -17,7 +17,7 @@
 import { ExpressionContainer } from "../../../components";
 import { render } from "@testing-library/react";
 import * as React from "react";
-import { usingTestingBoxedExpressionI18nContext } from "../test-utils";
+import { usingTestingBoxedExpressionI18nContext, wrapComponentInContext } from "../test-utils";
 import { DataType, LogicType } from "../../../api";
 
 describe("ExpressionContainer tests", () => {
@@ -25,7 +25,7 @@ describe("ExpressionContainer tests", () => {
     const expression = { name: "Test", dataType: DataType.Undefined };
 
     const { container } = render(
-      usingTestingBoxedExpressionI18nContext(<ExpressionContainer selectedExpression={expression} />).wrapper
+      usingTestingBoxedExpressionI18nContext(wrapComponentInContext(<ExpressionContainer />, expression)).wrapper
     );
 
     expect(container).toMatchSnapshot();
@@ -36,7 +36,7 @@ describe("ExpressionContainer tests", () => {
     const expression = { name: expressionTitle, dataType: DataType.Undefined };
 
     const { container } = render(
-      usingTestingBoxedExpressionI18nContext(<ExpressionContainer selectedExpression={expression} />).wrapper
+      usingTestingBoxedExpressionI18nContext(wrapComponentInContext(<ExpressionContainer />, expression)).wrapper
     );
     expect(container.querySelector(".expression-title")).toBeTruthy();
     expect(container.querySelector(".expression-title")!.innerHTML).toBe(expressionTitle);
@@ -45,7 +45,7 @@ describe("ExpressionContainer tests", () => {
   test("should render expression type, when type prop is passed", () => {
     const expression = { name: "Test", logicType: LogicType.LiteralExpression, dataType: DataType.Undefined };
     const { container } = render(
-      usingTestingBoxedExpressionI18nContext(<ExpressionContainer selectedExpression={expression} />).wrapper
+      usingTestingBoxedExpressionI18nContext(wrapComponentInContext(<ExpressionContainer />, expression)).wrapper
     );
 
     expect(container.querySelector(".expression-type")).toBeTruthy();
@@ -56,7 +56,7 @@ describe("ExpressionContainer tests", () => {
     const expression = { name: "Test", dataType: DataType.Undefined };
 
     const { container } = render(
-      usingTestingBoxedExpressionI18nContext(<ExpressionContainer selectedExpression={expression} />).wrapper
+      usingTestingBoxedExpressionI18nContext(wrapComponentInContext(<ExpressionContainer />, expression)).wrapper
     );
     expect(container.querySelector(".expression-type")).toBeTruthy();
     expect(container.querySelector(".expression-type")!.innerHTML).toBe("(&lt;Undefined&gt;)");

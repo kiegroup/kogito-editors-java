@@ -15,40 +15,34 @@
  */
 
 import * as React from "react";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useContext, useRef } from "react";
 import "./ExpressionContainer.css";
 import { ExpressionProps, LogicType } from "../../api";
 import { LogicTypeSelector } from "../LogicTypeSelector";
+import { BoxedExpressionGlobalContext } from "../../context";
 
-export interface ExpressionContainerProps {
-  /** Expression properties */
-  selectedExpression: ExpressionProps;
-}
+export const ExpressionContainer: () => JSX.Element = () => {
+  const { expressionDefinition, setExpressionDefinition } = useContext(BoxedExpressionGlobalContext);
 
-export const ExpressionContainer: ({ selectedExpression }: ExpressionContainerProps) => JSX.Element = (
-  props: ExpressionContainerProps
-) => {
   const expressionContainerRef = useRef<HTMLDivElement>(null);
 
-  const [selectedExpression, setSelectedExpression] = useState(props.selectedExpression);
-
   const updateExpressionNameAndDataType = useCallback((updatedName, updatedDataType) => {
-    setSelectedExpression((previousSelectedExpression: ExpressionProps) => ({
+    setExpressionDefinition((previousSelectedExpression: ExpressionProps) => ({
       ...previousSelectedExpression,
       name: updatedName,
       dataType: updatedDataType,
     }));
-  }, []);
+  }, [setExpressionDefinition]);
 
   const onLogicTypeUpdating = useCallback((logicType) => {
-    setSelectedExpression((previousSelectedExpression: ExpressionProps) => ({
+    setExpressionDefinition((previousSelectedExpression: ExpressionProps) => ({
       ...previousSelectedExpression,
       logicType: logicType,
     }));
-  }, []);
+  }, [setExpressionDefinition]);
 
   const onLogicTypeResetting = useCallback(() => {
-    setSelectedExpression((previousSelectedExpression: ExpressionProps) => {
+    setExpressionDefinition((previousSelectedExpression: ExpressionProps) => {
       const updatedExpression = {
         uid: previousSelectedExpression.uid,
         name: previousSelectedExpression.name,
@@ -58,17 +52,13 @@ export const ExpressionContainer: ({ selectedExpression }: ExpressionContainerPr
       window.beeApi?.resetExpressionDefinition?.(updatedExpression);
       return updatedExpression;
     });
-  }, []);
-
-  const getLogicTypeSelectorRef = useCallback(() => {
-    return expressionContainerRef.current!;
-  }, []);
+  }, [setExpressionDefinition]);
 
   return (
     <div className="expression-container">
       <div className="expression-name-and-logic-type">
-        <span className="expression-title">{selectedExpression.name}</span>
-        <span className="expression-type">({selectedExpression.logicType || LogicType.Undefined})</span>
+        <span className="expression-title">{expressionDefinition.name}</span>
+        <span className="expression-type">({expressionDefinition.logicType || LogicType.Undefined})</span>
       </div>
 
       <div
@@ -77,11 +67,11 @@ export const ExpressionContainer: ({ selectedExpression }: ExpressionContainerPr
         data-ouia-component-id="expression-container"
       >
         <LogicTypeSelector
-          selectedExpression={selectedExpression}
+          selectedExpression={expressionDefinition}
           onLogicTypeUpdating={onLogicTypeUpdating}
           onLogicTypeResetting={onLogicTypeResetting}
           onUpdatingNameAndDataType={updateExpressionNameAndDataType}
-          getPlacementRef={getLogicTypeSelectorRef}
+          getPlacementRef={useCallback(() => expressionContainerRef.current!, [])}
         />
       </div>
     </div>
