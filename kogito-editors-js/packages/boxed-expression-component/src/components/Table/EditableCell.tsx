@@ -16,8 +16,9 @@
 
 import "./EditableCell.css";
 import * as React from "react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { PropsWithChildren, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { CellProps } from "../../api";
+import _ from "lodash";
 
 export const READ_MODE = "editable-cell--read-mode";
 export const EDIT_MODE = "editable-cell--edit-mode";
@@ -29,7 +30,11 @@ export interface EditableCellProps extends CellProps {
   onCellUpdate: (rowIndex: number, columnId: string, value: string) => void;
 }
 
-export const EditableCell: React.FunctionComponent<EditableCellProps> = ({
+const areEqual = (prevProps: Readonly<PropsWithChildren<EditableCellProps>>, nextProps: Readonly<PropsWithChildren<EditableCellProps>>): boolean => {
+  return _.isEqual(prevProps.value, nextProps.value);
+};
+
+export const EditableCell: React.FunctionComponent<EditableCellProps> = React.memo(({
   value: initialValue,
   row: { index },
   column: { id },
@@ -41,7 +46,11 @@ export const EditableCell: React.FunctionComponent<EditableCellProps> = ({
   const textarea = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
-    setValue(initialValue);
+    if (initialValue !== value) {
+      setValue(initialValue);
+    }
+    // Watching for initialValue prop change for updating value properly
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialValue]);
 
   const onChange = useCallback((e) => {
@@ -53,8 +62,10 @@ export const EditableCell: React.FunctionComponent<EditableCellProps> = ({
     setMode(READ_MODE);
     setIsSelected(false);
 
-    onCellUpdate(index, id, value);
-  }, [id, index, value, onCellUpdate]);
+    if (initialValue !== value) {
+      onCellUpdate(index, id, value);
+    }
+  }, [initialValue, value, onCellUpdate, index, id]);
 
   const onSelect = useCallback(() => {
     setIsSelected(true);
@@ -64,7 +75,11 @@ export const EditableCell: React.FunctionComponent<EditableCellProps> = ({
     }
 
     textarea.current?.focus();
-    textarea.current?.setSelectionRange(value.length, value.length);
+    if (value) {
+      textarea.current?.setSelectionRange(value.length, value.length);
+    } else {
+      textarea.current?.setSelectionRange(0, 0);
+    }
   }, [value]);
 
   const onDoubleClick = useCallback(() => {
@@ -104,20 +119,18 @@ export const EditableCell: React.FunctionComponent<EditableCellProps> = ({
 
   return useMemo(
     () => (
-      <>
-        <div onDoubleClick={onDoubleClick} onClick={onSelect} className={cssClass()}>
-          <span>{value}</span>
-          <textarea
-            ref={textarea}
-            value={value || ""}
-            onFocus={onSelect}
-            onKeyPress={onKeyPress}
-            onChange={onChange}
-            onBlur={onBlur}
-          />
-        </div>
-      </>
+      <div onDoubleClick={onDoubleClick} onClick={onSelect} className={cssClass()}>
+        <span>{value}</span>
+        <textarea
+          ref={textarea}
+          value={value || ""}
+          onFocus={onSelect}
+          onKeyPress={onKeyPress}
+          onChange={onChange}
+          onBlur={onBlur}
+        />
+      </div>
     ),
     [onDoubleClick, onSelect, cssClass, value, onKeyPress, onChange, onBlur]
   );
-};
+}, areEqual);
