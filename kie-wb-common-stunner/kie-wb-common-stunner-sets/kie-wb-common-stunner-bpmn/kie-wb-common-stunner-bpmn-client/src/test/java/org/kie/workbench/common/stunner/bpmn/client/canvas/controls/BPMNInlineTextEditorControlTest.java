@@ -63,17 +63,50 @@ public class BPMNInlineTextEditorControlTest {
     private TextAnnotation textAnnotation;
 
     @Test
-    public void testEditable() {
+    public void testEditableUserTask() {
         doCallRealMethod().when(inline).isFiltered(any());
-
         assertEquals(true, inline.isFiltered(userTask));
-        assertEquals(true, inline.isFiltered(embeddedSubprocess));
-        assertEquals(true, inline.isFiltered(dataObject));
-        assertEquals(true, inline.isFiltered(textAnnotation));
+    }
 
+    @Test
+    public void testEditableEmbeddedSubprocess() {
+        doCallRealMethod().when(inline).isFiltered(any());
+        assertEquals(true, inline.isFiltered(embeddedSubprocess));
+    }
+
+    @Test
+    public void testEditableDataObject() {
+        doCallRealMethod().when(inline).isFiltered(any());
+        assertEquals(true, inline.isFiltered(dataObject));
+    }
+
+    @Test
+    public void testEditableTextAnnotation() {
+        doCallRealMethod().when(inline).isFiltered(any());
+        assertEquals(true, inline.isFiltered(textAnnotation));
+    }
+
+    @Test
+    public void testEditableGateway() {
+        doCallRealMethod().when(inline).isFiltered(any());
         assertEquals(false, inline.isFiltered(gateway));
+    }
+
+    @Test
+    public void testEditableEndEvent() {
+        doCallRealMethod().when(inline).isFiltered(any());
         assertEquals(false, inline.isFiltered(endEvent));
+    }
+
+    @Test
+    public void testEditableStartEvent() {
+        doCallRealMethod().when(inline).isFiltered(any());
         assertEquals(false, inline.isFiltered(startEvent));
+    }
+
+    @Test
+    public void testEditableIntermediateEvent() {
+        doCallRealMethod().when(inline).isFiltered(any());
         assertEquals(false, inline.isFiltered(intermediateEvent));
     }
 }

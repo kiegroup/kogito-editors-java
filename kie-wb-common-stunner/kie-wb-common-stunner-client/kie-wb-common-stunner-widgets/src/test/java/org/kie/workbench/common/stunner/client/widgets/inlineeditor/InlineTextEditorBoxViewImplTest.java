@@ -34,6 +34,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
@@ -92,6 +93,8 @@ public class InlineTextEditorBoxViewImplTest {
     public void init() {
         this.tested = spy(new InlineTextEditorBoxViewImpl(translationService, editNameBox, nameField, showCommand, hideCommand));
         this.tested.init(presenter);
+        doNothing().when(tested).selectText(any());
+
         when(editNameBox.getStyle()).thenReturn(editNameBoxStyle);
         when(nameField.getStyle()).thenReturn(nameFieldStyle);
         when(editNameBox.getParentElement()).thenReturn(parentElement);

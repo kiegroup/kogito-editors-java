@@ -148,15 +148,13 @@ public class InlineTextEditorBoxViewImpl
 
         setVisible();
         scheduleDeferredCommand(() -> {
-                nameField.focus();
-                selectText(nameField);
+            nameField.focus();
+            selectText(nameField);
         });
     }
 
     public void selectText(Div node) {
-        if (DomGlobal.window != null) {
-            DomGlobal.window.getSelection().selectAllChildren(Js.cast(node));
-        }
+        DomGlobal.window.getSelection().selectAllChildren(Js.cast(node));
     }
 
     String buildStyle(final double width, final double height) {
