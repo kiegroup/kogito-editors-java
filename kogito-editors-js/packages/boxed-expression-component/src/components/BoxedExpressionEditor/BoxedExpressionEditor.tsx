@@ -15,7 +15,7 @@
  */
 
 import * as React from "react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import "@patternfly/react-core/dist/styles/base-no-reset.css";
 import "@patternfly/react-styles/css/components/Drawer/drawer.css";
 import "./BoxedExpressionEditor.css";
@@ -52,6 +52,8 @@ export const BoxedExpressionEditor: (props: BoxedExpressionEditorProps) => JSX.E
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.expressionDefinition]);
 
+  const onExpressionChange = useCallback((updatedExpression: ExpressionProps) => setExpressionDefinition(updatedExpression), []);
+
   return useMemo(
     () => (
       <I18nDictionariesProvider
@@ -62,8 +64,6 @@ export const BoxedExpressionEditor: (props: BoxedExpressionEditorProps) => JSX.E
       >
         <BoxedExpressionGlobalContext.Provider
           value={{
-            expressionDefinition,
-            setExpressionDefinition,
             pmmlParams: props.pmmlParams,
             supervisorHash,
             setSupervisorHash,
@@ -74,7 +74,7 @@ export const BoxedExpressionEditor: (props: BoxedExpressionEditorProps) => JSX.E
         >
           <ResizerSupervisor>
             <div className="boxed-expression-editor" ref={boxedExpressionEditorRef}>
-              <ExpressionContainer />
+              <ExpressionContainer selectedExpression={expressionDefinition} onExpressionChange={onExpressionChange} />
             </div>
           </ResizerSupervisor>
         </BoxedExpressionGlobalContext.Provider>

@@ -15,11 +15,9 @@
  */
 
 import * as React from "react";
-import { ExpressionProps, PMMLParams } from "../api";
+import { PMMLParams } from "../api";
 
 export interface BoxedExpressionGlobalContextProps {
-  expressionDefinition: ExpressionProps;
-  setExpressionDefinition: React.Dispatch<React.SetStateAction<ExpressionProps>>
   pmmlParams?: PMMLParams;
   supervisorHash: string;
   setSupervisorHash: (hash: string) => void;
