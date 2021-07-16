@@ -26,7 +26,7 @@ import { act } from "react-dom/test-utils";
 import { fireEvent } from "@testing-library/react";
 import { resetId } from "react-id-generator";
 import { BoxedExpressionGlobalContext } from "../../context";
-import { DataType, ExpressionProps } from "../../api";
+import { DataType } from "../../api";
 
 global.console = { ...global.console, warn: jest.fn() };
 
@@ -57,12 +57,10 @@ export function usingTestingBoxedExpressionI18nContext(
   };
 }
 
-export function wrapComponentInContext(component: JSX.Element, expressionDefinition: ExpressionProps = {}): JSX.Element {
+export function wrapComponentInContext(component: JSX.Element): JSX.Element {
   return (
     <BoxedExpressionGlobalContext.Provider
       value={{
-        expressionDefinition,
-        setExpressionDefinition: jest.fn,
         pmmlParams: [
           {
             document: "document",
