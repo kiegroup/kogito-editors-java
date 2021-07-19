@@ -18,7 +18,7 @@ code {
 
 .menu {
   display: inline-grid;
-  margin: 5px;
+  margin: 20px;
 }
 
 .import-java-classes {

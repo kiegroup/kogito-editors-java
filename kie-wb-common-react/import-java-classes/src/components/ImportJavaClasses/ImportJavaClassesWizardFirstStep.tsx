@@ -15,16 +15,49 @@
  */
 
 import * as React from "react";
-import { EmptyState, EmptyStateIcon, EmptyStateBody, Title, SearchInput } from "@patternfly/react-core";
+import { Title, SearchInput } from "@patternfly/react-core";
 import CubesIcon from "@patternfly/react-icons/dist/js/icons/cubes-icon";
 import { useImportJavaClassesWizardI18n } from "../../i18n";
 import { useCallback, useState } from "react";
+import { EmptyStateWidget } from "../EmptyStateWidget";
+import { ImportJavaClassesWizardClassListTable } from "./ImportJavaClassesWizardClassListTable";
 
-export const ImportJavaClassesWizardFirstStep: React.FunctionComponent = () => {
+export interface ImportJavaClassesWizardFirstStep {
+  /** Text to apply to the Modal button */
+  selectedJavaClasses: string[];
+  /** Text to apply to the Modal button */
+  onSelectedJavaClassesUpdated: (fullClassName: string, add: boolean) => void;
+}
+
+export const ImportJavaClassesWizardFirstStep: React.FunctionComponent<ImportJavaClassesWizardFirstStep> = ({
+  selectedJavaClasses,
+  onSelectedJavaClassesUpdated,
+}) => {
   const EMPTY_SEARCH_VALUE = "";
   const { i18n } = useImportJavaClassesWizardI18n();
   const [searchValue, setSearchValue] = useState(EMPTY_SEARCH_VALUE);
-  const onSearchValueChange = useCallback((value: string) => setSearchValue(value), []);
+  const [retrievedJavaClasses, setRetrievedJavaClasses] = useState<string[]>([]);
+  const onSearchValueChange = useCallback((value: string) => retrieveJavaClasses(value), []);
+  /* This function temporary mocks a call to the LSP service method getClasses */
+  const retrieveJavaClasses = (value: string) => {
+    setSearchValue(value);
+    const retrieved = window.envelopeMock.lspGetClassServiceMocked(value);
+    if (retrieved) {
+      setRetrievedJavaClasses(retrieved);
+    }
+  };
+
+  const EmptyStep: React.FunctionComponent = () => {
+    return (
+      <EmptyStateWidget
+        emptyStateIcon={CubesIcon}
+        emptyStateTitleHeading={"h6"}
+        emptyStateTitleSize={"md"}
+        emptyStateTitleText={i18n.modalWizard.firstStep.emptyState.title}
+        emptyStateBodyText={i18n.modalWizard.firstStep.emptyState.body}
+      />
+    );
+  };
 
   return (
     <>
@@ -38,13 +71,15 @@ export const ImportJavaClassesWizardFirstStep: React.FunctionComponent = () => {
         onClear={() => onSearchValueChange(EMPTY_SEARCH_VALUE)}
         autoFocus
       />
-      <EmptyState>
-        <EmptyStateIcon icon={CubesIcon} />
-        <Title headingLevel="h6" size="md">
-          {i18n.modalWizard.firstStep.emptyState.title}
-        </Title>
-        <EmptyStateBody>{i18n.modalWizard.firstStep.emptyState.body}</EmptyStateBody>
-      </EmptyState>
+      {retrievedJavaClasses.length > 0 || selectedJavaClasses.length > 0 ? (
+        <ImportJavaClassesWizardClassListTable
+          selectedJavaClasses={selectedJavaClasses}
+          retrievedJavaClasses={retrievedJavaClasses}
+          onJavaClassItemSelected={onSelectedJavaClassesUpdated}
+        />
+      ) : (
+        <EmptyStep />
+      )}
     </>
   );
 };
