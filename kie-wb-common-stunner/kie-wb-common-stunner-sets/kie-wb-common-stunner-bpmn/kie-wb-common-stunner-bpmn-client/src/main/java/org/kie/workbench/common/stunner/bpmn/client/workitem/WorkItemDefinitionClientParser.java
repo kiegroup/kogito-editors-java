@@ -285,7 +285,8 @@ public class WorkItemDefinitionClientParser {
 
     private static boolean isComment(char symbol) {
         if (isSlash(symbol)) {
-            if (isSlash(widString.charAt(index + 1))) {
+            if (isSlash(widString.charAt(index + 1))
+                    || isStar(widString.charAt(index + 1))) {
                 return true;
             }
         }
@@ -294,6 +295,26 @@ public class WorkItemDefinitionClientParser {
     }
 
     private static void skipComment() {
+        index++;
+        if (isStar(getCurrentSymbol())) {
+            skipMultiLineComment();
+        } else {
+            skipSingleLineComment();
+        }
+    }
+
+    private static void skipMultiLineComment() {
+        do {
+            index++;
+            if (isStar(getCurrentSymbol())
+                    && isSlash(widString.charAt(index + 1))) {
+                index += 2;
+                break;
+            }
+        } while (true);
+    }
+
+    private static void skipSingleLineComment() {
         do {
             index++;
             if (getCurrentSymbol() == '\n') {
@@ -357,6 +378,10 @@ public class WorkItemDefinitionClientParser {
 
     private static boolean isSlash(char symbol) {
         return symbol == '/';
+    }
+
+    private static boolean isStar(char symbol) {
+        return symbol == '*';
     }
 
     private static boolean isObjectStart(char symbol) {

@@ -46,6 +46,7 @@ public class WorkItemDefinitionClientParserTest {
     private static final String SECOND_WID_IS_INCORRECT_WID_FILE = "org/kie/workbench/common/stunner/bpmn/client/workitem/secondWidIsIncorrect.wid";
     private static final String MVEL_LIST_IN_WID_FILE = "org/kie/workbench/common/stunner/bpmn/client/workitem/listParameters.wid";
     private static final String SINGLE_LINE_COMMENTS_FILE = "org/kie/workbench/common/stunner/bpmn/client/workitem/singleLineComments.wid";
+    private static final String MULTI_LINE_COMMENTS_FILE = "org/kie/workbench/common/stunner/bpmn/client/workitem/multiLineComments.wid";
 
     final static String EMAIL_WID_EXTRACTED_PARAMETERS = "|Body:String,From:String,Subject:String,To:String|";
     final static String RESULT_WID_RETURN_EXTRACTED_PARAMETERS = "|Result:java.lang.Object|";
@@ -220,6 +221,20 @@ public class WorkItemDefinitionClientParserTest {
     @Test
     public void testSingleLineComments() {
         String widFile = loadTestFile(SINGLE_LINE_COMMENTS_FILE);
+        List<WorkItemDefinition> defs = WorkItemDefinitionClientParser.parse(widFile);
+        assertEquals(1, defs.size());
+
+        WorkItemDefinition wid3 = defs.get(0);
+        assertEquals("Rest", wid3.getName());
+        assertEquals("REST", wid3.getDisplayName());
+        assertEquals("", wid3.getIconDefinition().getUri());
+        assertEquals(RESULT_WID_RETURN_EXTRACTED_PARAMETERS, wid3.getResults());
+        assertEquals(REST_WID_EXTRACTED_NOT_COMMENTED_PARAMETERS, wid3.getParameters());
+    }
+
+    @Test
+    public void testMultiLineComments() {
+        String widFile = loadTestFile(MULTI_LINE_COMMENTS_FILE);
         List<WorkItemDefinition> defs = WorkItemDefinitionClientParser.parse(widFile);
         assertEquals(1, defs.size());
 
