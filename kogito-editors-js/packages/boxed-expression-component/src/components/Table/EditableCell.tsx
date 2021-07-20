@@ -16,9 +16,8 @@
 
 import "./EditableCell.css";
 import * as React from "react";
-import { PropsWithChildren, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { CellProps } from "../../api";
-import _ from "lodash";
 
 export const READ_MODE = "editable-cell--read-mode";
 export const EDIT_MODE = "editable-cell--edit-mode";
@@ -29,10 +28,6 @@ export interface EditableCellProps extends CellProps {
   /** Function executed each time a cell gets updated */
   onCellUpdate: (rowIndex: number, columnId: string, value: string) => void;
 }
-
-const areEqual = (prevProps: Readonly<PropsWithChildren<EditableCellProps>>, nextProps: Readonly<PropsWithChildren<EditableCellProps>>): boolean => {
-  return _.isEqual(prevProps.value, nextProps.value);
-};
 
 export const EditableCell: React.FunctionComponent<EditableCellProps> = React.memo(({
   value: initialValue,
@@ -133,4 +128,4 @@ export const EditableCell: React.FunctionComponent<EditableCellProps> = React.me
     ),
     [onDoubleClick, onSelect, cssClass, value, onKeyPress, onChange, onBlur]
   );
-}, areEqual);
+}, () => true);
