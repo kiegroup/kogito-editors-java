@@ -75,13 +75,13 @@ public class WorkItemDefinitionClientParser {
     }
 
     private static List<WorkItemDefinition> parseWid() {
-        if (notObjectStart(skipWhitespace())) {
+        if (notObjectStart(skipWhitespaceAndComments())) {
             throw new IllegalArgumentException("Invalid parameter");
         }
         findNextToken();
 
         List<Map<String, Object>> widFile = new ArrayList<>();
-        while (isObjectStart(skipWhitespace())) {
+        while (isObjectStart(skipWhitespaceAndComments())) {
             switch (findNextToken()) {
                 case '"':
                     widFile.add(getMapEntries());
@@ -93,7 +93,7 @@ public class WorkItemDefinitionClientParser {
                     // If current WID file is incorrect return all already parsed and skip others
                     return convertMvelToWid(widFile);
             }
-            if (isElementSeparator(skipWhitespace())) {
+            if (isElementSeparator(skipWhitespaceAndComments())) {
                 findNextToken();
             }
         }
@@ -180,7 +180,7 @@ public class WorkItemDefinitionClientParser {
 
     private static Map<String, Object> getMapEntries() {
         Map<String, Object> params = new HashMap<>();
-        while (notObjectEnd(skipWhitespace())) {
+        while (notObjectEnd(skipWhitespaceAndComments())) {
             if (isElementSeparator(getCurrentSymbol())) {
                 index++;
                 continue;
@@ -190,7 +190,7 @@ public class WorkItemDefinitionClientParser {
                 params.put(entry.getKey(), entry.getValue());
                 continue;
             }
-            throw new IllegalArgumentException("Invalid parameter");
+            throw new IllegalArgumentException("Invalid parameter line: " + lineNumber + ", file position: " + index);
         }
         index++;
 
@@ -202,21 +202,21 @@ public class WorkItemDefinitionClientParser {
     }
 
     private static Map.Entry<String, Object> getEntry() {
-        skipWhitespace();
+        skipWhitespaceAndComments();
         String name = parseString();
-        if (isObjectEnd(skipWhitespace())) {
+        if (isObjectEnd(skipWhitespaceAndComments())) {
             return new SimpleEntry<>(name, null);
         }
-        if (isElementSeparator(skipWhitespace())) {
+        if (isElementSeparator(skipWhitespaceAndComments())) {
             return new SimpleEntry<>(name, null);
         }
-        if (notParameterDivider(skipWhitespace())) {
+        if (notParameterDivider(skipWhitespaceAndComments())) {
             throw new IllegalArgumentException("Invalid parameter");
         }
 
         index++;
 
-        char currentToken = skipWhitespace();
+        char currentToken = skipWhitespaceAndComments();
 
         Object parameterValue;
 
@@ -248,15 +248,20 @@ public class WorkItemDefinitionClientParser {
 
     private static char findNextToken() {
         index++;
-        return skipWhitespace();
+        return skipWhitespaceAndComments();
     }
 
     private static char getCurrentSymbol() {
         return widString.charAt(index);
     }
 
-    private static char skipWhitespace() {
-        while (isWhitespace(getCurrentSymbol())) {
+    private static char skipWhitespaceAndComments() {
+        while (isWhitespace(getCurrentSymbol()) || isComment(getCurrentSymbol())) {
+            if (isComment(getCurrentSymbol())) {
+                skipComment();
+                continue;
+            }
+
             if (getCurrentSymbol() == '\n') {
                 lineNumber++;
             }
@@ -276,6 +281,25 @@ public class WorkItemDefinitionClientParser {
             default:
                 return false;
         }
+    }
+
+    private static boolean isComment(char symbol) {
+        if (isSlash(symbol)) {
+            if (isSlash(widString.charAt(index + 1))) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static void skipComment() {
+        do {
+            index++;
+            if (getCurrentSymbol() == '\n') {
+                break;
+            }
+        } while (true);
     }
 
     private static String parseString() {
@@ -323,11 +347,16 @@ public class WorkItemDefinitionClientParser {
             case '"':
             case '\'':
             case ',':
+            case '/':
             case ']':
                 return true;
             default:
                 return false;
         }
+    }
+
+    private static boolean isSlash(char symbol) {
+        return symbol == '/';
     }
 
     private static boolean isObjectStart(char symbol) {
