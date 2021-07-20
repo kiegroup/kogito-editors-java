@@ -47,6 +47,7 @@ public class WorkItemDefinitionClientParserTest {
     private static final String MVEL_LIST_IN_WID_FILE = "org/kie/workbench/common/stunner/bpmn/client/workitem/listParameters.wid";
     private static final String SINGLE_LINE_COMMENTS_FILE = "org/kie/workbench/common/stunner/bpmn/client/workitem/singleLineComments.wid";
     private static final String MULTI_LINE_COMMENTS_FILE = "org/kie/workbench/common/stunner/bpmn/client/workitem/multiLineComments.wid";
+    private static final String IMPORT_PART_IGNORED = "org/kie/workbench/common/stunner/bpmn/client/workitem/importPartIgnored.wid";
 
     final static String EMAIL_WID_EXTRACTED_PARAMETERS = "|Body:String,From:String,Subject:String,To:String|";
     final static String RESULT_WID_RETURN_EXTRACTED_PARAMETERS = "|Result:java.lang.Object|";
@@ -244,6 +245,21 @@ public class WorkItemDefinitionClientParserTest {
         assertEquals("", wid3.getIconDefinition().getUri());
         assertEquals(RESULT_WID_RETURN_EXTRACTED_PARAMETERS, wid3.getResults());
         assertEquals(REST_WID_EXTRACTED_NOT_COMMENTED_PARAMETERS, wid3.getParameters());
+    }
+
+    @Test
+    public void testIgnoreImportPart() {
+        String widFile = loadTestFile(IMPORT_PART_IGNORED);
+        List<WorkItemDefinition> defs = WorkItemDefinitionClientParser.parse(widFile);
+
+        assertEquals(1, defs.size());
+        WorkItemDefinition wid1 = defs.get(0);
+
+        assertEquals("Rest", wid1.getName());
+        assertEquals("REST", wid1.getDisplayName());
+        assertEquals("defaultservicenodeicon.png", wid1.getIconDefinition().getUri());
+        assertEquals(RESULT_WID_RETURN_EXTRACTED_PARAMETERS, wid1.getResults());
+        assertEquals(REST_WID_EXTRACTED_PARAMETERS, wid1.getParameters());
     }
 
     @Test

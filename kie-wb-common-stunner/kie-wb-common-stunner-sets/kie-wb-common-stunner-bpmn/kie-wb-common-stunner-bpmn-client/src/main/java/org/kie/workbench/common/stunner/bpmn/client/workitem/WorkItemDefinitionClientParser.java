@@ -75,9 +75,7 @@ public class WorkItemDefinitionClientParser {
     }
 
     private static List<WorkItemDefinition> parseWid() {
-        if (notObjectStart(skipWhitespaceAndComments())) {
-            throw new IllegalArgumentException("Invalid parameter");
-        }
+        skipToObjectStart();
         findNextToken();
 
         List<Map<String, Object>> widFile = new ArrayList<>();
@@ -414,6 +412,14 @@ public class WorkItemDefinitionClientParser {
 
     private static boolean notObjectEnd(char symbol) {
         return !isObjectEnd(symbol);
+    }
+
+    private static void skipToObjectStart() {
+        skipWhitespaceAndComments();
+        while (notObjectStart(getCurrentSymbol())) {
+            index++;
+            skipWhitespaceAndComments();
+        }
     }
 
     private static boolean notObjectStart(char symbol) {
