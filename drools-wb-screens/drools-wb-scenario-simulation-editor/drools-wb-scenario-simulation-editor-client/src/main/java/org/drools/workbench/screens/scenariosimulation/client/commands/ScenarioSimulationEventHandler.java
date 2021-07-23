@@ -407,7 +407,8 @@ public class ScenarioSimulationEventHandler implements AppendColumnEventHandler,
         context.getStatus().setPropertyNameElements(event.getPropertyNameElements());
         context.getStatus().setValueClassName(event.getValueClassName());
         context.getStatus().setImportPrefix(event.getImportPrefix());
-        if (isSameFactProperty(event.getGridWidget(), event.getPropertyNameElements(), event.getFactMappingValueType()) &&                isSameSelectedColumnType(event.getGridWidget(), event.getValueClassName())) {
+        if (isSameFactProperty(event.getGridWidget(), event.getPropertyNameElements(), event.getFactMappingValueType()) &&
+                isSameSelectedColumnType(event.getGridWidget(), event.getValueClassName())) {
             return;
         } else {
             if (isSelectedColumnEmpty(event.getGridWidget())) {
