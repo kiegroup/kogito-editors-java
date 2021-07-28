@@ -15,5 +15,5 @@
  */
 
 module.exports = {
-  extends: ["../../.eslintrc.js"],
+  printWidth: 120,
 };

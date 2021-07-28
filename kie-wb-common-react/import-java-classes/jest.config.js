@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2020 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,5 +15,17 @@
  */
 
 module.exports = {
-  extends: ["../../.eslintrc.js"],
+  reporters: ["default"],
+  moduleDirectories: ["node_modules", "src", "<rootDir>"],
+  moduleFileExtensions: ["js", "jsx", "ts", "tsx"],
+  modulePathIgnorePatterns: ["<rootDir>/showcase/", "<rootDir>/dist/"],
+  testRegex: "/__tests__/.*\\.test\\.(jsx?|tsx?)$",
+  setupFilesAfterEnv: ["./src/__tests__/test-setup.ts"],
+  transform: {
+    "^.+\\.jsx?$": "babel-jest",
+    "^.+\\.tsx?$": "ts-jest",
+  },
+  moduleNameMapper: {
+    "\\.(css|less|sass|scss)$": "identity-obj-proxy",
+  },
 };
