@@ -19,44 +19,42 @@ import { fireEvent, render } from "@testing-library/react";
 import { ImportJavaClasses } from "../../components";
 
 describe("ImportJavaClasses component tests", () => {
+  test("should render ImportJavaClasses Button component", () => {
+    const { container } = render(<ImportJavaClasses buttonDisabledStatus={false} />);
 
-    test("should render ImportJavaClasses Button component", () => {
-        const { container } = render(<ImportJavaClasses buttonDisabledStatus={false} />);
+    expect(container).toMatchSnapshot();
+  });
 
-        expect(container).toMatchSnapshot();
-    });
+  test("Should show Modal after clicking on the button", () => {
+    const { baseElement, getByText } = render(<ImportJavaClasses buttonDisabledStatus={false} />);
+    const modalWizardButton = getByText("Import Java classes")! as HTMLButtonElement;
+    modalWizardButton.click();
 
-    test("Should show Modal after clicking on the button", () => {
-        const { baseElement, getByText } = render(<ImportJavaClasses buttonDisabledStatus={false} />);
-        const modalWizardButton = getByText("Import Java classes")! as HTMLButtonElement;
-        modalWizardButton.click();
+    expect(baseElement).toMatchSnapshot();
+  });
 
-        expect(baseElement).toMatchSnapshot();
-    });
+  test("Should search box works", () => {
+    const { baseElement, getByText } = render(<ImportJavaClasses buttonDisabledStatus={false} />);
+    const modalWizardButton = getByText("Import Java classes")! as HTMLButtonElement;
+    modalWizardButton.click();
+    const inputElement = baseElement.querySelector('[aria-label="Search input"]')! as HTMLInputElement;
+    expect(inputElement).toHaveValue("");
+    expect(baseElement.querySelector('[aria-label="Reset"]')! as HTMLButtonElement).not.toBeInTheDocument();
+    fireEvent.change(inputElement, { target: { value: "test" } });
+    expect(inputElement).toHaveValue("test");
+    const resetButton = baseElement.querySelector('[aria-label="Reset"]')! as HTMLButtonElement;
+    expect(resetButton).toBeInTheDocument();
+    resetButton.click();
+    expect(baseElement.querySelector('[aria-label="Reset"]')! as HTMLButtonElement).not.toBeInTheDocument();
+  });
 
-    test("Should search box works", () => {
-      const { baseElement, getByText } = render(<ImportJavaClasses buttonDisabledStatus={false} />);
-      const modalWizardButton = getByText("Import Java classes")! as HTMLButtonElement;
-      modalWizardButton.click();
-      const inputElement = baseElement.querySelector('[aria-label="Search input"]')! as HTMLInputElement;
-      expect(inputElement).toHaveValue("");
-      expect(baseElement.querySelector('[aria-label="Reset"]')! as HTMLButtonElement).not.toBeInTheDocument();
-      fireEvent.change(inputElement, { target: { value: "test" } });
-      expect(inputElement).toHaveValue("test");
-      const resetButton = baseElement.querySelector('[aria-label="Reset"]')! as HTMLButtonElement;
-      expect(resetButton).toBeInTheDocument();
-      resetButton.click();
-      expect(baseElement.querySelector('[aria-label="Reset"]')! as HTMLButtonElement).not.toBeInTheDocument();
-    });
+  test("Should close Modal after opening it and clicking on the Cancel button", () => {
+    const { baseElement, getByText } = render(<ImportJavaClasses buttonDisabledStatus={false} />);
+    const modalWizardButton = getByText("Import Java classes")! as HTMLButtonElement;
+    modalWizardButton.click();
+    const cancelButton = getByText("Cancel") as HTMLButtonElement;
+    cancelButton.click();
 
-    test("Should close Modal after opening it and clicking on the Cancel button", () => {
-        const { baseElement, getByText } = render(<ImportJavaClasses buttonDisabledStatus={false} />);
-        const modalWizardButton = getByText("Import Java classes")! as HTMLButtonElement;
-        modalWizardButton.click();
-        const cancelButton = getByText("Cancel") as HTMLButtonElement;
-        cancelButton.click();
-
-        expect(baseElement).toMatchSnapshot();
-    });
-
+    expect(baseElement).toMatchSnapshot();
+  });
 });

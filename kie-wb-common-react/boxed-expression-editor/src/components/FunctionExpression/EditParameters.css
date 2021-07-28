@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 .boxed-expression-editor .parameters-editor-popover .parameters-editor {
   padding: 8px 14px;
 }
@@ -38,14 +37,29 @@
   padding-top: 5px;
 }
 
-.boxed-expression-editor .parameters-editor-popover .parameters-editor .parameters-container .parameter-entry > :nth-child(1) {
+.boxed-expression-editor
+  .parameters-editor-popover
+  .parameters-editor
+  .parameters-container
+  .parameter-entry
+  > :nth-child(1) {
   width: 30%;
 }
 
-.boxed-expression-editor .parameters-editor-popover .parameters-editor .parameters-container .parameter-entry > :nth-child(2) {
+.boxed-expression-editor
+  .parameters-editor-popover
+  .parameters-editor
+  .parameters-container
+  .parameter-entry
+  > :nth-child(2) {
   width: 40%;
 }
 
-.boxed-expression-editor .parameters-editor-popover .parameters-editor .parameters-container .parameter-entry > :nth-child(3) {
+.boxed-expression-editor
+  .parameters-editor-popover
+  .parameters-editor
+  .parameters-container
+  .parameter-entry
+  > :nth-child(3) {
   width: 25%;
 }

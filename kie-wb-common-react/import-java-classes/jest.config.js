@@ -23,9 +23,9 @@ module.exports = {
   setupFilesAfterEnv: ["./src/__tests__/test-setup.ts"],
   transform: {
     "^.+\\.jsx?$": "babel-jest",
-    "^.+\\.tsx?$": "ts-jest"
+    "^.+\\.tsx?$": "ts-jest",
   },
   moduleNameMapper: {
-    "\\.(css|less|sass|scss)$": "identity-obj-proxy"
-  }
+    "\\.(css|less|sass|scss)$": "identity-obj-proxy",
+  },
 };

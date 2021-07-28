@@ -11,12 +11,7 @@
     "tsconfigRootDir": "."
   },
   // we want to use the recommended rules provided from the typescript plugin
-  "extends": [
-    "eslint:recommended",
-    "plugin:react/recommended",
-    "plugin:@typescript-eslint/recommended",
-    "prettier"
-  ],
+  "extends": ["eslint:recommended", "plugin:react/recommended", "plugin:@typescript-eslint/recommended", "prettier"],
   "globals": {
     "window": "readonly",
     "describe": "readonly",
@@ -32,12 +27,7 @@
     }
   },
   // includes the typescript specific rules found here: https://github.com/typescript-eslint/typescript-eslint/tree/master/packages/eslint-plugin#supported-rules
-  "plugins": [
-    "@typescript-eslint",
-    "react-hooks",
-    "eslint-plugin-react-hooks",
-    "prettier"
-  ],
+  "plugins": ["@typescript-eslint", "react-hooks", "eslint-plugin-react-hooks", "prettier"],
   "rules": {
     "@typescript-eslint/explicit-function-return-type": "off",
     "@typescript-eslint/no-non-null-assertion": "off",

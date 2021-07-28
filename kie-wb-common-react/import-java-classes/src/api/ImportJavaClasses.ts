@@ -18,6 +18,6 @@ export {};
 
 declare global {
   interface Window {
-    renderImportJavaClasses: (selector: string, buttonDisabledStatus: boolean, buttonTooltipMessage?: string) => void,
+    renderImportJavaClasses: (selector: string, buttonDisabledStatus: boolean, buttonTooltipMessage?: string) => void;
   }
 }
