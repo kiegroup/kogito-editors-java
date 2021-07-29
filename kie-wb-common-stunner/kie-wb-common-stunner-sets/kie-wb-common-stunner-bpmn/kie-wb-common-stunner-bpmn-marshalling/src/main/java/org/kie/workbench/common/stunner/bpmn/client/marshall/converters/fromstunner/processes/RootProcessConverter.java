@@ -26,13 +26,12 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseFileVari
 import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseIdPrefix;
 import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseRoles;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.BaseDiagramSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.variables.BaseAdvancedData;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.BaseProcessData;
+import org.kie.workbench.common.stunner.bpmn.definition.property.variables.BaseRootProcessAdvancedData;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 
 import static org.kie.workbench.common.stunner.bpmn.client.marshall.converters.fromstunner.Factories.bpmn2;
-import static org.kie.workbench.common.stunner.core.util.StringUtils.replaceIllegalCharsAttribute;
 
 public class RootProcessConverter {
 
@@ -65,10 +64,10 @@ public class RootProcessConverter {
 
         BaseDiagramSet diagramSet = definition.getDiagramSet();
 
-        p.setName(replaceIllegalCharsAttribute(diagramSet.getName().getValue()));
+        p.setName(diagramSet.getName().getValue());
         p.setDocumentation(diagramSet.getDocumentation().getValue());
 
-        p.setId(replaceIllegalCharsAttribute(diagramSet.getId().getValue()));
+        p.setId(diagramSet.getId().getValue());
         p.setPackage(diagramSet.getPackageProperty().getValue());
         p.setType(diagramSet.getProcessType().getValue());
         p.setVersion(diagramSet.getVersion().getValue());
@@ -81,9 +80,9 @@ public class RootProcessConverter {
         BaseProcessData processData = definition.getProcessData();
         p.setProcessVariables(processData.getProcessVariables());
 
-        BaseAdvancedData advancedData = definition.getAdvancedData();
+        BaseRootProcessAdvancedData advancedData = definition.getAdvancedData();
         p.setGlobalVariables(advancedData.getGlobalVariables());
-        p.setMetadata(advancedData.getMetaDataAttributes());
+        p.setMetaData(advancedData.getMetaDataAttributes());
 
         //Case Management
         final CaseIdPrefix caseIdPrefix = definition.getCaseManagementSet().getCaseIdPrefix();

@@ -16,48 +16,12 @@
 
 package org.kie.workbench.common.stunner.client.widgets.canvas;
 
-import com.ait.lienzo.client.widget.panel.scrollbars.ScrollablePanel;
-import elemental2.dom.DomGlobal;
-import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyEventHandler;
-import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyboardControl;
+import com.ait.lienzo.client.widget.panel.impl.ScrollablePanel;
 
 public class ScrollableLienzoPanelView
-        extends ScrollablePanel
-        implements StunnerLienzoBoundsPanelView {
+        extends ScrollablePanel {
 
     public ScrollableLienzoPanelView() {
         super(StunnerBoundsProviderFactory.newProvider());
-    }
-
-    public ScrollableLienzoPanelView(final int width,
-                                     final int height) {
-        super(StunnerBoundsProviderFactory.newProvider(), width, height);
-    }
-
-    /**
-     * This is where all keyboard events start. On Kogito environment, we skip event handling since that's done by the envelope.
-     * See {@link KeyEventHandler#addKeyShortcutCallback(KeyboardControl.KeyShortcutCallback)}
-     */
-    @Override
-    public void setPresenter(final StunnerLienzoBoundsPanel presenter) {
-
-        if (!isRemoteCommunicationEnabled()) {
-            DomGlobal.console.debug("Kogito environment detected. Skipping default event handling.");
-            return;
-        }
-
-        presenter.register(
-                addKeyDownHandler(event -> presenter.onKeyDown(event.getNativeKeyCode()))
-        );
-        presenter.register(
-                addKeyPressHandler(event -> presenter.onKeyPress(event.getUnicodeCharCode()))
-        );
-        presenter.register(
-                addKeyUpHandler(event -> presenter.onKeyUp(event.getNativeKeyCode()))
-        );
-    }
-
-    boolean isRemoteCommunicationEnabled() {
-        return false;
     }
 }

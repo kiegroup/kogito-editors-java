@@ -27,11 +27,10 @@ import org.kie.workbench.common.stunner.bpmn.definition.DataObject;
 import org.kie.workbench.common.stunner.bpmn.definition.property.artifacts.DataObjectType;
 import org.kie.workbench.common.stunner.bpmn.definition.property.artifacts.DataObjectTypeValue;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
+import org.kie.workbench.common.stunner.bpmn.definition.property.variables.AdvancedData;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
-
-import static org.kie.workbench.common.stunner.core.util.StringUtils.revertIllegalCharsAttribute;
 
 public class DataObjectConverter implements NodeConverter<org.eclipse.bpmn2.DataObjectReference> {
 
@@ -49,16 +48,17 @@ public class DataObjectConverter implements NodeConverter<org.eclipse.bpmn2.Data
     }
 
     private Result<BpmnNode> convert(DataObjectReference element, DataObjectPropertyReader p) {
-        Node<View<DataObject>, Edge> node = typedFactoryManager.newNode(revertIllegalCharsAttribute(element.getId()),
+        Node<View<DataObject>, Edge> node = typedFactoryManager.newNode(element.getId(),
                                                                         DataObject.class);
         DataObject definition = node.getContent().getDefinition();
-        definition.setName(new Name(revertIllegalCharsAttribute(p.getName())));
+        definition.setName(new Name(p.getName()));
         definition.setType(new DataObjectType(new DataObjectTypeValue(p.getType())));
         node.getContent().setBounds(p.getBounds());
 
         definition.setDimensionsSet(p.getRectangleDimensionsSet());
         definition.setFontSet(p.getFontSet());
         definition.setBackgroundSet(p.getBackgroundSet());
+        definition.setAdvancedData(new AdvancedData(p.getMetaDataAttributes()));
         return Result.success(BpmnNode.of(node, p));
     }
 }
