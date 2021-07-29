@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2020 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.core.client.event.keyboard;
+package org.kie.workbench.common.stunner.bpmn.definition.property.variables;
 
-import org.jboss.errai.common.client.api.annotations.NonPortable;
+import org.kie.workbench.common.stunner.bpmn.definition.BPMNPropertySet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.GlobalVariables;
+import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.MetaDataAttributes;
 
-@NonPortable
-public final class KeyPressEvent extends AbstractKeyboardEvent {
+public interface BaseRootProcessAdvancedData extends BPMNPropertySet {
 
-    public KeyPressEvent(final Key key) {
-        super(key);
-    }
+    GlobalVariables getGlobalVariables();
+
+    MetaDataAttributes getMetaDataAttributes();
 }
