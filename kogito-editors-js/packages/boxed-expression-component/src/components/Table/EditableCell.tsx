@@ -125,5 +125,5 @@ export const EditableCell: React.FunctionComponent<EditableCellProps> = React.me
       [onDoubleClick, onSelect, cssClass, value, onKeyPress, onChange, onBlur]
     );
   },
-  () => true
+  ({ value: oldValue }, { value }) => oldValue === value
 );
