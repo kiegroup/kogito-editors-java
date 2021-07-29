@@ -22,7 +22,7 @@ import {
   executeIfExpressionDefinitionChanged,
   ExpressionProps,
   LiteralExpressionProps,
-  LogicType
+  LogicType,
 } from "../../api";
 import { EditExpressionMenu, EXPRESSION_NAME } from "../EditExpressionMenu";
 import { Resizer } from "../Resizer";
@@ -58,13 +58,17 @@ export const LiteralExpression: React.FunctionComponent<LiteralExpressionProps> 
         : {}),
     };
 
-    executeIfExpressionDefinitionChanged(storedExpressionDefinition.current, expressionDefinition, () => {
-      isHeadless
-        ? onUpdatingRecursiveExpression?.(expressionDefinition)
-        : window.beeApi?.broadcastLiteralExpressionDefinition?.(expressionDefinition);
-      storedExpressionDefinition.current = expressionDefinition;
-    }, ["name", "dataType", "content", "width"]);
-
+    executeIfExpressionDefinitionChanged(
+      storedExpressionDefinition.current,
+      expressionDefinition,
+      () => {
+        isHeadless
+          ? onUpdatingRecursiveExpression?.(expressionDefinition)
+          : window.beeApi?.broadcastLiteralExpressionDefinition?.(expressionDefinition);
+        storedExpressionDefinition.current = expressionDefinition;
+      },
+      ["name", "dataType", "content", "width"]
+    );
   }, [expressionDataType, expressionName, isHeadless, onUpdatingRecursiveExpression, uid]);
 
   const onExpressionUpdate = useCallback(

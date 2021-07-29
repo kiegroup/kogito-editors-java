@@ -98,16 +98,20 @@ export const InvocationExpression: React.FunctionComponent<InvocationProps> = ({
 
     const expression = _.omit(updatedDefinition, ["name", "dataType"]);
 
-    executeIfExpressionDefinitionChanged(storedExpressionDefinition.current, updatedDefinition, () => {
-      if (isHeadless) {
-        onUpdatingRecursiveExpression?.(expression);
-      } else {
-        setSupervisorHash(hashfy(expression));
-        window.beeApi?.broadcastInvocationExpressionDefinition?.(updatedDefinition);
-      }
-      storedExpressionDefinition.current = updatedDefinition;
-    }, ["name", "dataType", "bindingEntries", "invokedFunction", "entryInfoWidth", "entryExpressionWidth"]);
-
+    executeIfExpressionDefinitionChanged(
+      storedExpressionDefinition.current,
+      updatedDefinition,
+      () => {
+        if (isHeadless) {
+          onUpdatingRecursiveExpression?.(expression);
+        } else {
+          setSupervisorHash(hashfy(expression));
+          window.beeApi?.broadcastInvocationExpressionDefinition?.(updatedDefinition);
+        }
+        storedExpressionDefinition.current = updatedDefinition;
+      },
+      ["name", "dataType", "bindingEntries", "invokedFunction", "entryInfoWidth", "entryExpressionWidth"]
+    );
   }, [
     expressionWidth,
     functionName,

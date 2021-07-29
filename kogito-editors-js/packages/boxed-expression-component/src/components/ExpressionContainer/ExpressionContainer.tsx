@@ -27,25 +27,32 @@ export interface ExpressionContainerProps {
   onExpressionChange?: (updatedExpression: ExpressionProps) => void;
 }
 
-export const ExpressionContainer: (props: ExpressionContainerProps) => JSX.Element = (
-  {onExpressionChange, selectedExpression}: ExpressionContainerProps
-) => {
+export const ExpressionContainer: (props: ExpressionContainerProps) => JSX.Element = ({
+  onExpressionChange,
+  selectedExpression,
+}: ExpressionContainerProps) => {
   const expressionContainerRef = useRef<HTMLDivElement>(null);
 
-  const updateExpressionNameAndDataType = useCallback((updatedName, updatedDataType) => {
-    onExpressionChange?.({
-      ...selectedExpression,
-      name: updatedName,
-      dataType: updatedDataType,
-    });
-  }, [onExpressionChange, selectedExpression]);
+  const updateExpressionNameAndDataType = useCallback(
+    (updatedName, updatedDataType) => {
+      onExpressionChange?.({
+        ...selectedExpression,
+        name: updatedName,
+        dataType: updatedDataType,
+      });
+    },
+    [onExpressionChange, selectedExpression]
+  );
 
-  const onLogicTypeUpdating = useCallback((logicType) => {
-    onExpressionChange?.({
-      ...selectedExpression,
-      logicType: logicType,
-    });
-  }, [onExpressionChange, selectedExpression]);
+  const onLogicTypeUpdating = useCallback(
+    (logicType) => {
+      onExpressionChange?.({
+        ...selectedExpression,
+        logicType: logicType,
+      });
+    },
+    [onExpressionChange, selectedExpression]
+  );
 
   const onLogicTypeResetting = useCallback(() => {
     const updatedExpression = {

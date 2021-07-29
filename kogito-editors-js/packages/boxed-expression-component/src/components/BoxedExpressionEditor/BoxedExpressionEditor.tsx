@@ -47,12 +47,15 @@ export const BoxedExpressionEditor: (props: BoxedExpressionEditorProps) => JSX.E
   const [supervisorHash, setSupervisorHash] = useState(hashfy(props.expressionDefinition));
 
   useEffect(() => {
-    setExpressionDefinition(props.expressionDefinition)
+    setExpressionDefinition(props.expressionDefinition);
     setSupervisorHash(hashfy(props.expressionDefinition));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.expressionDefinition]);
 
-  const onExpressionChange = useCallback((updatedExpression: ExpressionProps) => setExpressionDefinition(updatedExpression), []);
+  const onExpressionChange = useCallback(
+    (updatedExpression: ExpressionProps) => setExpressionDefinition(updatedExpression),
+    []
+  );
 
   return useMemo(
     () => (

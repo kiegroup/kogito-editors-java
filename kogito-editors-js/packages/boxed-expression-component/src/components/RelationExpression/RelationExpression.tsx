@@ -24,7 +24,7 @@ import {
   executeIfExpressionDefinitionChanged,
   RelationProps,
   Row,
-  TableOperation
+  TableOperation,
 } from "../../api";
 import { Table } from "../Table";
 import { useBoxedExpressionEditorI18n } from "../../i18n";
@@ -71,13 +71,17 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = (relat
       rows: tableRows.current,
     };
 
-    executeIfExpressionDefinitionChanged(storedExpressionDefinition.current, expressionDefinition, () => {
-      relationProps.isHeadless
-        ? relationProps.onUpdatingRecursiveExpression?.(expressionDefinition)
-        : window.beeApi?.broadcastRelationExpressionDefinition?.(expressionDefinition);
-      storedExpressionDefinition.current = expressionDefinition;
-    }, ["columns", "rows"]);
-
+    executeIfExpressionDefinitionChanged(
+      storedExpressionDefinition.current,
+      expressionDefinition,
+      () => {
+        relationProps.isHeadless
+          ? relationProps.onUpdatingRecursiveExpression?.(expressionDefinition)
+          : window.beeApi?.broadcastRelationExpressionDefinition?.(expressionDefinition);
+        storedExpressionDefinition.current = expressionDefinition;
+      },
+      ["columns", "rows"]
+    );
   }, [relationProps]);
 
   const convertColumnsForTheTable = useCallback(

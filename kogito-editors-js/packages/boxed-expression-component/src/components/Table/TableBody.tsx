@@ -51,17 +51,23 @@ export const TableBody: React.FunctionComponent<TableBodyProps> = ({
     return DEFAULT_MIN_WIDTH;
   }, []);
 
-  const setWidth = useCallback((column: IColumn, width: number, cellIndex: number) => {
-    column?.setWidth?.(width);
-    tableInstance.allColumns[cellIndex].width = width;
-  }, [tableInstance.allColumns]);
+  const setWidth = useCallback(
+    (column: IColumn, width: number, cellIndex: number) => {
+      column?.setWidth?.(width);
+      tableInstance.allColumns[cellIndex].width = width;
+    },
+    [tableInstance.allColumns]
+  );
 
-  const onResize = useCallback((column: IColumn, width: number, cellIndex: number) => {
-    if (column.setWidth) {
-      setWidth(column, width, cellIndex);
-      onColumnsUpdate?.(tableInstance.columns);
-    }
-  }, [onColumnsUpdate, setWidth, tableInstance.columns]);
+  const onResize = useCallback(
+    (column: IColumn, width: number, cellIndex: number) => {
+      if (column.setWidth) {
+        setWidth(column, width, cellIndex);
+        onColumnsUpdate?.(tableInstance.columns);
+      }
+    },
+    [onColumnsUpdate, setWidth, tableInstance.columns]
+  );
 
   const getElement = useCallback((cell) => {
     return <>{cell.render("Cell")}</>;

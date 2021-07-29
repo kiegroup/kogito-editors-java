@@ -57,12 +57,14 @@ export const executeIfExpressionDefinitionChanged = (
   prevDef: ExpressionProps,
   updatedDef: ExpressionProps,
   functionToExecute: () => void,
-  propertiesToCheck?: string[],
-  ) => {
-  const customizer = propertiesToCheck ? (prev: Record<string, any>, next: Record<string, any>) =>
-    _.every(propertiesToCheck, (prop) => _.isEqual(prev[prop], next[prop])) : undefined;
+  propertiesToCheck?: string[]
+) => {
+  const customizer = propertiesToCheck
+    ? (prev: Record<string, any>, next: Record<string, any>) =>
+        _.every(propertiesToCheck, (prop) => _.isEqual(prev[prop], next[prop]))
+    : undefined;
 
   if (!_.isEqualWith(prevDef, updatedDef, customizer)) {
     functionToExecute();
   }
-}
+};
