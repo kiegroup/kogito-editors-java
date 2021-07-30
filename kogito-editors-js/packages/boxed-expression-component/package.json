@@ -9,8 +9,9 @@
     "build:dev": "webpack --config webpack.development.js",
     "build:prod": "webpack --config webpack.production.js",
     "build:watch": "webpack --config webpack.development.js --watch",
-    "test": "jest --collect-coverage",
     "lint": "eslint --ext .ts,.tsx,.js ./src/",
+    "precommit": "lint-staged",
+    "test": "jest --collect-coverage",
     "type-check": "tsc --noEmit",
     "quality-checks": "yarn run type-check && yarn run lint && yarn run test"
   },
@@ -95,5 +96,10 @@
     "webpack": "^5.36.2",
     "webpack-cli": "^4.7.0",
     "webpack-dev-server": "^3.11.2"
+  },
+  "lint-staged": {
+    "*.{js,ts,tsx}": [
+      "yarn run lint"
+    ]
   }
 }

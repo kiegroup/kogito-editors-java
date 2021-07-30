@@ -6,10 +6,11 @@
   "main": "src/index.tsx",
   "source": "src/index.tsx",
   "scripts": {
-    "lint": "eslint --ext .ts,.tsx,.js ./src/",
     "build:dev": "webpack --config webpack.development.js",
     "build:prod": "webpack --config webpack.production.js",
-    "build:watch": "webpack --config webpack.development.js --watch"
+    "build:watch": "webpack --config webpack.development.js --watch",
+    "lint": "eslint --ext .ts,.tsx,.js ./src/",
+    "precommit": "lint-staged"
   },
   "peerDependencies": {
     "react": "^17.0.2",
@@ -32,5 +33,10 @@
     "typescript": "^4.2.4",
     "webpack": "^5.36.2",
     "webpack-cli": "^4.7.0"
+  },
+  "lint-staged": {
+    "*.{js,ts,tsx}": [
+      "yarn run lint"
+    ]
   }
 }
