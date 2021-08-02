@@ -18,6 +18,8 @@
     "gwt:wire": "lerna run build:dev && lerna run build:watch --parallel",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "lint": "eslint --ext .ts,.tsx,.js",
+    "precommit": "lint-staged",
     "prepare": "cd .. && husky install kogito-editors-js/.husky"
   },
   "dependencies": {
@@ -107,5 +109,10 @@
   },
   "files": [
     "dist"
-  ]
+  ],
+  "lint-staged": {
+    "*.{js,ts,tsx}": [
+      "yarn run lint"
+    ]
+  }
 }
