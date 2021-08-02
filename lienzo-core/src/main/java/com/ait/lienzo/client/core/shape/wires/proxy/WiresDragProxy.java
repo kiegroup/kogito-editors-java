@@ -73,13 +73,9 @@ public class WiresDragProxy {
     private void move(final double x,
                       final double y) {
 
-        final Transform transform = getLayer().getViewport().getTransform();
-        final Point2D inversed = new Point2D(0, 0);
-        final Point2D point = new Point2D(startPoint.getX(), startPoint.getY());
-        transform.getInverse().transform(point, inversed);
-
-        final double dx = x - inversed.getX();
-        final double dy = y - inversed.getY();
+        final Point2D adjusted = getAdjustedForZoomPoint(startPoint.getX(), startPoint.getY());
+        final double dx = x - adjusted.getX();
+        final double dy = y - adjusted.getY();
 
         getDelegate().move(dx, dy);
         proxyDragLayer.moveToTop();
@@ -100,13 +96,18 @@ public class WiresDragProxy {
         registrations[EXIT] = proxyDragLayer.addNodeMouseExitHandler(exitEvent -> end());
         registrations[OUT] = proxyDragLayer.addNodeMouseOutHandler(outEvent -> end());
         registrations[MOVE] = proxyDragLayer.addNodeMouseMoveHandler(moveEvent -> {
-                                                                         final Transform transform = getLayer().getViewport().getTransform();
-                                                                         final Point2D inversed = new Point2D(0, 0);
-                                                                         final Point2D point = new Point2D(moveEvent.getX(), moveEvent.getY());
-                                                                         transform.getInverse().transform(point, inversed);
-                                                                         move(inversed.getX(), inversed.getY());
+                                                                         final Point2D adjusted = getAdjustedForZoomPoint(moveEvent.getX(), moveEvent.getY());
+                                                                         move(adjusted.getX(), adjusted.getY());
                                                                      }
         );
+    }
+
+    protected Point2D getAdjustedForZoomPoint(final double x, final double y) {
+        final Transform transform = getLayer().getViewport().getTransform();
+        final Point2D inversed = new Point2D(0, 0);
+        final Point2D point = new Point2D(x, y);
+        transform.getInverse().transform(point, inversed);
+        return inversed;
     }
 
     private void endEventHandling() {
