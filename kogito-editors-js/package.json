@@ -19,8 +19,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "eslint --ext .ts,.tsx,.js",
-    "precommit": "lint-staged",
-    "prepare": "cd .. && husky install kogito-editors-js/.husky"
+    "prepare": "cd .. && husky install kogito-editors-js/.husky",
+    "prepush": "lint-staged"
   },
   "dependencies": {
     "@kogito-tooling/i18n": "0.10.0",

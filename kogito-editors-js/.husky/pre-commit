@@ -1,4 +1,0 @@
-#!/bin/sh
-. "$(dirname "$0")/_/husky.sh"
-
-cd kogito-editors-js && yarn run format && yarn run precommit && git add .

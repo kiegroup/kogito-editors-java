@@ -1,6 +1,6 @@
 # How to to check my code before push
 
-The `kogito-editors-js` components contain pre-commit hooks to automatically:
+The `kogito-editors-js` components contain pre-push hooks to automatically:
 
 - **Format the code** - we use `prettier` to format whole `kogito-editors-js` codebase.
 
