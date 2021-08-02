@@ -72,8 +72,14 @@ public class WiresDragProxy {
 
     private void move(final double x,
                       final double y) {
-        final double dx = x - startPoint.getX();
-        final double dy = y - startPoint.getY();
+
+        final Transform transform = getLayer().getViewport().getTransform();
+        final Point2D inversed = new Point2D(0, 0);
+        final Point2D point = new Point2D(startPoint.getX(), startPoint.getY());
+        transform.getInverse().transform(point, inversed);
+
+        final double dx = x - inversed.getX();
+        final double dy = y - inversed.getY();
 
         getDelegate().move(dx, dy);
         proxyDragLayer.moveToTop();
@@ -93,7 +99,14 @@ public class WiresDragProxy {
         registrations[UP] = proxyDragLayer.addNodeMouseUpHandler(upEvent -> end());
         registrations[EXIT] = proxyDragLayer.addNodeMouseExitHandler(exitEvent -> end());
         registrations[OUT] = proxyDragLayer.addNodeMouseOutHandler(outEvent -> end());
-        registrations[MOVE] = proxyDragLayer.addNodeMouseMoveHandler(moveEvent -> move(moveEvent.getX(), moveEvent.getY()));
+        registrations[MOVE] = proxyDragLayer.addNodeMouseMoveHandler(moveEvent -> {
+                                                                         final Transform transform = getLayer().getViewport().getTransform();
+                                                                         final Point2D inversed = new Point2D(0, 0);
+                                                                         final Point2D point = new Point2D(moveEvent.getX(), moveEvent.getY());
+                                                                         transform.getInverse().transform(point, inversed);
+                                                                         move(inversed.getX(), inversed.getY());
+                                                                     }
+        );
     }
 
     private void endEventHandling() {
