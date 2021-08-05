@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.stunner.core.client.shape.impl;
 
+import java.util.Objects;
+
 import org.kie.workbench.common.stunner.core.client.shape.Lifecycle;
 import org.kie.workbench.common.stunner.core.client.shape.MutationContext;
 import org.kie.workbench.common.stunner.core.client.shape.NodeShape;
@@ -69,11 +71,11 @@ public class NodeShapeImpl<W, D extends ShapeViewDef<W, V>, V extends ShapeView>
         getShape().applyState(shapeState);
         ShapeView shape = getShapeView();
         if (!isSelected() && shape instanceof HasControlPoints) {
-            ((HasControlPoints<Object>)shape).hideControlPoints();
+            ((HasControlPoints<Object>) shape).hideControlPoints();
         }
     }
 
     private boolean isSelected() {
-        return ShapeState.SELECTED.equals(getShape().getShapeStateHandler().getShapeState());
+        return Objects.equals(ShapeState.SELECTED, getShape().getShapeStateHandler().getShapeState());
     }
 }
