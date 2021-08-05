@@ -60,6 +60,6 @@ describe("Relation Expression Tests", () => {
 
     cy.ouiaId("confirm-expression-json").click();
 
-    cy.ouiaId("OUIA-Generated-Table-2").should("contain.text", "row 49 column 49");
+    cy.ouiaId("expression-grid-table").should("contain.text", "row 49 column 49");
   });
 });
