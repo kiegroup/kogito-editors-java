@@ -1,3 +1,5 @@
+import "@patternfly/react-core/dist/styles/base-no-reset.css";
+import "@patternfly/react-styles/css/components/Drawer/drawer.css";
 import { BoxedExpressionProvider } from "./BoxedExpressionProvider";
 import { ExpressionContainer } from "../ExpressionContainer";
 import * as React from "react";

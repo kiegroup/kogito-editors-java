@@ -16,8 +16,6 @@
 
 import * as React from "react";
 import { useEffect, useRef, useState } from "react";
-import "@patternfly/react-core/dist/styles/base-no-reset.css";
-import "@patternfly/react-styles/css/components/Drawer/drawer.css";
 import "./BoxedExpressionProvider.css";
 import { hashfy, ResizerSupervisor } from "../Resizer";
 import { BoxedExpressionGlobalContext } from "../../context";
