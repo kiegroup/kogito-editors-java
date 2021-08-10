@@ -27,6 +27,7 @@ import { fireEvent } from "@testing-library/react";
 import { resetId } from "react-id-generator";
 import { BoxedExpressionGlobalContext } from "../../context";
 import { DataType } from "../../api";
+import { BoxedExpressionProvider, BoxedExpressionProviderProps } from "../../components";
 
 global.console = { ...global.console, warn: jest.fn() };
 
@@ -57,6 +58,31 @@ export function usingTestingBoxedExpressionI18nContext(
   };
 }
 
+export function usingTestingBoxedExpressionProviderContext(
+  children: React.ReactElement,
+  ctx?: Partial<BoxedExpressionProviderProps>
+) {
+  const usedCtx: BoxedExpressionProviderProps = {
+    expressionDefinition: {},
+    pmmlParams: [
+      {
+        document: "document",
+        modelsFromDocument: [{ model: "model", parametersFromModel: [{ name: "p-1", dataType: DataType.Number }] }],
+      },
+    ],
+    children,
+    ...ctx,
+  };
+  return {
+    ctx: usedCtx,
+    wrapper: (
+      <BoxedExpressionProvider expressionDefinition={usedCtx.expressionDefinition} pmmlParams={usedCtx.pmmlParams}>
+        {usedCtx.children}
+      </BoxedExpressionProvider>
+    ),
+  };
+}
+
 export function wrapComponentInContext(component: JSX.Element): JSX.Element {
   return (
     <BoxedExpressionGlobalContext.Provider
@@ -72,6 +98,7 @@ export function wrapComponentInContext(component: JSX.Element): JSX.Element {
         boxedExpressionEditorRef: { current: document.body as HTMLDivElement },
         currentlyOpenedHandlerCallback: jest.fn,
         setCurrentlyOpenedHandlerCallback: jest.fn,
+        selectedExpression: {},
       }}
     >
       {component}

@@ -15,7 +15,7 @@
  */
 
 import * as React from "react";
-import { PMMLParams } from "../api";
+import { ExpressionProps, PMMLParams } from "../api";
 
 export interface BoxedExpressionGlobalContextProps {
   pmmlParams?: PMMLParams;
@@ -26,6 +26,7 @@ export interface BoxedExpressionGlobalContextProps {
   setCurrentlyOpenedHandlerCallback: React.Dispatch<
     React.SetStateAction<React.Dispatch<React.SetStateAction<boolean>>>
   >;
+  selectedExpression: ExpressionProps
 }
 
 export const BoxedExpressionGlobalContext = React.createContext<BoxedExpressionGlobalContextProps>(
