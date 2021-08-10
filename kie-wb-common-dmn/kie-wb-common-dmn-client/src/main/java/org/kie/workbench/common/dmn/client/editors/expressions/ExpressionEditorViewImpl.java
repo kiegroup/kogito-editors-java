@@ -38,6 +38,7 @@ import org.kie.workbench.common.dmn.api.definition.model.Expression;
 import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
 import org.kie.workbench.common.dmn.client.commands.factory.DefaultCanvasCommandFactory;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinitions;
+import org.kie.workbench.common.dmn.client.js.DMNLoader;
 import org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants;
 import org.kie.workbench.common.dmn.client.session.DMNSession;
 import org.kie.workbench.common.dmn.client.widgets.grid.BoundaryTransformMediator;
@@ -279,6 +280,7 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
 
     void renderNewBoxedExpression() {
         // TODO (KOGITO-3661): Render the new boxed expression here
+        DMNLoader.renderBoxedExpressionEditor(".kie-dmn-expression-editor");
     }
 
     void renderOldBoxedExpression() {
