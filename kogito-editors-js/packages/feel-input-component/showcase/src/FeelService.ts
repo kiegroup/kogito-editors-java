@@ -29,7 +29,7 @@ declare namespace org {
         namespace client {
           namespace showcase {
             class FeelJS {
-              getSuggestions: (feelExpression: string, row: number, col: number) => { toArray: () => string[]; };
+              getSuggestions: (feelExpression: string, row: number, col: number) => { toArray: () => string[] };
               evaluate(expression: string): string;
             }
           }
