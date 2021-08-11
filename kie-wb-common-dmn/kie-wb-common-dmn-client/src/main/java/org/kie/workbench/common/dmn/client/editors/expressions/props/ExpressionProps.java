@@ -14,18 +14,22 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.dmn.client.js;
+package org.kie.workbench.common.dmn.client.editors.expressions.props;
 
-import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
-import org.kie.workbench.common.dmn.client.editors.expressions.props.ExpressionProps;
 
-@JsType(isNative = true)
-public class DMNLoader {
+@JsType
+public class ExpressionProps {
 
-    @JsMethod(namespace = "__KIE__DMN_LOADER__")
-    public static native void renderHelloWorld(final String selector);
+    public final String name;
 
-    @JsMethod(namespace = "__KIE__DMN_LOADER__")
-    public static native void renderBoxedExpressionEditor(final String selector, final ExpressionProps expressionProps);
+    public final String dataType;
+
+    public final String logicType;
+
+    public ExpressionProps(final String name, final String dataType, final String logicType) {
+        this.name = name;
+        this.dataType = dataType;
+        this.logicType = logicType;
+    }
 }

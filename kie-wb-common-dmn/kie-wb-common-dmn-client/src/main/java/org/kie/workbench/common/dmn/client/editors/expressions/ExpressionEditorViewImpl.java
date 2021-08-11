@@ -37,6 +37,7 @@ import org.kie.workbench.common.dmn.api.definition.HasName;
 import org.kie.workbench.common.dmn.api.definition.model.Expression;
 import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
 import org.kie.workbench.common.dmn.client.commands.factory.DefaultCanvasCommandFactory;
+import org.kie.workbench.common.dmn.client.editors.expressions.props.ExpressionProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinitions;
 import org.kie.workbench.common.dmn.client.js.DMNLoader;
 import org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants;
@@ -96,6 +97,12 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
     @DataField("beta-boxed-expression-toggle")
     private HTMLDivElement betaBoxedExpressionToggle;
 
+    @DataField("new-boxed-expression")
+    private HTMLDivElement newBoxedExpression;
+
+    @DataField("old-boxed-expression")
+    private HTMLDivElement oldBoxedExpression;
+
     private TranslationService translationService;
     private ListSelectorView.Presenter listSelector;
     private SessionManager sessionManager;
@@ -110,6 +117,10 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
     private CellEditorControlsView.Presenter cellEditorControls;
     private RestrictedMousePanMediator mousePanMediator;
     private ExpressionContainerGrid expressionContainerGrid;
+    private String nodeUUID;
+    private HasExpression hasExpression;
+    private Optional<HasName> hasName;
+    private boolean isOnlyVisualChangeAllowed;
 
     public ExpressionEditorViewImpl() {
         //CDI proxy
@@ -130,7 +141,9 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
                                     final Event<DomainObjectSelectionEvent> domainObjectSelectionEvent,
                                     final HTMLAnchorElement tryIt,
                                     final HTMLAnchorElement switchBack,
-                                    final HTMLDivElement betaBoxedExpressionToggle) {
+                                    final HTMLDivElement betaBoxedExpressionToggle,
+                                    final HTMLDivElement newBoxedExpression,
+                                    final HTMLDivElement oldBoxedExpression) {
         this.returnToLink = returnToLink;
         this.expressionName = expressionName;
         this.expressionType = expressionType;
@@ -149,6 +162,8 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
         this.tryIt = tryIt;
         this.switchBack = switchBack;
         this.betaBoxedExpressionToggle = betaBoxedExpressionToggle;
+        this.newBoxedExpression = newBoxedExpression;
+        this.oldBoxedExpression = oldBoxedExpression;
     }
 
     @Override
@@ -238,6 +253,10 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
                               final HasExpression hasExpression,
                               final Optional<HasName> hasName,
                               final boolean isOnlyVisualChangeAllowed) {
+        this.nodeUUID = nodeUUID;
+        this.hasExpression = hasExpression;
+        this.hasName = hasName;
+        this.isOnlyVisualChangeAllowed = isOnlyVisualChangeAllowed;
         expressionContainerGrid.setExpression(nodeUUID,
                                               hasExpression,
                                               hasName,
@@ -279,12 +298,12 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
     }
 
     void renderNewBoxedExpression() {
-        // TODO (KOGITO-3661): Render the new boxed expression here
-        DMNLoader.renderBoxedExpressionEditor(".kie-dmn-expression-editor");
+        toggleEditorsVisibility();
+        DMNLoader.renderBoxedExpressionEditor(".kie-dmn-expression-container", new ExpressionProps("Expression Name", "<Undefined>", null));
     }
 
     void renderOldBoxedExpression() {
-        // TODO (KOGITO-3661): Render the old boxed expression here
+        toggleEditorsVisibility();
     }
 
     void toggleBoxedExpression(final boolean enabled) {
@@ -294,6 +313,11 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
     private void preventDefault(final ClickEvent event) {
         event.preventDefault();
         event.stopPropagation();
+    }
+
+    private void toggleEditorsVisibility() {
+        oldBoxedExpression.classList.toggle("hidden");
+        newBoxedExpression.classList.toggle("hidden");
     }
 
     @EventHandler("returnToLink")
