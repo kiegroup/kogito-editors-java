@@ -18,77 +18,53 @@ import * as React from "react";
 import { useState } from "react";
 import * as ReactDOM from "react-dom";
 import "./index.css";
-import {
-  ContextProps,
-  DecisionTableProps,
-  ExpressionProps,
-  FunctionProps,
-  InvocationProps,
-  ListProps,
-  LiteralExpressionProps,
-  RelationProps,
-} from "../../dist/api";
 import { DmnAutoTable } from "./unitables";
+import * as schemas from "./schemas";
+import { Button } from "@patternfly/react-core";
 
 export const App: React.FunctionComponent = () => {
-  const schema = {
-    definitions: {
-      InputSet: {
-        required: ["InputData-1"],
-        type: "object",
-        properties: {
-          "InputData-1": {
-            "x-dmn-type": "FEEL:Any",
-          },
-        },
-        "x-dmn-type": "DMNType{ https://kiegroup.org/dmn/_1481BD07-15EA-41EC-8612-8D5691B7A74E : InputSet }",
-        "x-dmn-descriptions": {},
-      },
-      OutputSet: {
-        type: "object",
-        properties: {
-          "Decision-1": {
-            "x-dmn-type": "FEEL:Any",
-          },
-          "InputData-1": {
-            "x-dmn-type": "FEEL:Any",
-          },
-        },
-        "x-dmn-type": "DMNType{ https://kiegroup.org/dmn/_1481BD07-15EA-41EC-8612-8D5691B7A74E : OutputSet }",
-        "x-dmn-descriptions": {},
-      },
-    },
-    $ref: "#/definitions/InputSet",
-  };
-
-  //Defining global function that will be available in the Window namespace and used by the BoxedExpressionEditor component
-  window.beeApi = {
-    resetExpressionDefinition: (definition: ExpressionProps) => definition,
-    broadcastLiteralExpressionDefinition: (definition: LiteralExpressionProps) => definition,
-    broadcastRelationExpressionDefinition: (definition: RelationProps) => definition,
-    broadcastContextExpressionDefinition: (definition: ContextProps) => definition,
-    broadcastListExpressionDefinition: (definition: ListProps) => definition,
-    broadcastInvocationExpressionDefinition: (definition: InvocationProps) => definition,
-    broadcastFunctionExpressionDefinition: (definition: FunctionProps) => definition,
-    broadcastDecisionTableExpressionDefinition: (definition: DecisionTableProps) => definition,
-  };
-
   const [tableData, setTableData] = useState([]);
   const [formError, setFormError] = useState(false);
 
+  const [schema, setSchema] = useState<any>(schemas.normalDataType);
+
   return (
-    <div className="showcase">
-      <div className="boxed-expression">
-        <DmnAutoTable
-          schema={schema}
-          tableData={tableData}
-          setTableData={setTableData}
-          results={[]}
-          formError={formError}
-          setFormError={setFormError}
-        />
+    <>
+      <div style={{ display: "flex" }}>
+        <div style={{ padding: "5px" }}>
+          <Button variant={"primary"} onClick={() => setSchema(schemas.normalDataType)}>
+            Normal Type
+          </Button>
+        </div>
+        <div style={{ padding: "5px" }}>
+          <Button variant={"primary"} onClick={() => setSchema(schemas.multipleInputs)}>
+            Multiple Inputs
+          </Button>
+        </div>
+        <div style={{ padding: "5px" }}>
+          <Button variant={"primary"} onClick={() => setSchema(schemas.simpleCustomDataType)}>
+            Simple Custom
+          </Button>
+        </div>
+        <div style={{ padding: "5px" }}>
+          <Button variant={"primary"} onClick={() => setSchema(schemas.complexCustomDataType)}>
+            Complex Custom
+          </Button>
+        </div>
       </div>
-    </div>
+      <div className="showcase">
+        <div className="boxed-expression">
+          <DmnAutoTable
+            schema={schema}
+            tableData={tableData}
+            setTableData={setTableData}
+            results={[]}
+            formError={formError}
+            setFormError={setFormError}
+          />
+        </div>
+      </div>
+    </>
   );
 };
 

@@ -17,6 +17,7 @@
 import groupBy from "lodash/groupBy";
 import * as React from "react";
 import { useCallback, useContext, useEffect, useMemo } from "react";
+import * as dummy from "../../../dist";
 import { ColumnInstance, DataRecord } from "react-table";
 import { ExpressionProps, GroupOperations, LogicType, TableHeaderVisibility, TableOperation } from "../../../dist/api";
 import { BoxedExpressionGlobalContext } from "../../../dist/context";
