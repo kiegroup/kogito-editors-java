@@ -16,15 +16,16 @@
 
 import groupBy from "lodash/groupBy";
 import * as React from "react";
-import { useCallback, useContext, useMemo } from "react";
+import { useCallback, useContext, useEffect, useMemo } from "react";
 import { ColumnInstance, DataRecord } from "react-table";
-import { ExpressionProps, GroupOperations, TableHeaderVisibility, TableOperation } from "../../../dist";
+import { ExpressionProps, GroupOperations, LogicType, TableHeaderVisibility, TableOperation } from "../../../dist/api";
 import { BoxedExpressionGlobalContext } from "../../../dist/context";
-import { getColumnsAtLastLevel, Table } from "../../../dist/components/Table";
+import { getColumnsAtLastLevel, Table } from "../../../dist/components";
 import "./DmnRunnerTable.css";
 import { DmnRunnerClause, DmnRunnerRule } from "./DmnRunnerTableTypes";
-import nextId from "react-id-generator";
-import { useDmnAutoTableI18n } from "../unitables/i18n";
+import { useDmnAutoTableI18n } from "../unitables";
+import "../../../src/components/ExpressionContainer/ExpressionContainer.css";
+import "../../../src/components/LogicTypeSelector/LogicTypeSelector.css";
 
 enum DecisionTableColumnType {
   InputClause = "input",
@@ -44,9 +45,8 @@ export interface DmnRunnerTableProps extends ExpressionProps {
   rules?: DmnRunnerRule[];
 }
 
-export function DmnRunnerTable() {
+export function DmnRunnerTable(props: DmnRunnerTableProps) {
   const { i18n } = useDmnAutoTableI18n();
-  const { selectedExpression } = useContext(BoxedExpressionGlobalContext);
 
   const getColumnPrefix = useCallback((groupType?: string) => {
     switch (groupType) {
@@ -125,11 +125,11 @@ export function DmnRunnerTable() {
       rowDelegate: row.rowDelegate as any,
     }));
 
-    window.beeApi?.broadcastDmnRunnerTable?.(newRules.length);
+    // window.beeApi?.broadcastDmnRunnerTable?.(newRules.length);
   }, []);
 
   const memoColumns = useMemo(() => {
-    const inputColumns = ((selectedExpression as DmnRunnerTableProps)?.input ?? []).map(
+    const inputColumns = (props.input ?? []).map(
       (inputClause) =>
         ({
           label: inputClause.name,
@@ -141,7 +141,7 @@ export function DmnRunnerTable() {
           cellDelegate: inputClause.cellDelegate,
         } as any)
     );
-    const outputColumns = ((selectedExpression as DmnRunnerTableProps)?.output ?? []).map(
+    const outputColumns = (props.output ?? []).map(
       (outputClause) =>
         ({
           label: outputClause.name,
@@ -171,10 +171,10 @@ export function DmnRunnerTable() {
     };
 
     return [inputSection, outputSection] as ColumnInstance[];
-  }, [selectedExpression]);
+  }, [props.input, props.output]);
 
   const memoRows = useMemo(() => {
-    return ((selectedExpression as DmnRunnerTableProps)?.rules ?? []).map((rule) => {
+    return (props.rules ?? []).map((rule) => {
       const rowArray = [...rule.inputEntries, ...rule.outputEntries];
       return getColumnsAtLastLevel(memoColumns).reduce((tableRow: any, column, columnIndex: number) => {
         tableRow[column.accessor] = rowArray[columnIndex] || EMPTY_SYMBOL;
@@ -182,7 +182,7 @@ export function DmnRunnerTable() {
         return tableRow;
       }, {});
     });
-  }, [selectedExpression, memoColumns]);
+  }, [props.rules, memoColumns]);
 
   const onRowsUpdate = useCallback(
     (updatedRows) => {
@@ -212,19 +212,34 @@ export function DmnRunnerTable() {
     }, {} as DataRecord);
   }, [memoColumns]);
 
+  useEffect(() => {
+    console.log("TABLE", props.name, props.input, props.output, props.rules);
+  }, [props.name, props.input, props.output, props.rules]);
+
   return (
-    <div className={`decision-table-expression ${selectedExpression?.uid ?? nextId()}`}>
-      <Table
-        headerLevels={1}
-        headerVisibility={TableHeaderVisibility.Full}
-        getColumnPrefix={getColumnPrefix}
-        editColumnLabel={getEditColumnLabel}
-        handlerConfiguration={getHandlerConfiguration}
-        columns={memoColumns}
-        rows={memoRows}
-        onRowsUpdate={onRowsUpdate}
-        onRowAdding={onRowAdding}
-      />
+    <div className="expression-container">
+      <div className="expression-name-and-logic-type">
+        <span className="expression-title">{props?.name ?? ""}</span>
+        <span className="expression-type">({props?.logicType ?? LogicType.Undefined})</span>
+      </div>
+
+      <div className="expression-container-box" data-ouia-component-id="expression-container">
+        <div className={`decision-table-expression ${props.uid}`}>
+          <div className={`logic-type-selector logic-type-selected`}>
+            <Table
+              headerLevels={1}
+              headerVisibility={TableHeaderVisibility.Full}
+              getColumnPrefix={getColumnPrefix}
+              editColumnLabel={getEditColumnLabel}
+              handlerConfiguration={getHandlerConfiguration}
+              columns={memoColumns}
+              rows={memoRows}
+              onRowsUpdate={onRowsUpdate}
+              onRowAdding={onRowAdding}
+            />
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

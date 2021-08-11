@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 import "@patternfly/react-core/dist/styles/base.css";
-import "@patternfly/react-core/dist/styles/base-no-reset.css";
-import "@patternfly/react-styles/css/components/Drawer/drawer.css";
 import * as React from "react";
 import { useState } from "react";
 import * as ReactDOM from "react-dom";
@@ -29,8 +27,8 @@ import {
   ListProps,
   LiteralExpressionProps,
   RelationProps,
-} from "../../dist";
-import { DmnAutoTable } from "./unitables/dmn";
+} from "../../dist/api";
+import { DmnAutoTable } from "./unitables";
 
 export const App: React.FunctionComponent = () => {
   const schema = {
@@ -73,7 +71,6 @@ export const App: React.FunctionComponent = () => {
     broadcastInvocationExpressionDefinition: (definition: InvocationProps) => definition,
     broadcastFunctionExpressionDefinition: (definition: FunctionProps) => definition,
     broadcastDecisionTableExpressionDefinition: (definition: DecisionTableProps) => definition,
-    broadcastDmnRunnerTable: (rowQtt: number) => {},
   };
 
   const [tableData, setTableData] = useState([]);

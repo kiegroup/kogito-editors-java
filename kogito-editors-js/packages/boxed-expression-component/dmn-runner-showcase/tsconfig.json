@@ -36,6 +36,5 @@
     "noFallthroughCasesInSwitch": true,
     "module": "esnext",
     "isolatedModules": true,
-    "noEmit": true
   }
 }

@@ -1,9 +1,9 @@
 import { Bridge, joinName } from "uniforms";
 import * as React from "react";
 import { AutoField } from "./AutoField";
-import { DataType } from "../../../../dist";
+import { DataType } from "../../../../dist/api";
 import { DmnRunnerClause } from "../../DmnRunnerTable/DmnRunnerTableTypes";
-import { DecisionResult, Result } from "../dmn/DmnAutoTable";
+import { DecisionResult, Result } from "../dmn";
 
 export class Grid {
   constructor(private readonly bridge: Bridge) {}

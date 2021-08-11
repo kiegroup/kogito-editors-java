@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { DataType } from "../../../dist";
+import { DataType } from "../../../dist/api";
 
 export interface DmnRunnerClause {
   /** Clause name */

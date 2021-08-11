@@ -1,7 +1,6 @@
 import * as React from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
-  BoxedExpressionProvider,
   Clause,
   ContextProps,
   DecisionTableProps,
@@ -12,7 +11,7 @@ import {
   LiteralExpressionProps,
   LogicType,
   RelationProps,
-} from "../../../../dist";
+} from "../../../../dist/api";
 import { DmnValidator } from "./DmnValidator";
 import { AutoRow } from "../core";
 import { createPortal } from "react-dom";
@@ -27,6 +26,8 @@ import { DmnRunnerTable, DmnRunnerTableProps } from "../../DmnRunnerTable";
 import { NotificationSeverity } from "@kogito-tooling/notifications/dist/api";
 import { dmnAutoTableDictionaries, DmnAutoTableI18nContext, dmnAutoTableI18nDefaults } from "../i18n";
 import { I18nDictionariesProvider } from "@kogito-tooling/i18n/dist/react-components";
+import nextId from "react-id-generator";
+import { BoxedExpressionProvider } from "../../../../dist/components";
 
 export enum EvaluationStatus {
   SUCCEEDED = "SUCCEEDED",
@@ -151,6 +152,7 @@ export function DmnAutoTable(props: Props) {
         output,
         annotation: [],
         rules,
+        uid: selectedExpression?.uid ?? nextId(),
       };
     }
   }, [grid, bridge, onSubmit, props.tableData, props.schema, props.results, inputSize]);
@@ -169,7 +171,6 @@ export function DmnAutoTable(props: Props) {
     broadcastRelationExpressionDefinition(definition: RelationProps): void {},
     resetExpressionDefinition(definition: ExpressionProps): void {},
     broadcastDecisionTableExpressionDefinition(definition: DecisionTableProps): void {},
-    broadcastDmnRunnerTable: (rows: number) => setInputSize(rows ?? 1),
   };
 
   const formErrorMessage = useMemo(
@@ -190,9 +191,13 @@ export function DmnAutoTable(props: Props) {
   );
 
   // Resets the ErrorBoundary everytime the FormSchema is updated
+  // useEffect(() => {
+  //   errorBoundaryRef.current?.reset();
+  // }, [bridge]);
+
   useEffect(() => {
-    errorBoundaryRef.current?.reset();
-  }, [bridge]);
+    console.log(selectedExpression);
+  }, [selectedExpression]);
 
   return (
     <>
@@ -205,7 +210,7 @@ export function DmnAutoTable(props: Props) {
             ctx={DmnAutoTableI18nContext}
           >
             <BoxedExpressionProvider expressionDefinition={selectedExpression}>
-              <DmnRunnerTable />
+              <DmnRunnerTable {...selectedExpression} />
             </BoxedExpressionProvider>
           </I18nDictionariesProvider>
         </ErrorBoundary>
