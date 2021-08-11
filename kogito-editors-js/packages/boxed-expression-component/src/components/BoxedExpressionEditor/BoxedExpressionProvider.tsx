@@ -39,6 +39,11 @@ export function BoxedExpressionProvider(props: BoxedExpressionProviderProps) {
     setSupervisorHash(hashfy(props.expressionDefinition));
   }, [props.expressionDefinition]);
 
+  useEffect(() => {
+    console.log("PROVIDER", props.expressionDefinition)
+  }, [props.expressionDefinition])
+
+
   return (
     <BoxedExpressionGlobalContext.Provider
       value={{
@@ -48,7 +53,6 @@ export function BoxedExpressionProvider(props: BoxedExpressionProviderProps) {
         boxedExpressionEditorRef,
         currentlyOpenedHandlerCallback,
         setCurrentlyOpenedHandlerCallback,
-        selectedExpression: props.expressionDefinition,
       }}
     >
       <ResizerSupervisor>

@@ -58,10 +58,9 @@ export const EditExpressionMenu: React.FunctionComponent<EditExpressionMenuProps
   onExpressionUpdate,
 }: EditExpressionMenuProps) => {
   const globalContext = useContext(BoxedExpressionGlobalContext);
-  const { i18n } = useBoxedExpressionEditorI18n();
-  title = title ?? i18n.editExpression;
-  nameField = nameField ?? i18n.name;
-  dataTypeField = dataTypeField ?? i18n.dataType;
+  title = "title";
+  nameField = "name";
+  dataTypeField = "data type";
   appendTo = appendTo ?? globalContext.boxedExpressionEditorRef?.current ?? undefined;
 
   const [dataType, setDataType] = useState(selectedDataType);

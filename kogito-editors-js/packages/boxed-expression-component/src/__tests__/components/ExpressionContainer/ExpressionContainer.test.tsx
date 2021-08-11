@@ -26,8 +26,9 @@ describe("ExpressionContainer tests", () => {
 
     const { container } = render(
       usingTestingBoxedExpressionI18nContext(
-        usingTestingBoxedExpressionProviderContext(<ExpressionContainer />, { expressionDefinition: expression })
-          .wrapper
+        usingTestingBoxedExpressionProviderContext(<ExpressionContainer selectedExpression={expression} />, {
+          expressionDefinition: expression,
+        }).wrapper
       ).wrapper
     );
 
@@ -40,8 +41,9 @@ describe("ExpressionContainer tests", () => {
 
     const { container } = render(
       usingTestingBoxedExpressionI18nContext(
-        usingTestingBoxedExpressionProviderContext(<ExpressionContainer />, { expressionDefinition: expression })
-          .wrapper
+        usingTestingBoxedExpressionProviderContext(<ExpressionContainer selectedExpression={expression} />, {
+          expressionDefinition: expression,
+        }).wrapper
       ).wrapper
     );
     expect(container.querySelector(".expression-title")).toBeTruthy();
@@ -52,8 +54,9 @@ describe("ExpressionContainer tests", () => {
     const expression = { name: "Test", logicType: LogicType.LiteralExpression, dataType: DataType.Undefined };
     const { container } = render(
       usingTestingBoxedExpressionI18nContext(
-        usingTestingBoxedExpressionProviderContext(<ExpressionContainer />, { expressionDefinition: expression })
-          .wrapper
+        usingTestingBoxedExpressionProviderContext(<ExpressionContainer selectedExpression={expression} />, {
+          expressionDefinition: expression,
+        }).wrapper
       ).wrapper
     );
 
@@ -66,8 +69,9 @@ describe("ExpressionContainer tests", () => {
 
     const { container } = render(
       usingTestingBoxedExpressionI18nContext(
-        usingTestingBoxedExpressionProviderContext(<ExpressionContainer />, { expressionDefinition: expression })
-          .wrapper
+        usingTestingBoxedExpressionProviderContext(<ExpressionContainer selectedExpression={expression} />, {
+          expressionDefinition: expression,
+        }).wrapper
       ).wrapper
     );
     expect(container.querySelector(".expression-type")).toBeTruthy();

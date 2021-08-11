@@ -41,7 +41,6 @@ declare global {
       broadcastInvocationExpressionDefinition: (definition: InvocationProps) => void;
       broadcastFunctionExpressionDefinition: (definition: FunctionProps) => void;
       broadcastDecisionTableExpressionDefinition: (definition: DecisionTableProps) => void;
-      broadcastDmnRunnerTable: (rowQtt: number) => void;
     };
   }
 }

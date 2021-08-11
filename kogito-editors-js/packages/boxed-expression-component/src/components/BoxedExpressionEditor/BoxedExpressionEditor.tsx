@@ -18,7 +18,6 @@ import * as React from "react";
 import { useCallback, useState } from "react";
 import "@patternfly/react-core/dist/styles/base-no-reset.css";
 import "@patternfly/react-styles/css/components/Drawer/drawer.css";
-
 import { ExpressionProps, PMMLParams } from "../../api";
 import {
   boxedExpressionEditorDictionaries,
@@ -52,7 +51,7 @@ export function BoxedExpressionEditor(props: BoxedExpressionEditorProps) {
       ctx={BoxedExpressionEditorI18nContext}
     >
       <BoxedExpressionProvider expressionDefinition={expressionDefinition} pmmlParams={props.pmmlParams}>
-        <ExpressionContainer onExpressionChange={onExpressionChange} />
+        <ExpressionContainer selectedExpression={expressionDefinition} onExpressionChange={onExpressionChange} />
       </BoxedExpressionProvider>
     </I18nDictionariesProvider>
   );

@@ -98,7 +98,6 @@ export function wrapComponentInContext(component: JSX.Element): JSX.Element {
         boxedExpressionEditorRef: { current: document.body as HTMLDivElement },
         currentlyOpenedHandlerCallback: jest.fn,
         setCurrentlyOpenedHandlerCallback: jest.fn,
-        selectedExpression: {},
       }}
     >
       {component}

@@ -22,15 +22,16 @@ import { LogicTypeSelector } from "../LogicTypeSelector";
 import { BoxedExpressionGlobalContext } from "../../context";
 
 export interface ExpressionContainerProps {
+  selectedExpression: ExpressionProps;
   /** Callback triggered when expression gets changed */
   onExpressionChange?: (updatedExpression: ExpressionProps) => void;
 }
 
 export const ExpressionContainer: (props: ExpressionContainerProps) => JSX.Element = ({
+  selectedExpression,
   onExpressionChange,
 }: ExpressionContainerProps) => {
   const expressionContainerRef = useRef<HTMLDivElement>(null);
-  const { selectedExpression } = useContext(BoxedExpressionGlobalContext);
 
   const updateExpressionNameAndDataType = useCallback(
     (updatedName, updatedDataType) => {

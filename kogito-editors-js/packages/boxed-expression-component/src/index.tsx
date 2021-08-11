@@ -14,18 +14,9 @@
  * limitations under the License.
  */
 
-import { BoxedExpressionEditor } from "./components";
 import * as React from "react";
-import { DataType, ExpressionProps } from "./api";
-import * as ReactDOM from "react-dom";
+import { DataType } from "./api";
 import { TableResizerProps } from "react-table";
-
-export * from "./components";
-export * from "./api";
-
-window.renderBoxedExpressionEditor = (selector: string, definition: ExpressionProps) => {
-  ReactDOM.render(<BoxedExpressionEditor expressionDefinition={definition} />, document.getElementById(selector));
-};
 
 // Extending react-table definitions with missing and custom properties
 declare module "react-table" {
