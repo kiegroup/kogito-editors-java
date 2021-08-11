@@ -33,10 +33,10 @@ export interface BoxedExpressionProviderProps {
 export function BoxedExpressionProvider(props: BoxedExpressionProviderProps) {
   const [currentlyOpenedHandlerCallback, setCurrentlyOpenedHandlerCallback] = useState(() => _.identity);
   const boxedExpressionEditorRef = useRef<HTMLDivElement>(null);
-  const [supervisorHash, setSupervisorHash] = useState(hashfy({ selectedExpression: props.expressionDefinition }));
+  const [supervisorHash, setSupervisorHash] = useState(hashfy(props.expressionDefinition));
 
   useEffect(() => {
-    setSupervisorHash(hashfy({ selectedExpression: props.expressionDefinition }));
+    setSupervisorHash(hashfy(props.expressionDefinition));
   }, [props.expressionDefinition]);
 
   return (
@@ -52,7 +52,9 @@ export function BoxedExpressionProvider(props: BoxedExpressionProviderProps) {
       }}
     >
       <ResizerSupervisor>
-        <>{props.children}</>
+        <div className="boxed-expression-editor" ref={boxedExpressionEditorRef}>
+          {props.children}
+        </div>
       </ResizerSupervisor>
     </BoxedExpressionGlobalContext.Provider>
   );

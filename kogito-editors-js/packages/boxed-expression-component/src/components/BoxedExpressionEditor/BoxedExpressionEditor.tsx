@@ -1,8 +1,24 @@
+/*
+ * Copyright 2020 Red Hat, Inc. and/or its affiliates.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import * as React from "react";
+import { useCallback, useState } from "react";
 import "@patternfly/react-core/dist/styles/base-no-reset.css";
 import "@patternfly/react-styles/css/components/Drawer/drawer.css";
-import { BoxedExpressionProvider } from "./BoxedExpressionProvider";
-import { ExpressionContainer } from "../ExpressionContainer";
-import * as React from "react";
+
 import { ExpressionProps, PMMLParams } from "../../api";
 import {
   boxedExpressionEditorDictionaries,
@@ -10,6 +26,8 @@ import {
   boxedExpressionEditorI18nDefaults,
 } from "../../i18n";
 import { I18nDictionariesProvider } from "@kogito-tooling/i18n/dist/react-components";
+import { BoxedExpressionProvider } from "./BoxedExpressionProvider";
+import { ExpressionContainer } from "../ExpressionContainer";
 
 export interface BoxedExpressionEditorProps {
   /** All expression properties used to define it */
@@ -19,6 +37,13 @@ export interface BoxedExpressionEditorProps {
 }
 
 export function BoxedExpressionEditor(props: BoxedExpressionEditorProps) {
+  const [expressionDefinition, setExpressionDefinition] = useState(props.expressionDefinition);
+
+  const onExpressionChange = useCallback(
+    (updatedExpression: ExpressionProps) => setExpressionDefinition(updatedExpression),
+    []
+  );
+
   return (
     <I18nDictionariesProvider
       defaults={boxedExpressionEditorI18nDefaults}
@@ -26,8 +51,8 @@ export function BoxedExpressionEditor(props: BoxedExpressionEditorProps) {
       initialLocale={navigator.language}
       ctx={BoxedExpressionEditorI18nContext}
     >
-      <BoxedExpressionProvider expressionDefinition={props.expressionDefinition} pmmlParams={props.pmmlParams}>
-        <ExpressionContainer />
+      <BoxedExpressionProvider expressionDefinition={expressionDefinition} pmmlParams={props.pmmlParams}>
+        <ExpressionContainer onExpressionChange={onExpressionChange} />
       </BoxedExpressionProvider>
     </I18nDictionariesProvider>
   );

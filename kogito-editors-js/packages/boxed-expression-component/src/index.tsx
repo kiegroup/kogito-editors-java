@@ -23,9 +23,9 @@ import { TableResizerProps } from "react-table";
 export * from "./components";
 export * from "./api";
 
-// window.renderBoxedExpressionEditor = (selector: string, definition: ExpressionProps) => {
-//   ReactDOM.render(<BoxedExpressionEditor expressionDefinition={definition} />, document.getElementById(selector));
-// };
+window.renderBoxedExpressionEditor = (selector: string, definition: ExpressionProps) => {
+  ReactDOM.render(<BoxedExpressionEditor expressionDefinition={definition} />, document.getElementById(selector));
+};
 
 // Extending react-table definitions with missing and custom properties
 declare module "react-table" {
