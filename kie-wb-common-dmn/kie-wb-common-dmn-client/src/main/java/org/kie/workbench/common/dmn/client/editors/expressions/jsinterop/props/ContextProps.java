@@ -14,22 +14,18 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.dmn.client.editors.expressions.props;
+package org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props;
 
 import jsinterop.annotations.JsType;
 
 @JsType
-public class ExpressionProps {
+public class ContextProps extends ExpressionProps {
+    public final ContextEntryProps[] contextEntries;
+    public final ExpressionProps result;
 
-    public final String name;
-
-    public final String dataType;
-
-    public final String logicType;
-
-    public ExpressionProps(final String name, final String dataType, final String logicType) {
-        this.name = name;
-        this.dataType = dataType;
-        this.logicType = logicType;
+    public ContextProps(final String name, final String dataType, final ContextEntryProps[] contextEntries, final ExpressionProps result) {
+        super(name, dataType, "Context");
+        this.contextEntries = contextEntries;
+        this.result = result;
     }
 }
