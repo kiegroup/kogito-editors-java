@@ -108,30 +108,32 @@ export function DmnAutoTable(props: Props) {
           inputEntries: [""],
           outputEntries: (outputEntries?.[i] as string[]) ?? [],
         };
-        rule.rowDelegate = ({ children }: any) => (
-          <AutoRow
-            schema={bridge}
-            model={props.tableData[i]}
-            autosave={true}
-            autosaveDelay={500}
-            onSubmit={(model: any) => onSubmit(model, i)}
-            // onValidate={(model: any, error: any) => onValidate(model, error, i)}
-            placeholder={true}
-          >
-            <UniformsContext.Consumer>
-              {(ctx: any) => (
-                <>
-                  {createPortal(
-                    <form id={`dmn-auto-form-${i}`} onSubmit={ctx?.onSubmit} />,
-                    document.getElementById(FORMS_ID)!
-                  )}
-                  {children}
-                </>
-              )}
-            </UniformsContext.Consumer>
-          </AutoRow>
-        );
-        rules.push(rule);
+        if (document.getElementById(FORMS_ID)) {
+          rule.rowDelegate = ({ children }: any) => (
+            <AutoRow
+              schema={bridge}
+              model={props.tableData[i]}
+              autosave={true}
+              autosaveDelay={500}
+              onSubmit={(model: any) => onSubmit(model, i)}
+              // onValidate={(model: any, error: any) => onValidate(model, error, i)}
+              placeholder={true}
+            >
+              <UniformsContext.Consumer>
+                {(ctx: any) => (
+                  <>
+                    {createPortal(
+                      <form id={`dmn-auto-form-${i}`} onSubmit={ctx?.onSubmit} />,
+                      document.getElementById(FORMS_ID)!
+                    )}
+                    {children}
+                  </>
+                )}
+              </UniformsContext.Consumer>
+            </AutoRow>
+          );
+          rules.push(rule);
+        }
       }
 
       return {

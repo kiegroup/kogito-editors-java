@@ -24,8 +24,6 @@ import { getColumnsAtLastLevel, Table } from "../../../dist/components";
 import "./DmnRunnerTable.css";
 import { DmnRunnerClause, DmnRunnerRule } from "./DmnRunnerTableTypes";
 import { useDmnAutoTableI18n } from "../unitables";
-import "../../../src/components/ExpressionContainer/ExpressionContainer.css";
-import "../../../src/components/LogicTypeSelector/LogicTypeSelector.css";
 
 enum DecisionTableColumnType {
   InputClause = "input",
@@ -97,17 +95,39 @@ export function DmnRunnerTable(props: DmnRunnerTableProps) {
   }, [i18n.editClause.input, i18n.editClause.output]);
 
   const memoColumns = useMemo(() => {
-    const inputColumns = (props.input ?? []).map(
-      (inputClause) =>
-        ({
+    const inputSection = (props.input ?? []).map(
+      (inputClause) => {
+        if (inputClause.insideProperties) {
+          const insideProperties = inputClause.insideProperties.map((insideInputClauses) => {
+            return ({
+              label: insideInputClauses.name,
+              accessor: insideInputClauses.name,
+              dataType: insideInputClauses.dataType,
+              width: insideInputClauses.width,
+              groupType: DecisionTableColumnType.InputClause,
+              cellDelegate: ""
+            } as any);
+          })
+          return {
+            groupType: DecisionTableColumnType.InputClause,
+            label: inputClause.name,
+            accessor: inputClause.name,
+            cssClasses: "decision-table--output",
+            columns: insideProperties,
+            appendColumnsOnChildren: true,
+          };
+        }
+        return {
+          groupType: DecisionTableColumnType.InputClause,
           label: inputClause.name,
           accessor: inputClause.name,
-          dataType: inputClause.dataType,
-          width: inputClause.width,
-          groupType: DecisionTableColumnType.InputClause,
           cssClasses: "decision-table--output",
-          cellDelegate: inputClause.cellDelegate,
-        } as any)
+          appendColumnsOnChildren: true,
+        };
+
+        // cssClasses: inputClause.insideProperties ? "" : "decision-table--input",
+
+      }
     );
     const outputColumns = (props.output ?? []).map(
       (outputClause) =>
@@ -121,14 +141,6 @@ export function DmnRunnerTable(props: DmnRunnerTableProps) {
         } as ColumnInstance)
     );
 
-    const inputSection = {
-      groupType: DecisionTableColumnType.InputClause,
-      label: "Test",
-      accessor: "Something",
-      cssClasses: "decision-table--output",
-      columns: inputColumns,
-      appendColumnsOnChildren: true,
-    };
     const outputSection = {
       groupType: DecisionTableColumnType.OutputClause,
       label: " ",
@@ -138,7 +150,7 @@ export function DmnRunnerTable(props: DmnRunnerTableProps) {
       appendColumnsOnChildren: true,
     };
 
-    return [inputSection, outputSection] as ColumnInstance[];
+    return [...inputSection, outputSection] as ColumnInstance[];
   }, [props.input, props.output]);
 
   const memoRows = useMemo(() => {

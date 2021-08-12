@@ -49,33 +49,36 @@ export class Grid {
     }
   }
 
-  public deepGenerateBoxed(fieldName: any, parentName = ""): DmnRunnerClause[] {
+  public deepGenerateBoxed(fieldName: any, parentName = ""): any {
     const joinedName = joinName(parentName, fieldName);
     const field = this.bridge.getField(joinedName);
 
     if (field.type === "object") {
-      return [
-        {
-          ...this.getDataTypeProps(field["x-dmn-type"]),
-          name: joinedName,
-          cellDelegate: ({ formId }: any) => <AutoField key={joinedName} name={joinedName} form={formId} />,
-        },
-      ];
-    }
-    return [
-      {
+      const insideProperties = this.bridge.getSubfields(joinedName).reduce((acc: any[], subField: string) => {
+        const field = this.deepGenerateBoxed(subField, joinedName);
+        if (field.insideProperties) {
+          return [...acc, ...field.insideProperties];
+        }
+        return [...acc, field];
+      }, []);
+      return {
         ...this.getDataTypeProps(field["x-dmn-type"]),
-        name: this.removeInputName(joinedName),
-        cellDelegate: ({ formId }: any) => <AutoField key={joinedName} name={joinedName} form={formId} />,
-      },
-    ];
+        insideProperties,
+        name: joinedName,
+      };
+    }
+    return {
+      ...this.getDataTypeProps(field["x-dmn-type"]),
+      name: this.removeInputName(joinedName),
+      cellDelegate: ({ formId }: any) => <AutoField key={joinedName} name={joinedName} form={formId} />,
+    };
   }
 
-  public generateBoxedInputs(): DmnRunnerClause[] {
+  public generateBoxedInputs(): any {
     let myGrid: DmnRunnerClause[] = [];
     const subfields = this.bridge.getSubfields();
     const inputs = subfields.reduce(
-      (acc: DmnRunnerClause[], fieldName: string) => [...acc, ...this.deepGenerateBoxed(fieldName)],
+      (acc: DmnRunnerClause[], fieldName: string) => [...acc, this.deepGenerateBoxed(fieldName)],
       [] as DmnRunnerClause[]
     );
     if (inputs.length > 0) {

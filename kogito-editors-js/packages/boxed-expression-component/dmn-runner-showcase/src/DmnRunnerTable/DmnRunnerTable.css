@@ -41,8 +41,8 @@
   tr:last-child
   th.decision-table--annotation
   .react-resizable {
-  height: 114px !important;
-  top: -69px;
+  height: 108px !important;
+  top: -66px;
   padding: 40px 0;
   cursor: pointer;
 }
@@ -62,16 +62,10 @@
   content: "";
   position: absolute;
   border-right: 2px solid #d2d2d2;
-  height: 120px;
-  top: -60px;
-  right: -2px;
+  height: 113px;
+  top: -58px;
+  right: -1px;
   z-index: 1;
-}
-
-.expression-container .decision-table-expression table tr th.colspan-header.input .header-cell,
-.expression-container .decision-table-expression table tr th.colspan-header.annotation .header-cell,
-.expression-container .decision-table-expression table thead th.colspan-header::after {
-  display: none;
 }
 
 .expression-container .decision-table-expression table thead th.output {
@@ -90,4 +84,53 @@
   th.annotation.decision-table--annotation
   .header-cell-info {
   width: 95%;
+}
+
+/* ExpressionContainer */
+.expression-container .expression-container-box {
+  display: inline-block;
+  border: 2px solid var(--pf-global--palette--black-300);
+  margin-top: 5px;
+}
+
+.expression-container .context-menu-container {
+  position: fixed;
+  z-index: 10000;
+  font-style: initial;
+}
+
+.expression-container > .expression-container-box,
+.expression-container .expression-type,
+.expression-container .entry-expression {
+  font-size: 14px;
+  font-style: italic;
+  color: gray;
+}
+
+/* LogicTypeSelector */
+.expression-container .logic-type-selector {
+  display: flex;
+  align-items: center;
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  min-width: 15em;
+  min-height: 4em;
+  overflow: hidden;
+  transition: background-color 0.1s ease;
+}
+
+.expression-container .logic-type-selector:hover {
+  background-color: #eff5f8;
+}
+
+.expression-container .logic-type-selector.logic-type-not-present {
+  cursor: pointer;
+  justify-content: center;
+}
+
+.expression-container .logic-type-selector.logic-type-selected {
+  cursor: default;
+  padding: 0.5em;
 }

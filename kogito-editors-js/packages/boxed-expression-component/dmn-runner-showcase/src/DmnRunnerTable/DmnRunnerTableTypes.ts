@@ -25,6 +25,8 @@ export interface DmnRunnerClause {
   width?: number | string;
 
   cellDelegate?: any;
+
+  insideProperties?: any[];
 }
 
 export interface DmnRunnerRule {
