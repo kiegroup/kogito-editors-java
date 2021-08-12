@@ -78,7 +78,6 @@ interface Props {
 const FORMS_ID = "forms";
 
 export function DmnAutoTable(props: Props) {
-  // const [selectedExpression, setSelectedExpression] = useState<DecisionTableProps>();
   const bridge = useMemo(() => new DmnValidator().getBridge(props.schema ?? {}), [props.schema]);
   const grid = useMemo(() => (bridge ? new DmnGrid(bridge) : undefined), [bridge]);
   const errorBoundaryRef = useRef<ErrorBoundary>(null);
@@ -105,6 +104,8 @@ export function DmnAutoTable(props: Props) {
   const [inputSize, setInputSize] = useState<number>(1);
 
   const shouldRender = useMemo(() => (grid?.generateBoxedInputs().length ?? 0) > 0, [grid]);
+
+  const onRowNumberUpdated = useCallback((rowNumber) => setInputSize(rowNumber), []);
 
   const selectedExpression: DmnRunnerTableProps | undefined = useMemo(() => {
     if (grid && props.results) {
@@ -145,33 +146,20 @@ export function DmnAutoTable(props: Props) {
       }
 
       return {
-        // ...previousSelectedExpression,
         name: "DMN Runner",
         logicType: LogicType.DecisionTable,
         input,
         output,
-        annotation: [],
         rules,
         uid: selectedExpression?.uid ?? nextId(),
+        onRowNumberUpdated,
       };
     }
-  }, [grid, bridge, onSubmit, props.tableData, props.schema, props.results, inputSize]);
+  }, [grid, bridge, onSubmit, props.tableData, props.schema, props.results, inputSize, onRowNumberUpdated]);
 
   useEffect(() => {
     errorBoundaryRef.current?.reset();
   }, [props.formError]);
-
-  //Defining global function that will be available in the Window namespace and used by the BoxedExpressionEditor component
-  window.beeApi = {
-    broadcastContextExpressionDefinition(definition: ContextProps): void {},
-    broadcastFunctionExpressionDefinition(definition: FunctionProps): void {},
-    broadcastInvocationExpressionDefinition(definition: InvocationProps): void {},
-    broadcastListExpressionDefinition(definition: ListProps): void {},
-    broadcastLiteralExpressionDefinition(definition: LiteralExpressionProps): void {},
-    broadcastRelationExpressionDefinition(definition: RelationProps): void {},
-    resetExpressionDefinition(definition: ExpressionProps): void {},
-    broadcastDecisionTableExpressionDefinition(definition: DecisionTableProps): void {},
-  };
 
   const formErrorMessage = useMemo(
     () => (
@@ -191,9 +179,9 @@ export function DmnAutoTable(props: Props) {
   );
 
   // Resets the ErrorBoundary everytime the FormSchema is updated
-  // useEffect(() => {
-  //   errorBoundaryRef.current?.reset();
-  // }, [bridge]);
+  useEffect(() => {
+    errorBoundaryRef.current?.reset();
+  }, [bridge]);
 
   useEffect(() => {
     console.log(selectedExpression);

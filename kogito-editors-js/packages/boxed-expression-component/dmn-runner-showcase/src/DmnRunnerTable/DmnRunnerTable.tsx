@@ -44,6 +44,8 @@ export interface DmnRunnerTableProps extends ExpressionProps {
   output?: DmnRunnerClause[];
   /** Rules represent rows values */
   rules?: DmnRunnerRule[];
+  /** Callback to be called when row number is updated */
+  onRowNumberUpdated: (rowNumber: number) => void;
 }
 
 export function DmnRunnerTable(props: DmnRunnerTableProps) {
@@ -102,32 +104,6 @@ export function DmnRunnerTable(props: DmnRunnerTableProps) {
     editColumnLabel[DecisionTableColumnType.OutputClause] = i18n.editClause.output;
     return editColumnLabel;
   }, [i18n.editClause.input, i18n.editClause.output]);
-
-  const spreadDecisionTableExpressionDefinition = useCallback((columns: ColumnInstance[], rows: DataRecord[]) => {
-    const groupedColumns = groupBy(getColumnsAtLastLevel(columns), (column) => column.groupType);
-    const newInput: DmnRunnerClause[] = (groupedColumns[DecisionTableColumnType.InputClause] ?? []).map(
-      (inputClause) => ({
-        name: inputClause.accessor,
-        dataType: inputClause.dataType,
-        width: inputClause.width,
-        cellDelegate: (inputClause as any)?.cellDelegate,
-      })
-    );
-    const newOutput: DmnRunnerClause[] = (groupedColumns[DecisionTableColumnType.OutputClause] ?? []).map(
-      (outputClause) => ({
-        name: outputClause.accessor,
-        dataType: outputClause.dataType,
-        width: outputClause.width,
-      })
-    );
-    const newRules: DmnRunnerRule[] = rows.map((row: DataRecord) => ({
-      inputEntries: newInput.map((inputClause) => row[inputClause.name] as string),
-      outputEntries: newOutput.map((outputClause) => row[outputClause.name] as string),
-      rowDelegate: row.rowDelegate as any,
-    }));
-
-    // window.beeApi?.broadcastDmnRunnerTable?.(newRules.length);
-  }, []);
 
   const memoColumns = useMemo(() => {
     const inputColumns = (props.input ?? []).map(
@@ -201,9 +177,9 @@ export function DmnRunnerTable(props: DmnRunnerTableProps) {
           return filledRow;
         }, {})
       );
-      spreadDecisionTableExpressionDefinition(memoColumns, newRows);
+      props.onRowNumberUpdated?.(newRows.length);
     },
-    [spreadDecisionTableExpressionDefinition, memoColumns]
+    [props.onRowNumberUpdated, memoColumns]
   );
 
   const onRowAdding = useCallback(() => {
