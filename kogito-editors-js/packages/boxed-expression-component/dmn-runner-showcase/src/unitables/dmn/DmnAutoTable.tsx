@@ -1,17 +1,6 @@
 import * as React from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import {
-  Clause,
-  ContextProps,
-  DecisionTableProps,
-  ExpressionProps,
-  FunctionProps,
-  InvocationProps,
-  ListProps,
-  LiteralExpressionProps,
-  LogicType,
-  RelationProps,
-} from "../../../../dist/api";
+import { Clause, LogicType } from "../../../../dist/api";
 import { DmnValidator } from "./DmnValidator";
 import { AutoRow } from "../core";
 import { createPortal } from "react-dom";

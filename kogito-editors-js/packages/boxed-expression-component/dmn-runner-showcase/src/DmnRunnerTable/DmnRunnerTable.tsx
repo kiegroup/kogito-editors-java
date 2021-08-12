@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-import groupBy from "lodash/groupBy";
 import * as React from "react";
 import { useCallback, useContext, useEffect, useMemo } from "react";
-import * as dummy from "../../../dist";
+import "../../../dist";
 import { ColumnInstance, DataRecord } from "react-table";
 import { ExpressionProps, GroupOperations, LogicType, TableHeaderVisibility, TableOperation } from "../../../dist/api";
 import { BoxedExpressionGlobalContext } from "../../../dist/context";
@@ -65,15 +64,7 @@ export function DmnRunnerTable(props: DmnRunnerTableProps) {
   }, []);
 
   const generateHandlerConfigurationByColumn = useCallback(
-    (groupName: string) => [
-      {
-        group: groupName,
-        items: [
-          { name: i18n.columnOperations.insertLeft, type: TableOperation.ColumnInsertLeft },
-          { name: i18n.columnOperations.insertRight, type: TableOperation.ColumnInsertRight },
-          { name: i18n.columnOperations.delete, type: TableOperation.ColumnDelete },
-        ],
-      },
+    () => [
       {
         group: i18n.decisionRule,
         items: [
@@ -91,10 +82,10 @@ export function DmnRunnerTable(props: DmnRunnerTableProps) {
 
   const getHandlerConfiguration = useMemo(() => {
     const configuration: { [columnGroupType: string]: GroupOperations[] } = {};
-    configuration[EMPTY_SYMBOL] = generateHandlerConfigurationByColumn(i18n.ruleAnnotation);
-    configuration[DecisionTableColumnType.InputClause] = generateHandlerConfigurationByColumn(i18n.inputClause);
-    configuration[DecisionTableColumnType.OutputClause] = generateHandlerConfigurationByColumn(i18n.outputClause);
-    configuration[DecisionTableColumnType.Annotation] = generateHandlerConfigurationByColumn(i18n.ruleAnnotation);
+    configuration[EMPTY_SYMBOL] = generateHandlerConfigurationByColumn();
+    configuration[DecisionTableColumnType.InputClause] = generateHandlerConfigurationByColumn();
+    configuration[DecisionTableColumnType.OutputClause] = generateHandlerConfigurationByColumn();
+    configuration[DecisionTableColumnType.Annotation] = generateHandlerConfigurationByColumn();
     return configuration;
   }, [generateHandlerConfigurationByColumn, i18n.inputClause, i18n.outputClause, i18n.ruleAnnotation]);
 
@@ -204,6 +195,7 @@ export function DmnRunnerTable(props: DmnRunnerTableProps) {
         <div className={`decision-table-expression ${props.uid}`}>
           <div className={`logic-type-selector logic-type-selected`}>
             <Table
+              editableHeader={false}
               headerLevels={1}
               headerVisibility={TableHeaderVisibility.Full}
               getColumnPrefix={getColumnPrefix}
