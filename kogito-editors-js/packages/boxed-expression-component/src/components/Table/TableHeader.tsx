@@ -45,6 +45,8 @@ export interface TableHeaderProps {
   onColumnsUpdate: (columns: Column[]) => void;
   /** Th props */
   thProps: (column: ColumnInstance) => any;
+  /** Option to enable or disable header edits */
+  editableHeader: boolean;
 }
 
 export const TableHeader: React.FunctionComponent<TableHeaderProps> = ({
@@ -58,6 +60,7 @@ export const TableHeader: React.FunctionComponent<TableHeaderProps> = ({
   tableColumns,
   onColumnsUpdate,
   thProps,
+  editableHeader,
 }) => {
   const getColumnLabel: (groupType: string) => string | undefined = useCallback(
     (groupType) => {
@@ -204,7 +207,7 @@ export const TableHeader: React.FunctionComponent<TableHeaderProps> = ({
         <Th {...headerProps} {...thProps(column)} className={getCssClass()} key={computeColumnKey(column, columnIndex)}>
           <Resizer width={width} onHorizontalResizeStop={(columnWidth) => onHorizontalResizeStop(column, columnWidth)}>
             <div className="header-cell" data-ouia-component-type="expression-column-header">
-              {column.dataType ? (
+              {column.dataType && editableHeader ? (
                 <EditExpressionMenu
                   title={getColumnLabel(column.groupType)}
                   selectedExpressionName={column.label}

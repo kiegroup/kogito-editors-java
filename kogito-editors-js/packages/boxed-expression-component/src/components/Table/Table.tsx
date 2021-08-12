@@ -65,6 +65,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
   children,
   getColumnPrefix,
   editColumnLabel,
+  editableHeader = true,
   onColumnsUpdate,
   onRowsUpdate,
   onRowAdding,
@@ -293,6 +294,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
           getColumnKey={onGetColumnKey}
           onColumnsUpdate={onColumnsUpdateCallback}
           thProps={thProps}
+          editableHeader={editableHeader}
         />
         <TableBody
           tableInstance={tableInstance}
