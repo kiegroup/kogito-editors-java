@@ -196,6 +196,15 @@ public class ExpressionEditorViewImplTest {
     @Mock
     private HTMLDivElement betaBoxedExpressionToggle;
 
+    @Mock
+    private HTMLDivElement newBoxedExpression;
+
+    @Mock
+    private HTMLDivElement dmnExpressionType;
+
+    @Mock
+    private HTMLDivElement dmnExpressionEditor;
+
     @Captor
     private ArgumentCaptor<Transform> transformArgumentCaptor;
 
@@ -251,7 +260,10 @@ public class ExpressionEditorViewImplTest {
                                                      domainObjectSelectionEvent,
                                                      tryIt,
                                                      switchBack,
-                                                     betaBoxedExpressionToggle));
+                                                     betaBoxedExpressionToggle,
+                                                     newBoxedExpression,
+                                                     dmnExpressionType,
+                                                     dmnExpressionEditor));
         view.init(presenter);
         view.bind(session);
 
@@ -284,6 +296,9 @@ public class ExpressionEditorViewImplTest {
         doAnswer((i) -> i.getArguments()[0]).when(translationService).getTranslation(Mockito.<String>any());
 
         betaBoxedExpressionToggle.classList = mock(DOMTokenList.class);
+        newBoxedExpression.classList = mock(DOMTokenList.class);
+        dmnExpressionType.classList = mock(DOMTokenList.class);
+        dmnExpressionEditor.classList = mock(DOMTokenList.class);
     }
 
     @Test
