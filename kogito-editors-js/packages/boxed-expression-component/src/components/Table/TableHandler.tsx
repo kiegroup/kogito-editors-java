@@ -34,13 +34,13 @@ export interface TableHandlerProps {
   /** Gets the prefix to be used for the next column name */
   getColumnPrefix: (groupType?: string) => string;
   /** Columns instance */
-  tableColumns: React.MutableRefObject<Column[]>;
+  tableColumns: Column[];
   /** Last selected column */
   lastSelectedColumn: ColumnInstance;
   /** Last selected row index */
   lastSelectedRowIndex: number;
   /** Rows instance */
-  tableRows: React.MutableRefObject<DataRecord[]>;
+  tableRows: DataRecord[];
   /** Function to be executed when one or more rows are modified */
   onRowsUpdate: (rows: DataRecord[]) => void;
   /** Function to be executed when adding a new row to the table */
@@ -122,7 +122,7 @@ export const TableHandler: React.FunctionComponent<TableHandlerProps> = ({
   const generateNextAvailableColumnName: (lastIndex: number, groupType?: string) => string = useCallback(
     (lastIndex, groupType) => {
       const candidateName = `${getColumnPrefix(groupType)}${lastIndex}`;
-      const columnWithCandidateName = _.find(getColumnsAtLastLevel(tableColumns.current), { accessor: candidateName });
+      const columnWithCandidateName = _.find(getColumnsAtLastLevel(tableColumns), { accessor: candidateName });
       return columnWithCandidateName ? generateNextAvailableColumnName(lastIndex + 1, groupType) : candidateName;
     },
     [getColumnPrefix, tableColumns]
@@ -136,7 +136,7 @@ export const TableHandler: React.FunctionComponent<TableHandlerProps> = ({
   const generateNextAvailableColumn = useCallback(() => {
     const groupType = selectedColumn.groupType;
     const cssClasses = selectedColumn.cssClasses;
-    const columns = getColumnsAtLastLevel(tableColumns.current);
+    const columns = getColumnsAtLastLevel(tableColumns);
     const columnsLength = groupType ? getLengthOfColumnsByGroupType(columns, groupType) + 1 : columns.length;
     const nextAvailableColumnName = generateNextAvailableColumnName(columnsLength, groupType);
 
@@ -152,14 +152,13 @@ export const TableHandler: React.FunctionComponent<TableHandlerProps> = ({
 
   /** These column operations have impact also on the collection of cells */
   const updateColumnsThenRows = useCallback(() => {
-    onColumnsUpdate([...tableColumns.current]);
-    onRowsUpdate([...tableRows.current]);
+    onColumnsUpdate([...tableColumns]);
+    onRowsUpdate([...tableRows]);
   }, [onColumnsUpdate, onRowsUpdate, tableColumns, tableRows]);
 
   const appendOnColumnChildren = useCallback(
     (operation: <T extends unknown>(elements: T[], index: number, element: T) => T[]) => {
-      const children = (_.find(tableColumns.current, getColumnSearchPredicate(selectedColumn)) as ColumnInstance)
-        .columns;
+      const children = (_.find(tableColumns, getColumnSearchPredicate(selectedColumn)) as ColumnInstance).columns;
       if (operation === insertBefore) {
         children!.unshift(generateNextAvailableColumn());
       } else if (operation === insertAfter) {
@@ -171,7 +170,7 @@ export const TableHandler: React.FunctionComponent<TableHandlerProps> = ({
 
   const updateTargetColumns = (operation: <T extends unknown>(elements: T[], index: number, element: T) => T[]) => {
     if (selectedColumn.parent) {
-      const parent = _.find(tableColumns.current, getColumnSearchPredicate(selectedColumn.parent)) as ColumnInstance;
+      const parent = _.find(tableColumns, getColumnSearchPredicate(selectedColumn.parent)) as ColumnInstance;
       parent.columns = operation(
         parent.columns!,
         _.findIndex(parent.columns, getColumnSearchPredicate(selectedColumn)),
@@ -181,10 +180,12 @@ export const TableHandler: React.FunctionComponent<TableHandlerProps> = ({
       if (selectedColumn.appendColumnsOnChildren && _.isArray(selectedColumn.columns)) {
         appendOnColumnChildren(operation);
       } else {
-        tableColumns.current = operation(
-          tableColumns.current,
-          _.findIndex(tableColumns.current, getColumnSearchPredicate(selectedColumn)),
-          generateNextAvailableColumn()
+        onColumnsUpdate?.(
+          operation(
+            tableColumns,
+            _.findIndex(tableColumns, getColumnSearchPredicate(selectedColumn)),
+            generateNextAvailableColumn()
+          )
         );
       }
     }
@@ -204,19 +205,19 @@ export const TableHandler: React.FunctionComponent<TableHandlerProps> = ({
           updateTargetColumns(deleteAt);
           break;
         case TableOperation.RowInsertAbove:
-          onRowsUpdate(insertBefore(tableRows.current, selectedRowIndex, onRowAdding()));
+          onRowsUpdate(insertBefore(tableRows, selectedRowIndex, onRowAdding()));
           break;
         case TableOperation.RowInsertBelow:
-          onRowsUpdate(insertAfter(tableRows.current, selectedRowIndex, onRowAdding()));
+          onRowsUpdate(insertAfter(tableRows, selectedRowIndex, onRowAdding()));
           break;
         case TableOperation.RowDelete:
-          onRowsUpdate(deleteAt(tableRows.current, selectedRowIndex));
+          onRowsUpdate(deleteAt(tableRows, selectedRowIndex));
           break;
         case TableOperation.RowClear:
-          onRowsUpdate(clearAt(tableRows.current, selectedRowIndex));
+          onRowsUpdate(clearAt(tableRows, selectedRowIndex));
           break;
         case TableOperation.RowDuplicate:
-          onRowsUpdate(duplicateAfter(tableRows.current, selectedRowIndex));
+          onRowsUpdate(duplicateAfter(tableRows, selectedRowIndex));
       }
       setShowTableHandler(false);
     },
@@ -244,36 +245,25 @@ export const TableHandler: React.FunctionComponent<TableHandlerProps> = ({
     return handlerConfiguration[selectedColumn?.groupType || ""];
   }, [handlerConfiguration, selectedColumn?.groupType]);
 
-  return useMemo(
-    () => (
-      <Popover
-        className="table-handler"
-        hasNoPadding
-        showClose={false}
-        distance={5}
-        position={"right"}
-        isVisible={showTableHandler}
-        shouldClose={() => setShowTableHandler(false)}
-        shouldOpen={(showFunction) => showFunction?.()}
-        reference={() => tableHandlerTarget}
-        appendTo={globalContext.boxedExpressionEditorRef?.current ?? undefined}
-        bodyContent={
-          <TableHandlerMenu
-            handlerConfiguration={getHandlerConfiguration}
-            allowedOperations={tableHandlerAllowedOperations}
-            onOperation={handlingOperation}
-          />
-        }
-      />
-    ),
-    [
-      showTableHandler,
-      globalContext.boxedExpressionEditorRef,
-      getHandlerConfiguration,
-      tableHandlerAllowedOperations,
-      handlingOperation,
-      setShowTableHandler,
-      tableHandlerTarget,
-    ]
+  return (
+    <Popover
+      className="table-handler"
+      hasNoPadding
+      showClose={false}
+      distance={5}
+      position={"right"}
+      isVisible={showTableHandler}
+      shouldClose={() => setShowTableHandler(false)}
+      shouldOpen={(showFunction) => showFunction?.()}
+      reference={() => tableHandlerTarget}
+      appendTo={globalContext.boxedExpressionEditorRef?.current ?? undefined}
+      bodyContent={
+        <TableHandlerMenu
+          handlerConfiguration={getHandlerConfiguration}
+          allowedOperations={tableHandlerAllowedOperations}
+          onOperation={handlingOperation}
+        />
+      }
+    />
   );
 };

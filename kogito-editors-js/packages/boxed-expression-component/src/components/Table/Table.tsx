@@ -20,13 +20,14 @@ import {
   ColumnInstance,
   ContextMenuEvent,
   DataRecord,
+  Row,
   useBlockLayout,
   useResizeColumns,
   useTable,
 } from "react-table";
 import { TableComposable } from "@patternfly/react-table";
 import * as React from "react";
-import { useCallback, useContext, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useMemo, useRef, useState } from "react";
 import { EditableCell } from "./EditableCell";
 import { TableHeaderVisibility, TableOperation, TableProps } from "../../api";
 import * as _ from "lodash";
@@ -62,11 +63,11 @@ export const getColumnSearchPredicate: (column: ColumnInstance) => (columnToComp
 export const Table: React.FunctionComponent<TableProps> = ({
   tableId,
   children,
-  getColumnPrefix = () => "column-",
+  getColumnPrefix,
   editColumnLabel,
   onColumnsUpdate,
   onRowsUpdate,
-  onRowAdding = () => ({}),
+  onRowAdding,
   controllerCell = NUMBER_OF_ROWS_COLUMN,
   defaultCell,
   rows,
@@ -75,15 +76,12 @@ export const Table: React.FunctionComponent<TableProps> = ({
   headerVisibility,
   headerLevels = 0,
   skipLastHeaderGroup = false,
-  getRowKey = (row) => row.id as string,
-  getColumnKey = (column) => column.id as string,
+  getRowKey,
+  getColumnKey,
   resetRowCustomFunction,
 }: TableProps) => {
   const tableRef = useRef<HTMLTableElement>(null);
-
   const globalContext = useContext(BoxedExpressionGlobalContext);
-
-  const [currentControllerCell, setCurrentControllerCell] = useState(controllerCell);
 
   const generateNumberOfRowsSubColumnRecursively: (column: ColumnInstance, headerLevels: number) => void = useCallback(
     (column, headerLevels) => {
@@ -91,7 +89,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
         _.assign(column, {
           columns: [
             {
-              label: headerVisibility === TableHeaderVisibility.Full ? NUMBER_OF_ROWS_SUBCOLUMN : currentControllerCell,
+              label: headerVisibility === TableHeaderVisibility.Full ? NUMBER_OF_ROWS_SUBCOLUMN : controllerCell,
               accessor: NUMBER_OF_ROWS_SUBCOLUMN,
               minWidth: 60,
               width: 60,
@@ -107,9 +105,10 @@ export const Table: React.FunctionComponent<TableProps> = ({
         }
       }
     },
-    [currentControllerCell, headerVisibility]
+    [controllerCell, headerVisibility]
   );
 
+  // adds row number
   const generateNumberOfRowsColumn = useCallback(
     (currentControllerCell: string | JSX.Element, columns: Column[]) => {
       const numberOfRowsColumn = {
@@ -125,8 +124,6 @@ export const Table: React.FunctionComponent<TableProps> = ({
     [generateNumberOfRowsSubColumnRecursively, headerLevels]
   );
 
-  const tableColumns = useRef<Column[]>(generateNumberOfRowsColumn(currentControllerCell, columns));
-  const tableRows = useRef<DataRecord[]>(rows);
   const [showTableHandler, setShowTableHandler] = useState(false);
   const [tableHandlerTarget, setTableHandlerTarget] = useState(document.body);
   const [tableHandlerAllowedOperations, setTableHandlerAllowedOperations] = useState(
@@ -135,26 +132,10 @@ export const Table: React.FunctionComponent<TableProps> = ({
   const [lastSelectedColumn, setLastSelectedColumn] = useState({} as ColumnInstance);
   const [lastSelectedRowIndex, setLastSelectedRowIndex] = useState(-1);
 
-  useEffect(() => {
-    tableColumns.current = generateNumberOfRowsColumn(controllerCell, tableColumns.current.slice(1));
-    setCurrentControllerCell(controllerCell);
-  }, [controllerCell, generateNumberOfRowsColumn]);
-
-  useEffect(() => {
-    tableColumns.current = generateNumberOfRowsColumn(currentControllerCell, columns);
-    // Watching for external changes of the columns
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [columns]);
-
-  useEffect(() => {
-    tableRows.current = rows;
-    // Watching for external changes of the rows
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rows]);
+  const tableColumns = useMemo(() => generateNumberOfRowsColumn(controllerCell, columns), [columns, controllerCell]);
 
   const onColumnsUpdateCallback = useCallback(
     (columns: Column[]) => {
-      tableColumns.current = columns;
       onColumnsUpdate?.(columns.slice(1)); //Removing "# of rows" column
     },
     [onColumnsUpdate]
@@ -162,7 +143,6 @@ export const Table: React.FunctionComponent<TableProps> = ({
 
   const onRowsUpdateCallback = useCallback(
     (rows: DataRecord[]) => {
-      tableRows.current = rows;
       onRowsUpdate?.(rows);
     },
     [onRowsUpdate]
@@ -170,145 +150,157 @@ export const Table: React.FunctionComponent<TableProps> = ({
 
   const onCellUpdate = useCallback(
     (rowIndex: number, columnId: string, value: string) => {
-      const updatedTableCells = [...tableRows.current];
+      const updatedTableCells = [...rows];
       updatedTableCells[rowIndex][columnId] = value;
       onRowsUpdateCallback(updatedTableCells);
     },
-    [onRowsUpdateCallback]
+    [onRowsUpdateCallback, rows]
   );
 
   const onRowUpdate = useCallback(
     (rowIndex: number, updatedRow: DataRecord) => {
-      const updatedRows = [...tableRows.current];
+      const updatedRows = [...rows];
       updatedRows[rowIndex] = updatedRow;
       onRowsUpdateCallback(updatedRows);
     },
-    [onRowsUpdateCallback]
+    [onRowsUpdateCallback, rows]
   );
 
-  const defaultColumn = {
-    Cell: useCallback((cellRef) => {
-      const column = cellRef.column as ColumnInstance;
-      if (column.isCountColumn) {
-        return cellRef.value;
-      } else {
-        return defaultCell ? defaultCell[column.id](cellRef) : <EditableCell {...cellRef} />;
-      }
-      // Table performance optimization: no need to re-render cells, since nested component themselves will re-render
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []),
-  };
+  const defaultColumn = useMemo(
+    () => ({
+      Cell: (cellRef: any) => {
+        const column = cellRef.column as ColumnInstance;
+        if (column.isCountColumn) {
+          return cellRef.value;
+        } else {
+          return defaultCell ? defaultCell[column.id](cellRef) : <EditableCell {...cellRef} />;
+        }
+        // Table performance optimization: no need to re-render cells, since nested component themselves will re-render
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+      },
+    }),
+    [defaultCell]
+  );
 
-  const contextMenuIsAvailable = (target: HTMLElement) => {
+  const contextMenuIsAvailable = useCallback((target: HTMLElement) => {
     const targetIsContainedInCurrentTable = target.closest("table") === tableRef.current;
     const contextMenuAvailableForTarget = !target.classList.contains(NO_TABLE_CONTEXT_MENU_CLASS);
     return targetIsContainedInCurrentTable && contextMenuAvailableForTarget;
-  };
+  }, []);
 
-  const tableHandlerStateUpdate = (target: HTMLElement, column: ColumnInstance) => {
+  const tableHandlerStateUpdate = useCallback((target: HTMLElement, column: ColumnInstance) => {
     setTableHandlerTarget(target);
     globalContext.currentlyOpenedHandlerCallback?.(false);
     setShowTableHandler(true);
     globalContext.setCurrentlyOpenedHandlerCallback?.(() => setShowTableHandler);
     setLastSelectedColumn(column);
-  };
+  }, []);
 
-  const atLeastTwoColumnsOfTheSameGroupType = (columnIndex: number) => {
-    const columnsAtLastLevel = getColumnsAtLastLevel(tableColumns.current);
-    const groupTypeForCurrentColumn = (columnsAtLastLevel[columnIndex] as ColumnInstance)?.groupType;
-    const columnsByGroupType = _.groupBy(columnsAtLastLevel, (column: ColumnInstance) => column.groupType);
-    return groupTypeForCurrentColumn
-      ? columnsByGroupType[groupTypeForCurrentColumn].length > 1
-      : tableColumns.current.length > 2; // The total number of columns is counting also the # of rows column
-  };
+  const getColumnOperations = useCallback(
+    (columnIndex: number) => {
+      const columnsAtLastLevel = getColumnsAtLastLevel(tableColumns);
+      const groupTypeForCurrentColumn = (columnsAtLastLevel[columnIndex] as ColumnInstance)?.groupType;
+      const columnsByGroupType = _.groupBy(columnsAtLastLevel, (column: ColumnInstance) => column.groupType);
+      const atLeastTwoColumnsOfTheSameGroupType = groupTypeForCurrentColumn
+        ? columnsByGroupType[groupTypeForCurrentColumn].length > 1
+        : tableColumns.length > 2; // The total number of columns is counting also the # of rows column
 
-  const columnCanBeDeleted = (columnIndex: number) => {
-    return columnIndex > 0 && atLeastTwoColumnsOfTheSameGroupType(columnIndex);
-  };
+      const columnCanBeDeleted = columnIndex > 0 && atLeastTwoColumnsOfTheSameGroupType;
 
-  const getColumnOperations = (columnIndex: number) =>
-    columnIndex === 0
-      ? []
-      : [
-          TableOperation.ColumnInsertLeft,
-          TableOperation.ColumnInsertRight,
-          ...(columnCanBeDeleted(columnIndex) ? [TableOperation.ColumnDelete] : []),
-        ];
-
-  const getThProps = (column: ColumnInstance) => ({
-    onContextMenu: (e: ContextMenuEvent) => {
-      const columnIndex = _.findIndex(
-        getColumnsAtLastLevel(tableColumns.current, column.depth),
-        getColumnSearchPredicate(column)
-      );
-      const target = e.target as HTMLElement;
-      const handlerOnHeaderIsAvailable = !column.disableHandlerOnHeader;
-      if (contextMenuIsAvailable(target) && handlerOnHeaderIsAvailable) {
-        e.preventDefault();
-        setTableHandlerAllowedOperations(getColumnOperations(columnIndex));
-        tableHandlerStateUpdate(target, column);
-      }
+      return columnIndex === 0
+        ? []
+        : [
+            TableOperation.ColumnInsertLeft,
+            TableOperation.ColumnInsertRight,
+            ...(columnCanBeDeleted ? [TableOperation.ColumnDelete] : []),
+          ];
     },
-  });
+    [tableColumns]
+  );
 
-  const getTdProps = (columnIndex: number, rowIndex: number) => ({
-    onContextMenu: (e: ContextMenuEvent) => {
-      const target = e.target as HTMLElement;
-      if (contextMenuIsAvailable(target)) {
-        e.preventDefault();
-        setTableHandlerAllowedOperations([
-          ...getColumnOperations(columnIndex),
-          TableOperation.RowInsertAbove,
-          TableOperation.RowInsertBelow,
-          ...(tableRows.current.length > 1 ? [TableOperation.RowDelete] : []),
-          TableOperation.RowClear,
-          TableOperation.RowDuplicate,
-        ]);
-        tableHandlerStateUpdate(target, getColumnsAtLastLevel(tableInstance.columns, headerLevels)[columnIndex]);
-        setLastSelectedRowIndex(rowIndex);
-      }
-    },
-  });
+  const thProps = useCallback(
+    (column: ColumnInstance) => ({
+      onContextMenu: (e: ContextMenuEvent) => {
+        const columnIndex = _.findIndex(
+          getColumnsAtLastLevel(tableColumns, column.depth),
+          getColumnSearchPredicate(column)
+        );
+        const target = e.target as HTMLElement;
+        const handlerOnHeaderIsAvailable = !column.disableHandlerOnHeader;
+        if (contextMenuIsAvailable(target) && handlerOnHeaderIsAvailable) {
+          e.preventDefault();
+          setTableHandlerAllowedOperations(getColumnOperations(columnIndex));
+          tableHandlerStateUpdate(target, column);
+        }
+      },
+    }),
+    [getColumnOperations, tableHandlerStateUpdate, contextMenuIsAvailable, tableColumns]
+  );
 
   const tableInstance = useTable(
     {
-      columns: tableColumns.current,
-      data: tableRows.current,
-      defaultColumn,
+      columns: tableColumns,
+      data: rows,
       onCellUpdate,
       onRowUpdate,
-      getThProps,
-      getTdProps,
+      defaultColumn,
     },
     useBlockLayout,
     useResizeColumns
   );
 
+  const tdProps = useCallback(
+    (columnIndex: number, rowIndex: number) => ({
+      onContextMenu: (e: ContextMenuEvent) => {
+        const target = e.target as HTMLElement;
+        if (contextMenuIsAvailable(target)) {
+          e.preventDefault();
+          setTableHandlerAllowedOperations([
+            ...getColumnOperations(columnIndex),
+            TableOperation.RowInsertAbove,
+            TableOperation.RowInsertBelow,
+            ...(rows.length > 1 ? [TableOperation.RowDelete] : []),
+            TableOperation.RowClear,
+            TableOperation.RowDuplicate,
+          ]);
+          tableHandlerStateUpdate(target, getColumnsAtLastLevel(tableColumns, headerLevels)[columnIndex]);
+          setLastSelectedRowIndex(rowIndex);
+        }
+      },
+    }),
+    [getColumnOperations, tableHandlerStateUpdate, contextMenuIsAvailable, tableColumns, rows, headerLevels]
+  );
+
+  const onGetColumnKey = useCallback(
+    (column: Column) => (getColumnKey ? getColumnKey(column) : column.id!),
+    [getColumnKey]
+  );
+  const onGetRowKey = useCallback((row: Row) => (getRowKey ? getRowKey(row) : row.id), [getRowKey]);
+  const onRowAddingCallback = useCallback(() => (onRowAdding ? onRowAdding() : {}), [onRowAdding]);
+  const onGetColumnPrefix = useCallback(() => (getColumnPrefix ? getColumnPrefix() : "column-"), [getColumnPrefix]);
+
   return (
     <div className={`table-component ${tableId}`}>
-      <TableComposable
-        variant="compact"
-        {...tableInstance.getTableProps()}
-        ref={tableRef}
-        ouiaId="expression-grid-table"
-      >
+      <TableComposable variant="compact" {...(tableInstance.getTableProps() as any)} ref={tableRef}>
         <TableHeader
           tableInstance={tableInstance}
           editColumnLabel={editColumnLabel}
           headerVisibility={headerVisibility}
           skipLastHeaderGroup={skipLastHeaderGroup}
-          tableRows={tableRows}
+          tableRows={rows}
           onRowsUpdate={onRowsUpdateCallback}
           tableColumns={tableColumns}
-          getColumnKey={getColumnKey}
+          getColumnKey={onGetColumnKey}
           onColumnsUpdate={onColumnsUpdateCallback}
+          thProps={thProps}
         />
         <TableBody
           tableInstance={tableInstance}
-          getRowKey={getRowKey}
-          getColumnKey={getColumnKey}
+          getRowKey={onGetRowKey}
+          getColumnKey={onGetColumnKey}
           onColumnsUpdate={onColumnsUpdateCallback}
           headerVisibility={headerVisibility}
+          tdProps={tdProps}
         >
           {children}
         </TableBody>
@@ -316,13 +308,13 @@ export const Table: React.FunctionComponent<TableProps> = ({
       {showTableHandler && handlerConfiguration ? (
         <TableHandler
           tableColumns={tableColumns}
-          getColumnPrefix={getColumnPrefix}
+          getColumnPrefix={onGetColumnPrefix}
           handlerConfiguration={handlerConfiguration}
           lastSelectedColumn={lastSelectedColumn}
           lastSelectedRowIndex={lastSelectedRowIndex}
-          tableRows={tableRows}
+          tableRows={rows}
           onRowsUpdate={onRowsUpdateCallback}
-          onRowAdding={onRowAdding}
+          onRowAdding={onRowAddingCallback}
           showTableHandler={showTableHandler}
           setShowTableHandler={setShowTableHandler}
           tableHandlerAllowedOperations={tableHandlerAllowedOperations}

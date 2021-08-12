@@ -19,8 +19,8 @@ import { useCallback, useState } from "react";
 import * as ReactDOM from "react-dom";
 import "./index.css";
 // noinspection ES6PreferShortImport
+import { BoxedExpressionEditor } from "./lib/components";
 import {
-  BoxedExpressionEditor,
   ContextProps,
   DataType,
   DecisionTableProps,
@@ -31,7 +31,7 @@ import {
   LiteralExpressionProps,
   LogicType,
   RelationProps,
-} from "./lib";
+} from "./lib/api";
 import { Button, Modal } from "@patternfly/react-core";
 import { CopyIcon, PenIcon } from "@patternfly/react-icons";
 
@@ -86,7 +86,6 @@ export const App: React.FunctionComponent = () => {
     broadcastInvocationExpressionDefinition: (definition: InvocationProps) => setExpressionDefinition(definition),
     broadcastFunctionExpressionDefinition: (definition: FunctionProps) => setExpressionDefinition(definition),
     broadcastDecisionTableExpressionDefinition: (definition: DecisionTableProps) => setExpressionDefinition(definition),
-    broadcastDmnRunnerTable: (rowQtt => 0)
   };
 
   const copyToClipboard = useCallback(

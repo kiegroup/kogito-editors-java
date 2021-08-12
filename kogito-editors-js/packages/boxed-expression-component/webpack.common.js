@@ -16,7 +16,6 @@ module.exports = {
       name: `__KIE__BoxedExpressionComponent__`,
     },
   },
-
   module: {
     rules: [
       {

@@ -108,21 +108,18 @@ export const EditableCell: React.FunctionComponent<EditableCellProps> = React.me
       [mode]
     );
 
-    return useMemo(
-      () => (
-        <div onDoubleClick={onDoubleClick} onClick={onSelect} className={cssClass()}>
-          <span>{value}</span>
-          <textarea
-            ref={textarea}
-            value={value || ""}
-            onFocus={onSelect}
-            onKeyPress={onKeyPress}
-            onChange={onChange}
-            onBlur={onBlur}
-          />
-        </div>
-      ),
-      [onDoubleClick, onSelect, cssClass, value, onKeyPress, onChange, onBlur]
+    return (
+      <div onDoubleClick={onDoubleClick} onClick={onSelect} className={cssClass()}>
+        <span>{value}</span>
+        <textarea
+          ref={textarea}
+          value={value || ""}
+          onFocus={onSelect}
+          onKeyPress={onKeyPress}
+          onChange={onChange}
+          onBlur={onBlur}
+        />
+      </div>
     );
   },
   ({ value: oldValue }, { value }) => oldValue === value
