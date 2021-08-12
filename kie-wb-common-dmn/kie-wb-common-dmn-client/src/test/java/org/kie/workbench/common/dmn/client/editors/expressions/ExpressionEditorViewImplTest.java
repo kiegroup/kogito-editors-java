@@ -200,7 +200,10 @@ public class ExpressionEditorViewImplTest {
     private HTMLDivElement newBoxedExpression;
 
     @Mock
-    private HTMLDivElement oldBoxedExpression;
+    private HTMLDivElement dmnExpressionType;
+
+    @Mock
+    private HTMLDivElement dmnExpressionEditor;
 
     @Captor
     private ArgumentCaptor<Transform> transformArgumentCaptor;
@@ -259,7 +262,8 @@ public class ExpressionEditorViewImplTest {
                                                      switchBack,
                                                      betaBoxedExpressionToggle,
                                                      newBoxedExpression,
-                                                     oldBoxedExpression));
+                                                     dmnExpressionType,
+                                                     dmnExpressionEditor));
         view.init(presenter);
         view.bind(session);
 

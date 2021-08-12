@@ -34,10 +34,24 @@ import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.kie.workbench.common.dmn.api.definition.HasExpression;
 import org.kie.workbench.common.dmn.api.definition.HasName;
+import org.kie.workbench.common.dmn.api.definition.HasVariable;
+import org.kie.workbench.common.dmn.api.definition.model.Context;
 import org.kie.workbench.common.dmn.api.definition.model.Expression;
+import org.kie.workbench.common.dmn.api.definition.model.InformationItemPrimary;
+import org.kie.workbench.common.dmn.api.definition.model.LiteralExpression;
+import org.kie.workbench.common.dmn.api.definition.model.Relation;
+import org.kie.workbench.common.dmn.api.editors.types.BuiltInTypeUtils;
+import org.kie.workbench.common.dmn.api.property.dmn.Name;
+import org.kie.workbench.common.dmn.api.property.dmn.QName;
+import org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType;
 import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
 import org.kie.workbench.common.dmn.client.commands.factory.DefaultCanvasCommandFactory;
-import org.kie.workbench.common.dmn.client.editors.expressions.props.ExpressionProps;
+import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.ContextProps;
+import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.ExpressionProps;
+import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.LiteralExpressionProps;
+import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.RelationProps;
+import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.util.BoxedExpressionService;
+import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.util.ExpressionFiller;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinitions;
 import org.kie.workbench.common.dmn.client.js.DMNLoader;
 import org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants;
@@ -97,11 +111,14 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
     @DataField("beta-boxed-expression-toggle")
     private HTMLDivElement betaBoxedExpressionToggle;
 
-    @DataField("new-boxed-expression")
+    @DataField("dmn-new-expression-editor")
     private HTMLDivElement newBoxedExpression;
 
-    @DataField("old-boxed-expression")
-    private HTMLDivElement oldBoxedExpression;
+    @DataField("dmn-expression-type")
+    private HTMLDivElement dmnExpressionType;
+
+    @DataField("dmn-expression-editor")
+    private HTMLDivElement dmnExpressionEditor;
 
     private TranslationService translationService;
     private ListSelectorView.Presenter listSelector;
@@ -143,7 +160,8 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
                                     final HTMLAnchorElement switchBack,
                                     final HTMLDivElement betaBoxedExpressionToggle,
                                     final HTMLDivElement newBoxedExpression,
-                                    final HTMLDivElement oldBoxedExpression) {
+                                    final HTMLDivElement dmnExpressionType,
+                                    final HTMLDivElement dmnExpressionEditor) {
         this.returnToLink = returnToLink;
         this.expressionName = expressionName;
         this.expressionType = expressionType;
@@ -163,7 +181,8 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
         this.switchBack = switchBack;
         this.betaBoxedExpressionToggle = betaBoxedExpressionToggle;
         this.newBoxedExpression = newBoxedExpression;
-        this.oldBoxedExpression = oldBoxedExpression;
+        this.dmnExpressionType = dmnExpressionType;
+        this.dmnExpressionEditor = dmnExpressionEditor;
     }
 
     @Override
@@ -244,6 +263,20 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
     }
 
     @Override
+    public void activate() {
+        final String expressionName = hasName.orElse((HasName) hasExpression).getValue().getValue();
+        String dataType = null;
+        if (hasExpression instanceof HasVariable) {
+            @SuppressWarnings("unchecked")
+            final HasVariable<InformationItemPrimary> hasVariable = (HasVariable<InformationItemPrimary>) hasExpression;
+            dataType = hasVariable.getVariable().getTypeRef().getLocalPart();
+        }
+
+        DMNLoader.renderBoxedExpressionEditor(".kie-dmn-new-expression-editor", ExpressionFiller.buildAndFillJsInteropProp(hasExpression.getExpression(), expressionName, dataType));
+        BoxedExpressionService.registerBroadcastForExpression(this);
+    }
+
+    @Override
     public void setReturnToLinkText(final String text) {
         returnToLink.setTextContent(translationService.format(DMNEditorConstants.ExpressionEditor_ReturnToLink, text));
     }
@@ -297,9 +330,37 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
         preventDefault(event);
     }
 
+    public void resetExpressionDefinition() {
+        hasExpression.setExpression(null);
+    }
+
+    public void broadcastLiteralExpressionDefinition(final LiteralExpressionProps literalExpressionProps) {
+        setExpressionName(literalExpressionProps);
+        setTypeRef(literalExpressionProps.dataType);
+        if (hasExpression.getExpression() == null) {
+            hasExpression.setExpression(new LiteralExpression());
+        }
+        ExpressionFiller.fillLiteralExpression((LiteralExpression) hasExpression.getExpression(), literalExpressionProps);
+    }
+
+    public void broadcastContextExpressionDefinition(final ContextProps contextProps) {
+        setExpressionName(contextProps);
+        setTypeRef(contextProps.dataType);
+        if (hasExpression.getExpression() == null) {
+            hasExpression.setExpression(new Context());
+        }
+        ExpressionFiller.fillContextExpression((Context) hasExpression.getExpression(), contextProps);
+    }
+
+    public void broadcastRelationExpressionDefinition(final RelationProps relationProps) {
+        if (hasExpression.getExpression() == null) {
+            hasExpression.setExpression(new Relation());
+        }
+        ExpressionFiller.fillRelationExpression((Relation) hasExpression.getExpression(), relationProps);
+    }
+
     void renderNewBoxedExpression() {
         toggleEditorsVisibility();
-        DMNLoader.renderBoxedExpressionEditor(".kie-dmn-expression-container", new ExpressionProps("Expression Name", "<Undefined>", null));
     }
 
     void renderOldBoxedExpression() {
@@ -315,8 +376,26 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
         event.stopPropagation();
     }
 
+    private void setExpressionName(final ExpressionProps expressionProps) {
+        final HasName hasName = (HasName) hasExpression;
+        hasName.setName(new Name(expressionProps.name));
+    }
+
+    private void setTypeRef(final String dataType) {
+        final QName typeRef = BuiltInTypeUtils
+                .findBuiltInTypeByName(dataType)
+                .orElse(BuiltInType.UNDEFINED)
+                .asQName();
+        if (hasExpression instanceof HasVariable) {
+            @SuppressWarnings("unchecked")
+            HasVariable<InformationItemPrimary> hasVariable = (HasVariable<InformationItemPrimary>) hasExpression;
+            hasVariable.getVariable().setTypeRef(typeRef);
+        }
+    }
+
     private void toggleEditorsVisibility() {
-        oldBoxedExpression.classList.toggle("hidden");
+        dmnExpressionType.classList.toggle("hidden");
+        dmnExpressionEditor.classList.toggle("hidden");
         newBoxedExpression.classList.toggle("hidden");
     }
 

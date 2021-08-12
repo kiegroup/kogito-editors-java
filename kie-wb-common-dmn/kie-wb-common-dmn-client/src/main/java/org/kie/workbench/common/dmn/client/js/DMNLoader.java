@@ -18,7 +18,7 @@ package org.kie.workbench.common.dmn.client.js;
 
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
-import org.kie.workbench.common.dmn.client.editors.expressions.props.ExpressionProps;
+import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.ExpressionProps;
 
 @JsType(isNative = true)
 public class DMNLoader {
