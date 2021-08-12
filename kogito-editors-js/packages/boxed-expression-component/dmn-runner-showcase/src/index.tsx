@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import "@patternfly/react-core/dist/styles/base.css";
+
 import * as React from "react";
 import { useState } from "react";
 import * as ReactDOM from "react-dom";
 import "./index.css";
+import "@patternfly/react-core/dist/styles/base-no-reset.css";
 import { DmnAutoTable } from "./unitables";
 import * as schemas from "./schemas";
 import { Button } from "@patternfly/react-core";

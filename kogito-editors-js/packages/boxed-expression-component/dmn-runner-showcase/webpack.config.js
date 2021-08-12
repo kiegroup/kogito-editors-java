@@ -1,5 +1,6 @@
 const CopyPlugin = require("copy-webpack-plugin");
 const path = require("path");
+const { patternflyRules } = require("@kogito-tooling/patternfly-base/patternflyWebpackOptions")
 
 module.exports = () => {
   return {
@@ -21,14 +22,7 @@ module.exports = () => {
     ],
     module: {
       rules: [
-        {
-          test: /\.s[ac]ss$/i,
-          use: ["style-loader", "css-loader", "sass-loader"],
-        },
-        {
-          test: /\.css$/,
-          use: ["style-loader", "css-loader"],
-        },
+        ...patternflyRules,
         {
           test: /\.js$/,
           enforce: "pre",
