@@ -18,7 +18,8 @@
     <div class="kie-dmn-return-to-link">
         <i class="fa fa-angle-double-left" aria-hidden="true"></i><a href="#" data-field="returnToLink"></a>
 
-        <div data-field="beta-boxed-expression-toggle" class="kie-beta-boxed-expression-editor">
+        <!-- TODO (KOGITO-3661): Remove the "display: none" here. -->
+        <div data-field="beta-boxed-expression-toggle" style="display: none" class="kie-beta-boxed-expression-editor">
             <span class="beta-dash"></span>
             <span class="beta-badge" data-i18n-key="Beta"></span>
             <span class="stable-badge" data-i18n-key="Stable"></span>
@@ -35,13 +36,11 @@
             </span>
         </div>
     </div>
-    <div data-field="dmn-new-expression-editor" class="kie-dmn-new-expression-editor hidden">
-    </div>
-    <div data-field="dmn-expression-type" class="kie-dmn-expression-type">
+    <div class="kie-dmn-expression-type">
         <span id="name" data-field="expressionName"></span>
         <span id="type" data-field="expressionType"></span>
     </div>
-    <div data-field="dmn-expression-editor" class="kie-dmn-expression-editor">
+    <div class="kie-dmn-expression-editor">
         <div data-field="dmn-table"></div>
     </div>
 </div>
