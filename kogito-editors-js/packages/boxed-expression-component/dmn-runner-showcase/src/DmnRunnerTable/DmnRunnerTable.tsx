@@ -105,7 +105,7 @@ export function DmnRunnerTable(props: DmnRunnerTableProps) {
               dataType: insideInputClauses.dataType,
               width: insideInputClauses.width,
               groupType: DecisionTableColumnType.InputClause,
-              cellDelegate: ""
+              cellDelegate: insideInputClauses.cellDelegate
             } as any);
           })
           return {
@@ -123,6 +123,7 @@ export function DmnRunnerTable(props: DmnRunnerTableProps) {
           accessor: inputClause.name,
           cssClasses: "decision-table--output",
           appendColumnsOnChildren: true,
+          cellDelegate: inputClause.cellDelegate
         };
 
         // cssClasses: inputClause.insideProperties ? "" : "decision-table--input",

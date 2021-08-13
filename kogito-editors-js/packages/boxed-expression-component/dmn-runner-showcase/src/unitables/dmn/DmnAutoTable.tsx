@@ -91,10 +91,9 @@ export function DmnAutoTable(props: Props) {
   // }, []);
 
   const [inputSize, setInputSize] = useState<number>(1);
-
   const shouldRender = useMemo(() => (grid?.generateBoxedInputs().length ?? 0) > 0, [grid]);
-
   const onRowNumberUpdated = useCallback((rowNumber) => setInputSize(rowNumber), []);
+  const [formsDivRendered, setFormsDivRendered] = useState<boolean>(false);
 
   const selectedExpression: DmnRunnerTableProps | undefined = useMemo(() => {
     if (grid && props.results) {
@@ -108,7 +107,7 @@ export function DmnAutoTable(props: Props) {
           inputEntries: [""],
           outputEntries: (outputEntries?.[i] as string[]) ?? [],
         };
-        if (document.getElementById(FORMS_ID)) {
+        if (formsDivRendered) {
           rule.rowDelegate = ({ children }: any) => (
             <AutoRow
               schema={bridge}
@@ -146,7 +145,17 @@ export function DmnAutoTable(props: Props) {
         onRowNumberUpdated,
       };
     }
-  }, [grid, bridge, onSubmit, props.tableData, props.schema, props.results, inputSize, onRowNumberUpdated]);
+  }, [
+    grid,
+    bridge,
+    onSubmit,
+    props.tableData,
+    props.schema,
+    props.results,
+    inputSize,
+    onRowNumberUpdated,
+    formsDivRendered,
+  ]);
 
   useEffect(() => {
     errorBoundaryRef.current?.reset();
@@ -194,7 +203,7 @@ export function DmnAutoTable(props: Props) {
           </I18nDictionariesProvider>
         </ErrorBoundary>
       )}
-      <div id={FORMS_ID} />
+      <div ref={() => setFormsDivRendered(true)} id={FORMS_ID} />
     </>
   );
 }

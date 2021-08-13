@@ -155,3 +155,114 @@ export const multipleInputs = {
   },
   $ref: "#/definitions/InputSet",
 };
+
+export const multipleCustomNormal = {
+  definitions: {
+    OutputSet: {
+      type: "object",
+      properties: {
+        customInput: {
+          $ref: "#/definitions/tCustom",
+        },
+        anotherInput: {
+          $ref: "#/definitions/tAnother",
+        },
+      },
+      "x-dmn-type": "DMNType{ https://kiegroup.org/dmn/_8AC41608-8F62-417C-AF24-706D60E0C1DA : OutputSet }",
+      "x-dmn-descriptions": {},
+    },
+    tCustom: {
+      type: "object",
+      properties: {
+        tName: {
+          type: "string",
+          "x-dmn-type": "FEEL:string",
+        },
+      },
+      "x-dmn-type": "DMNType{ https://kiegroup.org/dmn/_8AC41608-8F62-417C-AF24-706D60E0C1DA : tCustom }",
+    },
+    InputSet: {
+      required: ["customInput", "anotherInput"],
+      type: "object",
+      properties: {
+        customInput: {
+          $ref: "#/definitions/tCustom",
+        },
+        anotherInput: {
+          $ref: "#/definitions/tAnother",
+        },
+      },
+      "x-dmn-type": "DMNType{ https://kiegroup.org/dmn/_8AC41608-8F62-417C-AF24-706D60E0C1DA : InputSet }",
+      "x-dmn-descriptions": {},
+    },
+    tAnother: {
+      type: "object",
+      properties: {
+        tAge: {
+          type: "number",
+          "x-dmn-type": "FEEL:number",
+        },
+      },
+      "x-dmn-type": "DMNType{ https://kiegroup.org/dmn/_8AC41608-8F62-417C-AF24-706D60E0C1DA : tAnother }",
+    },
+  },
+  $ref: "#/definitions/InputSet",
+};
+
+export const multipleCustomEnum = {
+  definitions: {
+    tCustom: {
+      type: "object",
+      properties: {
+        tName: {
+          type: "string",
+          "x-dmn-type": "FEEL:string",
+        },
+      },
+      "x-dmn-type": "DMNType{ https://kiegroup.org/dmn/_8AC41608-8F62-417C-AF24-706D60E0C1DA : tCustom }",
+    },
+    tAnother__tCountry: {
+      enum: ["Brazil", "US"],
+      type: "string",
+      "x-dmn-type": "FEEL:string",
+      "x-dmn-allowed-values": '"Brazil", "US"',
+    },
+    tAnother: {
+      type: "object",
+      properties: {
+        tCountry: {
+          $ref: "#/definitions/tAnother__tCountry",
+        },
+      },
+      "x-dmn-type": "DMNType{ https://kiegroup.org/dmn/_8AC41608-8F62-417C-AF24-706D60E0C1DA : tAnother }",
+    },
+    OutputSet: {
+      type: "object",
+      properties: {
+        customInput: {
+          $ref: "#/definitions/tCustom",
+        },
+        anotherInput: {
+          $ref: "#/definitions/tAnother",
+        },
+      },
+      "x-dmn-type": "DMNType{ https://kiegroup.org/dmn/_8AC41608-8F62-417C-AF24-706D60E0C1DA : OutputSet }",
+      "x-dmn-descriptions": {},
+    },
+    InputSet: {
+      required: ["customInput", "anotherInput"],
+      type: "object",
+      properties: {
+        customInput: {
+          $ref: "#/definitions/tCustom",
+        },
+        anotherInput: {
+          $ref: "#/definitions/tAnother",
+        },
+      },
+      "x-dmn-type": "DMNType{ https://kiegroup.org/dmn/_8AC41608-8F62-417C-AF24-706D60E0C1DA : InputSet }",
+      "x-dmn-descriptions": {},
+    },
+  },
+  $ref: "#/definitions/InputSet",
+};

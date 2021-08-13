@@ -48,6 +48,16 @@ export const App: React.FunctionComponent = () => {
           </Button>
         </div>
         <div style={{ padding: "5px" }}>
+          <Button variant={"primary"} onClick={() => setSchema(schemas.multipleCustomNormal)}>
+            Multiple Custom Normal
+          </Button>
+        </div>
+        <div style={{ padding: "5px" }}>
+          <Button variant={"primary"} onClick={() => setSchema(schemas.multipleCustomEnum)}>
+            Multiple Custom Enum
+          </Button>
+        </div>
+        <div style={{ padding: "5px" }}>
           <Button variant={"primary"} onClick={() => setSchema(schemas.complexCustomDataType)}>
             Complex Custom
           </Button>
