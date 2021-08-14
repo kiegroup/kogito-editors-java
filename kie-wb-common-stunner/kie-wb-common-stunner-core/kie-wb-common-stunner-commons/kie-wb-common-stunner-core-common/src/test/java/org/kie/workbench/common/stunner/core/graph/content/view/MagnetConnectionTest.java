@@ -39,15 +39,15 @@ public class MagnetConnectionTest {
     private Element<? extends View<?>> element2;
 
     @Mock
-    private View content;
+    private View<?> content;
     @Mock
-    private View content2;
+    private View<?> content2;
 
     @Before
     @SuppressWarnings("unchecked")
     public void setUp() {
         Bounds bounds = Bounds.create(10d, 20d, 100d, 200d);
-        when(element.getContent()).thenReturn(content);
+        // TODO when(element.getContent()).thenReturn(content);
         when(content.getBounds()).thenReturn(bounds);
     }
 
@@ -83,7 +83,7 @@ public class MagnetConnectionTest {
     @SuppressWarnings("unchecked")
     public void testForTargetAtTop() {
         Bounds bounds2 = Bounds.create(0d, -100d, 200d, 0d);
-        when(element2.getContent()).thenReturn(content2);
+        // TODO when(element2.getContent()).thenReturn(content2);
         when(content2.getBounds()).thenReturn(bounds2);
 
         MagnetConnection m1 = MagnetConnection.Builder.forTarget(element, element2);
@@ -97,7 +97,7 @@ public class MagnetConnectionTest {
     @SuppressWarnings("unchecked")
     public void testForTargetAtBottom() {
         Bounds bounds2 = Bounds.create(0d, 210d, 200d, 310d);
-        when(element2.getContent()).thenReturn(content2);
+        // TODO when(element2.getContent()).thenReturn(content2);
         when(content2.getBounds()).thenReturn(bounds2);
 
         MagnetConnection m1 = MagnetConnection.Builder.forTarget(element, element2);
@@ -111,7 +111,7 @@ public class MagnetConnectionTest {
     @SuppressWarnings("unchecked")
     public void testForTargetAtRight() {
         Bounds bounds2 = Bounds.create(120d, 30d, 200d, 300d);
-        when(element2.getContent()).thenReturn(content2);
+        // TODO when(element2.getContent()).thenReturn(content2);
         when(content2.getBounds()).thenReturn(bounds2);
 
         MagnetConnection m1 = MagnetConnection.Builder.forTarget(element, element2);
@@ -125,7 +125,7 @@ public class MagnetConnectionTest {
     @SuppressWarnings("unchecked")
     public void testForTargetAtLeft() {
         Bounds bounds2 = Bounds.create(-40d, 10d, 0d, 300d);
-        when(element2.getContent()).thenReturn(content2);
+        // TODO when(element2.getContent()).thenReturn(content2);
         when(content2.getBounds()).thenReturn(bounds2);
 
         MagnetConnection m1 = MagnetConnection.Builder.forTarget(element, element2);
