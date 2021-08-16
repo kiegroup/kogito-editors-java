@@ -49,7 +49,7 @@ export const TableBody: React.FunctionComponent<TableBodyProps> = ({
 }) => {
   const renderCell = useCallback(
     (cellIndex: number, cell: Cell, rowIndex: number, inAForm: boolean) => {
-      const cellType = cellIndex === 0 ? "counter-cell" : "data-cell";
+      let cellType = cellIndex === 0 ? "counter-cell" : "data-cell";
       const column = tableInstance.allColumns[cellIndex] as unknown as IColumn;
       const width = typeof column?.width === "number" ? column?.width : DEFAULT_MIN_WIDTH;
 
@@ -75,6 +75,10 @@ export const TableBody: React.FunctionComponent<TableBodyProps> = ({
             </>
           </Resizer>
         );
+
+      if (typeof (cell.column as any)?.cellDelegate === "function") {
+        cellType += " input";
+      }
 
       return (
         <Td

@@ -22,7 +22,6 @@ module.exports = () => {
     ],
     module: {
       rules: [
-        ...patternflyRules,
         {
           test: /\.js$/,
           enforce: "pre",
@@ -34,13 +33,17 @@ module.exports = () => {
             {
               loader: "ts-loader",
               options: {
+                configFile: path.resolve("./tsconfig.json"),
                 compilerOptions: {
-                  sourceMap: true,
+                  declaration: true,
+                  outDir: "dist",
+                  sourceMap: true
                 },
               },
             },
           ],
         },
+        ...patternflyRules,
       ],
     },
     devtool: "inline-source-map",

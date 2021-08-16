@@ -4,6 +4,7 @@ export class DmnTableJsonSchemaBridge extends JSONSchemaBridge {
   public getProps(name: string, props: Record<string, any> = {}) {
     const ready = super.getProps(name, props);
     ready.label = "";
+    ready.style = { "height" : "100%" };
     if (ready.required) {
       ready.required = false;
     }

@@ -112,7 +112,7 @@ export function DmnRunnerTable(props: DmnRunnerTableProps) {
             groupType: DecisionTableColumnType.InputClause,
             label: inputClause.name,
             accessor: inputClause.name,
-            cssClasses: "decision-table--output",
+            cssClasses: "decision-table--input",
             columns: insideProperties,
             appendColumnsOnChildren: true,
           };
@@ -121,7 +121,7 @@ export function DmnRunnerTable(props: DmnRunnerTableProps) {
           groupType: DecisionTableColumnType.InputClause,
           label: inputClause.name,
           accessor: inputClause.name,
-          cssClasses: "decision-table--output",
+          cssClasses: "decision-table--input",
           appendColumnsOnChildren: true,
           cellDelegate: inputClause.cellDelegate
         };
@@ -194,14 +194,13 @@ export function DmnRunnerTable(props: DmnRunnerTableProps) {
   }, [memoColumns]);
 
   useEffect(() => {
-    console.log("TABLE", props.name, props.input, props.output, props.rules);
-  }, [props.name, props.input, props.output, props.rules]);
+    console.log(document.getElementsByTagName("input"))
+  }, []);
 
   return (
     <div className="expression-container">
       <div className="expression-name-and-logic-type">
         <span className="expression-title">{props?.name ?? ""}</span>
-        <span className="expression-type">({props?.logicType ?? LogicType.Undefined})</span>
       </div>
 
       <div className="expression-container-box" data-ouia-component-id="expression-container">

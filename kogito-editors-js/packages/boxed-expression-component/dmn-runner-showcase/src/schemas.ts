@@ -156,6 +156,47 @@ export const multipleInputs = {
   $ref: "#/definitions/InputSet",
 };
 
+export const customWithMultiple = {
+  definitions: {
+    tCustom: {
+      type: "object",
+      properties: {
+        tAge: {
+          type: "number",
+          "x-dmn-type": "FEEL:number",
+        },
+        tName: {
+          type: "string",
+          "x-dmn-type": "FEEL:string",
+        },
+      },
+      "x-dmn-type": "DMNType{ https://kiegroup.org/dmn/_8AC41608-8F62-417C-AF24-706D60E0C1DA : tCustom }",
+    },
+    OutputSet: {
+      type: "object",
+      properties: {
+        customInput1: {
+          $ref: "#/definitions/tCustom",
+        },
+      },
+      "x-dmn-type": "DMNType{ https://kiegroup.org/dmn/_8AC41608-8F62-417C-AF24-706D60E0C1DA : OutputSet }",
+      "x-dmn-descriptions": {},
+    },
+    InputSet: {
+      required: ["customInput1"],
+      type: "object",
+      properties: {
+        customInput1: {
+          $ref: "#/definitions/tCustom",
+        },
+      },
+      "x-dmn-type": "DMNType{ https://kiegroup.org/dmn/_8AC41608-8F62-417C-AF24-706D60E0C1DA : InputSet }",
+      "x-dmn-descriptions": {},
+    },
+  },
+  $ref: "#/definitions/InputSet",
+};
+
 export const multipleCustomNormal = {
   definitions: {
     OutputSet: {

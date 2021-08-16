@@ -52,7 +52,7 @@ class SupervisorExecution {
     cell.refreshWidthAsLastColumn();
   }
 
-  private refreshWidthAsLastGroupColumn(cell: Cell) {
-    cell.refreshWidthAsLastGroupColumn();
+  private refreshWidthAsLastGroupColumn(cell: Cell, index: number) {
+    cell.refreshWidthAsLastGroupColumn(index);
   }
 }

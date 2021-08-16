@@ -73,23 +73,23 @@ export class Cell {
     }
   }
 
-  refreshWidthAsLastGroupColumn(): void {
-    if (!this.isColSpanHeader()) {
+  refreshWidthAsLastGroupColumn(index: number): void {
+    if (!this.isColSpanHeader() && !this.getParentRow()?.classList.contains("table-row")) {
       return;
     }
 
-    const refSibling = this.getParent()?.parentElement?.nextSibling;
+    let refSibling = this.getParent()?.parentElement?.nextSibling;
 
-    if (!refSibling) {
-      return;
+    if (!refSibling || (refSibling as any)?.classList?.contains("table-row")) {
+      refSibling = document.querySelector('[role="row"]')?.nextSibling;
     }
 
-    const children = [].slice.call((refSibling as HTMLElement).querySelectorAll(`.${this.getHeaderType()}`));
-    const childrenRects = children.map((c: HTMLElement) => c.getBoundingClientRect());
-    const x = Math.min(...childrenRects.map((c: DOMRect) => c.x));
-    const right = Math.max(...childrenRects.map((c: DOMRect) => c.right));
+    const children: HTMLElement[] = [].slice.call(
+      (refSibling as HTMLElement).querySelectorAll(`.${this.getHeaderType()}`)
+    );
+    const childrenRects = children[index % children.length].getBoundingClientRect();
 
-    this.setWidth(right - x - BORDER * 2);
+    this.setWidth(childrenRects.right - childrenRects.x - BORDER * 2);
   }
 
   isColSpanHeader(): boolean {

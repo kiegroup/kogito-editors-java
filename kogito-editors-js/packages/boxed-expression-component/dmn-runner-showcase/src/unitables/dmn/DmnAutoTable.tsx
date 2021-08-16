@@ -137,7 +137,6 @@ export function DmnAutoTable(props: Props) {
 
       return {
         name: "DMN Runner",
-        logicType: LogicType.DecisionTable,
         input,
         output,
         rules,

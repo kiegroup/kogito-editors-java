@@ -1,6 +1,7 @@
 const path = require("path");
 
 module.exports = {
+  devtool: "inline-source-map",
   entry: {
     "api/index": "./src/api/index.ts",
     "components/index": "./src/components/index.ts",
@@ -19,6 +20,11 @@ module.exports = {
   module: {
     rules: [
       {
+        test: /\.js$/,
+        enforce: "pre",
+        use: ["source-map-loader"],
+      },
+      {
         test: /\.tsx?$/i,
         loader: "ts-loader",
         options: {
@@ -26,6 +32,7 @@ module.exports = {
           compilerOptions: {
             declaration: true,
             outDir: "dist",
+            sourceMap: true
           },
         },
       },

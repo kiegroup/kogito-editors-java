@@ -48,6 +48,11 @@ export const App: React.FunctionComponent = () => {
           </Button>
         </div>
         <div style={{ padding: "5px" }}>
+          <Button variant={"primary"} onClick={() => setSchema(schemas.customWithMultiple)}>
+            Custom With Multiple
+          </Button>
+        </div>
+        <div style={{ padding: "5px" }}>
           <Button variant={"primary"} onClick={() => setSchema(schemas.multipleCustomNormal)}>
             Multiple Custom Normal
           </Button>
