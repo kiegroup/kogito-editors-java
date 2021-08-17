@@ -31,6 +31,7 @@ import org.kie.workbench.common.stunner.core.client.canvas.controls.CanvasContro
 import org.kie.workbench.common.stunner.core.client.canvas.controls.ClipboardControl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.ContainmentAcceptorControl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.DockingAcceptorControl;
+import org.kie.workbench.common.stunner.core.client.canvas.controls.LineSpliceAcceptorControl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.LocationControl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.ResizeControl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.ToolboxControl;
@@ -39,6 +40,7 @@ import org.kie.workbench.common.stunner.core.client.canvas.controls.builder.Elem
 import org.kie.workbench.common.stunner.core.client.canvas.controls.builder.NodeBuilderControl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.builder.impl.Observer;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.connection.ConnectionAcceptorControl;
+import org.kie.workbench.common.stunner.core.client.canvas.controls.connection.ControlPointControl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.AbstractCanvasShortcutsControlImpl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyboardControl;
 import org.kie.workbench.common.stunner.core.client.canvas.event.registration.RegisterChangedEvent;
@@ -48,7 +50,6 @@ import org.kie.workbench.common.stunner.core.command.Command;
 import org.mockito.Mock;
 import org.uberfire.mocks.EventSourceMock;
 
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 
 @RunWith(GwtMockitoTestRunner.class)
@@ -81,6 +82,9 @@ public class DMNEditorSessionTest extends BaseDMNSessionTest<DMNEditorSession> {
     private DockingAcceptorControl dockingAcceptorControl;
 
     @Mock
+    private LineSpliceAcceptorControl lineSpliceAcceptorControl;
+
+    @Mock
     private DMNCanvasInlineTextEditorControl canvasInlineTextEditorControl;
 
     @Mock
@@ -106,6 +110,9 @@ public class DMNEditorSessionTest extends BaseDMNSessionTest<DMNEditorSession> {
 
     @Mock
     private AbstractCanvasShortcutsControlImpl canvasShortcutsControl;
+
+    @Mock
+    private ControlPointControl controlPointControl;
 
     @Before
     @Override
@@ -142,6 +149,7 @@ public class DMNEditorSessionTest extends BaseDMNSessionTest<DMNEditorSession> {
         canvasHandlerControls.put(decisionServiceMoveDividerControl, DecisionServiceMoveDividerControl.class);
         canvasHandlerControls.put(connectionAcceptorControl, ConnectionAcceptorControl.class);
         canvasHandlerControls.put(containmentAcceptorControl, ContainmentAcceptorControl.class);
+        canvasHandlerControls.put(lineSpliceAcceptorControl, LineSpliceAcceptorControl.class);
         canvasHandlerControls.put(dockingAcceptorControl, DockingAcceptorControl.class);
         canvasHandlerControls.put(canvasInlineTextEditorControl, DMNCanvasInlineTextEditorControl.class);
         canvasHandlerControls.put(locationControl, LocationControl.class);
@@ -150,14 +158,17 @@ public class DMNEditorSessionTest extends BaseDMNSessionTest<DMNEditorSession> {
         canvasHandlerControls.put(nodeBuilderControl, NodeBuilderControl.class);
         canvasHandlerControls.put(edgeBuilderControl, EdgeBuilderControl.class);
         canvasHandlerControls.put(canvasShortcutsControl, DMNCanvasShortcutsControl.class);
+        canvasHandlerControls.put(controlPointControl, ControlPointControl.class);
         return canvasHandlerControls;
     }
 
     @Override
     protected void assertInitQualifiers() {
         super.assertInitQualifiers();
-        verify(managedSession).registerCanvasHandlerControl(eq(DMNCanvasInlineTextEditorControl.class));
-        verify(managedSession).registerCanvasHandlerControl(eq(ElementBuilderControl.class), eq(Observer.class));
-        verify(managedSession).registerCanvasHandlerControl(eq(DMNCanvasShortcutsControl.class));
+        verify(managedSession).registerCanvasHandlerControl(DMNCanvasInlineTextEditorControl.class);
+        verify(managedSession).registerCanvasHandlerControl(LineSpliceAcceptorControl.class);
+        verify(managedSession).registerCanvasHandlerControl(ElementBuilderControl.class, Observer.class);
+        verify(managedSession).registerCanvasHandlerControl(DMNCanvasShortcutsControl.class);
+        verify(managedSession).registerCanvasHandlerControl(ControlPointControl.class);
     }
 }

@@ -33,6 +33,7 @@ import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler
 import org.kie.workbench.common.stunner.core.client.canvas.CanvasPanel;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.ContainmentAcceptorControl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.DockingAcceptorControl;
+import org.kie.workbench.common.stunner.core.client.canvas.controls.LineSpliceAcceptorControl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.MediatorsControl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.SelectionControl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.connection.ConnectionAcceptorControl;
@@ -108,6 +109,12 @@ public class SessionEditorImpl<S extends EditorSession>
 
     private S getSession() {
         return getInstance();
+    }
+
+    @Override
+    protected void onAfterCanvasInitialized() {
+        super.onAfterCanvasInitialized();
+        canvasPanel.getView().onResize();
     }
 
     @Override
@@ -210,6 +217,12 @@ public class SessionEditorImpl<S extends EditorSession>
         @SuppressWarnings("unchecked")
         public DockingAcceptorControl<AbstractCanvasHandler> getDockingAcceptorControl() {
             return getSession().getDockingAcceptorControl();
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public LineSpliceAcceptorControl<AbstractCanvasHandler> getLineSpliceAcceptorControl() {
+            return getSession().getLineSpliceAcceptorControl();
         }
     }
 }

@@ -32,6 +32,7 @@ import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler
 import org.kie.workbench.common.stunner.core.client.canvas.Canvas;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.ContainmentAcceptorControl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.DockingAcceptorControl;
+import org.kie.workbench.common.stunner.core.client.canvas.controls.LineSpliceAcceptorControl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.LocationControl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.MediatorsControl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.ResizeControl;
@@ -72,6 +73,7 @@ public class DefaultDiagramEditor
     private final ManagedInstance<ConnectionAcceptorControl<AbstractCanvasHandler>> connectionAcceptorControls;
     private final ManagedInstance<ContainmentAcceptorControl<AbstractCanvasHandler>> containmentAcceptorControls;
     private final ManagedInstance<DockingAcceptorControl<AbstractCanvasHandler>> dockingAcceptorControls;
+    private final ManagedInstance<LineSpliceAcceptorControl<AbstractCanvasHandler>> lineSpliceAcceptorControls;
 
     private CanvasElementListener elementListener;
     private CanvasCommandManager<AbstractCanvasHandler> commandManager;
@@ -84,6 +86,7 @@ public class DefaultDiagramEditor
     private ConnectionAcceptorControl<AbstractCanvasHandler> connectionAcceptorControl;
     private ContainmentAcceptorControl<AbstractCanvasHandler> containmentAcceptorControl;
     private DockingAcceptorControl<AbstractCanvasHandler> dockingAcceptorControl;
+    private LineSpliceAcceptorControl<AbstractCanvasHandler> lineSpliceAcceptorControl;
 
     @Inject
     public DefaultDiagramEditor(final DefinitionUtils definitionUtils,
@@ -97,7 +100,8 @@ public class DefaultDiagramEditor
                                 final @Any ManagedInstance<ControlPointControl<AbstractCanvasHandler>> controlPointControls,
                                 final @Any ManagedInstance<ConnectionAcceptorControl<AbstractCanvasHandler>> connectionAcceptorControls,
                                 final @Any ManagedInstance<ContainmentAcceptorControl<AbstractCanvasHandler>> containmentAcceptorControls,
-                                final @Any ManagedInstance<DockingAcceptorControl<AbstractCanvasHandler>> dockingAcceptorControls) {
+                                final @Any ManagedInstance<DockingAcceptorControl<AbstractCanvasHandler>> dockingAcceptorControls,
+                                final @Any ManagedInstance<LineSpliceAcceptorControl<AbstractCanvasHandler>> lineSpliceAcceptorControls) {
         this.definitionUtils = definitionUtils;
         this.viewer = viewer;
         this.commandManagers = commandManagers;
@@ -110,23 +114,13 @@ public class DefaultDiagramEditor
         this.connectionAcceptorControls = connectionAcceptorControls;
         this.containmentAcceptorControls = containmentAcceptorControls;
         this.dockingAcceptorControls = dockingAcceptorControls;
+        this.lineSpliceAcceptorControls = lineSpliceAcceptorControls;
     }
 
     @Override
     public void open(final Diagram item,
                      final DiagramViewerCallback<Diagram> callback) {
         viewer.open(item,
-                    new ViewCallback(callback));
-    }
-
-    @Override
-    public void open(final Diagram item,
-                     final int width,
-                     final int height,
-                     final DiagramViewerCallback<Diagram> callback) {
-        viewer.open(item,
-                    width,
-                    height,
                     new ViewCallback(callback));
     }
 
@@ -191,6 +185,10 @@ public class DefaultDiagramEditor
         dockingAcceptorControl.setCommandManagerProvider(() -> null);
         dockingAcceptorControls.destroy(dockingAcceptorControl);
         dockingAcceptorControls.destroyAll();
+        lineSpliceAcceptorControl.destroy();
+        lineSpliceAcceptorControl.setCommandManagerProvider(() -> null);
+        lineSpliceAcceptorControls.destroy(lineSpliceAcceptorControl);
+        lineSpliceAcceptorControls.destroyAll();
         // Destroy the viewer state as well.
         viewer.destroy();
         // Nullify
@@ -205,6 +203,7 @@ public class DefaultDiagramEditor
         connectionAcceptorControl = null;
         containmentAcceptorControl = null;
         dockingAcceptorControl = null;
+        lineSpliceAcceptorControl = null;
     }
 
     @Override
@@ -236,6 +235,12 @@ public class DefaultDiagramEditor
     public DockingAcceptorControl<AbstractCanvasHandler> getDockingAcceptorControl() {
         return dockingAcceptorControl;
     }
+
+    @Override
+    public LineSpliceAcceptorControl<AbstractCanvasHandler> getLineSpliceAcceptorControl() {
+        return lineSpliceAcceptorControl;
+    }
+
 
     public LocationControl<AbstractCanvasHandler, Element> getLocationControl() {
         return locationControl;
@@ -291,6 +296,7 @@ public class DefaultDiagramEditor
             connectionAcceptorControl.init(getHandler());
             containmentAcceptorControl.init(getHandler());
             dockingAcceptorControl.init(getHandler());
+            lineSpliceAcceptorControl.init(getHandler());
         }
 
         @Override
@@ -325,7 +331,9 @@ public class DefaultDiagramEditor
         containmentAcceptorControl = InstanceUtils.lookup(containmentAcceptorControls, qualifier);
         containmentAcceptorControl.setCommandManagerProvider(() -> commandManager);
         dockingAcceptorControl = InstanceUtils.lookup(dockingAcceptorControls, qualifier);
-        containmentAcceptorControl.setCommandManagerProvider(() -> commandManager);
+        dockingAcceptorControl.setCommandManagerProvider(() -> commandManager);
+        lineSpliceAcceptorControl = InstanceUtils.lookup(lineSpliceAcceptorControls, qualifier);
+        lineSpliceAcceptorControl.setCommandManagerProvider(() -> commandManager);
         elementListener = new DefaultCanvasElementListener(Arrays.asList(locationControl,
                                                                          resizeControl,
                                                                          elementBuilderControl,
@@ -334,7 +342,8 @@ public class DefaultDiagramEditor
                                                                          controlPointControl,
                                                                          containmentAcceptorControl,
                                                                          connectionAcceptorControl,
-                                                                         dockingAcceptorControl));
+                                                                         dockingAcceptorControl,
+                                                                         lineSpliceAcceptorControl));
         viewer.getHandler().addRegistrationListener(elementListener);
     }
 }

@@ -5,7 +5,7 @@
   <parent>
     <artifactId>kie-wb-common-kogito</artifactId>
     <groupId>org.kie.kogito</groupId>
-    <version>8.2.1-SNAPSHOT</version>
+    <version>8.3.1-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -88,7 +88,7 @@
 
     <!-- Test scope dependencies -->
     <dependency>
-      <groupId>org.kie</groupId>
+      <groupId>org.kie.kogito</groupId>
       <artifactId>lienzo-tests</artifactId>
       <scope>test</scope>
       <exclusions>

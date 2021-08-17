@@ -18,6 +18,7 @@ package org.kie.workbench.common.stunner.client.lienzo.wires.decorator;
 
 import com.ait.lienzo.client.core.shape.Shape;
 import com.ait.lienzo.client.core.shape.wires.decorator.MagnetDecorator;
+import com.ait.lienzo.client.core.shape.wires.decorator.PointHandleDecorator;
 
 public class StunnerMagnetDecorator extends MagnetDecorator {
 
@@ -27,10 +28,10 @@ public class StunnerMagnetDecorator extends MagnetDecorator {
             case VALID:
             case INVALID:
             case NONE:
-                shape.setFillColor(StunnerPointHandleDecorator.MAIN_COLOR)
-                        .setFillAlpha(0.7)
-                        .setStrokeAlpha(1)
+                shape.setFillColor(PointHandleDecorator.MAIN_COLOR)
                         .setStrokeWidth(0)
+                        .setFillAlpha(0.8)
+                        .setStrokeAlpha(1)
                         .moveToTop();
         }
         return shape;

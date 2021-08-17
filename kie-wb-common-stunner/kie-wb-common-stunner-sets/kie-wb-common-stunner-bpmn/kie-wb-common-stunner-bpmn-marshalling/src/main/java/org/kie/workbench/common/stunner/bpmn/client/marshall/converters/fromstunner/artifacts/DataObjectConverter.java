@@ -45,9 +45,10 @@ public class DataObjectConverter {
             DataObjectPropertyWriter writer = propertyWriterFactory.of(element);
 
             DataObject definition = node.getContent().getDefinition();
-            writer.setName(StringUtils.replaceIllegalCharsAttribute(StringUtils.replaceIllegalCharsForDataObjects(definition.getName().getValue())));
+            writer.setName(StringUtils.replaceIllegalCharsForDataObjects(definition.getName().getValue()));
             writer.setType(definition.getType().getValue().getType());
             writer.setAbsoluteBounds(node);
+            writer.setMetaData(definition.getAdvancedData().getMetaDataAttributes());
             return writer;
         }
         return ConverterUtils.notSupported(def);

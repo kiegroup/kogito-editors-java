@@ -26,7 +26,6 @@ import com.ait.lienzo.client.core.event.NodeDragEndEvent;
 import com.ait.lienzo.client.core.event.NodeDragEndHandler;
 import com.ait.lienzo.client.core.event.NodeDragMoveEvent;
 import com.ait.lienzo.client.core.event.NodeDragStartEvent;
-import com.ait.lienzo.client.core.shape.AbstractMultiPathPartShape;
 import com.ait.lienzo.client.core.shape.Circle;
 import com.ait.lienzo.client.core.shape.IPrimitive;
 import com.ait.lienzo.client.core.shape.Layer;
@@ -35,6 +34,7 @@ import com.ait.lienzo.client.core.shape.wires.AbstractControlHandle;
 import com.ait.lienzo.client.core.shape.wires.IControlHandle;
 import com.ait.lienzo.client.core.shape.wires.IControlHandleFactory;
 import com.ait.lienzo.client.core.shape.wires.IControlHandleList;
+import com.ait.lienzo.client.core.shape.wires.decorator.PointHandleDecorator;
 import com.ait.lienzo.client.core.types.DragBounds;
 import com.ait.lienzo.client.core.types.Point2D;
 import com.ait.lienzo.client.widget.DefaultDragConstraintEnforcer;
@@ -42,10 +42,10 @@ import com.ait.lienzo.client.widget.DragConstraintEnforcer;
 import com.ait.lienzo.client.widget.DragContext;
 import com.ait.lienzo.shared.core.types.DragConstraint;
 import com.ait.lienzo.shared.core.types.DragMode;
-import com.ait.tooling.nativetools.client.event.HandlerRegistrationManager;
-import com.google.gwt.event.shared.GwtEvent;
-import com.google.gwt.event.shared.HandlerManager;
-import com.google.gwt.event.shared.HandlerRegistration;
+import com.ait.lienzo.tools.client.event.HandlerManager;
+import com.ait.lienzo.tools.client.event.HandlerRegistration;
+import com.ait.lienzo.tools.client.event.HandlerRegistrationManager;
+import com.ait.lienzo.tools.client.event.INodeEvent;
 import org.kie.workbench.common.dmn.api.property.dimensions.GeneralRectangleDimensionsSet;
 import org.kie.workbench.common.stunner.core.client.shape.view.event.DragHandler;
 import org.kie.workbench.common.stunner.core.client.shape.view.event.ViewEventType;
@@ -92,9 +92,13 @@ public class DecisionServiceSVGShapeView extends SVGShapeViewImpl {
 
     public DecisionServiceSVGShapeView addDividerDragHandler(final DragHandler dragHandler) {
         final HandlerManager handlerManager = getHandlerManager();
-        final HandlerRegistration dragStartRegistration = handlerManager.addHandler(MoveDividerStartEvent.TYPE, event -> dragHandler.start(buildDragEvent(event)));
-        final HandlerRegistration dragStepRegistration = handlerManager.addHandler(MoveDividerStepEvent.TYPE, event -> dragHandler.handle(buildDragEvent(event)));
-        final HandlerRegistration dragEndRegistration = handlerManager.addHandler(MoveDividerEndEvent.TYPE, event -> dragHandler.end(buildDragEvent(event)));
+        final HandlerRegistration dragStartRegistration =
+                handlerManager.addHandler(MoveDividerStartEvent.TYPE,
+                                          (MoveDividerStartHandler) event -> dragHandler.start(buildDragEvent(event)));
+        final HandlerRegistration dragStepRegistration = handlerManager.addHandler(MoveDividerStepEvent.TYPE,
+                                                                                   (MoveDividerStepHandler) event -> dragHandler.handle(buildDragEvent(event)));
+        final HandlerRegistration dragEndRegistration = handlerManager.addHandler(MoveDividerEndEvent.TYPE,
+                                                                                  (MoveDividerEndHandler) event -> dragHandler.end(buildDragEvent(event)));
         final HandlerRegistration[] registrations = new HandlerRegistration[]{dragStartRegistration, dragStepRegistration, dragEndRegistration};
         getEventHandlerManager().addHandlersRegistration(ViewEventType.DRAG, registrations);
 
@@ -182,18 +186,24 @@ public class DecisionServiceSVGShapeView extends SVGShapeViewImpl {
         }
 
         private void moveDividerStart(final NodeDragStartEvent event) {
-            fireMoveDividerEvent(new MoveDividerStartEvent(DecisionServiceSVGShapeView.this, event));
+            MoveDividerStartEvent e = new MoveDividerStartEvent(event.getRelativeElement());
+            e.override(DecisionServiceSVGShapeView.this, event);
+            fireMoveDividerEvent(e);
         }
 
         private void moveDividerMove(final NodeDragMoveEvent event) {
-            fireMoveDividerEvent(new MoveDividerStepEvent(DecisionServiceSVGShapeView.this, event));
+            MoveDividerStepEvent e = new MoveDividerStepEvent(event.getRelativeElement());
+            e.override(DecisionServiceSVGShapeView.this, event);
+            fireMoveDividerEvent(e);
         }
 
         private void moveDividerEnd(final NodeDragEndEvent event) {
-            fireMoveDividerEvent(new MoveDividerEndEvent(DecisionServiceSVGShapeView.this, event));
+            MoveDividerEndEvent e = new MoveDividerEndEvent(event.getRelativeElement());
+            e.override(DecisionServiceSVGShapeView.this, event);
+            fireMoveDividerEvent(e);
         }
 
-        private void fireMoveDividerEvent(final GwtEvent<?> event) {
+        private void fireMoveDividerEvent(final INodeEvent event) {
             moveDividerControlHandle.ifPresent(handle -> {
                 divider.setY(handle.getControl().getY());
                 getHandlerManager().fireEvent(event);
@@ -281,7 +291,7 @@ public class DecisionServiceSVGShapeView extends SVGShapeViewImpl {
             delegateDragConstraintEnforcer.startDrag(dragContext);
 
             if ((moveDividerControlHandle.isActive()) && (resizeControlHandles.isActive())) {
-                controlShape.setFillColor(AbstractMultiPathPartShape.CONTROL_POINT_DRAG_FILL);
+                controlShape.setFillColor(PointHandleDecorator.STROKE_COLOR);
                 doSafeDraw();
             }
         }
@@ -294,7 +304,7 @@ public class DecisionServiceSVGShapeView extends SVGShapeViewImpl {
         @Override
         public void onNodeDragEnd(final NodeDragEndEvent event) {
             if ((moveDividerControlHandle.isActive()) && (resizeControlHandles.isActive())) {
-                controlShape.setFillColor(AbstractMultiPathPartShape.CONTROL_POINT_ACTIVE_FILL);
+                controlShape.setFillColor(PointHandleDecorator.MAIN_COLOR);
                 doSafeDraw();
             }
         }

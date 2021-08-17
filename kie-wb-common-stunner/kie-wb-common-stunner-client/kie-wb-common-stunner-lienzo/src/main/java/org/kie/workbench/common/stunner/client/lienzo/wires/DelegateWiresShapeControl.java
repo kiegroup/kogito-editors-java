@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.stunner.client.lienzo.wires;
 
+import java.util.function.Supplier;
+
 import com.ait.lienzo.client.core.shape.wires.OptionalBounds;
 import com.ait.lienzo.client.core.shape.wires.handlers.AlignAndDistributeControl;
 import com.ait.lienzo.client.core.shape.wires.handlers.MouseEvent;
@@ -23,12 +25,12 @@ import com.ait.lienzo.client.core.shape.wires.handlers.WiresBoundsConstraintCont
 import com.ait.lienzo.client.core.shape.wires.handlers.WiresContainmentControl;
 import com.ait.lienzo.client.core.shape.wires.handlers.WiresDockingControl;
 import com.ait.lienzo.client.core.shape.wires.handlers.WiresLayerIndex;
+import com.ait.lienzo.client.core.shape.wires.handlers.WiresLineSpliceControl;
 import com.ait.lienzo.client.core.shape.wires.handlers.WiresMagnetsControl;
 import com.ait.lienzo.client.core.shape.wires.handlers.WiresParentPickerControl;
 import com.ait.lienzo.client.core.shape.wires.handlers.WiresShapeControl;
 import com.ait.lienzo.client.core.shape.wires.handlers.impl.WiresShapeControlImpl;
 import com.ait.lienzo.client.core.types.Point2D;
-import com.ait.tooling.common.api.java.util.function.Supplier;
 
 public abstract class DelegateWiresShapeControl implements WiresShapeControl,
                                                            WiresBoundsConstraintControl.SupportsOptionalBounds<DelegateWiresShapeControl> {
@@ -70,6 +72,11 @@ public abstract class DelegateWiresShapeControl implements WiresShapeControl,
     @Override
     public WiresParentPickerControl getParentPickerControl() {
         return getDelegate().getParentPickerControl();
+    }
+
+    @Override
+    public WiresLineSpliceControl getLineSpliceControl() {
+        return getDelegate().getLineSpliceControl();
     }
 
     @Override

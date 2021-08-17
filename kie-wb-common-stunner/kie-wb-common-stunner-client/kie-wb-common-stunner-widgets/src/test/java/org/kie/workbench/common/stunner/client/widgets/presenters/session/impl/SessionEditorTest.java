@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.stunner.client.widgets.presenters.session.impl;
 
+import com.ait.lienzo.client.widget.panel.impl.ScrollablePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.junit.Before;
@@ -30,6 +31,7 @@ import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler
 import org.kie.workbench.common.stunner.core.client.canvas.CanvasPanel;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.ContainmentAcceptorControl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.DockingAcceptorControl;
+import org.kie.workbench.common.stunner.core.client.canvas.controls.LineSpliceAcceptorControl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.MediatorsControl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.SelectionControl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.connection.ConnectionAcceptorControl;
@@ -62,6 +64,8 @@ public class SessionEditorTest extends AbstractCanvasHandlerViewerTest {
     @Mock
     ScrollableLienzoPanel canvasPanel;
     @Mock
+    ScrollablePanel canvasPanelView;
+    @Mock
     MediatorsControl<AbstractCanvas> mediatorsControl;
     @Mock
     SelectionControl<AbstractCanvasHandler, Element> selectionControl;
@@ -71,6 +75,8 @@ public class SessionEditorTest extends AbstractCanvasHandlerViewerTest {
     ContainmentAcceptorControl<AbstractCanvasHandler> containmentAcceptorControl;
     @Mock
     DockingAcceptorControl<AbstractCanvasHandler> dockingAcceptorControl;
+    @Mock
+    LineSpliceAcceptorControl<AbstractCanvasHandler> lineSpliceAcceptorControl;
     @Mock
     WidgetWrapperView view;
     @Mock
@@ -83,6 +89,7 @@ public class SessionEditorTest extends AbstractCanvasHandlerViewerTest {
     @Before
     public void setup() throws Exception {
         super.init();
+        when(canvasPanel.getView()).thenReturn(canvasPanelView);
         when(canvasHandler.getDiagram()).thenReturn(diagram);
         when(session.getCanvasHandler()).thenReturn(canvasHandler);
         when(session.getCanvas()).thenReturn(canvas);
@@ -91,6 +98,7 @@ public class SessionEditorTest extends AbstractCanvasHandlerViewerTest {
         when(session.getConnectionAcceptorControl()).thenReturn(connectionAcceptorControl);
         when(session.getContainmentAcceptorControl()).thenReturn(containmentAcceptorControl);
         when(session.getDockingAcceptorControl()).thenReturn(dockingAcceptorControl);
+        when(session.getLineSpliceAcceptorControl()).thenReturn(lineSpliceAcceptorControl);
         when(metadata.getDefinitionSetId()).thenReturn(DEFINITION_SET_ID);
         when(preferencesRegistries.get(DEFINITION_SET_ID, StunnerPreferences.class)).thenReturn(stunnerPreferences);
         this.tested = new SessionEditorImpl<>(view, canvasPanel, preferencesRegistries);
@@ -117,11 +125,14 @@ public class SessionEditorTest extends AbstractCanvasHandlerViewerTest {
                      tested.getDiagramEditor().getContainmentAcceptorControl());
         assertEquals(dockingAcceptorControl,
                      tested.getDiagramEditor().getDockingAcceptorControl());
+        assertEquals(lineSpliceAcceptorControl,
+                     tested.getDiagramEditor().getLineSpliceAcceptorControl());
         verify(canvasHandler,
                times(1)).draw(eq(diagram),
                               any(ParameterizedCommand.class));
         verify(view,
                times(1)).setWidget(any(Widget.class));
+        verify(canvasPanelView, times(1)).onResize();
     }
 
     @Test
