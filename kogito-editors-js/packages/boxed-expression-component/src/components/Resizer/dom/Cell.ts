@@ -84,10 +84,12 @@ export class Cell {
       refSibling = document.querySelector('[role="row"]')?.nextSibling;
     }
 
+    const headerSize = this.isColSpanHeader() ? 0 : document.querySelectorAll(".colspan-header").length;
+
     const children: HTMLElement[] = [].slice.call(
       (refSibling as HTMLElement).querySelectorAll(`.${this.getHeaderType()}`)
     );
-    const childrenRects = children[index % children.length].getBoundingClientRect();
+    const childrenRects = children[(index - headerSize) % children.length].getBoundingClientRect();
 
     this.setWidth(childrenRects.right - childrenRects.x - BORDER * 2);
   }
