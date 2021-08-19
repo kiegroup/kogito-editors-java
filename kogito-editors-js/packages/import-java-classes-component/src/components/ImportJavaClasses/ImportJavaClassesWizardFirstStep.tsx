@@ -22,14 +22,14 @@ import { useCallback, useState } from "react";
 import { EmptyStateWidget } from "../EmptyStateWidget";
 import { ImportJavaClassesWizardClassListTable } from "./ImportJavaClassesWizardClassListTable";
 
-export interface ImportJavaClassesWizardFirstStep {
+export interface ImportJavaClassesWizardFirstStepProps {
   /** List of the selected classes by user */
   selectedJavaClasses: string[];
   /** Function to be called when selecting a Java Class */
   onSelectedJavaClassesUpdated: (fullClassName: string, add: boolean) => void;
 }
 
-export const ImportJavaClassesWizardFirstStep: React.FunctionComponent<ImportJavaClassesWizardFirstStep> = ({
+export const ImportJavaClassesWizardFirstStep: React.FunctionComponent<ImportJavaClassesWizardFirstStepProps> = ({
   selectedJavaClasses,
   onSelectedJavaClassesUpdated,
 }) => {

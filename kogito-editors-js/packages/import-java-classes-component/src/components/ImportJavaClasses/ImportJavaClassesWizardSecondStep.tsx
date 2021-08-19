@@ -19,12 +19,12 @@ import { Spinner } from "@patternfly/react-core";
 import { useEffect, useState } from "react";
 import { TableComposable, Tbody, Td, Tr } from "@patternfly/react-table";
 
-export interface ImportJavaClassesWizardSecondStep {
+export interface ImportJavaClassesWizardSecondStepProps {
   /** List of the selected classes by user */
   selectedJavaClasses: string[];
 }
 
-export const ImportJavaClassesWizardSecondStep: React.FunctionComponent<ImportJavaClassesWizardSecondStep> = ({
+export const ImportJavaClassesWizardSecondStep: React.FunctionComponent<ImportJavaClassesWizardSecondStepProps> = ({
   selectedJavaClasses,
 }) => {
   const emptyMap = new Map<string, Map<string, string>>();
