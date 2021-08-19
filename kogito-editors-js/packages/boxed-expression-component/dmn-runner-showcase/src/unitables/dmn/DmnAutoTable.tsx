@@ -67,9 +67,16 @@ interface Props {
 const FORMS_ID = "forms";
 
 export function DmnAutoTable(props: Props) {
+  const errorBoundaryRef = useRef<ErrorBoundary>(null);
+
+  const [rowQuantity, setRowQuantity] = useState<number>(1);
+  const [formsDivRendered, setFormsDivRendered] = useState<boolean>(false);
+
   const bridge = useMemo(() => new DmnValidator().getBridge(props.schema ?? {}), [props.schema]);
   const grid = useMemo(() => (bridge ? new DmnGrid(bridge) : undefined), [bridge]);
-  const errorBoundaryRef = useRef<ErrorBoundary>(null);
+  const shouldRender = useMemo(() => (grid?.generateBoxedInputs().length ?? 0) > 0, [grid]);
+
+  const onRowNumberUpdated = useCallback((rowNumber) => setRowQuantity(rowNumber), []);
 
   const onSubmit = useCallback(
     (model: any, index) => {
@@ -79,21 +86,48 @@ export function DmnAutoTable(props: Props) {
         return newTableData;
       });
     },
-    [props]
+    [props.setTableData]
   );
 
-  // const onValidate = useCallback((model: any, error: any, index) => {
-  //   props.setTableData((previousTableData: any) => {
-  //     const newTableData = [...previousTableData];
-  //     newTableData[index] = model;
-  //     return newTableData;
-  //   });
-  // }, []);
+  const onValidate = useCallback(
+    (model: any, error: any, index) => {
+      props.setTableData((previousTableData: any) => {
+        const newTableData = [...previousTableData];
+        newTableData[index] = model;
+        return newTableData;
+      });
+    },
+    [props.setTableData]
+  );
 
-  const [inputSize, setInputSize] = useState<number>(1);
-  const shouldRender = useMemo(() => (grid?.generateBoxedInputs().length ?? 0) > 0, [grid]);
-  const onRowNumberUpdated = useCallback((rowNumber) => setInputSize(rowNumber), []);
-  const [formsDivRendered, setFormsDivRendered] = useState<boolean>(false);
+  const getAutoRow = useCallback(
+    (data, rowIndex: number) =>
+      ({ children }: any) =>
+        (
+          <AutoRow
+            schema={bridge}
+            autosave={true}
+            autosaveDelay={500}
+            model={data}
+            onSubmit={(model: any) => onSubmit(model, rowIndex)}
+            onValidate={(model: any, error: any) => onValidate(model, error, rowIndex)}
+            placeholder={true}
+          >
+            <UniformsContext.Consumer>
+              {(ctx: any) => (
+                <>
+                  {createPortal(
+                    <form id={`dmn-auto-form-${rowIndex}`} onSubmit={(data) => ctx?.onSubmit(data)} />,
+                    document.getElementById(FORMS_ID)!
+                  )}
+                  {children}
+                </>
+              )}
+            </UniformsContext.Consumer>
+          </AutoRow>
+        ),
+    [bridge, onSubmit, onValidate]
+  );
 
   const selectedExpression: DmnRunnerTableProps | undefined = useMemo(() => {
     if (grid && props.results) {
@@ -102,35 +136,13 @@ export function DmnAutoTable(props: Props) {
       const output: Clause[] = Array.from(outputSet.values());
 
       const rules = [];
-      for (let i = 0; i < inputSize; i++) {
+      for (let i = 0; i < rowQuantity; i++) {
         const rule: DmnRunnerRule = {
           inputEntries: [""],
           outputEntries: (outputEntries?.[i] as string[]) ?? [],
         };
         if (formsDivRendered) {
-          rule.rowDelegate = ({ children }: any) => (
-            <AutoRow
-              schema={bridge}
-              model={props.tableData[i]}
-              autosave={true}
-              autosaveDelay={500}
-              onSubmit={(model: any) => onSubmit(model, i)}
-              // onValidate={(model: any, error: any) => onValidate(model, error, i)}
-              placeholder={true}
-            >
-              <UniformsContext.Consumer>
-                {(ctx: any) => (
-                  <>
-                    {createPortal(
-                      <form id={`dmn-auto-form-${i}`} onSubmit={ctx?.onSubmit} />,
-                      document.getElementById(FORMS_ID)!
-                    )}
-                    {children}
-                  </>
-                )}
-              </UniformsContext.Consumer>
-            </AutoRow>
-          );
+          rule.rowDelegate = getAutoRow(props.tableData[i], i);
           rules.push(rule);
         }
       }
@@ -144,17 +156,7 @@ export function DmnAutoTable(props: Props) {
         onRowNumberUpdated,
       };
     }
-  }, [
-    grid,
-    bridge,
-    onSubmit,
-    props.tableData,
-    props.schema,
-    props.results,
-    inputSize,
-    onRowNumberUpdated,
-    formsDivRendered,
-  ]);
+  }, [grid, props.schema, props.results, props.tableData, rowQuantity, onRowNumberUpdated, formsDivRendered, getAutoRow]);
 
   useEffect(() => {
     errorBoundaryRef.current?.reset();

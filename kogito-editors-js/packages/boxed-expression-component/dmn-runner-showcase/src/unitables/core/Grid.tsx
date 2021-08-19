@@ -29,7 +29,7 @@ export class Grid {
       case "boolean":
         return { dataType: DataType.Boolean, width: 150 }; // 50
       case "context":
-        return { dataType: DataType.Context, width: undefined }; // 150
+        return { dataType: DataType.Context, width: 150 }; // 150
       case "date":
         return { dataType: DataType.Date, width: 180 }; // 180
       case "date and time":
@@ -37,13 +37,13 @@ export class Grid {
       case "days and time duration":
         return { dataType: DataType.DateTimeDuration, width: 150 };
       case "number":
-        return { dataType: DataType.Number, width: undefined };
+        return { dataType: DataType.Number, width: 150 };
       case "string":
-        return { dataType: DataType.String, width: undefined };
+        return { dataType: DataType.String, width: 150 };
       case "time":
-        return { dataType: DataType.Time, width: undefined };
+        return { dataType: DataType.Time, width: 150 };
       case "years and months duration":
-        return { dataType: DataType.YearsMonthsDuration, width: undefined };
+        return { dataType: DataType.YearsMonthsDuration, width: 150 };
       default:
         return { dataType: extractedType as DataType, width: undefined };
     }

@@ -91,7 +91,7 @@ export const TableBody: React.FunctionComponent<TableBodyProps> = ({
         </Td>
       );
     },
-    [getColumnKey, onColumnsUpdate, tableInstance]
+    [getColumnKey, onColumnsUpdate, tableInstance, tdProps]
   );
 
   const renderBodyRow = useCallback(

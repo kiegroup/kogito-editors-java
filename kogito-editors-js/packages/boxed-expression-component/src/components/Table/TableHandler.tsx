@@ -234,12 +234,8 @@ export const TableHandler: React.FunctionComponent<TableHandlerProps> = ({
     ]
   );
 
-  const groupOperationsDoNotDependOnColumn = (
-    handlerConfiguration: GroupOperations[] | GroupOperationsByColumnType
-  ): handlerConfiguration is GroupOperations[] => _.isArray(handlerConfiguration);
-
   const getHandlerConfiguration = useMemo(() => {
-    if (groupOperationsDoNotDependOnColumn(handlerConfiguration)) {
+    if (_.isArray(handlerConfiguration)) {
       return handlerConfiguration;
     }
     return handlerConfiguration[selectedColumn?.groupType || ""];

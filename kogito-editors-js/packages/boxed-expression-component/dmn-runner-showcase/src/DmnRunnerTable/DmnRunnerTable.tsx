@@ -18,7 +18,7 @@ import * as React from "react";
 import { useCallback, useContext, useEffect, useMemo } from "react";
 import "../../../dist";
 import { ColumnInstance, DataRecord } from "react-table";
-import { ExpressionProps, GroupOperations, LogicType, TableHeaderVisibility, TableOperation } from "../../../dist/api";
+import { ExpressionProps, GroupOperations, TableHeaderVisibility, TableOperation } from "../../../dist/api";
 import { BoxedExpressionGlobalContext } from "../../../dist/context";
 import { getColumnsAtLastLevel, Table } from "../../../dist/components";
 import "./DmnRunnerTable.css";
@@ -54,14 +54,12 @@ export function DmnRunnerTable(props: DmnRunnerTableProps) {
         return "input-";
       case DecisionTableColumnType.OutputClause:
         return "output-";
-      case DecisionTableColumnType.Annotation:
-        return "annotation-";
       default:
         return "column-";
     }
   }, []);
 
-  const generateHandlerConfigurationByColumn = useCallback(
+  const generateHandlerConfigurationByColumn = useMemo(
     () => [
       {
         group: i18n.decisionRule,
@@ -80,10 +78,9 @@ export function DmnRunnerTable(props: DmnRunnerTableProps) {
 
   const getHandlerConfiguration = useMemo(() => {
     const configuration: { [columnGroupType: string]: GroupOperations[] } = {};
-    configuration[EMPTY_SYMBOL] = generateHandlerConfigurationByColumn();
-    configuration[DecisionTableColumnType.InputClause] = generateHandlerConfigurationByColumn();
-    configuration[DecisionTableColumnType.OutputClause] = generateHandlerConfigurationByColumn();
-    configuration[DecisionTableColumnType.Annotation] = generateHandlerConfigurationByColumn();
+    configuration[EMPTY_SYMBOL] = generateHandlerConfigurationByColumn;
+    configuration[DecisionTableColumnType.InputClause] = generateHandlerConfigurationByColumn;
+    configuration[DecisionTableColumnType.OutputClause] = generateHandlerConfigurationByColumn;
     return configuration;
   }, [generateHandlerConfigurationByColumn, i18n.inputClause, i18n.outputClause, i18n.ruleAnnotation]);
 
@@ -95,41 +92,40 @@ export function DmnRunnerTable(props: DmnRunnerTableProps) {
   }, [i18n.editClause.input, i18n.editClause.output]);
 
   const memoColumns = useMemo(() => {
-    const inputSection = (props.input ?? []).map(
-      (inputClause) => {
-        if (inputClause.insideProperties) {
-          const insideProperties = inputClause.insideProperties.map((insideInputClauses) => {
-            return ({
-              label: insideInputClauses.name,
-              accessor: insideInputClauses.name,
-              dataType: insideInputClauses.dataType,
-              width: insideInputClauses.width,
-              groupType: DecisionTableColumnType.InputClause,
-              cellDelegate: insideInputClauses.cellDelegate
-            } as any);
-          })
+    const inputSection = (props.input ?? []).map((inputClause) => {
+      if (inputClause.insideProperties) {
+        const insideProperties = inputClause.insideProperties.map((insideInputClauses) => {
           return {
+            label: insideInputClauses.name,
+            accessor: insideInputClauses.name,
+            dataType: insideInputClauses.dataType,
+            width: insideInputClauses.width,
             groupType: DecisionTableColumnType.InputClause,
-            label: inputClause.name,
-            accessor: inputClause.name,
-            cssClasses: "decision-table--input",
-            columns: insideProperties,
-            appendColumnsOnChildren: true,
-          };
-        }
+            cellDelegate: insideInputClauses.cellDelegate,
+          } as any;
+        });
         return {
           groupType: DecisionTableColumnType.InputClause,
           label: inputClause.name,
           accessor: inputClause.name,
+          width: inputClause.width,
           cssClasses: "decision-table--input",
+          columns: insideProperties,
           appendColumnsOnChildren: true,
-          cellDelegate: inputClause.cellDelegate
         };
-
-        // cssClasses: inputClause.insideProperties ? "" : "decision-table--input",
-
       }
-    );
+      return {
+        groupType: DecisionTableColumnType.InputClause,
+        label: inputClause.name,
+        accessor: inputClause.name,
+        width: inputClause.width,
+        cssClasses: "decision-table--input",
+        appendColumnsOnChildren: true,
+        cellDelegate: inputClause.cellDelegate,
+      };
+
+      // cssClasses: inputClause.insideProperties ? "" : "decision-table--input",
+    });
     const outputColumns = (props.output ?? []).map(
       (outputClause) =>
         ({

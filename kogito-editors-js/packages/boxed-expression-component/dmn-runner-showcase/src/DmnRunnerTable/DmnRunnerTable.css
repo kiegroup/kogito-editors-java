@@ -24,7 +24,7 @@
 
 .expression-container .decision-table-expression table thead tr:first-child {
   border-top: 2px solid #d2d2d2;
-  overflow: hidden;
+  overflow: visible !important;
 }
 .expression-container .decision-table-expression table thead tr:first-child th {
   border-top: none;
@@ -106,7 +106,7 @@
   display: -webkit-flex;
   min-width: 15em;
   min-height: 4em;
-  overflow: hidden;
+  overflow: visible;
   transition: background-color 0.1s ease;
 }
 
