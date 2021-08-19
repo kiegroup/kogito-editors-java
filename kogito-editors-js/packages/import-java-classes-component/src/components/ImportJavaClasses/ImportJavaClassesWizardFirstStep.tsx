@@ -23,9 +23,9 @@ import { EmptyStateWidget } from "../EmptyStateWidget";
 import { ImportJavaClassesWizardClassListTable } from "./ImportJavaClassesWizardClassListTable";
 
 export interface ImportJavaClassesWizardFirstStep {
-  /** Text to apply to the Modal button */
+  /** List of the selected classes by user */
   selectedJavaClasses: string[];
-  /** Text to apply to the Modal button */
+  /** Function to be called when selecting a Java Class */
   onSelectedJavaClassesUpdated: (fullClassName: string, add: boolean) => void;
 }
 
