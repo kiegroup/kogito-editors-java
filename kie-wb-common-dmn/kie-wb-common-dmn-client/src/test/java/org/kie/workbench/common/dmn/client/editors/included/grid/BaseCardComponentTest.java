@@ -16,15 +16,24 @@
 
 package org.kie.workbench.common.dmn.client.editors.included.grid;
 
+import javax.enterprise.event.Event;
+
 import com.google.gwt.dom.client.Style.HasCssName;
 import elemental2.dom.HTMLElement;
 import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.junit.Before;
 import org.junit.Test;
+import org.kie.workbench.common.dmn.client.api.included.legacy.DMNIncludeModelsClient;
 import org.kie.workbench.common.dmn.client.docks.navigator.events.RefreshDecisionComponents;
 import org.kie.workbench.common.dmn.client.editors.included.BaseIncludedModelActiveRecord;
+import org.kie.workbench.common.dmn.client.editors.included.commands.RemoveIncludedModelCommand;
+import org.kie.workbench.common.dmn.client.editors.included.imports.persistence.ImportRecordEngine;
+import org.kie.workbench.common.dmn.client.editors.types.common.events.RefreshDataTypesListEvent;
+import org.kie.workbench.common.stunner.core.client.api.SessionManager;
+import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
+import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
+import org.kie.workbench.common.stunner.core.client.session.ClientSession;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.uberfire.mocks.EventSourceMock;
 
 import static java.util.Collections.emptyList;
@@ -32,6 +41,7 @@ import static org.gwtbootstrap3.client.ui.constants.IconType.DOWNLOAD;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -44,12 +54,33 @@ public abstract class BaseCardComponentTest<C extends BaseCardComponent<R, V>, V
     @Mock
     protected EventSourceMock<RefreshDecisionComponents> refreshDecisionComponentsEvent;
 
+    @Mock
+    protected SessionCommandManager<AbstractCanvasHandler> sessionCommandManager;
+
+    @Mock
+    protected SessionManager sessionManager;
+
+    @Mock
+    protected ImportRecordEngine recordEngine;
+
+    @Mock
+    protected DMNIncludeModelsClient client;
+
+    @Mock
+    protected Event<RefreshDataTypesListEvent> refreshDataTypesListEvent;
+
+    @Mock
+    private AbstractCanvasHandler canvasHandler;
+
     protected C card;
 
     protected V cardView;
 
     @Before
     public void setup() {
+        final ClientSession clientSession = mock(ClientSession.class);
+        when(clientSession.getCanvasHandler()).thenReturn(canvasHandler);
+        when(sessionManager.getCurrentSession()).thenReturn(clientSession);
         cardView = getCardView();
         card = spy(getCard(cardView));
     }
@@ -61,6 +92,8 @@ public abstract class BaseCardComponentTest<C extends BaseCardComponent<R, V>, V
     protected abstract Class<R> getActiveRecordClass();
 
     protected abstract BaseIncludedModelActiveRecord prepareIncludedModelMock();
+
+    protected abstract void doCheckRemoveIncludedModelCommandType(final RemoveIncludedModelCommand command);
 
     @Test
     public void testInit() {
@@ -215,15 +248,15 @@ public abstract class BaseCardComponentTest<C extends BaseCardComponent<R, V>, V
     public void testRemove() {
         final DMNCardsGridComponent grid = mock(DMNCardsGridComponent.class);
         final BaseIncludedModelActiveRecord includedModel = prepareIncludedModelMock();
+        final RemoveIncludedModelCommand command = mock(RemoveIncludedModelCommand.class);
 
         doReturn(includedModel).when(card).getIncludedModel();
         doReturn(grid).when(card).getGrid();
+        doReturn(command).when(card).getRemoveCommand();
 
         card.remove();
 
-        verify(includedModel).destroy();
-        verify(grid).refresh();
-        verify(refreshDecisionComponentsEvent).fire(Mockito.<RefreshDecisionComponents>any());
+        verify(sessionCommandManager).execute(canvasHandler, command);
     }
 
     @Test
@@ -251,5 +284,26 @@ public abstract class BaseCardComponentTest<C extends BaseCardComponent<R, V>, V
         final String actual = card.getSubTitle();
 
         assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testGetRemoveCommand() {
+
+        final DMNCardsGridComponent expectedGrid = mock(DMNCardsGridComponent.class);
+        final R expectedIncludedModel = mock(getActiveRecordClass());
+
+        doNothing().when(card).refreshView();
+
+        card.setup(expectedGrid, expectedIncludedModel);
+
+        final RemoveIncludedModelCommand command = card.getRemoveCommand();
+
+        doCheckRemoveIncludedModelCommandType(command);
+
+        assertEquals(client, command.getClient());
+        assertEquals(refreshDecisionComponentsEvent, command.getRefreshDecisionComponentsEvent());
+        assertEquals(recordEngine, command.getRecordEngine());
+        assertEquals(refreshDataTypesListEvent, command.getRefreshDataTypesListEvent());
+        assertEquals(expectedIncludedModel, command.getIncludedModel());
     }
 }

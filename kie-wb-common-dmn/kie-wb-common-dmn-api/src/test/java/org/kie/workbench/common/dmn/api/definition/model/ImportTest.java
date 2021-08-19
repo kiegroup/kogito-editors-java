@@ -90,6 +90,42 @@ public class ImportTest {
     }
 
     @Test
+    public void testEqualsUuid() {
+
+        import1.setUuid("uuid");
+        import2.setUuid("uuid");
+
+        assertEquals(import1, import2);
+    }
+
+    @Test
+    public void testNotEqualsUuid() {
+
+        import1.setUuid("uuid1");
+        import2.setUuid("uuid2");
+
+        assertNotEquals(import1, import2);
+    }
+
+    @Test
+    public void testHashCodeWithTheSameUuid() {
+
+        import1.setUuid("uuid");
+        import2.setUuid("uuid");
+
+        assertEquals(import1.hashCode(), import2.hashCode());
+    }
+
+    @Test
+    public void testHashCodeWithADifferentUuid() {
+
+        import1.setUuid("uuid1");
+        import2.setUuid("uuid2");
+
+        assertNotEquals(import1.hashCode(), import2.hashCode());
+    }
+
+    @Test
     public void testHashCodeWithTheSameId() {
 
         import1.setId(new Id("123"));

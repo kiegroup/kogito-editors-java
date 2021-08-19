@@ -28,6 +28,8 @@ public class Import extends NamedElement {
 
     protected String importType;
 
+    protected String uuid;
+
     public Import() {
         this(null,
              new LocationURI(),
@@ -70,6 +72,14 @@ public class Import extends NamedElement {
         this.importType = importType;
     }
 
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(final String uuid) {
+        this.uuid = uuid;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
@@ -96,6 +106,9 @@ public class Import extends NamedElement {
         if (locationURI != null ? !locationURI.equals(that.locationURI) : that.locationURI != null) {
             return false;
         }
+        if (uuid != null ? !uuid.equals(that.uuid) : that.uuid != null) {
+            return false;
+        }
         return importType != null ? importType.equals(that.importType) : that.importType == null;
     }
 
@@ -106,6 +119,7 @@ public class Import extends NamedElement {
                                          nameHolder != null ? nameHolder.hashCode() : 0,
                                          namespace != null ? namespace.hashCode() : 0,
                                          locationURI != null ? locationURI.hashCode() : 0,
-                                         importType != null ? importType.hashCode() : 0);
+                                         importType != null ? importType.hashCode() : 0,
+                                         uuid != null ? uuid.hashCode() : 0);
     }
 }

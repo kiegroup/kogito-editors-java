@@ -41,6 +41,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -112,6 +113,8 @@ public class IncludedModelsFactoryTest {
         verify(includedModelsIndex).clear();
         verify(includedModelsIndex).index(includedModel1, import1);
         verify(includedModelsIndex).index(includedModel2, import2);
+        verify(factory).setUuid(import1,includedModel1);
+        verify(factory).setUuid(import2,includedModel2);
         assertEquals(2, includedModels.size());
         assertEquals(uuid1, includedModel1.getUUID());
         assertEquals(uuid2, includedModel2.getUUID());
@@ -178,6 +181,8 @@ public class IncludedModelsFactoryTest {
         verify(includedModelsIndex).clear();
         verify(includedModelsIndex).index(includedModel1, import1);
         verify(includedModelsIndex).index(includedModel2, import2);
+        verify(factory).setUuid(import1,includedModel1);
+        verify(factory).setUuid(import2,includedModel2);
         assertEquals(2, includedModels.size());
         assertEquals(uuid1, includedModel1.getUUID());
         assertEquals(uuid2, includedModel2.getUUID());
@@ -193,5 +198,34 @@ public class IncludedModelsFactoryTest {
         assertEquals(modelCount2, ((PMMLIncludedModelActiveRecord) includedModel2).getModelCount());
         assertEquals(recordEngine, includedModel1.getRecordEngine());
         assertEquals(recordEngine, includedModel2.getRecordEngine());
+    }
+
+    @Test
+    public void testSetUuid(){
+
+        final Import anImport = mock(Import.class);
+        final BaseIncludedModelActiveRecord includedModel = mock(BaseIncludedModelActiveRecord.class);
+        final String theUuid = "the uuid";
+
+        when(factory.uuidWrapper()).thenReturn(theUuid);
+
+        factory.setUuid(anImport, includedModel);
+
+        verify(includedModel).setUuid(theUuid);
+    }
+
+    @Test
+    public void testSetUuidWhenUuidIsSetInTheImport(){
+
+        final Import anImport = mock(Import.class);
+        final BaseIncludedModelActiveRecord includedModel = mock(BaseIncludedModelActiveRecord.class);
+        final String theUuid = "the uuid";
+
+        when(anImport.getUuid()).thenReturn(theUuid);
+
+        factory.setUuid(anImport, includedModel);
+
+        verify(includedModel).setUuid(theUuid);
+        verify(factory, never()).uuidWrapper();
     }
 }
