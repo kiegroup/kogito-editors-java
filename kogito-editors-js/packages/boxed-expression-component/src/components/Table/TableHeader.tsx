@@ -195,6 +195,7 @@ export const TableHeader: React.FunctionComponent<TableHeaderProps> = ({
           cssClasses.push("colspan-header");
         }
         if (column.placeholderOf) {
+          cssClasses.push("colspan-header");
           cssClasses.push(column.placeholderOf.cssClasses);
           cssClasses.push(column.placeholderOf.groupType);
         }
@@ -275,14 +276,22 @@ export const TableHeader: React.FunctionComponent<TableHeaderProps> = ({
     [renderColumn, tableInstance.headerGroups]
   );
 
-  switch (headerVisibility) {
-    case TableHeaderVisibility.Full:
-      return <Thead noWrap>{renderHeaderGroups}</Thead>;
-    case TableHeaderVisibility.LastLevel:
-      return <Thead noWrap>{renderAtLevelInHeaderGroups(-1)}</Thead>;
-    case TableHeaderVisibility.SecondToLastLevel:
-      return <Thead noWrap>{renderAtLevelInHeaderGroups(-2)}</Thead>;
-    default:
-      return null;
-  }
+  const header = useMemo(() => {
+    switch (headerVisibility) {
+      case TableHeaderVisibility.Full:
+        return <Thead noWrap>{renderHeaderGroups}</Thead>;
+      case TableHeaderVisibility.LastLevel:
+        return <Thead noWrap>{renderAtLevelInHeaderGroups(-1)}</Thead>;
+      case TableHeaderVisibility.SecondToLastLevel:
+        return <Thead noWrap>{renderAtLevelInHeaderGroups(-2)}</Thead>;
+      default:
+        return null;
+    }
+  }, [headerVisibility, renderHeaderGroups, renderAtLevelInHeaderGroups, renderAtLevelInHeaderGroups]);
+
+  return (
+    <>
+      {header}
+    </>
+  );
 };

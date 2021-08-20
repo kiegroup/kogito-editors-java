@@ -74,6 +74,7 @@ export class Cell {
   }
 
   refreshWidthAsLastGroupColumn(index: number): void {
+    console.log(this.isColSpanHeader());
     if (!this.isColSpanHeader() && !this.getParentRow()?.classList.contains("table-row")) {
       return;
     }
@@ -84,14 +85,31 @@ export class Cell {
       refSibling = document.querySelector('[role="row"]')?.nextSibling;
     }
 
-    const headerSize = this.isColSpanHeader() ? 0 : document.querySelectorAll(".colspan-header").length;
+    // sum the colSpan to determine the header size;
+    const headerSize = this.isColSpanHeader()
+      ? 0
+      : Array.from(document.querySelectorAll(".colspan-header")).reduce(
+          (acc, th: HTMLTableHeaderCellElement) => acc + th.colSpan,
+          0
+        );
 
+    // if is header uses the headerType, if not (inputs/outputs cells) use the .data-cell class
     const children: HTMLElement[] = [].slice.call(
-      (refSibling as HTMLElement).querySelectorAll(`.${this.getHeaderType()}`)
+      this.isColSpanHeader()
+        ? (refSibling as HTMLElement).querySelectorAll(`.${this.getHeaderType()}`)
+        : (refSibling as HTMLElement).querySelectorAll(".data-cell")
     );
-    const childrenRects = children[(index - headerSize) % children.length].getBoundingClientRect();
-
-    this.setWidth(childrenRects.right - childrenRects.x - BORDER * 2);
+    const colSpan = (this.element?.parentNode as HTMLTableHeaderCellElement)?.colSpan;
+    if (colSpan > 1) {
+      const firstReact = children[0].getBoundingClientRect();
+      const lastReact = children[(colSpan - 1)].getBoundingClientRect();
+      this.setWidth(lastReact.width + firstReact.width - BORDER * 2);
+    } else {
+      const childrenRects = children[(index - headerSize) % children.length]?.getBoundingClientRect();
+      if (childrenRects) {
+        this.setWidth(childrenRects.width - BORDER * 2);
+      }
+    }
   }
 
   isColSpanHeader(): boolean {
