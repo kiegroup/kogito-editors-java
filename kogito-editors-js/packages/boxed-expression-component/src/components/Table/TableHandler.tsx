@@ -42,7 +42,7 @@ export interface TableHandlerProps {
   /** Rows instance */
   tableRows: DataRecord[];
   /** Function to be executed when one or more rows are modified */
-  onRowsUpdate: (rows: DataRecord[]) => void;
+  onRowsUpdate: (rows: DataRecord[], operation?: TableOperation, rowIndex?: number) => void;
   /** Function to be executed when adding a new row to the table */
   onRowAdding: () => DataRecord;
   /** Show/hide table handler */
@@ -168,29 +168,39 @@ export const TableHandler: React.FunctionComponent<TableHandlerProps> = ({
     [generateNextAvailableColumn, selectedColumn, tableColumns]
   );
 
-  const updateTargetColumns = (operation: <T extends unknown>(elements: T[], index: number, element: T) => T[]) => {
-    if (selectedColumn.parent) {
-      const parent = _.find(tableColumns, getColumnSearchPredicate(selectedColumn.parent)) as ColumnInstance;
-      parent.columns = operation(
-        parent.columns!,
-        _.findIndex(parent.columns, getColumnSearchPredicate(selectedColumn)),
-        generateNextAvailableColumn()
-      );
-    } else {
-      if (selectedColumn.appendColumnsOnChildren && _.isArray(selectedColumn.columns)) {
-        appendOnColumnChildren(operation);
-      } else {
-        onColumnsUpdate?.(
-          operation(
-            tableColumns,
-            _.findIndex(tableColumns, getColumnSearchPredicate(selectedColumn)),
-            generateNextAvailableColumn()
-          )
+  const updateTargetColumns = useCallback(
+    (operation: <T extends unknown>(elements: T[], index: number, element: T) => T[]) => {
+      if (selectedColumn.parent) {
+        const parent = _.find(tableColumns, getColumnSearchPredicate(selectedColumn.parent)) as ColumnInstance;
+        parent.columns = operation(
+          parent.columns!,
+          _.findIndex(parent.columns, getColumnSearchPredicate(selectedColumn)),
+          generateNextAvailableColumn()
         );
+      } else {
+        if (selectedColumn.appendColumnsOnChildren && _.isArray(selectedColumn.columns)) {
+          appendOnColumnChildren(operation);
+        } else {
+          onColumnsUpdate?.(
+            operation(
+              tableColumns,
+              _.findIndex(tableColumns, getColumnSearchPredicate(selectedColumn)),
+              generateNextAvailableColumn()
+            )
+          );
+        }
       }
-    }
-    updateColumnsThenRows();
-  };
+      updateColumnsThenRows();
+    },
+    [
+      selectedColumn,
+      generateNextAvailableColumn,
+      appendOnColumnChildren,
+      onColumnsUpdate,
+      tableColumns,
+      updateColumnsThenRows,
+    ]
+  );
 
   const handlingOperation = useCallback(
     (tableOperation: TableOperation) => {
@@ -205,33 +215,24 @@ export const TableHandler: React.FunctionComponent<TableHandlerProps> = ({
           updateTargetColumns(deleteAt);
           break;
         case TableOperation.RowInsertAbove:
-          onRowsUpdate(insertBefore(tableRows, selectedRowIndex, onRowAdding()));
+          onRowsUpdate(insertBefore(tableRows, selectedRowIndex, onRowAdding()), TableOperation.RowInsertAbove);
           break;
         case TableOperation.RowInsertBelow:
-          onRowsUpdate(insertAfter(tableRows, selectedRowIndex, onRowAdding()));
+          onRowsUpdate(insertAfter(tableRows, selectedRowIndex, onRowAdding()), TableOperation.RowInsertBelow);
           break;
         case TableOperation.RowDelete:
-          onRowsUpdate(deleteAt(tableRows, selectedRowIndex));
+          onRowsUpdate(deleteAt(tableRows, selectedRowIndex), TableOperation.RowDelete, selectedRowIndex);
           break;
         case TableOperation.RowClear:
-          onRowsUpdate(clearAt(tableRows, selectedRowIndex));
+          onRowsUpdate(clearAt(tableRows, selectedRowIndex), TableOperation.RowClear);
           break;
         case TableOperation.RowDuplicate:
-          onRowsUpdate(duplicateAfter(tableRows, selectedRowIndex));
+          onRowsUpdate(duplicateAfter(tableRows, selectedRowIndex), TableOperation.RowDuplicate);
       }
       setShowTableHandler(false);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [
-      generateNextAvailableColumn,
-      updateColumnsThenRows,
-      onRowAdding,
-      onRowsUpdate,
-      selectedRowIndex,
-      setShowTableHandler,
-      tableColumns,
-      tableRows,
-    ]
+    [updateTargetColumns, onRowAdding, onRowsUpdate, selectedRowIndex, setShowTableHandler, tableRows]
   );
 
   const getHandlerConfiguration = useMemo(() => {
