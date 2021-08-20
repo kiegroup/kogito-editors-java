@@ -17,7 +17,7 @@
 import * as React from "react";
 import { Spinner } from "@patternfly/react-core";
 import { useEffect, useState } from "react";
-import { TableComposable, Tbody, Td, Tr } from "@patternfly/react-table";
+import { ImportJavaClassesWizardFieldListTable } from "./ImportJavaClassesWizardFieldListTable";
 
 export interface ImportJavaClassesWizardSecondStepProps {
   /** List of the selected classes by user */
@@ -50,15 +50,7 @@ export const ImportJavaClassesWizardSecondStep: React.FunctionComponent<ImportJa
       {retrievedJavaClassFields.size != selectedJavaClasses.length ? (
         <Spinner isSVG diameter="80px" />
       ) : (
-        <TableComposable aria-label="field-table" variant="compact">
-          <Tbody>
-            {selectedJavaClasses.map((className, rowIndex) => (
-              <Tr key={rowIndex}>
-                <Td key={`${rowIndex}_${className}`}>{className.split(".").pop() + " (" + className + ")"}</Td>
-              </Tr>
-            ))}
-          </Tbody>
-        </TableComposable>
+        <ImportJavaClassesWizardFieldListTable selectedJavaClassFields={retrievedJavaClassFields} />
       )}
     </>
   );

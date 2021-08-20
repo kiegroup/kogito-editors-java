@@ -15,7 +15,7 @@
  */
 
 import * as React from "react";
-import { Title, SearchInput } from "@patternfly/react-core";
+import { SearchInput } from "@patternfly/react-core";
 import CubesIcon from "@patternfly/react-icons/dist/js/icons/cubes-icon";
 import { useImportJavaClassesWizardI18n } from "../../i18n";
 import { useCallback, useState } from "react";
@@ -61,9 +61,6 @@ export const ImportJavaClassesWizardFirstStep: React.FunctionComponent<ImportJav
 
   return (
     <>
-      <Title headingLevel="h6" size="md">
-        {i18n.modalWizard.firstStep.input.title}
-      </Title>
       <SearchInput
         placeholder={i18n.modalWizard.firstStep.input.placeholder}
         value={searchValue}
