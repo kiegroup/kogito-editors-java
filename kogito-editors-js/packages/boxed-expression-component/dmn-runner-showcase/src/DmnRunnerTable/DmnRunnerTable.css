@@ -44,7 +44,7 @@
   height: 108px !important;
   top: -66px;
   padding: 40px 0;
-  cursor: pointer;
+  cursor: unset;
 }
 
 .expression-container .decision-table-expression table thead th.input,

@@ -189,9 +189,29 @@ export function DmnRunnerTable(props: DmnRunnerTableProps) {
     }, {} as DataRecord);
   }, [memoColumns]);
 
-  useEffect(() => {
-    console.log(document.getElementsByTagName("input"))
+  const searchRecursively = useCallback((child: any) => {
+    if (child.tagName === "svg") {
+      return;
+    }
+    if (child.style) {
+      child.style.height = "100%";
+    }
+    if (!child.childNodes) {
+      return;
+    }
+    child.childNodes.forEach(searchRecursively);
   }, []);
+
+  useEffect(() => {
+    const tbody = document.getElementsByTagName("tbody")[0];
+    const inputsCells = Array.from(tbody.getElementsByTagName("td"));
+    // remove id column
+    inputsCells.shift();
+
+    inputsCells.forEach((inputCell) => {
+      searchRecursively(inputCell.childNodes[0]);
+    });
+  }, [memoColumns]);
 
   return (
     <div className="expression-container">

@@ -185,7 +185,7 @@ export function DmnAutoTable(props: Props) {
   }, [bridge]);
 
   useEffect(() => {
-    console.log(selectedExpression);
+
   }, [selectedExpression]);
 
   return (
