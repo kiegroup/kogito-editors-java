@@ -33,31 +33,33 @@ export const ImportJavaClassesWizardSecondStep: React.FunctionComponent<ImportJa
   const loadJavaClassFields = (className: string) => {
     const retrieved = window.envelopeMock.lspGetClassFieldsServiceMocked(className);
     if (retrieved) {
-      setRetrievedJavaClassFields(prevState => {
+      setRetrievedJavaClassFields((prevState) => {
         const javaClassFieldsMap = new Map<string, Map<string, string>>(prevState);
         javaClassFieldsMap.set(className, retrieved);
-        return javaClassFieldsMap
+        return javaClassFieldsMap;
       });
     }
   };
-  useEffect(() => selectedJavaClasses.forEach((className : string) => loadJavaClassFields(className)), [selectedJavaClasses]);
+  useEffect(
+    () => selectedJavaClasses.forEach((className: string) => loadJavaClassFields(className)),
+    [selectedJavaClasses]
+  );
 
   return (
     <>
-      {retrievedJavaClassFields.size != selectedJavaClasses.length ?
-        (<Spinner isSVG diameter="80px" />) :
-        (<TableComposable aria-label="field-table" variant='compact'>
+      {retrievedJavaClassFields.size != selectedJavaClasses.length ? (
+        <Spinner isSVG diameter="80px" />
+      ) : (
+        <TableComposable aria-label="field-table" variant="compact">
           <Tbody>
             {selectedJavaClasses.map((className, rowIndex) => (
               <Tr key={rowIndex}>
-                <Td key={`${rowIndex}_${className}`}>
-                  {className.split('.').pop() + " (" + className + ")"}
-                </Td>
+                <Td key={`${rowIndex}_${className}`}>{className.split(".").pop() + " (" + className + ")"}</Td>
               </Tr>
             ))}
           </Tbody>
-        </TableComposable>)
-      }
+        </TableComposable>
+      )}
     </>
   );
 };
