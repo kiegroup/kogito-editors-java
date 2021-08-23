@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 import * as React from "react";
 import { TableComposable, Tbody, Td, Tr } from "@patternfly/react-table";
 
@@ -23,22 +22,20 @@ export interface ImportJavaClassesWizardFieldListTableProps {
   selectedJavaClassFields: Map<string, Map<string, string>>;
 }
 
-export const ImportJavaClassesWizardFieldListTable: React.FunctionComponent<ImportJavaClassesWizardFieldListTableProps> = ({
-  selectedJavaClassFields,
-}) => {
-
-  return (
-    <TableComposable aria-label="field-table" variant="compact">
-      <Tbody>
-        {Array.from(selectedJavaClassFields).map(([key, value]) => (
-          <Tr key={key}>
-            <Td key={`${key}_${key}`}>
-              <strong>{key.split(".").pop()}</strong>
-              <span>{" (" + key + ")"}</span>
-            </Td>
-          </Tr>
-        ))}
-      </Tbody>
-    </TableComposable>
-  );
-}
+export const ImportJavaClassesWizardFieldListTable: React.FunctionComponent<ImportJavaClassesWizardFieldListTableProps> =
+  ({ selectedJavaClassFields }) => {
+    return (
+      <TableComposable aria-label="field-table" variant="compact">
+        <Tbody>
+          {Array.from(selectedJavaClassFields).map(([key, value]) => (
+            <Tr key={key}>
+              <Td key={`${key}_${key}`}>
+                <strong>{key.split(".").pop()}</strong>
+                <span>{" (" + key + ")"}</span>
+              </Td>
+            </Tr>
+          ))}
+        </Tbody>
+      </TableComposable>
+    );
+  };
