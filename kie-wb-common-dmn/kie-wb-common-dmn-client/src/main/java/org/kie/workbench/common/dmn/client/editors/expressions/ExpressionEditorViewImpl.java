@@ -318,6 +318,7 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
 
     @EventHandler("try-it")
     public void onTryIt(final ClickEvent event) {
+        activate();
         renderNewBoxedExpression();
         toggleBoxedExpression(true);
         preventDefault(event);
