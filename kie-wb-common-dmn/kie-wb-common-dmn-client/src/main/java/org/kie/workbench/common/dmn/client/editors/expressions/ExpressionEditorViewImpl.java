@@ -326,6 +326,10 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
 
     @EventHandler("switch-back")
     public void onSwitchBack(final ClickEvent event) {
+        getExpressionGridCacheSupplier()
+                .get()
+                .removeExpressionGrid(nodeUUID);
+        setExpression(nodeUUID, hasExpression, hasName, isOnlyVisualChangeAllowed);
         renderOldBoxedExpression();
         toggleBoxedExpression(false);
         preventDefault(event);
