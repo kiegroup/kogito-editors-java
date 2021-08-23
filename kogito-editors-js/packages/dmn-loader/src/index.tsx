@@ -15,7 +15,7 @@
  */
 
 import { HelloWorld } from "hello-world-component";
-import { BoxedExpressionEditor, ExpressionProps, PMMLParams } from "boxed-expression-component";
+import { BoxedExpressionEditor, ExpressionProps, LogicType, PMMLParams } from "boxed-expression-component";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { setupWire } from "./wire";
@@ -32,9 +32,15 @@ const renderBoxedExpressionEditor = (
   pmmlParams: PMMLParams
 ) => {
   ReactDOM.render(
-    <BoxedExpressionEditor expressionDefinition={expressionDefinition} pmmlParams={pmmlParams} />,
+    <BoxedExpressionEditor expressionDefinition={{ logicType: LogicType.Undefined }} />,
     document.querySelector(selector)
   );
+  setTimeout(() => {
+    ReactDOM.render(
+      <BoxedExpressionEditor expressionDefinition={expressionDefinition} pmmlParams={pmmlParams} />,
+      document.querySelector(selector)
+    );
+  }, 0);
 };
 
 export { renderHelloWorld, renderBoxedExpressionEditor };
