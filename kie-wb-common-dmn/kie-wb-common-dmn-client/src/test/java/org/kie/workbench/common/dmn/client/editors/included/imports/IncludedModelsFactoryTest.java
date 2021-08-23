@@ -18,6 +18,7 @@ package org.kie.workbench.common.dmn.client.editors.included.imports;
 
 import java.util.List;
 
+import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,7 +34,6 @@ import org.kie.workbench.common.dmn.client.editors.included.PMMLIncludedModelAct
 import org.kie.workbench.common.dmn.client.editors.included.imports.persistence.ImportRecordEngine;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 
 import static java.util.Arrays.asList;
@@ -46,7 +46,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(GwtMockitoTestRunner.class)
 public class IncludedModelsFactoryTest {
 
     @Mock
@@ -113,8 +113,8 @@ public class IncludedModelsFactoryTest {
         verify(includedModelsIndex).clear();
         verify(includedModelsIndex).index(includedModel1, import1);
         verify(includedModelsIndex).index(includedModel2, import2);
-        verify(factory).setUuid(import1,includedModel1);
-        verify(factory).setUuid(import2,includedModel2);
+        verify(factory).setUuid(import1, includedModel1);
+        verify(factory).setUuid(import2, includedModel2);
         assertEquals(2, includedModels.size());
         assertEquals(uuid1, includedModel1.getUUID());
         assertEquals(uuid2, includedModel2.getUUID());
@@ -181,8 +181,8 @@ public class IncludedModelsFactoryTest {
         verify(includedModelsIndex).clear();
         verify(includedModelsIndex).index(includedModel1, import1);
         verify(includedModelsIndex).index(includedModel2, import2);
-        verify(factory).setUuid(import1,includedModel1);
-        verify(factory).setUuid(import2,includedModel2);
+        verify(factory).setUuid(import1, includedModel1);
+        verify(factory).setUuid(import2, includedModel2);
         assertEquals(2, includedModels.size());
         assertEquals(uuid1, includedModel1.getUUID());
         assertEquals(uuid2, includedModel2.getUUID());
@@ -201,7 +201,7 @@ public class IncludedModelsFactoryTest {
     }
 
     @Test
-    public void testSetUuid(){
+    public void testSetUuid() {
 
         final Import anImport = mock(Import.class);
         final BaseIncludedModelActiveRecord includedModel = mock(BaseIncludedModelActiveRecord.class);
@@ -215,7 +215,7 @@ public class IncludedModelsFactoryTest {
     }
 
     @Test
-    public void testSetUuidWhenUuidIsSetInTheImport(){
+    public void testSetUuidWhenUuidIsSetInTheImport() {
 
         final Import anImport = mock(Import.class);
         final BaseIncludedModelActiveRecord includedModel = mock(BaseIncludedModelActiveRecord.class);
