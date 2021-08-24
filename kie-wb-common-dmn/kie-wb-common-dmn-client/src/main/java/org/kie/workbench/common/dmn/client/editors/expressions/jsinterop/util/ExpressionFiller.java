@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.kie.workbench.common.dmn.api.definition.HasExpression;
 import org.kie.workbench.common.dmn.api.definition.model.Context;
@@ -156,7 +157,8 @@ public class ExpressionFiller {
                 .map(row -> {
                     final List list = new List();
                     list.getExpression().addAll(
-                            Arrays.stream(Optional.ofNullable(row).orElse(new String[0])).map(cell -> {
+                            IntStream.range(0, Optional.ofNullable(relationProps.columns).orElse(new Column[0]).length).mapToObj(columnIndex -> {
+                                final String cell = row.length <= columnIndex ? "" : row[columnIndex];
                                 final LiteralExpression wrappedExpression = new LiteralExpression();
                                 wrappedExpression.setText(new Text(cell));
                                 wrappedExpression.setTypeRef(BuiltInType.STRING.asQName());
