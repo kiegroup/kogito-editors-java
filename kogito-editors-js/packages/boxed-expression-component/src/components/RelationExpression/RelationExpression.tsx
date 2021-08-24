@@ -16,7 +16,7 @@
 
 import "./RelationExpression.css";
 import * as React from "react";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import "@patternfly/react-styles/css/utilities/Text/text.css";
 import {
   Column as RelationColumn,
@@ -54,7 +54,7 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = (relat
     },
   ];
 
-  const storedExpressionDefinition = useRef({} as RelationProps);
+  const [storedExpressionDefinition, setStoredExpressionDefinition] = useState({} as RelationProps);
 
   const tableColumns = useRef<RelationColumn[]>(
     relationProps.columns === undefined
@@ -72,17 +72,17 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = (relat
     };
 
     executeIfExpressionDefinitionChanged(
-      storedExpressionDefinition.current,
+      storedExpressionDefinition,
       expressionDefinition,
       () => {
         relationProps.isHeadless
           ? relationProps.onUpdatingRecursiveExpression?.(expressionDefinition)
           : window.beeApi?.broadcastRelationExpressionDefinition?.(expressionDefinition);
-        storedExpressionDefinition.current = expressionDefinition;
+        setStoredExpressionDefinition(expressionDefinition);
       },
       ["columns", "rows"]
     );
-  }, [relationProps]);
+  }, [relationProps, storedExpressionDefinition]);
 
   const convertColumnsForTheTable = useCallback(
     () =>
