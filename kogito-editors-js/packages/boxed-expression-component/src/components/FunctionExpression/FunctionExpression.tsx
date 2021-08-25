@@ -300,31 +300,31 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (props
       selectedFunctionKind
     );
 
-    executeIfExpressionDefinitionChanged(
-      storedExpressionDefinition.current,
-      updatedDefinition,
-      () => {
-        if (props.isHeadless) {
-          props.onUpdatingRecursiveExpression?.(_.omit(updatedDefinition, ["name", "dataType"]));
-        } else {
+    if (props.isHeadless) {
+      props.onUpdatingRecursiveExpression?.(_.omit(updatedDefinition, ["name", "dataType"]));
+    } else {
+      executeIfExpressionDefinitionChanged(
+        storedExpressionDefinition.current,
+        updatedDefinition,
+        () => {
           setSupervisorHash(hashfy(rows));
           window.beeApi?.broadcastFunctionExpressionDefinition?.(updatedDefinition);
-        }
-        storedExpressionDefinition.current = updatedDefinition;
-      },
-      [
-        "name",
-        "dataType",
-        "functionKind",
-        "formalParameters",
-        "parametersWidth",
-        "class",
-        "method",
-        "document",
-        "model",
-        "expression",
-      ]
-    );
+          storedExpressionDefinition.current = updatedDefinition;
+        },
+        [
+          "name",
+          "dataType",
+          "functionKind",
+          "formalParameters",
+          "parametersWidth",
+          "class",
+          "method",
+          "document",
+          "model",
+          "expression",
+        ]
+      );
+    }
   }, [extendDefinitionBasedOnFunctionKind, setSupervisorHash, parameters, props, selectedFunctionKind, rows, width]);
 
   const getHeaderVisibility = useCallback(() => {

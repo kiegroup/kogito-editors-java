@@ -130,20 +130,20 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
       entryExpressionWidth: expressionWidth,
     };
 
-    executeIfExpressionDefinitionChanged(
-      storedExpressionDefinition.current,
-      updatedDefinition,
-      () => {
-        if (isHeadless) {
-          onUpdatingRecursiveExpression?.(_.omit(updatedDefinition, ["name", "dataType"]));
-        } else {
+    if (isHeadless) {
+      onUpdatingRecursiveExpression?.(_.omit(updatedDefinition, ["name", "dataType"]));
+    } else {
+      executeIfExpressionDefinitionChanged(
+        storedExpressionDefinition.current,
+        updatedDefinition,
+        () => {
           setSupervisorHash(hashfy(updatedDefinition));
           window.beeApi?.broadcastContextExpressionDefinition?.(updatedDefinition);
-        }
-        storedExpressionDefinition.current = updatedDefinition;
-      },
-      ["name", "dataType", "contextEntries", "result", "entryInfoWidth", "entryExpressionWidth"]
-    );
+          storedExpressionDefinition.current = updatedDefinition;
+        },
+        ["name", "dataType", "contextEntries", "result", "entryInfoWidth", "entryExpressionWidth"]
+      );
+    }
   }, [
     expressionWidth,
     infoWidth,

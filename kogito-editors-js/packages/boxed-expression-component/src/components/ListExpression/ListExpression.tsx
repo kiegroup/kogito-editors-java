@@ -113,20 +113,20 @@ export const ListExpression: React.FunctionComponent<ListProps> = ({
       items: _.map(listItems, (listItem: DataRecord) => listItem.entryExpression as ExpressionProps),
     };
 
-    executeIfExpressionDefinitionChanged(
-      storedExpressionDefinition.current,
-      updatedDefinition,
-      () => {
-        if (isHeadless) {
-          onUpdatingRecursiveExpression?.(updatedDefinition);
-        } else {
+    if (isHeadless) {
+      onUpdatingRecursiveExpression?.(updatedDefinition);
+    } else {
+      executeIfExpressionDefinitionChanged(
+        storedExpressionDefinition.current,
+        updatedDefinition,
+        () => {
           setSupervisorHash(hashfy(updatedDefinition));
           window.beeApi?.broadcastListExpressionDefinition?.(updatedDefinition);
-        }
-        storedExpressionDefinition.current = updatedDefinition;
-      },
-      ["width", "items"]
-    );
+          storedExpressionDefinition.current = updatedDefinition;
+        },
+        ["width", "items"]
+      );
+    }
   }, [listWidth, listItems, isHeadless, onUpdatingRecursiveExpression, uid, setSupervisorHash]);
 
   const resetRowCustomFunction = useCallback((row: DataRecord) => {
