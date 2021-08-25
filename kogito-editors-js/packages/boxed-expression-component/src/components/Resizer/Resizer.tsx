@@ -97,6 +97,7 @@ export const Resizer: React.FunctionComponent<ResizerProps> = ({
     const isCellParent = (cell: Cell) => cell.element?.contains(currentCell.element);
     const containsCurrent = (cell: Cell) => {
       const cellRect = cell.getRect();
+      // Problems with floats.
       return (
         Number(cellRect.x).toFixed(3) <= Number(currentRect.x).toFixed(3) &&
         Number(cellRect.right).toFixed(3) >= Number(currentRect.right).toFixed(3)

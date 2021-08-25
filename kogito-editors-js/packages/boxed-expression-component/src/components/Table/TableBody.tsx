@@ -80,9 +80,11 @@ export const TableBody: React.FunctionComponent<TableBodyProps> = ({
         cellType += " input";
       }
 
+      const tdProp = tdProps(cellIndex, rowIndex)
+
       return (
         <Td
-          {...tdProps(cellIndex, rowIndex)}
+          {...tdProp}
           key={`${getColumnKey(cell.column)}-${cellIndex}`}
           data-ouia-component-id={"expression-column-" + cellIndex}
           className={`${cellType}`}

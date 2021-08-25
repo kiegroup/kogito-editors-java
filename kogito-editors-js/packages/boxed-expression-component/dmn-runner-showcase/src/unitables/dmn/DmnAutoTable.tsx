@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Clause, LogicType } from "../../../../dist/api";
+import { Clause, LogicType, TableOperation } from "../../../../dist/api";
 import { DmnValidator } from "./DmnValidator";
 import { AutoRow } from "../core";
 import { createPortal } from "react-dom";
@@ -76,7 +76,51 @@ export function DmnAutoTable(props: Props) {
   const grid = useMemo(() => (bridge ? new DmnGrid(bridge) : undefined), [bridge]);
   const shouldRender = useMemo(() => (grid?.generateBoxedInputs().length ?? 0) > 0, [grid]);
 
-  const onRowNumberUpdated = useCallback((rowNumber) => setRowQuantity(rowNumber), []);
+  // const insertBefore = <T extends unknown>(elements: T[], index: number, element: T) => [
+  //   ...elements.slice(0, index),
+  //   element,
+  //   ...elements.slice(index),
+  // ];
+  //
+  // const insertAfter = <T extends unknown>(elements: T[], index: number, element: T) => [
+  //   ...elements.slice(0, index + 1),
+  //   element,
+  //   ...elements.slice(index + 1),
+  // ];
+  //
+  // const duplicateAfter = <T extends unknown>(elements: T[], index: number) => [
+  //   ...elements.slice(0, index + 1),
+  //   _.cloneDeep(elements[index]),
+  //   ...elements.slice(index + 1),
+  // ];
+  //
+  // const deleteAt = <T extends unknown>(elements: T[], index: number) => [
+  //   ...elements.slice(0, index),
+  //   ...elements.slice(index + 1),
+  // ];
+  //
+  // const handleOperation = useCallback((tableOperation: TableOperation) => {
+  //   switch (tableOperation) {
+  //     case TableOperation.RowInsertAbove:
+  //       insertBefore(tableRows, selectedRowIndex, onRowAdding());
+  //       break;
+  //     case TableOperation.RowInsertBelow:
+  //       insertAfter(tableRows, selectedRowIndex, onRowAdding());
+  //       break;
+  //     case TableOperation.RowDelete:
+  //       deleteAt(tableRows, selectedRowIndex);
+  //       break;
+  //     case TableOperation.RowClear:
+  //       clearAt(tableRows, selectedRowIndex);
+  //       break;
+  //     case TableOperation.RowDuplicate:
+  //       duplicateAfter(tableRows, selectedRowIndex);
+  //   }
+  // }, [])
+
+  const onRowNumberUpdated = useCallback((rowQtt: number, operation?: TableOperation, rowIndex?: number) => {
+    setRowQuantity(rowQtt);
+  }, []);
 
   const onSubmit = useCallback(
     (model: any, index) => {
@@ -136,15 +180,20 @@ export function DmnAutoTable(props: Props) {
       const output: Clause[] = Array.from(outputSet.values());
 
       const rules = [];
+      const inputEntriesLength = input.reduce(
+        (acc, i) => (i.insideProperties ? acc + i.insideProperties.length : acc + 1),
+        0
+      );
+      const inputEntries = new Array(inputEntriesLength);
       for (let i = 0; i < rowQuantity; i++) {
         const rule: DmnRunnerRule = {
-          inputEntries: [""],
+          inputEntries,
           outputEntries: (outputEntries?.[i] as string[]) ?? [],
         };
         if (formsDivRendered) {
           rule.rowDelegate = getAutoRow(props.tableData[i], i);
-          rules.push(rule);
         }
+        rules.push(rule);
       }
 
       return {
@@ -156,7 +205,16 @@ export function DmnAutoTable(props: Props) {
         onRowNumberUpdated,
       };
     }
-  }, [grid, props.schema, props.results, props.tableData, rowQuantity, onRowNumberUpdated, formsDivRendered, getAutoRow]);
+  }, [
+    grid,
+    props.schema,
+    props.results,
+    props.tableData,
+    rowQuantity,
+    onRowNumberUpdated,
+    formsDivRendered,
+    getAutoRow,
+  ]);
 
   useEffect(() => {
     errorBoundaryRef.current?.reset();
@@ -183,10 +241,6 @@ export function DmnAutoTable(props: Props) {
   useEffect(() => {
     errorBoundaryRef.current?.reset();
   }, [bridge]);
-
-  useEffect(() => {
-
-  }, [selectedExpression]);
 
   return (
     <>

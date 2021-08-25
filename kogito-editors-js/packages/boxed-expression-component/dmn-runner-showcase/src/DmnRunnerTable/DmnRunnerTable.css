@@ -110,6 +110,16 @@
   transition: background-color 0.1s ease;
 }
 
+.expression-container .decision-table-expression table thead tr:last-child th.decision-table--input::after,
+.expression-container .decision-table-expression table thead tr:last-child th.decision-table--annotation::after {
+  content: "";
+  position: absolute;
+  border: unset;
+  height: 0;
+  top: 0;
+  right: 0;
+}
+
 .expression-container .logic-type-selector:hover {
   background-color: #eff5f8;
 }

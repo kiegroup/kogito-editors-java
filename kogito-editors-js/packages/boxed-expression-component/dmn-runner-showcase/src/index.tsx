@@ -21,6 +21,7 @@ import "./index.css";
 import "@patternfly/react-core/dist/styles/base-no-reset.css";
 import { DmnAutoTable } from "./unitables";
 import * as schemas from "./schemas";
+import * as results from "./results";
 import { Button } from "@patternfly/react-core";
 
 export const App: React.FunctionComponent = () => {
@@ -28,53 +29,105 @@ export const App: React.FunctionComponent = () => {
   const [formError, setFormError] = useState(false);
 
   const [schema, setSchema] = useState<any>(schemas.normalDataType);
+  const [result, setResult] = useState<any>(results.normalResults);
 
   return (
     <>
-      <div style={{ display: "flex" }}>
-        <div style={{ padding: "5px" }}>
-          <Button variant={"primary"} onClick={() => setSchema(schemas.normalDataType)}>
-            Normal Type
-          </Button>
-        </div>
-        <div style={{ padding: "5px" }}>
-          <Button variant={"primary"} onClick={() => setSchema(schemas.multipleInputs)}>
-            Multiple Inputs
-          </Button>
-        </div>
-        <div style={{ padding: "5px" }}>
-          <Button variant={"primary"} onClick={() => setSchema(schemas.simpleCustomDataType)}>
-            Simple Custom
-          </Button>
-        </div>
-        <div style={{ padding: "5px" }}>
-          <Button variant={"primary"} onClick={() => setSchema(schemas.customWithMultiple)}>
-            Custom With Multiple
-          </Button>
-        </div>
-        <div style={{ padding: "5px" }}>
-          <Button variant={"primary"} onClick={() => setSchema(schemas.multipleCustomNormal)}>
-            Multiple Custom Normal
-          </Button>
-        </div>
-        <div style={{ padding: "5px" }}>
-          <Button variant={"primary"} onClick={() => setSchema(schemas.multipleCustomEnum)}>
-            Multiple Custom Enum
-          </Button>
-        </div>
-        <div style={{ padding: "5px" }}>
-          <Button variant={"primary"} onClick={() => setSchema(schemas.complexCustomDataType)}>
-            Complex Custom
-          </Button>
+      <div>
+        <h2>Inputs</h2>
+        <div style={{ display: "flex" }}>
+          <div style={{ padding: "5px" }}>
+            <Button variant={"primary"} onClick={() => setSchema(schemas.emptyInput)}>
+              Empty Input
+            </Button>
+          </div>
+          <div style={{ padding: "5px" }}>
+            <Button variant={"primary"} onClick={() => setSchema(schemas.normalDataType)}>
+              Normal Type
+            </Button>
+          </div>
+          <div style={{ padding: "5px" }}>
+            <Button variant={"primary"} onClick={() => setSchema(schemas.multipleInputs)}>
+              Multiple Inputs
+            </Button>
+          </div>
+          <div style={{ padding: "5px" }}>
+            <Button variant={"primary"} onClick={() => setSchema(schemas.simpleCustomDataType)}>
+              Simple Custom
+            </Button>
+          </div>
+          <div style={{ padding: "5px" }}>
+            <Button variant={"primary"} onClick={() => setSchema(schemas.customWithMultiple)}>
+              Custom With Multiple
+            </Button>
+          </div>
+          <div style={{ padding: "5px" }}>
+            <Button variant={"primary"} onClick={() => setSchema(schemas.multipleCustomNormal)}>
+              Multiple Custom Normal
+            </Button>
+          </div>
+          <div style={{ padding: "5px" }}>
+            <Button variant={"primary"} onClick={() => setSchema(schemas.multipleCustomEnum)}>
+              Multiple Custom Enum
+            </Button>
+          </div>
+          <div style={{ padding: "5px" }}>
+            <Button variant={"primary"} onClick={() => setSchema(schemas.complexCustomDataType)}>
+              Complex Custom
+            </Button>
+          </div>
         </div>
       </div>
+
+      <div>
+        <h2>Results</h2>
+        <div style={{ display: "flex" }}>
+          <div style={{ padding: "5px" }}>
+            <Button variant={"secondary"} onClick={() => setResult(results.normalResults)}>
+              Normal Results
+            </Button>
+          </div>
+          <div style={{ padding: "5px" }}>
+            <Button variant={"secondary"} onClick={() => setResult(results.multipleResults)}>
+              Multiple Results
+            </Button>
+          </div>
+          <div style={{ padding: "5px" }}>
+            <Button variant={"secondary"} onClick={() => setResult(results.arrayResult)}>
+              Array Results
+            </Button>
+          </div>
+          <div style={{ padding: "5px" }}>
+            <Button variant={"secondary"} onClick={() => setResult(results.arrayMultipleResults)}>
+              Array Multiple Results
+            </Button>
+          </div>
+          <div style={{ padding: "5px" }}>
+            <Button variant={"secondary"} onClick={() => setResult(results.objectResults)}>
+              Object Results
+            </Button>
+          </div>
+          <div style={{ padding: "5px" }}>
+            <Button variant={"secondary"} onClick={() => setResult(results.skippedResult)}>
+              Skipped Results
+            </Button>
+          </div>
+          <div style={{ padding: "5px" }}>
+            <Button variant={"secondary"} onClick={() => setResult(results.failedResult)}>
+              Failed Results
+            </Button>
+          </div>
+        </div>
+
+      </div>
+
       <div className="showcase">
         <div className="boxed-expression">
           <DmnAutoTable
             schema={schema}
             tableData={tableData}
             setTableData={setTableData}
-            results={[]}
+            results={result}
             formError={formError}
             setFormError={setFormError}
           />

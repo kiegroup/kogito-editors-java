@@ -45,7 +45,7 @@ export class Grid {
       case "years and months duration":
         return { dataType: DataType.YearsMonthsDuration, width: 150 };
       default:
-        return { dataType: extractedType as DataType, width: undefined };
+        return { dataType: (extractedType as DataType) ?? DataType.Undefined, width: undefined };
     }
   }
 
@@ -74,7 +74,7 @@ export class Grid {
     };
   }
 
-  public generateBoxedInputs(): any {
+  public generateBoxedInputs(): DmnRunnerClause[] {
     let myGrid: DmnRunnerClause[] = [];
     const subfields = this.bridge.getSubfields();
     const inputs = subfields.reduce(
@@ -89,7 +89,7 @@ export class Grid {
 
   public generateBoxedOutputs(
     schema: any,
-    results: Array<DecisionResult[] | undefined>
+    decisionResults: Array<DecisionResult[] | undefined>
   ): [Map<string, DmnRunnerClause>, Result[]] {
     const outputTypeMap = Object.entries(schema?.definitions?.OutputSet?.properties ?? []).reduce(
       (acc: Map<string, DataType>, [name, properties]: [string, any]) => {
@@ -100,23 +100,32 @@ export class Grid {
       new Map<string, DataType>()
     );
 
-    const outputSet = results.reduce((acc: Map<string, DmnRunnerClause>, result: DecisionResult[] | undefined) => {
-      if (result) {
-        result.forEach(({ decisionName }) => {
-          acc.set(decisionName, {
-            name: decisionName,
-            dataType: outputTypeMap.get(decisionName)!,
+    const outputSet = decisionResults.reduce(
+      (acc: Map<string, DmnRunnerClause>, decisionResult: DecisionResult[] | undefined) => {
+        if (decisionResult) {
+          decisionResult.forEach(({ decisionName }) => {
+            acc.set(decisionName, {
+              name: decisionName,
+              dataType: outputTypeMap.get(decisionName)!,
+            });
           });
-        });
-      }
-      return acc;
-    }, new Map<string, DmnRunnerClause>());
+        }
+        return acc;
+      },
+      new Map<string, DmnRunnerClause>()
+    );
 
-    const outputEntries = results.reduce((acc: Result[], result: DecisionResult[] | undefined) => {
-      if (result) {
-        const outputResults = result.map(({ result }) => {
+    const outputEntries = decisionResults.reduce((acc: Result[], decisionResult: DecisionResult[] | undefined) => {
+      if (decisionResult) {
+        const outputResults = decisionResult.map(({ result }) => {
           if (result === null) {
             return "null";
+          }
+          if (result === true) {
+            return "true";
+          }
+          if (result === false) {
+            return "false";
           }
           return result;
         });

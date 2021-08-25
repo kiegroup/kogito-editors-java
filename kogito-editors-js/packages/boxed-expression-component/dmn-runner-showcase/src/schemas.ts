@@ -1,3 +1,24 @@
+export const emptyInput = {
+  definitions: {
+    OutputSet: {
+      type: "object",
+      properties: {
+        "Decision-1": {
+          "x-dmn-type": "FEEL:Any",
+        },
+      },
+      "x-dmn-type": "DMNType{ https://kiegroup.org/dmn/_093D13A4-07DA-4B11-8DFE-9FB92ECC8E0D : OutputSet }",
+      "x-dmn-descriptions": {},
+    },
+    InputSet: {
+      type: "object",
+      "x-dmn-type": "DMNType{ https://kiegroup.org/dmn/_093D13A4-07DA-4B11-8DFE-9FB92ECC8E0D : InputSet }",
+      "x-dmn-descriptions": {},
+    },
+  },
+  $ref: "#/definitions/InputSet",
+};
+
 export const simpleCustomDataType = {
   definitions: {
     OutputSet: {

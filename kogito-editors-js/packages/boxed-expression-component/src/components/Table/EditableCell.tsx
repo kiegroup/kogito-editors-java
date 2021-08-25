@@ -29,98 +29,86 @@ export interface EditableCellProps extends CellProps {
   onCellUpdate: (rowIndex: number, columnId: string, value: string) => void;
 }
 
-export const EditableCell: React.FunctionComponent<EditableCellProps> = React.memo(
-  ({ value: initialValue, row: { index }, column: { id }, onCellUpdate }: EditableCellProps) => {
-    const [value, setValue] = useState(initialValue);
-    const [isSelected, setIsSelected] = useState(false);
-    const [mode, setMode] = useState(READ_MODE);
-    const textarea = useRef<HTMLTextAreaElement>(null);
+export function EditableCell({ value, row: { index }, column: { id }, onCellUpdate }: EditableCellProps) {
+  const [isSelected, setIsSelected] = useState(false);
+  const [mode, setMode] = useState(READ_MODE);
+  const textarea = useRef<HTMLTextAreaElement>(null);
 
-    useEffect(() => {
-      if (initialValue !== value) {
-        setValue(initialValue);
-      }
-      // Watching for initialValue prop change for updating value properly
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [initialValue]);
+  const onChange = useCallback((e) => {
+    setMode(EDIT_MODE);
+    onCellUpdate(index, id, e.target.value);
+  }, []);
 
-    const onChange = useCallback((e) => {
-      setMode(EDIT_MODE);
-      setValue(e.target.value);
-    }, []);
+  const onBlur = useCallback(() => {
+    setMode(READ_MODE);
+    setIsSelected(false);
+  }, []);
 
-    const onBlur = useCallback(() => {
-      setMode(READ_MODE);
-      setIsSelected(false);
+  const onSelect = useCallback(() => {
+    setIsSelected(true);
 
-      if (initialValue !== value) {
-        onCellUpdate(index, id, value);
-      }
-    }, [initialValue, value, onCellUpdate, index, id]);
+    if (document.activeElement === textarea.current) {
+      return;
+    }
 
-    const onSelect = useCallback(() => {
-      setIsSelected(true);
+    textarea.current?.focus();
+    if (value) {
+      textarea.current?.setSelectionRange(value.length, value.length);
+    } else {
+      textarea.current?.setSelectionRange(0, 0);
+    }
+  }, []);
 
-      if (document.activeElement === textarea.current) {
+  const onDoubleClick = useCallback(() => {
+    setMode(EDIT_MODE);
+  }, []);
+
+  const cssClass = useCallback(() => {
+    const selectedClass = isSelected ? "editable-cell--selected" : "";
+    return `editable-cell ${selectedClass} ${mode}`;
+  }, [isSelected, mode]);
+
+  const onKeyPress = useCallback(
+    (event) => {
+      if (event.key.toLowerCase() !== "enter") {
         return;
       }
 
-      textarea.current?.focus();
-      if (value) {
-        textarea.current?.setSelectionRange(value.length, value.length);
-      } else {
-        textarea.current?.setSelectionRange(0, 0);
+      event.preventDefault();
+
+      if (mode === READ_MODE) {
+        setMode(EDIT_MODE);
+        return;
       }
-    }, [value]);
 
-    const onDoubleClick = useCallback(() => {
-      setMode(EDIT_MODE);
-    }, []);
+      const newValue = event.target.value;
 
-    const cssClass = useCallback(() => {
-      const selectedClass = isSelected ? "editable-cell--selected" : "";
-      return `editable-cell ${selectedClass} ${mode}`;
-    }, [isSelected, mode]);
+      if (event.altKey || event.ctrlKey) {
+        onCellUpdate(index, id, `${newValue}\n`);
+        return;
+      }
 
-    const onKeyPress = useCallback(
-      (event) => {
-        if (event.key.toLowerCase() !== "enter") {
-          return;
+      onCellUpdate(index, id, newValue);
+      setMode(READ_MODE);
+    },
+    [mode, index, id]
+  );
+
+  return (
+    <div onDoubleClick={onDoubleClick} onClick={onSelect} className={cssClass()}>
+      <span>
+        {Array.isArray(value) ? JSON.stringify(value[index][id]) : typeof value === "object" ? value[id] : value}
+      </span>
+      <textarea
+        ref={textarea}
+        value={
+          Array.isArray(value) ? JSON.stringify(value[index][id]) : typeof value === "object" ? value[id] : value || ""
         }
-
-        event.preventDefault();
-
-        if (mode === READ_MODE) {
-          setMode(EDIT_MODE);
-          return;
-        }
-
-        const newValue = event.target.value;
-
-        if (event.altKey || event.ctrlKey) {
-          setValue(`${newValue}\n`);
-          return;
-        }
-
-        setValue(newValue);
-        setMode(READ_MODE);
-      },
-      [mode]
-    );
-
-    return (
-      <div onDoubleClick={onDoubleClick} onClick={onSelect} className={cssClass()}>
-        <span>{value}</span>
-        <textarea
-          ref={textarea}
-          value={value || ""}
-          onFocus={onSelect}
-          onKeyPress={onKeyPress}
-          onChange={onChange}
-          onBlur={onBlur}
-        />
-      </div>
-    );
-  },
-  ({ value: oldValue }, { value }) => oldValue === value
-);
+        onFocus={onSelect}
+        onKeyPress={onKeyPress}
+        onChange={onChange}
+        onBlur={onBlur}
+      />
+    </div>
+  );
+}

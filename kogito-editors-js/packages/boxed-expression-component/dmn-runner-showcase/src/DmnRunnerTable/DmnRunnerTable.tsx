@@ -42,7 +42,7 @@ export interface DmnRunnerTableProps extends ExpressionProps {
   /** Rules represent rows values */
   rules?: DmnRunnerRule[];
   /** Callback to be called when row number is updated */
-  onRowNumberUpdated: (rowNumber: number) => void;
+  onRowNumberUpdated: (rowNumber: number, operation?: TableOperation, updatedRowIndex?: number) => void;
 }
 
 export function DmnRunnerTable(props: DmnRunnerTableProps) {
@@ -123,32 +123,65 @@ export function DmnRunnerTable(props: DmnRunnerTableProps) {
         appendColumnsOnChildren: true,
         cellDelegate: inputClause.cellDelegate,
       };
-
-      // cssClasses: inputClause.insideProperties ? "" : "decision-table--input",
     });
-    const outputColumns = (props.output ?? []).map(
-      (outputClause) =>
-        ({
-          label: outputClause.name,
-          accessor: outputClause.name,
-          dataType: outputClause.dataType,
-          width: outputClause.width,
+
+    const [outputSection] = (props.rules?.[0].outputEntries ?? []).map((outputEntry, outputIndex) => {
+      if (Array.isArray(outputEntry)) {
+        return outputEntry.map((entry, entryIndex) => {
+          const columns = Object.keys(entry).map((keys) => {
+            return {
+              groupType: DecisionTableColumnType.OutputClause,
+              label: `${keys}`,
+              accessor: `${keys}-${entryIndex}`,
+              cssClasses: "decision-table--output",
+            } as ColumnInstance;
+          });
+          return {
+            groupType: DecisionTableColumnType.OutputClause,
+            label: `${props.output?.[outputIndex]?.name}.${entryIndex}`,
+            accessor: `${props.output?.[outputIndex]?.name}.${entryIndex}`,
+            cssClasses: "decision-table--output",
+            columns: columns,
+            appendColumnsOnChildren: true,
+          };
+        });
+      }
+      if (outputEntry !== null && typeof outputEntry === "object") {
+        const columns = Object.keys(outputEntry).map(
+          (entryName) =>
+            ({
+              groupType: DecisionTableColumnType.OutputClause,
+              label: entryName,
+              accessor: entryName,
+              cssClasses: "decision-table--output",
+            } as ColumnInstance)
+        );
+
+        return [
+          {
+            groupType: DecisionTableColumnType.OutputClause,
+            label: props.output?.[outputIndex]?.name,
+            accessor: props.output?.[outputIndex]?.name,
+            cssClasses: "decision-table--output",
+            columns: columns,
+            appendColumnsOnChildren: true,
+          },
+        ];
+      }
+      return [
+        {
           groupType: DecisionTableColumnType.OutputClause,
+          label: props.output?.[outputIndex]?.name,
+          accessor: props.output?.[outputIndex]?.name,
+          dataType: props.output?.[outputIndex]?.dataType,
           cssClasses: "decision-table--output",
-        } as ColumnInstance)
-    );
+          appendColumnsOnChildren: true,
+        } as ColumnInstance,
+      ];
+    });
 
-    const outputSection = {
-      groupType: DecisionTableColumnType.OutputClause,
-      label: " ",
-      accessor: " ",
-      cssClasses: "decision-table--output",
-      columns: outputColumns,
-      appendColumnsOnChildren: true,
-    };
-
-    return [...inputSection, outputSection] as ColumnInstance[];
-  }, [props.input, props.output]);
+    return [...inputSection, ...outputSection] as ColumnInstance[];
+  }, [props.input, props.output, props.rules]);
 
   const memoRows = useMemo(() => {
     return (props.rules ?? []).map((rule) => {
@@ -162,7 +195,7 @@ export function DmnRunnerTable(props: DmnRunnerTableProps) {
   }, [props.rules, memoColumns]);
 
   const onRowsUpdate = useCallback(
-    (updatedRows) => {
+    (updatedRows, operation?: TableOperation, updatedRowIndex?: number) => {
       const newRows = updatedRows.map((row: any) =>
         getColumnsAtLastLevel(memoColumns).reduce((filledRow: DataRecord, column: ColumnInstance) => {
           if (row.rowDelegate) {
@@ -177,7 +210,7 @@ export function DmnRunnerTable(props: DmnRunnerTableProps) {
           return filledRow;
         }, {})
       );
-      props.onRowNumberUpdated?.(newRows.length);
+      props.onRowNumberUpdated?.(newRows.length, operation, updatedRowIndex);
     },
     [props.onRowNumberUpdated, memoColumns]
   );
@@ -207,7 +240,6 @@ export function DmnRunnerTable(props: DmnRunnerTableProps) {
     const inputsCells = Array.from(tbody.getElementsByTagName("td"));
     // remove id column
     inputsCells.shift();
-
     inputsCells.forEach((inputCell) => {
       searchRecursively(inputCell.childNodes[0]);
     });
