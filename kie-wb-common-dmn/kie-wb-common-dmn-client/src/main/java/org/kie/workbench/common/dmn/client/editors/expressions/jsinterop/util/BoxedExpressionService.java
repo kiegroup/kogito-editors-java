@@ -28,29 +28,29 @@ public class BoxedExpressionService {
     }
 
     private static native void createNamespace()/*-{
-        $wnd["beeApi"] = {};
+        $wnd["beeApiWrapper"] = {};
     }-*/;
 
     private static native void registerResetExpressionDefinition(final ExpressionEditorViewImpl boxedExpressionEditorPanel)/*-{
-        $wnd["beeApi"].resetExpressionDefinition = function() {
+        $wnd["beeApiWrapper"].resetExpressionDefinition = function() {
             return boxedExpressionEditorPanel.@ExpressionEditorViewImpl::resetExpressionDefinition(*)();
         };
     }-*/;
 
     private static native void registerBroadcastForLiteralExpression(final ExpressionEditorViewImpl boxedExpressionEditorPanel)/*-{
-        $wnd["beeApi"].broadcastLiteralExpressionDefinition = function(literalExpressionDefinition) {
+        $wnd["beeApiWrapper"].broadcastLiteralExpressionDefinition = function(literalExpressionDefinition) {
             return boxedExpressionEditorPanel.@ExpressionEditorViewImpl::broadcastLiteralExpressionDefinition(*)(literalExpressionDefinition);
         };
     }-*/;
 
     private static native void registerBroadcastForContextExpression(final ExpressionEditorViewImpl boxedExpressionEditorPanel)/*-{
-        $wnd["beeApi"].broadcastContextExpressionDefinition = function(contextExpressionDefinition) {
+        $wnd["beeApiWrapper"].broadcastContextExpressionDefinition = function(contextExpressionDefinition) {
             return boxedExpressionEditorPanel.@ExpressionEditorViewImpl::broadcastContextExpressionDefinition(*)(contextExpressionDefinition);
         };
     }-*/;
 
     private static native void registerBroadcastForRelationExpression(final ExpressionEditorViewImpl boxedExpressionEditorPanel)/*-{
-        $wnd["beeApi"].broadcastRelationExpressionDefinition = function(relationExpressionDefinition) {
+        $wnd["beeApiWrapper"].broadcastRelationExpressionDefinition = function(relationExpressionDefinition) {
             return boxedExpressionEditorPanel.@ExpressionEditorViewImpl::broadcastRelationExpressionDefinition(*)(relationExpressionDefinition);
         };
     }-*/;
