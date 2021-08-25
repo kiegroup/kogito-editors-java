@@ -48,8 +48,6 @@ import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.R
 
 public class ExpressionFiller {
 
-    public static final String EDIT_INFO_POPOVER_LABEL = "editInfoPopoverLabel";
-
     public static void fillLiteralExpression(final LiteralExpression literalExpression, final LiteralExpressionProps literalExpressionProps) {
         literalExpression.setText(new Text(literalExpressionProps.content));
     }
@@ -104,10 +102,9 @@ public class ExpressionFiller {
                     final InformationItem contextEntryVariable = contextEntry.getVariable();
                     final String entryName = contextEntryVariable.getName().getValue();
                     final String entryDataType = contextEntryVariable.getTypeRef().getLocalPart();
-                    final String editInfoPopoverLabel = contextEntryVariable.getNsContext().get(EDIT_INFO_POPOVER_LABEL);
                     final EntryInfo entryInfo = new EntryInfo(entryName, entryDataType);
                     final ExpressionProps entryExpression = buildAndFillJsInteropProp(contextEntry.getExpression(), entryName, entryDataType);
-                    return new ContextEntryProps(entryInfo, entryExpression, editInfoPopoverLabel);
+                    return new ContextEntryProps(entryInfo, entryExpression);
                 })
                 .toArray(ContextEntryProps[]::new);
     }
@@ -140,7 +137,6 @@ public class ExpressionFiller {
                                                .findBuiltInTypeByName(entryRow.entryInfo.dataType)
                                                .orElse(BuiltInType.UNDEFINED)
                                                .asQName());
-            informationItem.getNsContext().put(EDIT_INFO_POPOVER_LABEL, entryRow.editInfoPopoverLabel);
             contextEntry.setVariable(informationItem);
             contextEntry.setExpression(buildAndFillNestedExpression(entryRow.entryExpression));
             return contextEntry;
