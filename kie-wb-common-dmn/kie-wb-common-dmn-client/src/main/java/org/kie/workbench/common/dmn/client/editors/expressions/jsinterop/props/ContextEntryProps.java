@@ -22,9 +22,11 @@ import jsinterop.annotations.JsType;
 public class ContextEntryProps {
     public final EntryInfo entryInfo;
     public final ExpressionProps entryExpression;
+    public final String editInfoPopoverLabel;
 
-    public ContextEntryProps(final EntryInfo entryInfo, final ExpressionProps entryExpression) {
+    public ContextEntryProps(final EntryInfo entryInfo, final ExpressionProps entryExpression, final String editInfoPopoverLabel) {
         this.entryInfo = entryInfo;
         this.entryExpression = entryExpression;
+        this.editInfoPopoverLabel = editInfoPopoverLabel;
     }
 }
