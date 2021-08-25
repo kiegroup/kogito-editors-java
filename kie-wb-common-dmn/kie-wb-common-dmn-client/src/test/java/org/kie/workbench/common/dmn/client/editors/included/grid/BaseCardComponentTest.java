@@ -27,24 +27,27 @@ import org.kie.workbench.common.dmn.client.api.included.legacy.DMNIncludeModelsC
 import org.kie.workbench.common.dmn.client.docks.navigator.events.RefreshDecisionComponents;
 import org.kie.workbench.common.dmn.client.editors.included.BaseIncludedModelActiveRecord;
 import org.kie.workbench.common.dmn.client.editors.included.commands.RemoveIncludedModelCommand;
+import org.kie.workbench.common.dmn.client.editors.included.commands.RenameIncludedModelCommand;
 import org.kie.workbench.common.dmn.client.editors.included.imports.persistence.ImportRecordEngine;
 import org.kie.workbench.common.dmn.client.editors.types.common.events.RefreshDataTypesListEvent;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
+import org.kie.workbench.common.stunner.core.client.command.CanvasCommandResultBuilder;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
 import org.kie.workbench.common.stunner.core.client.session.ClientSession;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.uberfire.mocks.EventSourceMock;
 
-import static java.util.Collections.emptyList;
 import static org.gwtbootstrap3.client.ui.constants.IconType.DOWNLOAD;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -177,55 +180,45 @@ public abstract class BaseCardComponentTest<C extends BaseCardComponent<R, V>, V
     }
 
     @Test
-    public void testOnTitleChangedWhenIncludedModelIsValid() {
-        doTestOnTitleChangedWhenIncludedModelIsValid("newName", "newName");
+    public void testOnTitleChanged() {
+
+        final ArgumentCaptor<RenameIncludedModelCommand> captor = ArgumentCaptor.forClass(RenameIncludedModelCommand.class);
+        final String newName = "new name";
+
+        when(sessionCommandManager.execute(any(), any())).thenReturn(CanvasCommandResultBuilder.SUCCESS);
+
+        final boolean result = card.onTitleChanged().apply(newName);
+
+        verify(sessionCommandManager).execute(eq(canvasHandler), captor.capture());
+
+        final RenameIncludedModelCommand renameCommand = captor.getValue();
+
+        assertEquals(card.getIncludedModel(), renameCommand.getIncludedModel());
+        assertEquals(card.getGrid(), renameCommand.getGrid());
+        assertEquals(refreshDecisionComponentsEvent, renameCommand.getRefreshDecisionComponentsEvent());
+        assertEquals(newName, renameCommand.getNewName());
+        assertTrue(result);
     }
 
     @Test
-    public void testOnTitleChangedWhenIncludedModelIsValidWithWhitespace() {
-        doTestOnTitleChangedWhenIncludedModelIsValid("   newName   ", "newName");
-    }
+    public void testOnTitleChangedWhenNameIsNotValid() {
 
-    private void doTestOnTitleChangedWhenIncludedModelIsValid(final String newName,
-                                                              final String expectedNewName) {
-        final DMNCardsGridComponent grid = mock(DMNCardsGridComponent.class);
-        final BaseIncludedModelActiveRecord includedModel = prepareIncludedModelMock();
+        final ArgumentCaptor<RenameIncludedModelCommand> captor = ArgumentCaptor.forClass(RenameIncludedModelCommand.class);
+        final String newName = "new name";
 
-        when(includedModel.getName()).thenReturn(expectedNewName);
+        when(sessionCommandManager.execute(any(), any())).thenReturn(CanvasCommandResultBuilder.failed());
 
-        doReturn(true).when(includedModel).isValid();
-        doReturn(emptyList()).when(includedModel).update();
-        doReturn(includedModel).when(card).getIncludedModel();
-        doReturn(grid).when(card).getGrid();
+        final boolean result = card.onTitleChanged().apply(newName);
 
-        final boolean titleChanged = card.onTitleChanged().apply(newName);
+        verify(sessionCommandManager).execute(eq(canvasHandler), captor.capture());
 
-        assertEquals(expectedNewName, includedModel.getName());
-        assertTrue(titleChanged);
-        verify(includedModel).update();
-        verify(grid).refresh();
-        verify(card).refreshDecisionComponents();
-    }
+        final RenameIncludedModelCommand renameCommand = captor.getValue();
 
-    @Test
-    public void testOnTitleChangedWhenIncludedModelIsNotValid() {
-        final DMNCardsGridComponent grid = mock(DMNCardsGridComponent.class);
-        final BaseIncludedModelActiveRecord includedModel = prepareIncludedModelMock();
-        final String newName = "newName";
-        final String oldName = "oldName";
-
-        when(includedModel.getName()).thenReturn(oldName);
-        doReturn(false).when(includedModel).isValid();
-        doReturn(includedModel).when(card).getIncludedModel();
-        doReturn(grid).when(card).getGrid();
-
-        final boolean titleChanged = card.onTitleChanged().apply(newName);
-
-        assertEquals(oldName, includedModel.getName());
-        assertFalse(titleChanged);
-        verify(includedModel, never()).update();
-        verify(grid, never()).refresh();
-        verify(card, never()).refreshDecisionComponents();
+        assertEquals(card.getIncludedModel(), renameCommand.getIncludedModel());
+        assertEquals(card.getGrid(), renameCommand.getGrid());
+        assertEquals(refreshDecisionComponentsEvent, renameCommand.getRefreshDecisionComponentsEvent());
+        assertEquals(newName, renameCommand.getNewName());
+        assertFalse(result);
     }
 
     @Test

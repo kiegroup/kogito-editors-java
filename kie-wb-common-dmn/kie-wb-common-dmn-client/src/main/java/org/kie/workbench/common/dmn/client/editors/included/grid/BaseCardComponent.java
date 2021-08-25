@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.dmn.client.editors.included.grid;
 
+import java.util.Objects;
 import java.util.function.Function;
 
 import javax.annotation.PostConstruct;
@@ -27,14 +28,17 @@ import elemental2.dom.HTMLElement;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.kie.workbench.common.dmn.client.api.included.legacy.DMNIncludeModelsClient;
 import org.kie.workbench.common.dmn.client.docks.navigator.events.RefreshDecisionComponents;
-import org.kie.workbench.common.dmn.client.editors.expressions.util.NameUtils;
 import org.kie.workbench.common.dmn.client.editors.included.BaseIncludedModelActiveRecord;
 import org.kie.workbench.common.dmn.client.editors.included.commands.RemoveIncludedModelCommand;
+import org.kie.workbench.common.dmn.client.editors.included.commands.RenameIncludedModelCommand;
 import org.kie.workbench.common.dmn.client.editors.included.imports.persistence.ImportRecordEngine;
 import org.kie.workbench.common.dmn.client.editors.types.common.events.RefreshDataTypesListEvent;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
+import org.kie.workbench.common.stunner.core.client.command.CanvasCommandResultBuilder;
+import org.kie.workbench.common.stunner.core.client.command.CanvasViolation;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
+import org.kie.workbench.common.stunner.core.command.CommandResult;
 import org.kie.workbench.common.widgets.client.cards.CardComponent;
 import org.uberfire.client.mvp.UberElemental;
 
@@ -111,19 +115,13 @@ public abstract class BaseCardComponent<R extends BaseIncludedModelActiveRecord,
     public Function<String, Boolean> onTitleChanged() {
         return newName -> {
 
-            final String oldName = getIncludedModel().getName();
+            final CommandResult<CanvasViolation> result = sessionCommandManager.execute((AbstractCanvasHandler) sessionManager.getCurrentSession().getCanvasHandler(),
+                                                                                        new RenameIncludedModelCommand(getIncludedModel(),
+                                                                                                                       getGrid(),
+                                                                                                                       refreshDecisionComponentsEvent,
+                                                                                                                       newName));
 
-            getIncludedModel().setName(NameUtils.normaliseName(newName));
-
-            if (getIncludedModel().isValid()) {
-                getIncludedModel().update();
-                getGrid().refresh();
-                refreshDecisionComponents();
-                return true;
-            } else {
-                getIncludedModel().setName(oldName);
-                return false;
-            }
+            return Objects.equals(CanvasCommandResultBuilder.SUCCESS, result);
         };
     }
 

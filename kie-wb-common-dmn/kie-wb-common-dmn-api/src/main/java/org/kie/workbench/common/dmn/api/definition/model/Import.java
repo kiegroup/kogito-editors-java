@@ -19,6 +19,8 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 import org.kie.workbench.common.dmn.api.property.dmn.LocationURI;
 import org.kie.workbench.common.stunner.core.util.HashUtil;
 
+import static org.uberfire.commons.UUID.uuid;
+
 @Portable
 public class Import extends NamedElement {
 
@@ -42,6 +44,7 @@ public class Import extends NamedElement {
         this.namespace = namespace;
         this.locationURI = locationURI;
         this.importType = importType;
+        this.uuid = uuid();
     }
 
     // -----------------------
@@ -106,9 +109,6 @@ public class Import extends NamedElement {
         if (locationURI != null ? !locationURI.equals(that.locationURI) : that.locationURI != null) {
             return false;
         }
-        if (uuid != null ? !uuid.equals(that.uuid) : that.uuid != null) {
-            return false;
-        }
         return importType != null ? importType.equals(that.importType) : that.importType == null;
     }
 
@@ -119,7 +119,6 @@ public class Import extends NamedElement {
                                          nameHolder != null ? nameHolder.hashCode() : 0,
                                          namespace != null ? namespace.hashCode() : 0,
                                          locationURI != null ? locationURI.hashCode() : 0,
-                                         importType != null ? importType.hashCode() : 0,
-                                         uuid != null ? uuid.hashCode() : 0);
+                                         importType != null ? importType.hashCode() : 0);
     }
 }

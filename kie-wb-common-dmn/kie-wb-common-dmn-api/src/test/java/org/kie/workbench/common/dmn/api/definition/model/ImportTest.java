@@ -20,10 +20,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.kie.workbench.common.dmn.api.property.dmn.Description;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
+import org.kie.workbench.common.dmn.api.property.dmn.LocationURI;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
+import static org.kie.workbench.common.stunner.core.util.StringUtils.isEmpty;
+import static org.mockito.Mockito.mock;
 
 public class ImportTest {
 
@@ -90,7 +94,7 @@ public class ImportTest {
     }
 
     @Test
-    public void testEqualsUuid() {
+    public void testEqualsWhenUuidIsEquals() {
 
         import1.setUuid("uuid");
         import2.setUuid("uuid");
@@ -99,12 +103,12 @@ public class ImportTest {
     }
 
     @Test
-    public void testNotEqualsUuid() {
+    public void testEqualsWhenUuidIsDifferent() {
 
         import1.setUuid("uuid1");
         import2.setUuid("uuid2");
 
-        assertNotEquals(import1, import2);
+        assertEquals(import1, import2);
     }
 
     @Test
@@ -113,16 +117,31 @@ public class ImportTest {
         import1.setUuid("uuid");
         import2.setUuid("uuid");
 
+        // Imports with only UUID not being equals should be considered equals
         assertEquals(import1.hashCode(), import2.hashCode());
     }
 
     @Test
-    public void testHashCodeWithADifferentUuid() {
+    public void testHashCodeWithADifferentUuidIsEquals() {
 
+        final String theType = "the type";
+        final Name theName = mock(Name.class);
+        final String theNamespace = "namespace";
+        final LocationURI locationURI = mock(LocationURI.class);
         import1.setUuid("uuid1");
-        import2.setUuid("uuid2");
+        import1.setImportType(theType);
+        import1.setName(theName);
+        import1.setNamespace(theNamespace);
+        import1.setLocationURI(locationURI);
 
-        assertNotEquals(import1.hashCode(), import2.hashCode());
+        import2.setUuid("uuid2");
+        import2.setImportType(theType);
+        import2.setName(theName);
+        import2.setNamespace(theNamespace);
+        import2.setLocationURI(locationURI);
+
+        // Imports with only UUID not being equals should be considered equals
+        assertEquals(import1.hashCode(), import2.hashCode());
     }
 
     @Test
@@ -177,5 +196,13 @@ public class ImportTest {
         import2.setDescription(new Description("desc2"));
 
         assertNotEquals(import1.hashCode(), import2.hashCode());
+    }
+
+    @Test
+    public void testUuidIsSet() {
+
+        final String uuid = import1.getUuid();
+
+        assertFalse(isEmpty(uuid));
     }
 }
