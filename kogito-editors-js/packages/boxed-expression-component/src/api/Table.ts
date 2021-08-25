@@ -59,6 +59,8 @@ export interface TableProps {
   getColumnKey?: (column: ReactTableColumn) => string;
   /** Custom function called for manually resetting a row */
   resetRowCustomFunction?: (row: DataRecord) => DataRecord;
+  /** Disable/Enable cell edits. Enabled by default */
+  readOnlyCells?: boolean;
 }
 
 /** Possible status for the visibility of the Table's Header */

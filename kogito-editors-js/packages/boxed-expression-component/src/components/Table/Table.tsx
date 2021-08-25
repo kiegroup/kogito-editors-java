@@ -80,6 +80,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
   getRowKey,
   getColumnKey,
   resetRowCustomFunction,
+  readOnlyCells = false,
 }: TableProps) => {
   const tableRef = useRef<HTMLTableElement>(null);
   const globalContext = useContext(BoxedExpressionGlobalContext);
@@ -174,7 +175,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
         if (column.isCountColumn) {
           return cellRef.value;
         } else {
-          return defaultCell ? defaultCell[column.id](cellRef) : <EditableCell {...cellRef} />;
+          return defaultCell ? defaultCell[column.id](cellRef) : <EditableCell {...cellRef} readOnly={readOnlyCells} />;
         }
         // Table performance optimization: no need to re-render cells, since nested component themselves will re-render
         // eslint-disable-next-line react-hooks/exhaustive-deps

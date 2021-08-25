@@ -27,9 +27,11 @@ export interface EditableCellProps extends CellProps {
   value: string;
   /** Function executed each time a cell gets updated */
   onCellUpdate: (rowIndex: number, columnId: string, value: string) => void;
+  /** Enable/Disable readonly */
+  readOnly?: boolean;
 }
 
-export function EditableCell({ value, row: { index }, column: { id }, onCellUpdate }: EditableCellProps) {
+export function EditableCell({ value, row: { index }, column: { id }, onCellUpdate, readOnly }: EditableCellProps) {
   const [isSelected, setIsSelected] = useState(false);
   const [mode, setMode] = useState(READ_MODE);
   const textarea = useRef<HTMLTextAreaElement>(null);
@@ -108,6 +110,7 @@ export function EditableCell({ value, row: { index }, column: { id }, onCellUpda
         onKeyPress={onKeyPress}
         onChange={onChange}
         onBlur={onBlur}
+        readOnly={readOnly}
       />
     </div>
   );

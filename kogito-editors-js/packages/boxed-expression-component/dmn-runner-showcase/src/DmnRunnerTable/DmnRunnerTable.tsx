@@ -265,6 +265,7 @@ export function DmnRunnerTable(props: DmnRunnerTableProps) {
               rows={memoRows}
               onRowsUpdate={onRowsUpdate}
               onRowAdding={onRowAdding}
+              readOnlyCells={true}
             />
           </div>
         </div>
