@@ -15,15 +15,78 @@
  */
 
 import { HelloWorld } from "hello-world-component";
-import { BoxedExpressionEditor, ExpressionProps, LogicType, PMMLParams } from "boxed-expression-component";
+import {
+  BoxedExpressionEditor,
+  BoxedExpressionEditorProps,
+  ContextProps,
+  DecisionTableProps,
+  ExpressionProps,
+  FunctionProps,
+  InvocationProps,
+  ListProps,
+  LiteralExpressionProps,
+  LogicType,
+  PMMLParams,
+  RelationProps,
+} from "boxed-expression-component";
 import * as React from "react";
+import { useEffect, useState } from "react";
 import * as ReactDOM from "react-dom";
 import { setupWire } from "./wire";
 
 setupWire();
 
-const renderHelloWorld = (selector: string) => {
-  ReactDOM.render(<HelloWorld />, document.querySelector(selector));
+const BoxedExpressionWrapper: React.FunctionComponent<BoxedExpressionEditorProps> = ({
+  pmmlParams,
+  expressionDefinition,
+}: BoxedExpressionEditorProps) => {
+  const [updatedDefinition, setExpressionDefinition] = useState<ExpressionProps>(expressionDefinition);
+
+  useEffect(() => {
+    setExpressionDefinition({ logicType: LogicType.Undefined });
+    setTimeout(() => {
+      setExpressionDefinition(expressionDefinition);
+    }, 0);
+  }, [expressionDefinition]);
+
+  //The wrapper defines these function in order to keep expression definition state updated,
+  //And to propagate such definition to DMN Editor (GWT world), by calling beeApiWrapper APIs
+  window.beeApi = {
+    resetExpressionDefinition: (definition: ExpressionProps) => {
+      setExpressionDefinition(definition);
+      window.beeApiWrapper?.resetExpressionDefinition?.(definition);
+    },
+    broadcastLiteralExpressionDefinition: (definition: LiteralExpressionProps) => {
+      setExpressionDefinition(definition);
+      window.beeApiWrapper?.broadcastLiteralExpressionDefinition?.(definition);
+    },
+    broadcastRelationExpressionDefinition: (definition: RelationProps) => {
+      setExpressionDefinition(definition);
+      window.beeApiWrapper?.broadcastRelationExpressionDefinition?.(definition);
+    },
+    broadcastContextExpressionDefinition: (definition: ContextProps) => {
+      setExpressionDefinition(definition);
+      window.beeApiWrapper?.broadcastContextExpressionDefinition?.(definition);
+    },
+    broadcastListExpressionDefinition: (definition: ListProps) => {
+      setExpressionDefinition(definition);
+      window.beeApiWrapper?.broadcastListExpressionDefinition?.(definition);
+    },
+    broadcastInvocationExpressionDefinition: (definition: InvocationProps) => {
+      setExpressionDefinition(definition);
+      window.beeApiWrapper?.broadcastInvocationExpressionDefinition?.(definition);
+    },
+    broadcastFunctionExpressionDefinition: (definition: FunctionProps) => {
+      setExpressionDefinition(definition);
+      window.beeApiWrapper?.broadcastFunctionExpressionDefinition?.(definition);
+    },
+    broadcastDecisionTableExpressionDefinition: (definition: DecisionTableProps) => {
+      setExpressionDefinition(definition);
+      window.beeApiWrapper?.broadcastDecisionTableExpressionDefinition?.(definition);
+    },
+  };
+
+  return <BoxedExpressionEditor expressionDefinition={updatedDefinition} pmmlParams={pmmlParams} />;
 };
 
 const renderBoxedExpressionEditor = (
@@ -32,15 +95,13 @@ const renderBoxedExpressionEditor = (
   pmmlParams: PMMLParams
 ) => {
   ReactDOM.render(
-    <BoxedExpressionEditor expressionDefinition={{ logicType: LogicType.Undefined }} />,
+    <BoxedExpressionWrapper expressionDefinition={expressionDefinition} pmmlParams={pmmlParams} />,
     document.querySelector(selector)
   );
-  setTimeout(() => {
-    ReactDOM.render(
-      <BoxedExpressionEditor expressionDefinition={expressionDefinition} pmmlParams={pmmlParams} />,
-      document.querySelector(selector)
-    );
-  }, 0);
+};
+
+const renderHelloWorld = (selector: string) => {
+  ReactDOM.render(<HelloWorld />, document.querySelector(selector));
 };
 
 export { renderHelloWorld, renderBoxedExpressionEditor };
