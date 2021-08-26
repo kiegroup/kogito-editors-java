@@ -25,24 +25,51 @@ export interface ImportJavaClassesWizardFieldListTableProps {
 
 export const ImportJavaClassesWizardFieldListTable: React.FunctionComponent<ImportJavaClassesWizardFieldListTableProps> =
   ({ selectedJavaClassFields }) => {
+    const [expanded, setExpanded] = React.useState(
+      Object.fromEntries(selectedJavaClassFields.map((value, index) => [index, Boolean(value.fields && value.fields.length > 0)]))
+    );
+    const handleExpansionToggle = (event: React.MouseEvent, pairIndex: number) => {
+      setExpanded({
+        ...expanded,
+        [pairIndex]: !expanded[pairIndex]
+      });
+    };
     const getJavaClassSimpleName = (className: string) => {
       return className.split(".").pop();
     }
     const formatJavaClassName = (className: string) => {
       return " (" + className + ")";
     }
+    let rowIndex = -1;
     return (
       <TableComposable aria-label="field-table" variant="compact">
-        <Tbody>
-          {selectedJavaClassFields.map(value => (
-            <Tr key={value.name}>
-              <Td key={`${value.name}_${value.name}`}>
-                <strong>{getJavaClassSimpleName(value.name)}</strong>
-                <span>{formatJavaClassName(value.name)}</span>
+        {selectedJavaClassFields.map((pair, pairIndex) => {
+          rowIndex += 1;
+          const parentRow = (
+            <Tr key={rowIndex}>
+              <Td
+                key={`${rowIndex}_0`}
+                expand={
+                  pair.fields && pair.fields.length > 0
+                    ? {
+                      rowIndex: pairIndex,
+                      isExpanded: expanded[pairIndex],
+                      onToggle: handleExpansionToggle
+                    }
+                    : undefined}
+              />
+              <Td key={`${rowIndex}_${pair.name}`}>
+                <strong>{getJavaClassSimpleName(pair.name)}</strong>
+                <span>{formatJavaClassName(pair.name)}</span>
               </Td>
             </Tr>
-          ))}
-        </Tbody>
+          );
+          return (
+            <Tbody key={pairIndex} isExpanded={expanded[pairIndex] === true}>
+              {parentRow}
+            </Tbody>
+          );
+        })}
       </TableComposable>
     );
   };
