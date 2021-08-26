@@ -268,15 +268,8 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
 
     @Override
     public void activate() {
-        final String expressionName = hasName.orElse((HasName) hasExpression).getValue().getValue();
-        String dataType = null;
-        if (hasExpression instanceof HasVariable) {
-            @SuppressWarnings("unchecked")
-            final HasVariable<InformationItemPrimary> hasVariable = (HasVariable<InformationItemPrimary>) hasExpression;
-            dataType = hasVariable.getVariable().getTypeRef().getLocalPart();
-        }
-
-        DMNLoader.renderBoxedExpressionEditor(".kie-dmn-new-expression-editor", ExpressionFiller.buildAndFillJsInteropProp(hasExpression.getExpression(), expressionName, dataType));
+        DMNLoader.renderBoxedExpressionEditor(".kie-dmn-new-expression-editor",
+                                              ExpressionFiller.buildAndFillJsInteropProp(hasExpression.getExpression(), getExpressionName(), getDataType()));
         BoxedExpressionService.registerBroadcastForExpression(this);
     }
 
@@ -397,6 +390,21 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
     private void preventDefault(final ClickEvent event) {
         event.preventDefault();
         event.stopPropagation();
+    }
+
+    private String getDataType() {
+        String dataType = null;
+        if (hasExpression instanceof HasVariable) {
+            @SuppressWarnings("unchecked")
+            final HasVariable<InformationItemPrimary> hasVariable = (HasVariable<InformationItemPrimary>) hasExpression;
+            dataType = hasVariable.getVariable().getTypeRef().getLocalPart();
+        }
+        return dataType;
+    }
+
+    private String getExpressionName() {
+        final HasName fallbackHasName = hasExpression instanceof HasName ? (HasName) hasExpression : HasName.NOP;
+        return hasName.orElse(fallbackHasName).getValue().getValue();
     }
 
     private void setExpressionName(final ExpressionProps expressionProps) {

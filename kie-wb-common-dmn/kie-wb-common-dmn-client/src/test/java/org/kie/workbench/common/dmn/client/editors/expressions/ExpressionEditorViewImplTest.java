@@ -483,6 +483,10 @@ public class ExpressionEditorViewImplTest {
     @Test
     public void testOnTryIt() {
         final ClickEvent event = mock(ClickEvent.class);
+        view.setExpression(NODE_UUID,
+                           hasExpression,
+                           Optional.of(HasName.NOP),
+                           false);
 
         view.onTryIt(event);
 
@@ -495,6 +499,10 @@ public class ExpressionEditorViewImplTest {
     @Test
     public void testOnSwitchBack() {
         final ClickEvent event = mock(ClickEvent.class);
+        view.setExpression(NODE_UUID,
+                           hasExpression,
+                           Optional.of(HasName.NOP),
+                           false);
 
         view.onSwitchBack(event);
 
