@@ -18,12 +18,14 @@ package org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props;
 
 import jsinterop.annotations.JsType;
 
+import static org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionType.LIST;
+
 @JsType
 public class ListProps extends ExpressionProps {
     public final ExpressionProps[] items;
 
     public ListProps(final String name, final String dataType, final ExpressionProps[] items) {
-        super(name, dataType, "List");
+        super(name, dataType, LIST.getText());
         this.items = items;
     }
 }

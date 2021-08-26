@@ -49,6 +49,14 @@ import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.L
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.LiteralExpressionProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.RelationProps;
 
+import static org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionType.CONTEXT;
+import static org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionType.DECISION_TABLE;
+import static org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionType.FUNCTION;
+import static org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionType.INVOCATION;
+import static org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionType.LIST;
+import static org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionType.LITERAL_EXPRESSION;
+import static org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionType.RELATION;
+
 public class ExpressionFiller {
 
     public static void fillLiteralExpression(final LiteralExpression literalExpression, final LiteralExpressionProps literalExpressionProps) {
@@ -123,30 +131,32 @@ public class ExpressionFiller {
     }
 
     private static Expression buildAndFillNestedExpression(final ExpressionProps props) {
-        switch (props.logicType) {
-            case "Literal expression":
-                final LiteralExpression literalExpression = new LiteralExpression();
-                fillLiteralExpression(literalExpression, (LiteralExpressionProps) props);
-                return literalExpression;
-            case "Context":
-                final Context contextExpression = new Context();
-                fillContextExpression(contextExpression, (ContextProps) props);
-                return contextExpression;
-            case "Relation":
-                final Relation relationExpression = new Relation();
-                fillRelationExpression(relationExpression, (RelationProps) props);
-                return relationExpression;
-            case "List":
-                final List listExpression = new List();
-                fillListExpression(listExpression, (ListProps) props);
-                return listExpression;
-            case "Invocation":
-                final Invocation invocationExpression = new Invocation();
-                fillInvocationExpression(invocationExpression, (InvocationProps) props);
-                return invocationExpression;
-            default:
-                return null;
+        if (LITERAL_EXPRESSION.getText().equals(props.logicType)) {
+            final LiteralExpression literalExpression = new LiteralExpression();
+            fillLiteralExpression(literalExpression, (LiteralExpressionProps) props);
+            return literalExpression;
+        } else if (CONTEXT.getText().equals(props.logicType)) {
+            final Context contextExpression = new Context();
+            fillContextExpression(contextExpression, (ContextProps) props);
+            return contextExpression;
+        } else if (RELATION.getText().equals(props.logicType)) {
+            final Relation relationExpression = new Relation();
+            fillRelationExpression(relationExpression, (RelationProps) props);
+            return relationExpression;
+        } else if (LIST.getText().equals(props.logicType)) {
+            final List listExpression = new List();
+            fillListExpression(listExpression, (ListProps) props);
+            return listExpression;
+        } else if (INVOCATION.getText().equals(props.logicType)) {
+            final Invocation invocationExpression = new Invocation();
+            fillInvocationExpression(invocationExpression, (InvocationProps) props);
+            return invocationExpression;
+        } else if (FUNCTION.getText().equals(props.logicType)) {
+
+        } else if (DECISION_TABLE.getText().equals(props.logicType)) {
+
         }
+        return null;
     }
 
     private static Collection<ContextEntry> contextEntriesConvertForContextExpression(final ContextProps contextProps) {

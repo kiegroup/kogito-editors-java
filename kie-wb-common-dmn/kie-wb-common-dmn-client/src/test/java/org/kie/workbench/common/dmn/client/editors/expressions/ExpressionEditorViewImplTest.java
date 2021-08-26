@@ -83,6 +83,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorViewImpl.ENABLED_BETA_CSS_CLASS;
+import static org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionType.LITERAL_EXPRESSION;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -103,8 +104,6 @@ public class ExpressionEditorViewImplTest {
     private static final String NODE_UUID = "uuid";
 
     private static final String UNDEFINED_EXPRESSION_DEFINITION_NAME = "Undefined";
-
-    private static final String LITERAL_EXPRESSION_DEFINITION_NAME = "Literal Expression";
 
     @Mock
     private Anchor returnToLink;
@@ -283,7 +282,7 @@ public class ExpressionEditorViewImplTest {
                                                            anyInt())).thenReturn(Optional.of(undefinedExpressionEditor));
 
         when(literalExpressionEditorDefinition.getModelClass()).thenReturn(Optional.of(new LiteralExpression()));
-        when(literalExpressionEditorDefinition.getName()).thenReturn(LITERAL_EXPRESSION_DEFINITION_NAME);
+        when(literalExpressionEditorDefinition.getName()).thenReturn(LITERAL_EXPRESSION.getText());
         when(literalExpressionEditor.getModel()).thenReturn(new BaseGridData());
         when(literalExpressionEditorDefinition.getEditor(any(GridCellTuple.class),
                                                          any(Optional.class),
@@ -444,7 +443,7 @@ public class ExpressionEditorViewImplTest {
                            hasName,
                            false);
 
-        verify(expressionType).setTextContent(eq(LITERAL_EXPRESSION_DEFINITION_NAME));
+        verify(expressionType).setTextContent(eq(LITERAL_EXPRESSION.getText()));
     }
 
     @Test

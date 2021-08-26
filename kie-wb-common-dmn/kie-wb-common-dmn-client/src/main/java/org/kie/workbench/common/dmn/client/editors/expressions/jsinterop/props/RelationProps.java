@@ -18,13 +18,15 @@ package org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props;
 
 import jsinterop.annotations.JsType;
 
+import static org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionType.RELATION;
+
 @JsType
 public class RelationProps extends ExpressionProps{
     public final Column[] columns;
     public final String[][] rows;
 
     public RelationProps(final String name, final String dataType, final Column[] columns, final String[][] rows) {
-        super(name, dataType, "Relation");
+        super(name, dataType, RELATION.getText());
         this.columns = columns;
         this.rows = rows;
     }

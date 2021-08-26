@@ -18,12 +18,14 @@ package org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props;
 
 import jsinterop.annotations.JsType;
 
+import static org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionType.LITERAL_EXPRESSION;
+
 @JsType
 public class LiteralExpressionProps extends ExpressionProps{
     public final String content;
 
     public LiteralExpressionProps(final String name, final String dataType, final String content) {
-        super(name, dataType, "Literal expression");
+        super(name, dataType, LITERAL_EXPRESSION.getText());
         this.content = content;
     }
 }

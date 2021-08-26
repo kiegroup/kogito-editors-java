@@ -18,13 +18,15 @@ package org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props;
 
 import jsinterop.annotations.JsType;
 
+import static org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionType.CONTEXT;
+
 @JsType
 public class ContextProps extends ExpressionProps {
     public final ContextEntryProps[] contextEntries;
     public final ExpressionProps result;
 
     public ContextProps(final String name, final String dataType, final ContextEntryProps[] contextEntries, final ExpressionProps result) {
-        super(name, dataType, "Context");
+        super(name, dataType, CONTEXT.getText());
         this.contextEntries = contextEntries;
         this.result = result;
     }
