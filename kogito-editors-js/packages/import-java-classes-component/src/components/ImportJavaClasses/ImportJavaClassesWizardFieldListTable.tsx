@@ -15,7 +15,7 @@
  */
 
 import * as React from "react";
-import { TableComposable, Tbody, Td, Tr } from "@patternfly/react-table";
+import { ExpandableRowContent, TableComposable, Tbody, Td, Tr } from "@patternfly/react-table";
 import { JavaClass } from "./Model/JavaClass";
 
 export interface ImportJavaClassesWizardFieldListTableProps {
@@ -64,9 +64,26 @@ export const ImportJavaClassesWizardFieldListTable: React.FunctionComponent<Impo
               </Td>
             </Tr>
           );
+          const childRow = pair.fields && pair.fields.length > 0 ? (
+            pair.fields.map((field) => {
+              rowIndex += 1;
+              return (
+                <Tr key={rowIndex} isExpanded={expanded[pairIndex] === true}>
+                  <Td key={`${rowIndex}_0`} />
+                  <Td key={field.name}>
+                    <ExpandableRowContent>
+                      <span>{field.name}</span>
+                      <span>{formatJavaClassName(field.type)}</span>
+                    </ExpandableRowContent>
+                  </Td>
+                </Tr>
+              );
+            })
+          ) : undefined;
           return (
             <Tbody key={pairIndex} isExpanded={expanded[pairIndex] === true}>
               {parentRow}
+              {childRow}
             </Tbody>
           );
         })}
