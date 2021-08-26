@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.kie.workbench.common.dmn.api.definition.HasExpression;
+import org.kie.workbench.common.dmn.api.definition.model.Binding;
 import org.kie.workbench.common.dmn.api.definition.model.Context;
 import org.kie.workbench.common.dmn.api.definition.model.ContextEntry;
 import org.kie.workbench.common.dmn.api.definition.model.DecisionTable;
@@ -43,6 +44,7 @@ import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.C
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.ContextProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.EntryInfo;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.ExpressionProps;
+import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.InvocationProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.ListProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.LiteralExpressionProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.RelationProps;
@@ -71,6 +73,15 @@ public class ExpressionFiller {
         listExpression.getExpression().addAll(itemsConvertForListExpression(listProps, listExpression));
     }
 
+    public static void fillInvocationExpression(final Invocation invocationExpression, final InvocationProps invocationProps) {
+        final LiteralExpression invokedFunction = new LiteralExpression();
+        invokedFunction.setText(new Text(invocationProps.invokedFunction));
+        invokedFunction.setTypeRef(BuiltInType.STRING.asQName());
+        invocationExpression.setExpression(invokedFunction);
+        invocationExpression.getBinding().clear();
+        invocationExpression.getBinding().addAll(bindingsConvertForInvocationExpression(invocationProps));
+    }
+
     public static ExpressionProps buildAndFillJsInteropProp(final Expression wrappedExpression, final String expressionName, final String dataType) {
         if (wrappedExpression instanceof IsLiteralExpression) {
             final LiteralExpression literalExpression = (LiteralExpression) wrappedExpression;
@@ -85,7 +96,9 @@ public class ExpressionFiller {
             final List listExpression = (List) wrappedExpression;
             return new ListProps(expressionName, dataType, itemsConvertForListProps(listExpression));
         } else if (wrappedExpression instanceof Invocation) {
-
+            final Invocation invocationExpression = (Invocation) wrappedExpression;
+            final String invokedFunction = ((LiteralExpression) Optional.ofNullable(invocationExpression.getExpression()).orElse(new LiteralExpression())).getText().getValue();
+            return new InvocationProps(expressionName, dataType, invokedFunction, bindingsConvertForInvocationProps(invocationExpression));
         } else if (wrappedExpression instanceof FunctionDefinition) {
 
         } else if (wrappedExpression instanceof DecisionTable) {
@@ -105,14 +118,7 @@ public class ExpressionFiller {
         return contextExpression.getContextEntry()
                 .stream()
                 .limit(contextExpression.getContextEntry().size() - 1)
-                .map(contextEntry -> {
-                    final InformationItem contextEntryVariable = contextEntry.getVariable();
-                    final String entryName = contextEntryVariable.getName().getValue();
-                    final String entryDataType = contextEntryVariable.getTypeRef().getLocalPart();
-                    final EntryInfo entryInfo = new EntryInfo(entryName, entryDataType);
-                    final ExpressionProps entryExpression = buildAndFillJsInteropProp(contextEntry.getExpression(), entryName, entryDataType);
-                    return new ContextEntryProps(entryInfo, entryExpression);
-                })
+                .map(contextEntry -> fromModelToPropsContextEntryMapper(contextEntry.getVariable(), contextEntry.getExpression()))
                 .toArray(ContextEntryProps[]::new);
     }
 
@@ -134,6 +140,10 @@ public class ExpressionFiller {
                 final List listExpression = new List();
                 fillListExpression(listExpression, (ListProps) props);
                 return listExpression;
+            case "Invocation":
+                final Invocation invocationExpression = new Invocation();
+                fillInvocationExpression(invocationExpression, (InvocationProps) props);
+                return invocationExpression;
             default:
                 return null;
         }
@@ -203,6 +213,24 @@ public class ExpressionFiller {
                 .collect(Collectors.toList());
     }
 
+    private static Collection<Binding> bindingsConvertForInvocationExpression(final InvocationProps invocationProps) {
+        return Arrays
+                .stream(Optional.ofNullable(invocationProps.bindingEntries).orElse(new ContextEntryProps[0]))
+                .map(binding -> {
+                    final Binding bindingModel = new Binding();
+                    final InformationItem informationItem = new InformationItem();
+                    informationItem.setName(new Name(binding.entryInfo.name));
+                    informationItem.setTypeRef(BuiltInTypeUtils
+                                                       .findBuiltInTypeByName(binding.entryInfo.dataType)
+                                                       .orElse(BuiltInType.UNDEFINED)
+                                                       .asQName());
+                    bindingModel.setVariable(informationItem);
+                    bindingModel.setExpression(buildAndFillNestedExpression(binding.entryExpression));
+                    return bindingModel;
+                })
+                .collect(Collectors.toList());
+    }
+
     private static Column[] columnsConvertForRelationProps(final Relation relationExpression) {
         return relationExpression
                 .getColumn()
@@ -225,9 +253,26 @@ public class ExpressionFiller {
     }
 
     private static ExpressionProps[] itemsConvertForListProps(final List listExpression) {
-        return listExpression.getExpression()
+        return listExpression
+                .getExpression()
                 .stream()
                 .map(expression -> buildAndFillJsInteropProp(expression.getExpression(), "List item", "<Undefined>"))
                 .toArray(ExpressionProps[]::new);
+    }
+
+    private static ContextEntryProps[] bindingsConvertForInvocationProps(final Invocation invocationExpression) {
+        return invocationExpression
+                .getBinding()
+                .stream()
+                .map(invocation -> fromModelToPropsContextEntryMapper(invocation.getVariable(), invocation.getExpression()))
+                .toArray(ContextEntryProps[]::new);
+    }
+
+    private static ContextEntryProps fromModelToPropsContextEntryMapper(final InformationItem contextEntryVariable, final Expression expression) {
+        final String entryName = contextEntryVariable.getName().getValue();
+        final String entryDataType = contextEntryVariable.getTypeRef().getLocalPart();
+        final EntryInfo entryInfo = new EntryInfo(entryName, entryDataType);
+        final ExpressionProps entryExpression = buildAndFillJsInteropProp(expression, entryName, entryDataType);
+        return new ContextEntryProps(entryInfo, entryExpression);
     }
 }

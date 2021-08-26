@@ -38,6 +38,7 @@ import org.kie.workbench.common.dmn.api.definition.HasVariable;
 import org.kie.workbench.common.dmn.api.definition.model.Context;
 import org.kie.workbench.common.dmn.api.definition.model.Expression;
 import org.kie.workbench.common.dmn.api.definition.model.InformationItemPrimary;
+import org.kie.workbench.common.dmn.api.definition.model.Invocation;
 import org.kie.workbench.common.dmn.api.definition.model.List;
 import org.kie.workbench.common.dmn.api.definition.model.LiteralExpression;
 import org.kie.workbench.common.dmn.api.definition.model.Relation;
@@ -49,6 +50,7 @@ import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
 import org.kie.workbench.common.dmn.client.commands.factory.DefaultCanvasCommandFactory;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.ContextProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.ExpressionProps;
+import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.InvocationProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.ListProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.LiteralExpressionProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.RelationProps;
@@ -371,6 +373,13 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
             hasExpression.setExpression(new List());
         }
         ExpressionFiller.fillListExpression((List) hasExpression.getExpression(), listProps);
+    }
+
+    public void broadcastInvocationExpressionDefinition(final InvocationProps invocationProps) {
+        if (hasExpression.getExpression() == null) {
+            hasExpression.setExpression(new Invocation());
+        }
+        ExpressionFiller.fillInvocationExpression((Invocation) hasExpression.getExpression(), invocationProps);
     }
 
     void renderNewBoxedExpression() {

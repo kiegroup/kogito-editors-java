@@ -19,7 +19,7 @@ package org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props;
 import jsinterop.annotations.JsType;
 
 @JsType
-public class ListProps extends ExpressionProps{
+public class ListProps extends ExpressionProps {
     public final ExpressionProps[] items;
 
     public ListProps(final String name, final String dataType, final ExpressionProps[] items) {
