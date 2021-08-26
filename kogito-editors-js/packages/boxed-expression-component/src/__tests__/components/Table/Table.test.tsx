@@ -271,7 +271,7 @@ describe("Table tests", () => {
       );
 
       expect(mockedOnRowsUpdate).toHaveBeenCalled();
-      expect(mockedOnRowsUpdate).toHaveBeenCalledWith([newRow]);
+      expect(mockedOnRowsUpdate).toHaveBeenCalledWith([newRow], undefined, undefined);
     });
   });
 
@@ -305,7 +305,7 @@ describe("Table tests", () => {
       fireEvent.blur(container.querySelector("table tbody tr td textarea")! as HTMLTextAreaElement);
 
       expect(mockedOnRowsUpdate).toHaveBeenCalled();
-      expect(mockedOnRowsUpdate).toHaveBeenCalledWith([newRow]);
+      expect(mockedOnRowsUpdate).toHaveBeenCalledWith([newRow], undefined, undefined);
     });
   });
 
@@ -437,7 +437,7 @@ describe("Table tests", () => {
     test("should trigger onRowsUpdate, when inserting a new row above", async () => {
       const row: DataRecord = {};
       row[columnName] = "value";
-      const onRowsUpdate = (rows: DataRecord[]) => {
+      const onRowsUpdate = (rows: DataRecord[], operation?: TableOperation, rowIndex?: number) => {
         _.identity(rows);
       };
       const mockedOnRowsUpdate = jest.fn(onRowsUpdate);
@@ -461,13 +461,13 @@ describe("Table tests", () => {
       await openContextMenu(container.querySelector(expressionCell(0, 1))!);
       await selectMenuEntryIfNotDisabled(baseElement, "Insert row above");
 
-      expect(mockedOnRowsUpdate).toHaveBeenCalledWith([{}, row]);
+      expect(mockedOnRowsUpdate).toHaveBeenCalledWith([{}, row], TableOperation.RowInsertAbove, 0);
     });
 
     test("should trigger onRowsUpdate, when inserting a new row below", async () => {
       const row: DataRecord = {};
       row[columnName] = "value";
-      const onRowsUpdate = (rows: DataRecord[]) => {
+      const onRowsUpdate = (rows: DataRecord[], operation?: TableOperation, rowIndex?: number) => {
         _.identity(rows);
       };
       const mockedOnRowsUpdate = jest.fn(onRowsUpdate);
@@ -491,7 +491,7 @@ describe("Table tests", () => {
       await openContextMenu(container.querySelector(expressionCell(0, 1))!);
       await selectMenuEntryIfNotDisabled(baseElement, "Insert row below");
 
-      expect(mockedOnRowsUpdate).toHaveBeenCalledWith([row, {}]);
+      expect(mockedOnRowsUpdate).toHaveBeenCalledWith([row, {}], TableOperation.RowInsertBelow, 0);
     });
 
     test("should trigger onRowsUpdate, when deleting a row", async () => {
@@ -499,7 +499,7 @@ describe("Table tests", () => {
       const secondRow: DataRecord = {};
       firstRow[columnName] = "value";
       secondRow[columnName] = "another value";
-      const onRowsUpdate = (rows: DataRecord[]) => {
+      const onRowsUpdate = (rows: DataRecord[], operation?: TableOperation, rowIndex?: number) => {
         _.identity(rows);
       };
       const mockedOnRowsUpdate = jest.fn(onRowsUpdate);
@@ -523,7 +523,7 @@ describe("Table tests", () => {
       await openContextMenu(container.querySelector(expressionCell(0, 1))!);
       await selectMenuEntryIfNotDisabled(baseElement, "Delete");
 
-      expect(mockedOnRowsUpdate).toHaveBeenCalledWith([secondRow]);
+      expect(mockedOnRowsUpdate).toHaveBeenCalledWith([secondRow], TableOperation.RowDelete, 0);
     });
   });
 });
