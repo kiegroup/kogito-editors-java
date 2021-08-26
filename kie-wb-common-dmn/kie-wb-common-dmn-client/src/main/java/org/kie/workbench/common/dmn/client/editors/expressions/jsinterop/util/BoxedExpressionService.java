@@ -25,7 +25,7 @@ public class BoxedExpressionService {
         registerBroadcastForLiteralExpression(boxedExpressionEditorPanel);
         registerBroadcastForContextExpression(boxedExpressionEditorPanel);
         registerBroadcastForRelationExpression(boxedExpressionEditorPanel);
-        registerBroadcastListExpressionDefinition(boxedExpressionEditorPanel);
+        registerBroadcastForListExpressionDefinition(boxedExpressionEditorPanel);
     }
 
     private static native void createNamespace()/*-{
@@ -56,7 +56,7 @@ public class BoxedExpressionService {
         };
     }-*/;
 
-    private static native void registerBroadcastListExpressionDefinition(final ExpressionEditorViewImpl boxedExpressionEditorPanel)/*-{
+    private static native void registerBroadcastForListExpressionDefinition(final ExpressionEditorViewImpl boxedExpressionEditorPanel)/*-{
         $wnd["beeApiWrapper"].broadcastListExpressionDefinition = function(listExpressionDefinition) {
             return boxedExpressionEditorPanel.@ExpressionEditorViewImpl::broadcastListExpressionDefinition(*)(listExpressionDefinition);
         };
