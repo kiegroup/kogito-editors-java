@@ -43,6 +43,7 @@ import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.C
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.ContextProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.EntryInfo;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.ExpressionProps;
+import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.ListProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.LiteralExpressionProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.RelationProps;
 
@@ -65,6 +66,11 @@ public class ExpressionFiller {
         relationExpression.getRow().addAll(rowsConvertForRelationExpression(relationProps, relationExpression));
     }
 
+    public static void fillListExpression(final List listExpression, final ListProps listProps) {
+        listExpression.getExpression().clear();
+        listExpression.getExpression().addAll(itemsConvertForListExpression(listProps, listExpression));
+    }
+
     public static ExpressionProps buildAndFillJsInteropProp(final Expression wrappedExpression, final String expressionName, final String dataType) {
         if (wrappedExpression instanceof IsLiteralExpression) {
             final LiteralExpression literalExpression = (LiteralExpression) wrappedExpression;
@@ -76,7 +82,8 @@ public class ExpressionFiller {
             final Relation relationExpression = (Relation) wrappedExpression;
             return new RelationProps(expressionName, dataType, columnsConvertForRelationProps(relationExpression), rowsConvertForRelationProps(relationExpression));
         } else if (wrappedExpression instanceof List) {
-
+            final List listExpression = (List) wrappedExpression;
+            return new ListProps(expressionName, dataType, itemsConvertForListProps(listExpression));
         } else if (wrappedExpression instanceof Invocation) {
 
         } else if (wrappedExpression instanceof FunctionDefinition) {
@@ -123,6 +130,10 @@ public class ExpressionFiller {
                 final Relation relationExpression = new Relation();
                 fillRelationExpression(relationExpression, (RelationProps) props);
                 return relationExpression;
+            case "List":
+                final List listExpression = new List();
+                fillListExpression(listExpression, (ListProps) props);
+                return listExpression;
             default:
                 return null;
         }
@@ -185,6 +196,13 @@ public class ExpressionFiller {
                 .collect(Collectors.toList());
     }
 
+    private static Collection<HasExpression> itemsConvertForListExpression(final ListProps listProps, final List listExpression) {
+        return Arrays
+                .stream(Optional.ofNullable(listProps.items).orElse(new ExpressionProps[0]))
+                .map(props -> HasExpression.wrap(listExpression, buildAndFillNestedExpression(props)))
+                .collect(Collectors.toList());
+    }
+
     private static Column[] columnsConvertForRelationProps(final Relation relationExpression) {
         return relationExpression
                 .getColumn()
@@ -204,5 +222,12 @@ public class ExpressionFiller {
                         .toArray(String[]::new)
                 )
                 .toArray(String[][]::new);
+    }
+
+    private static ExpressionProps[] itemsConvertForListProps(final List listExpression) {
+        return listExpression.getExpression()
+                .stream()
+                .map(expression -> buildAndFillJsInteropProp(expression.getExpression(), "List item", "<Undefined>"))
+                .toArray(ExpressionProps[]::new);
     }
 }
