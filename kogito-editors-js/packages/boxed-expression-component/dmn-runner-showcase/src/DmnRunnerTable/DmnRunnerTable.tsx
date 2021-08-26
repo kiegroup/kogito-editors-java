@@ -66,8 +66,9 @@ export function DmnRunnerTable(props: DmnRunnerTableProps) {
         items: [
           { name: i18n.rowOperations.insertAbove, type: TableOperation.RowInsertAbove },
           { name: i18n.rowOperations.insertBelow, type: TableOperation.RowInsertBelow },
-          { name: i18n.rowOperations.delete, type: TableOperation.RowDelete },
           { name: i18n.rowOperations.duplicate, type: TableOperation.RowDuplicate },
+          { name: i18n.rowOperations.clear, type: TableOperation.RowClear },
+          { name: i18n.rowOperations.delete, type: TableOperation.RowDelete },
         ],
       },
     ],

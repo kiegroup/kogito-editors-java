@@ -58,7 +58,7 @@ export interface Something {
 interface Props {
   schema: any;
   tableData?: any;
-  setTableData?: any;
+  setTableData?: React.Dispatch<React.SetStateAction<any>>;
   results?: Array<DecisionResult[] | undefined>;
   formError: boolean;
   setFormError: React.Dispatch<any>;
@@ -76,55 +76,57 @@ export function DmnAutoTable(props: Props) {
   const grid = useMemo(() => (bridge ? new DmnGrid(bridge) : undefined), [bridge]);
   const shouldRender = useMemo(() => (grid?.generateBoxedInputs().length ?? 0) > 0, [grid]);
 
-  // const insertBefore = <T extends unknown>(elements: T[], index: number, element: T) => [
-  //   ...elements.slice(0, index),
-  //   element,
-  //   ...elements.slice(index),
-  // ];
-  //
-  // const insertAfter = <T extends unknown>(elements: T[], index: number, element: T) => [
-  //   ...elements.slice(0, index + 1),
-  //   element,
-  //   ...elements.slice(index + 1),
-  // ];
-  //
-  // const duplicateAfter = <T extends unknown>(elements: T[], index: number) => [
-  //   ...elements.slice(0, index + 1),
-  //   _.cloneDeep(elements[index]),
-  //   ...elements.slice(index + 1),
-  // ];
-  //
-  // const deleteAt = <T extends unknown>(elements: T[], index: number) => [
-  //   ...elements.slice(0, index),
-  //   ...elements.slice(index + 1),
-  // ];
-  //
-  // const handleOperation = useCallback((tableOperation: TableOperation) => {
-  //   switch (tableOperation) {
-  //     case TableOperation.RowInsertAbove:
-  //       insertBefore(tableRows, selectedRowIndex, onRowAdding());
-  //       break;
-  //     case TableOperation.RowInsertBelow:
-  //       insertAfter(tableRows, selectedRowIndex, onRowAdding());
-  //       break;
-  //     case TableOperation.RowDelete:
-  //       deleteAt(tableRows, selectedRowIndex);
-  //       break;
-  //     case TableOperation.RowClear:
-  //       clearAt(tableRows, selectedRowIndex);
-  //       break;
-  //     case TableOperation.RowDuplicate:
-  //       duplicateAfter(tableRows, selectedRowIndex);
-  //   }
-  // }, [])
+  const handleOperation = useCallback(
+    (tableOperation: TableOperation, rowIndex: number) => {
+      switch (tableOperation) {
+        case TableOperation.RowInsertAbove:
+          props.setTableData?.((previousTableData: any) => {
+            return [...previousTableData.slice(0, rowIndex), {}, ...previousTableData.slice(rowIndex)];
+          });
+          break;
+        case TableOperation.RowInsertBelow:
+          props.setTableData?.((previousTableData: any) => {
+            return [...previousTableData.slice(0, rowIndex + 1), {}, ...previousTableData.slice(rowIndex + 1)];
+          });
+          break;
+        case TableOperation.RowDelete:
+          props.setTableData?.((previousTableData: any) => {
+            return [...previousTableData.slice(0, rowIndex), ...previousTableData.slice(rowIndex + 1)];
+          });
+          break;
+        case TableOperation.RowClear:
+          props.setTableData?.((previousTableData: any) => {
+            const newTableData = [...previousTableData];
+            newTableData[rowIndex] = {};
+            return newTableData;
+          });
+          break;
+        case TableOperation.RowDuplicate:
+          props.setTableData?.((previousTableData: any) => {
+            return [
+              ...previousTableData.slice(0, rowIndex + 1),
+              previousTableData[rowIndex],
+              ...previousTableData.slice(rowIndex + 1),
+            ];
+          });
+      }
+    },
+    [props.setTableData]
+  );
 
-  const onRowNumberUpdated = useCallback((rowQtt: number, operation?: TableOperation, rowIndex?: number) => {
-    setRowQuantity(rowQtt);
-  }, []);
+  const onRowNumberUpdated = useCallback(
+    (rowQtt: number, operation?: TableOperation, rowIndex?: number) => {
+      setRowQuantity(rowQtt);
+      if (operation !== undefined && rowIndex !== undefined) {
+        handleOperation(operation, rowIndex);
+      }
+    },
+    [handleOperation]
+  );
 
   const onSubmit = useCallback(
     (model: any, index) => {
-      props.setTableData((previousTableData: any) => {
+      props.setTableData?.((previousTableData: any) => {
         const newTableData = [...previousTableData];
         newTableData[index] = model;
         return newTableData;
@@ -135,7 +137,7 @@ export function DmnAutoTable(props: Props) {
 
   const onValidate = useCallback(
     (model: any, error: any, index) => {
-      props.setTableData((previousTableData: any) => {
+      props.setTableData?.((previousTableData: any) => {
         const newTableData = [...previousTableData];
         newTableData[index] = model;
         return newTableData;

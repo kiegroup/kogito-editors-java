@@ -215,19 +215,27 @@ export const TableHandler: React.FunctionComponent<TableHandlerProps> = ({
           updateTargetColumns(deleteAt);
           break;
         case TableOperation.RowInsertAbove:
-          onRowsUpdate(insertBefore(tableRows, selectedRowIndex, onRowAdding()), TableOperation.RowInsertAbove);
+          onRowsUpdate(
+            insertBefore(tableRows, selectedRowIndex, onRowAdding()),
+            TableOperation.RowInsertAbove,
+            selectedRowIndex
+          );
           break;
         case TableOperation.RowInsertBelow:
-          onRowsUpdate(insertAfter(tableRows, selectedRowIndex, onRowAdding()), TableOperation.RowInsertBelow);
+          onRowsUpdate(
+            insertAfter(tableRows, selectedRowIndex, onRowAdding()),
+            TableOperation.RowInsertBelow,
+            selectedRowIndex
+          );
           break;
         case TableOperation.RowDelete:
           onRowsUpdate(deleteAt(tableRows, selectedRowIndex), TableOperation.RowDelete, selectedRowIndex);
           break;
         case TableOperation.RowClear:
-          onRowsUpdate(clearAt(tableRows, selectedRowIndex), TableOperation.RowClear);
+          onRowsUpdate(clearAt(tableRows, selectedRowIndex), TableOperation.RowClear, selectedRowIndex);
           break;
         case TableOperation.RowDuplicate:
-          onRowsUpdate(duplicateAfter(tableRows, selectedRowIndex), TableOperation.RowDuplicate);
+          onRowsUpdate(duplicateAfter(tableRows, selectedRowIndex), TableOperation.RowDuplicate, selectedRowIndex);
       }
       setShowTableHandler(false);
     },
