@@ -18,6 +18,8 @@ import * as React from "react";
 import { Spinner } from "@patternfly/react-core";
 import { useEffect, useState } from "react";
 import { ImportJavaClassesWizardFieldListTable } from "./ImportJavaClassesWizardFieldListTable";
+import { JavaClassField } from "./Model/JavaClassField";
+import { JavaClass } from "./Model/JavaClass";
 
 export interface ImportJavaClassesWizardSecondStepProps {
   /** List of the selected classes by user */
@@ -27,16 +29,15 @@ export interface ImportJavaClassesWizardSecondStepProps {
 export const ImportJavaClassesWizardSecondStep: React.FunctionComponent<ImportJavaClassesWizardSecondStepProps> = ({
   selectedJavaClasses,
 }) => {
-  const emptyMap = new Map<string, Map<string, string>>();
-  const [retrievedJavaClassFields, setRetrievedJavaClassFields] = useState<Map<string, Map<string, string>>>(emptyMap);
+  const [retrievedJavaClassFields, setRetrievedJavaClassFields] = useState<JavaClass[]>([]);
   /* This function temporary mocks a call to the LSP service method getClasses */
   const loadJavaClassFields = (className: string) => {
-    const retrieved = window.envelopeMock.lspGetClassFieldsServiceMocked(className);
+    const retrieved : Map<string, string> = window.envelopeMock.lspGetClassFieldsServiceMocked(className);
     if (retrieved) {
       setRetrievedJavaClassFields((prevState) => {
-        const javaClassFieldsMap = new Map<string, Map<string, string>>(prevState);
-        javaClassFieldsMap.set(className, retrieved);
-        return javaClassFieldsMap;
+        const javaFields = Array.from(retrieved, ([k, value]) => new JavaClassField(k, value));
+        const javaClass = new JavaClass(className, javaFields);
+        return [...prevState, javaClass].sort((a, b) => (a.name < b.name ? -1 : 1));
       });
     }
   };
@@ -47,7 +48,7 @@ export const ImportJavaClassesWizardSecondStep: React.FunctionComponent<ImportJa
 
   return (
     <>
-      {retrievedJavaClassFields.size != selectedJavaClasses.length ? (
+      {retrievedJavaClassFields.length != selectedJavaClasses.length ? (
         <Spinner isSVG diameter="80px" />
       ) : (
         <ImportJavaClassesWizardFieldListTable selectedJavaClassFields={retrievedJavaClassFields} />
