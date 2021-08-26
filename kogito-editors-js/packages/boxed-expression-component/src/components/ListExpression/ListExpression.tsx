@@ -44,6 +44,8 @@ export const ListExpression: React.FunctionComponent<ListProps> = ({
   isHeadless,
   items,
   onUpdatingRecursiveExpression,
+  name,
+  dataType,
   uid,
   width = LIST_EXPRESSION_MIN_WIDTH,
 }: ListProps) => {
@@ -108,6 +110,8 @@ export const ListExpression: React.FunctionComponent<ListProps> = ({
   useEffect(() => {
     const updatedDefinition: ListProps = {
       uid,
+      name,
+      dataType,
       logicType: LogicType.List,
       width: listWidth,
       items: _.map(listItems, (listItem: DataRecord) => listItem.entryExpression as ExpressionProps),
