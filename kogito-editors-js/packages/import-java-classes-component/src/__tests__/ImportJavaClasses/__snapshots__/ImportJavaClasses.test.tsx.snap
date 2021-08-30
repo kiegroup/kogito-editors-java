@@ -170,7 +170,7 @@ exports[`ImportJavaClasses component tests Should search box with results works 
                         aria-current="false"
                         class="pf-c-wizard__nav-link"
                       >
-                        Cherry-pick fields
+                        Select fields
                       </button>
                     </li>
                     <li
@@ -194,11 +194,6 @@ exports[`ImportJavaClasses component tests Should search box with results works 
                   <div
                     class="pf-c-wizard__main-body"
                   >
-                    <h6
-                      class="pf-c-title pf-m-md"
-                    >
-                      Search:
-                    </h6>
                     <div
                       class="pf-c-search-input"
                     >
@@ -271,7 +266,7 @@ exports[`ImportJavaClasses component tests Should search box with results works 
                     </div>
                     <ul
                       aria-label="class-data-list"
-                      class="pf-c-data-list pf-m-compact pf-m-grid-md"
+                      class="pf-c-data-list pf-m-grid-md"
                     >
                       <li
                         aria-labelledby=""
@@ -536,7 +531,7 @@ exports[`ImportJavaClasses component tests Should show Modal after clicking on t
                         class="pf-c-wizard__nav-link pf-m-disabled"
                         disabled=""
                       >
-                        Cherry-pick fields
+                        Select fields
                       </button>
                     </li>
                     <li
@@ -560,11 +555,6 @@ exports[`ImportJavaClasses component tests Should show Modal after clicking on t
                   <div
                     class="pf-c-wizard__main-body"
                   >
-                    <h6
-                      class="pf-c-title pf-m-md"
-                    >
-                      Search:
-                    </h6>
                     <div
                       class="pf-c-search-input"
                     >
