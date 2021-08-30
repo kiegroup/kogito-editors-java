@@ -19,7 +19,7 @@ import { EntryInfo } from "./ContextEntry";
 
 export enum FunctionKind {
   Feel = "FEEL",
-  Java = "JAVA",
+  Java = "Java",
   Pmml = "PMML",
 }
 
