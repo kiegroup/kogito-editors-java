@@ -139,8 +139,8 @@ export function DmnRunnerTable(props: DmnRunnerTableProps) {
           });
           return {
             groupType: DecisionTableColumnType.OutputClause,
-            label: `${props.output?.[outputIndex]?.name}.${entryIndex}`,
-            accessor: `${props.output?.[outputIndex]?.name}.${entryIndex}`,
+            label: `${props.output?.[outputIndex]?.name}[${entryIndex}]`,
+            accessor: `${props.output?.[outputIndex]?.name}[${entryIndex}]`,
             cssClasses: "decision-table--output",
             columns: columns,
             appendColumnsOnChildren: true,

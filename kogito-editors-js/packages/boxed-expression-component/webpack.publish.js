@@ -14,9 +14,17 @@ module.exports = {
     filename: `[name].js`,
     library: {
       type: "umd",
-      name: `__KIE__BoxedExpressionComponent__`,
     },
   },
+  externals: [/^react.*/, /^@patternfly\/.+$/i],
+
+  plugins: [
+    new MiniCssExtractPlugin({
+      filename: `[name].css`,
+      chunkFilename: `[name].[id].css]`,
+    }),
+  ],
+
   module: {
     rules: [
       {
@@ -29,16 +37,11 @@ module.exports = {
         loader: "ts-loader",
         options: {
           configFile: path.resolve("./tsconfig.json"),
-          compilerOptions: {
-            declaration: true,
-            outDir: "dist",
-            sourceMap: true
-          },
         },
       },
       {
         test: /\.css$/,
-        use: ["style-loader", "css-loader"],
+        use: [MiniCssExtractPlugin.loader, "css-loader"],
       },
       {
         test: /\.(woff(2)?|ttf|eot)(\?v=\d+\.\d+\.\d+)?$/,
@@ -53,6 +56,10 @@ module.exports = {
         ],
       },
     ],
+  },
+  resolve: {
+    extensions: [".tsx", ".ts", ".js", ".jsx"],
+    modules: [path.resolve("../../node_modules"), path.resolve("../node_modules"), path.resolve("./src")],
   },
 }
 

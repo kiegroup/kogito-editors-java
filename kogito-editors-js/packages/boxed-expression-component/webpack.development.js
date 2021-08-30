@@ -15,6 +15,5 @@
  */
 
 const { developmentConfig } = require("../../webpack.common.development");
-const config = require("./webpack.common.js");
 
-module.exports = [developmentConfig("boxed-expression-component", config)];
+module.exports = [developmentConfig("boxed-expression-component")];

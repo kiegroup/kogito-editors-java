@@ -9,6 +9,8 @@
     "build:dev": "rimraf dist && webpack --config webpack.development.js",
     "build:prod": "rimraf dist && webpack --config webpack.production.js",
     "build:watch": "webpack --config webpack.development.js --watch",
+    "build:publish": "rimraf dist && yarn copy:css && tsc -p tsconfig.json",
+    "copy:css": "copyfiles -u 1 'src/**/*.{sass,scss,css}' dist/",
     "lint": "eslint --ext .ts,.tsx,.js ./src/",
     "test": "jest --collect-coverage",
     "type-check": "tsc --noEmit",
