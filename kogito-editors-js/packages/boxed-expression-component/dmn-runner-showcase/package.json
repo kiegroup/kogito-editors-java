@@ -35,7 +35,7 @@
   },
   "scripts": {
     "start": "webpack serve --host 0.0.0.0 --env dev",
-    "build:dev": "rimraf dist && webpack --env dev"
+    "build:fast": "rimraf dist && webpack --env dev"
   },
   "babel": {
     "presets": [
