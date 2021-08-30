@@ -99,9 +99,9 @@ describe("ImportJavaClasses component tests", () => {
   });
 
   test("Should move to second step", async () => {
-    lspGetClassServiceMock(jest.fn(value => ["com.Book", "com.Author", "com.Test"]));
+    lspGetClassServiceMock(jest.fn((value) => ["com.Book", "com.Author", "com.Test"]));
     lspGetClassFieldServiceMock(jest.fn(lspGetClassFieldsServiceMocked));
-    const { baseElement, getByText } = render(<ImportJavaClasses buttonDisabledStatus={false}/>);
+    const { baseElement, getByText } = render(<ImportJavaClasses buttonDisabledStatus={false} />);
     const modalWizardButton = getByText("Import Java classes")! as HTMLButtonElement;
     modalWizardButton.click();
     const inputElement = baseElement.querySelector('[aria-label="Search input"]')! as HTMLInputElement;
@@ -177,5 +177,4 @@ describe("ImportJavaClasses component tests", () => {
       return new Map<string, string>();
     }
   };
-
 });
