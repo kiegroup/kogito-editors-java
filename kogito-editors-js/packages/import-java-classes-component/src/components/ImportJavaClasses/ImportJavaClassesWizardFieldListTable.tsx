@@ -24,7 +24,7 @@ export interface ImportJavaClassesWizardFieldListTableProps {
 }
 
 export const ImportJavaClassesWizardFieldListTable: React.FunctionComponent<ImportJavaClassesWizardFieldListTableProps> =
-  ({ selectedJavaClassFields }) => {
+  ({ selectedJavaClassFields }: ImportJavaClassesWizardFieldListTableProps) => {
     const [expanded, setExpanded] = React.useState(
       Object.fromEntries(
         selectedJavaClassFields.map((value, index) => [index, Boolean(value.fields && value.fields.length > 0)])
@@ -39,53 +39,55 @@ export const ImportJavaClassesWizardFieldListTable: React.FunctionComponent<Impo
     const getJavaClassSimpleName = (className: string) => {
       return className.split(".").pop();
     };
-    const formatJavaClassName = (className: string) => {
+    const decorateWithRoundBrackets = (className: string) => {
       return " (" + className + ")";
     };
     let rowIndex = -1;
     return (
       <TableComposable aria-label="field-table">
-        {selectedJavaClassFields.map((pair, pairIndex) => {
+        {selectedJavaClassFields.map((javaClass, index) => {
           rowIndex += 1;
           const parentRow = (
             <Tr key={rowIndex}>
               <Td
                 key={`${rowIndex}_0`}
                 expand={
-                  pair.fields && pair.fields.length > 0
+                  javaClass.fields && javaClass.fields.length > 0
                     ? {
-                        rowIndex: pairIndex,
-                        isExpanded: expanded[pairIndex],
-                        onToggle: handleExpansionToggle,
-                      }
+                      rowIndex: index,
+                      isExpanded: expanded[index],
+                      onToggle: handleExpansionToggle,
+                    }
                     : undefined
                 }
               />
-              <Td key={`${rowIndex}_${pair.name}`}>
-                <strong>{getJavaClassSimpleName(pair.name)}</strong>
-                <span>{formatJavaClassName(pair.name)}</span>
+              <Td key={`${rowIndex}_${javaClass.name}`}>
+                <span>
+                  <strong>{getJavaClassSimpleName(javaClass.name)}</strong>
+                </span>
+                <span>{decorateWithRoundBrackets(javaClass.name)}</span>
               </Td>
             </Tr>
           );
           const childRow =
-            pair.fields && pair.fields.length > 0
-              ? pair.fields.map((field) => {
-                  rowIndex += 1;
-                  return (
-                    <Tr key={rowIndex} isExpanded={expanded[pairIndex] === true}>
-                      <Td key={`${rowIndex}_0`} />
-                      <Td key={field.name}>
-                        <ExpandableRowContent>
-                          <span>{field.name}</span>
-                          <span>{formatJavaClassName(field.type)}</span>
-                        </ExpandableRowContent>
-                      </Td>
-                    </Tr>
-                  );
-                })
+            javaClass.fields && javaClass.fields.length > 0
+              ? javaClass.fields.map((field) => {
+                rowIndex += 1;
+                return (
+                  <Tr key={rowIndex} isExpanded={expanded[index] === true}>
+                    <Td key={`${rowIndex}_0`} />
+                    <Td key={`${rowIndex}_${field.name}`}>
+                      <ExpandableRowContent>
+                        <span>{field.name}</span>
+                        <span>{decorateWithRoundBrackets(field.type)}</span>
+                      </ExpandableRowContent>
+                    </Td>
+                  </Tr>
+                );
+              })
               : undefined;
           return (
-            <Tbody key={pairIndex} isExpanded={expanded[pairIndex] === true}>
+            <Tbody key={index} isExpanded={expanded[index] === true}>
               {parentRow}
               {childRow}
             </Tbody>

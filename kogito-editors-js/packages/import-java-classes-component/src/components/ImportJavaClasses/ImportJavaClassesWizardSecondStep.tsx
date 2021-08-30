@@ -28,14 +28,14 @@ export interface ImportJavaClassesWizardSecondStepProps {
 
 export const ImportJavaClassesWizardSecondStep: React.FunctionComponent<ImportJavaClassesWizardSecondStepProps> = ({
   selectedJavaClasses,
-}) => {
+}: ImportJavaClassesWizardSecondStepProps) => {
   const [retrievedJavaClassFields, setRetrievedJavaClassFields] = useState<JavaClass[]>([]);
   /* This function temporary mocks a call to the LSP service method getClasseFields */
   const loadJavaClassFields = (className: string) => {
     const retrieved: Map<string, string> = window.envelopeMock.lspGetClassFieldsServiceMocked(className);
     if (retrieved) {
       setRetrievedJavaClassFields((prevState) => {
-        const javaFields = Array.from(retrieved, ([k, value]) => new JavaClassField(k, value));
+        const javaFields = Array.from(retrieved, ([key, value]) => new JavaClassField(key, value));
         const javaClass = new JavaClass(className, javaFields);
         return [...prevState, javaClass].sort((a, b) => (a.name < b.name ? -1 : 1));
       });
