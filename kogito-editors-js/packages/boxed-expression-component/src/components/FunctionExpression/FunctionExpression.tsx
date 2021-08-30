@@ -127,7 +127,7 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (props
           entryExpression: {
             noClearAction: true,
             logicType: LogicType.LiteralExpression,
-            content: javaProps.class,
+            content: javaProps.className,
           } as LiteralExpressionProps,
         },
         {
@@ -135,7 +135,7 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (props
           entryExpression: {
             noClearAction: true,
             logicType: LogicType.LiteralExpression,
-            content: javaProps.method,
+            content: javaProps.methodName,
           } as LiteralExpressionProps,
         },
       ];
@@ -261,7 +261,7 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (props
             (_.nth(contextProps.contextEntries, 0)?.entryExpression as LiteralExpressionProps)?.content || "";
           const methodName =
             (_.nth(contextProps.contextEntries, 1)?.entryExpression as LiteralExpressionProps)?.content || "";
-          return _.extend(definition, { class: className, method: methodName });
+          return _.extend(definition, { className, methodName });
         }
         case FunctionKind.Pmml: {
           const contextProps = _.first(rows)?.entryExpression as ContextProps;
@@ -317,8 +317,8 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (props
           "functionKind",
           "formalParameters",
           "parametersWidth",
-          "class",
-          "method",
+          "className",
+          "methodName",
           "document",
           "model",
           "expression",

@@ -34,9 +34,9 @@ export interface JavaFunctionProps {
   /** Java Function */
   functionKind: FunctionKind.Java;
   /** Java class */
-  class?: string;
+  className?: string;
   /** Method signature */
-  method?: string;
+  methodName?: string;
 }
 
 interface PMMLParam {

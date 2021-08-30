@@ -131,7 +131,7 @@ export const ListExpression: React.FunctionComponent<ListProps> = ({
         ["width", "items"]
       );
     }
-  }, [listWidth, listItems, isHeadless, onUpdatingRecursiveExpression, uid, setSupervisorHash]);
+  }, [dataType, name, listWidth, listItems, isHeadless, onUpdatingRecursiveExpression, uid, setSupervisorHash]);
 
   const resetRowCustomFunction = useCallback((row: DataRecord) => {
     return { entryExpression: { uid: (row.entryExpression as ExpressionProps).uid } };
