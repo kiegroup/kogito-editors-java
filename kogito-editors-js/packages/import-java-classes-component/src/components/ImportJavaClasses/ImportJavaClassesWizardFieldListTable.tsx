@@ -42,7 +42,7 @@ export const ImportJavaClassesWizardFieldListTable: React.FunctionComponent<Impo
     }
     let rowIndex = -1;
     return (
-      <TableComposable aria-label="field-table" variant="compact">
+      <TableComposable aria-label="field-table">
         {selectedJavaClassFields.map((pair, pairIndex) => {
           rowIndex += 1;
           const parentRow = (

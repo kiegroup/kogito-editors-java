@@ -53,6 +53,7 @@ const Showcase: React.FunctionComponent = () => {
     const boomClassFieldsList = new Map<string, string>();
     boomClassFieldsList.set("time", "date");
     boomClassFieldsList.set("big", "boolean");
+    boomClassFieldsList.set("color", "string");
 
     /* Temporary mocks managing */
     if (className === "org.kie.test.kogito.Book") {
