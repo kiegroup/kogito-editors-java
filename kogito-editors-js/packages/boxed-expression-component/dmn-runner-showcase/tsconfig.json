@@ -10,6 +10,8 @@
     "noEmit": false,
     "noFallthroughCasesInSwitch": true,
     "resolveJsonModule": true,
-    "strict": false
+    "strict": false,
+    "declaration": true,
+    "declarationMap": true
   }
 }

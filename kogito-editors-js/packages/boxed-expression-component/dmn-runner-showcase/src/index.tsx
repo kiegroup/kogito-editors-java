@@ -76,6 +76,11 @@ export const App: React.FunctionComponent = () => {
               Complex Custom
             </Button>
           </div>
+          <div style={{ padding: "5px" }}>
+            <Button variant={"primary"} onClick={() => setSchema(schemas.inputOutput)}>
+              Input Output
+            </Button>
+          </div>
         </div>
       </div>
 

@@ -48,7 +48,7 @@ export const arrayMultipleResults = [
     {
       decisionId: "",
       decisionName: "Array",
-      result: [{ test: "this is a test", fee: 1 }, { test: "second test" }],
+      result: [{ test: "this is a test", fee: "1" }, { test: "second test" }],
       messages: [],
       evaluationStatus: EvaluationStatus.SUCCEEDED,
     },

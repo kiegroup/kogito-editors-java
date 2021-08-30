@@ -16,11 +16,16 @@
 
 import * as React from "react";
 import { useCallback, useContext, useEffect, useMemo } from "react";
-import "../../../dist";
+import "boxed-expression-component/dist";
 import { ColumnInstance, DataRecord } from "react-table";
-import { ExpressionProps, GroupOperations, TableHeaderVisibility, TableOperation } from "../../../dist/api";
-import { BoxedExpressionGlobalContext } from "../../../dist/context";
-import { getColumnsAtLastLevel, Table } from "../../../dist/components";
+import {
+  ExpressionProps,
+  GroupOperations,
+  TableHeaderVisibility,
+  TableOperation,
+} from "boxed-expression-component/dist/api";
+import { BoxedExpressionGlobalContext } from "boxed-expression-component/dist/context";
+import { getColumnsAtLastLevel, Table } from "boxed-expression-component/dist/components";
 import "./DmnRunnerTable.css";
 import { DmnRunnerClause, DmnRunnerRule } from "./DmnRunnerTableTypes";
 import { useDmnAutoTableI18n } from "../unitables";
@@ -98,7 +103,7 @@ export function DmnRunnerTable(props: DmnRunnerTableProps) {
         const insideProperties = inputClause.insideProperties.map((insideInputClauses) => {
           return {
             label: insideInputClauses.name,
-            accessor: insideInputClauses.name,
+            accessor: `input-${insideInputClauses.name}`,
             dataType: insideInputClauses.dataType,
             width: insideInputClauses.width,
             groupType: DecisionTableColumnType.InputClause,
@@ -108,7 +113,8 @@ export function DmnRunnerTable(props: DmnRunnerTableProps) {
         return {
           groupType: DecisionTableColumnType.InputClause,
           label: inputClause.name,
-          accessor: inputClause.name,
+          accessor: `input-${inputClause.name}`,
+          dataType: inputClause.dataType,
           width: inputClause.width,
           cssClasses: "decision-table--input",
           columns: insideProperties,
@@ -118,7 +124,8 @@ export function DmnRunnerTable(props: DmnRunnerTableProps) {
       return {
         groupType: DecisionTableColumnType.InputClause,
         label: inputClause.name,
-        accessor: inputClause.name,
+        accessor: `input-${inputClause.name}`,
+        dataType: inputClause.dataType,
         width: inputClause.width,
         cssClasses: "decision-table--input",
         appendColumnsOnChildren: true,
@@ -133,14 +140,14 @@ export function DmnRunnerTable(props: DmnRunnerTableProps) {
             return {
               groupType: DecisionTableColumnType.OutputClause,
               label: `${keys}`,
-              accessor: `${keys}-${entryIndex}`,
+              accessor: `output-${keys}-${entryIndex}`,
               cssClasses: "decision-table--output",
             } as ColumnInstance;
           });
           return {
             groupType: DecisionTableColumnType.OutputClause,
             label: `${props.output?.[outputIndex]?.name}[${entryIndex}]`,
-            accessor: `${props.output?.[outputIndex]?.name}[${entryIndex}]`,
+            accessor: `output-${props.output?.[outputIndex]?.name}[${entryIndex}]`,
             cssClasses: "decision-table--output",
             columns: columns,
             appendColumnsOnChildren: true,
@@ -153,7 +160,7 @@ export function DmnRunnerTable(props: DmnRunnerTableProps) {
             ({
               groupType: DecisionTableColumnType.OutputClause,
               label: entryName,
-              accessor: entryName,
+              accessor: `output-${entryName}`,
               cssClasses: "decision-table--output",
             } as ColumnInstance)
         );
@@ -162,7 +169,7 @@ export function DmnRunnerTable(props: DmnRunnerTableProps) {
           {
             groupType: DecisionTableColumnType.OutputClause,
             label: props.output?.[outputIndex]?.name,
-            accessor: props.output?.[outputIndex]?.name,
+            accessor: `output-${props.output?.[outputIndex]?.name}`,
             cssClasses: "decision-table--output",
             columns: columns,
             appendColumnsOnChildren: true,
@@ -173,7 +180,7 @@ export function DmnRunnerTable(props: DmnRunnerTableProps) {
         {
           groupType: DecisionTableColumnType.OutputClause,
           label: props.output?.[outputIndex]?.name,
-          accessor: props.output?.[outputIndex]?.name,
+          accessor: `output-${props.output?.[outputIndex]?.name}`,
           dataType: props.output?.[outputIndex]?.dataType,
           cssClasses: "decision-table--output",
           appendColumnsOnChildren: true,
@@ -186,7 +193,20 @@ export function DmnRunnerTable(props: DmnRunnerTableProps) {
 
   const memoRows = useMemo(() => {
     return (props.rules ?? []).map((rule) => {
-      const rowArray = [...rule.inputEntries, ...rule.outputEntries];
+      const rowArray = [...rule.inputEntries, ...rule.outputEntries].reduce((acc, entry) => {
+        if (Array.isArray(entry)) {
+          return [
+            ...acc,
+            ...entry.flatMap((entryElement) =>
+              typeof entryElement === "object" ? [...Object.values(entryElement)] : entryElement
+            ),
+          ];
+        }
+        if (typeof entry === "object") {
+          return [...acc, ...Object.values(entry)];
+        }
+        return [...acc, entry];
+      }, []);
       return getColumnsAtLastLevel(memoColumns).reduce((tableRow: any, column, columnIndex: number) => {
         tableRow[column.accessor] = rowArray[columnIndex] || EMPTY_SYMBOL;
         tableRow.rowDelegate = rule.rowDelegate;

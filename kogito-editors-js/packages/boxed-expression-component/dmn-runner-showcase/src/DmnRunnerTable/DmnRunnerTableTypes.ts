@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { DataType } from "../../../dist/api";
+import { DataType } from "boxed-expression-component/dist/api";
 
 export interface DmnRunnerClause {
   /** Clause name */

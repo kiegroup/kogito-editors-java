@@ -36,6 +36,16 @@ const MONACO_OPTIONS: Monaco.editor.IStandaloneEditorConstructionOptions = {
 export const READ_MODE = "editable-cell--read-mode";
 export const EDIT_MODE = "editable-cell--edit-mode";
 
+function usePrevious(value: any) {
+  const ref = useRef();
+
+  useEffect(() => {
+    ref.current = value;
+  }, [value]);
+
+  return ref.current;
+}
+
 export interface EditableCellProps extends CellProps {
   /** Cell's value */
   value: string;
@@ -51,13 +61,14 @@ export function EditableCell({ value, row: { index }, column: { id }, onCellUpda
   const textarea = useRef<HTMLTextAreaElement>(null);
   const [cellHeight, setCellHeight] = useState(CELL_LINE_HEIGHT * 3);
   const [preview, setPreview] = useState(value || "");
-  const [previousValue, setPreviousValue] = useState("");
 
   // Common Handlers =========================================================
 
   useEffect(() => {
     if (!value) {
       setPreview("");
+    } else {
+      setPreview(value);
     }
   }, [value, setPreview]);
 
@@ -67,11 +78,11 @@ export function EditableCell({ value, row: { index }, column: { id }, onCellUpda
     }
   }, [value, textarea]);
 
-  const isEditMode = useCallback(() => mode === EDIT_MODE, [mode]);
+  const isEditMode = useMemo(() => mode === EDIT_MODE, [mode]);
 
   const triggerReadMode = useCallback(
     (newValue?: string) => {
-      if (!isEditMode()) {
+      if (!isEditMode) {
         return;
       }
 
@@ -87,10 +98,9 @@ export function EditableCell({ value, row: { index }, column: { id }, onCellUpda
   );
 
   const triggerEditMode = useCallback(() => {
-    setPreviousValue(value);
     blurActiveElement();
     setMode(EDIT_MODE);
-  }, [setPreviousValue, value, setMode]);
+  }, [setMode]);
 
   const cssClass = useCallback(() => {
     const selectedClass = isSelected ? "editable-cell--selected" : "";
@@ -98,7 +108,7 @@ export function EditableCell({ value, row: { index }, column: { id }, onCellUpda
   }, [isSelected, mode]);
 
   const focus = useCallback(() => {
-    if (isEditMode()) {
+    if (isEditMode) {
       return;
     }
 
@@ -148,6 +158,7 @@ export function EditableCell({ value, row: { index }, column: { id }, onCellUpda
     [onCellUpdate, triggerReadMode]
   );
 
+  const previousValue = usePrevious(value);
   const onFeelKeyDown = useCallback(
     (event: Monaco.IKeyboardEvent, newValue: string) => {
       const key = event?.code.toLowerCase() || "";
@@ -166,7 +177,7 @@ export function EditableCell({ value, row: { index }, column: { id }, onCellUpda
       }
 
       if (isEsc) {
-        onCellUpdate(index, id, previousValue);
+        onCellUpdate(index, id, previousValue ?? "");
         triggerReadMode(previousValue);
       }
 
@@ -178,13 +189,13 @@ export function EditableCell({ value, row: { index }, column: { id }, onCellUpda
   );
 
   const onFeelChange = useCallback(
-    (_e, newValue, preview) => {
+    (_e, newValue, newPreview) => {
       height(newValue);
-      setPreview(preview);
+      setPreview(newPreview);
     },
     [setPreview, height]
   );
-  const onFeelLoad = useCallback((preview) => setPreview(preview), [setPreview]);
+  const onFeelLoad = useCallback((newPreview) => setPreview(newPreview), [setPreview]);
 
   // Sub Components ==========================================================
 
@@ -197,24 +208,20 @@ export function EditableCell({ value, row: { index }, column: { id }, onCellUpda
       <textarea
         className="editable-cell-textarea"
         ref={textarea}
-        value={
-          Array.isArray(value) ? JSON.stringify(value[index][id]) : typeof value === "object" ? value[id] : value || ""
-        }
+        value={typeof value === "object" ? value[id] : value || ""}
         onChange={onTextAreaChange}
         onFocus={onTextAreaFocus}
         onBlur={onTextAreaBlur}
         readOnly={readOnly}
       />
     );
-  }, [textarea, value, onTextAreaFocus, onTextAreaBlur, onTextAreaChange, readOnly]);
+  }, [textarea, value, index, id, onTextAreaFocus, onTextAreaBlur, onTextAreaChange, readOnly]);
 
   const feelInputElement = useMemo(() => {
     return (
       <FeelInput
-        enabled={isEditMode()}
-        value={
-          Array.isArray(value) ? JSON.stringify(value[index][id]) : typeof value === "object" ? value[id] : value || ""
-        }
+        enabled={isEditMode}
+        value={typeof value === "object" ? value[id] : value || ""}
         onKeyDown={onFeelKeyDown}
         onChange={onFeelChange}
         onLoad={onFeelLoad}
@@ -222,7 +229,7 @@ export function EditableCell({ value, row: { index }, column: { id }, onCellUpda
         onBlur={onFeelBlur}
       />
     );
-  }, [isEditMode, value, onFeelChange, onFeelLoad, onFeelKeyDown, onFeelBlur]);
+  }, [isEditMode, value, index, id, onFeelChange, onFeelLoad, onFeelKeyDown, onFeelBlur]);
 
   return (
     <>

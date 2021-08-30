@@ -10,6 +10,7 @@
     "build:prod": "rimraf dist && webpack --config webpack.production.js",
     "build:watch": "webpack --config webpack.development.js --watch",
     "build:publish": "rimraf dist && yarn copy:css && tsc -p tsconfig.json",
+    "build:publish:watch": "rimraf dist && yarn copy:css && tsc -p tsconfig.json --watch",
     "copy:css": "copyfiles -u 1 'src/**/*.{sass,scss,css}' dist/",
     "lint": "eslint --ext .ts,.tsx,.js ./src/",
     "test": "jest --collect-coverage",

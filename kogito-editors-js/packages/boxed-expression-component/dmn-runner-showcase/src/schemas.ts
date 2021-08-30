@@ -328,3 +328,47 @@ export const multipleCustomEnum = {
   },
   $ref: "#/definitions/InputSet",
 };
+
+export const inputOutput = {
+  definitions: {
+    tArray: {
+      type: "object",
+      properties: {
+        fee: {
+          type: "number",
+          "x-dmn-type": "FEEL:number",
+        },
+        test: {
+          type: "string",
+          "x-dmn-type": "FEEL:string",
+        },
+      },
+      "x-dmn-type": "DMNType{ https://kiegroup.org/dmn/_E701CB63-DF59-4255-A9E8-2D6B5AA0EC34 : tArray }",
+    },
+    OutputSet: {
+      type: "object",
+      properties: {
+        Array: {
+          $ref: "#/definitions/tArray",
+        },
+        myInput: {
+          $ref: "#/definitions/tArray",
+        },
+      },
+      "x-dmn-type": "DMNType{ https://kiegroup.org/dmn/_E701CB63-DF59-4255-A9E8-2D6B5AA0EC34 : OutputSet }",
+      "x-dmn-descriptions": {},
+    },
+    InputSet: {
+      required: ["myInput"],
+      type: "object",
+      properties: {
+        myInput: {
+          $ref: "#/definitions/tArray",
+        },
+      },
+      "x-dmn-type": "DMNType{ https://kiegroup.org/dmn/_E701CB63-DF59-4255-A9E8-2D6B5AA0EC34 : InputSet }",
+      "x-dmn-descriptions": {},
+    },
+  },
+  $ref: "#/definitions/InputSet",
+};

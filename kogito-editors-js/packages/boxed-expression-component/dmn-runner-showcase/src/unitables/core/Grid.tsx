@@ -1,7 +1,7 @@
 import { Bridge, joinName } from "uniforms";
 import * as React from "react";
 import { AutoField } from "./AutoField";
-import { DataType } from "../../../../dist/api";
+import { DataType } from "boxed-expression-component/dist/api";
 import { DmnRunnerClause } from "../../DmnRunnerTable/DmnRunnerTableTypes";
 import { DecisionResult, Result } from "../dmn";
 
@@ -23,17 +23,17 @@ export class Grid {
     }
     switch (extractedType) {
       case "<Undefined>":
-        return { dataType: DataType.Undefined, width: 150 }; // 150
+        return { dataType: DataType.Undefined, width: 150 };
       case "Any":
-        return { dataType: DataType.Any, width: 150 }; // 150
+        return { dataType: DataType.Any, width: 150 };
       case "boolean":
-        return { dataType: DataType.Boolean, width: 150 }; // 50
+        return { dataType: DataType.Boolean, width: 150 };
       case "context":
-        return { dataType: DataType.Context, width: 150 }; // 150
+        return { dataType: DataType.Context, width: 150 };
       case "date":
-        return { dataType: DataType.Date, width: 180 }; // 180
+        return { dataType: DataType.Date, width: 180 };
       case "date and time":
-        return { dataType: DataType.DateTime, width: 300 }; // 300
+        return { dataType: DataType.DateTime, width: 300 };
       case "days and time duration":
         return { dataType: DataType.DateTimeDuration, width: 150 };
       case "number":
@@ -93,7 +93,13 @@ export class Grid {
   ): [Map<string, DmnRunnerClause>, Result[]] {
     const outputTypeMap = Object.entries(schema?.definitions?.OutputSet?.properties ?? []).reduce(
       (acc: Map<string, DataType>, [name, properties]: [string, any]) => {
-        acc.set(name, this.getDataTypeProps(properties["x-dmn-type"]).dataType);
+        if (properties["x-dmn-type"]) {
+          acc.set(name, this.getDataTypeProps(properties["x-dmn-type"]).dataType);
+        } else {
+          const path = properties.$ref.split("/").slice(1); // remove #
+          const type = path.reduce((acc: any, property: string) => acc[property], schema);
+          acc.set(name, this.getDataTypeProps(type["x-dmn-type"]).dataType);
+        }
 
         return acc;
       },
@@ -106,7 +112,7 @@ export class Grid {
           decisionResult.forEach(({ decisionName }) => {
             acc.set(decisionName, {
               name: decisionName,
-              dataType: outputTypeMap.get(decisionName)!,
+              dataType: outputTypeMap.get(decisionName) ?? DataType.Undefined,
             });
           });
         }
