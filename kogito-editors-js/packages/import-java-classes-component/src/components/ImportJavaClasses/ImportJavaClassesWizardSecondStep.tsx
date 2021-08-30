@@ -33,13 +33,11 @@ export const ImportJavaClassesWizardSecondStep: React.FunctionComponent<ImportJa
   /* This function temporary mocks a call to the LSP service method getClasseFields */
   const loadJavaClassFields = (className: string) => {
     const retrieved: Map<string, string> = window.envelopeMock.lspGetClassFieldsServiceMocked(className);
-    if (retrieved) {
-      setRetrievedJavaClassFields((prevState) => {
-        const javaFields = Array.from(retrieved, ([key, value]) => new JavaClassField(key, value));
-        const javaClass = new JavaClass(className, javaFields);
-        return [...prevState, javaClass].sort((a, b) => (a.name < b.name ? -1 : 1));
-      });
-    }
+    setRetrievedJavaClassFields((prevState) => {
+      const javaFields = Array.from(retrieved, ([key, value]) => new JavaClassField(key, value));
+      const javaClass = new JavaClass(className, javaFields);
+      return [...prevState, javaClass].sort((a, b) => (a.name < b.name ? -1 : 1));
+    });
   };
   useEffect(
     () => selectedJavaClasses.forEach((className: string) => loadJavaClassFields(className)),
