@@ -65,18 +65,14 @@ export function EditableCell({ value, row: { index }, column: { id }, onCellUpda
   // Common Handlers =========================================================
 
   useEffect(() => {
-    if (!value) {
-      setPreview("");
-    } else {
-      setPreview(value);
-    }
-  }, [value, setPreview]);
+    setPreview(value || "");
+  }, [value]);
 
   useEffect(() => {
     if (textarea.current) {
       textarea.current.value = value || "";
     }
-  }, [value, textarea]);
+  }, [value]);
 
   const isEditMode = useMemo(() => mode === EDIT_MODE, [mode]);
 
@@ -94,68 +90,59 @@ export function EditableCell({ value, row: { index }, column: { id }, onCellUpda
 
       focusTextArea(textarea.current);
     },
-    [id, isEditMode, setMode, onCellUpdate, index, value]
+    [id, isEditMode, onCellUpdate, index, value]
   );
 
   const triggerEditMode = useCallback(() => {
     blurActiveElement();
     setMode(EDIT_MODE);
-  }, [setMode]);
+  }, []);
 
   const cssClass = useCallback(() => {
     const selectedClass = isSelected ? "editable-cell--selected" : "";
     return `editable-cell ${selectedClass} ${mode}`;
   }, [isSelected, mode]);
 
-  const focus = useCallback(() => {
+  const onFocus = useCallback(() => {
     if (isEditMode) {
       return;
     }
-
     setIsSelected(true);
-
     focusTextArea(textarea.current);
   }, [isEditMode, setIsSelected, textarea]);
 
   const onClick = useCallback(() => {
     if (document.activeElement !== textarea.current) {
-      focus();
+      onFocus();
     }
-  }, [focus]);
+  }, [onFocus]);
 
-  const onDoubleClick = useCallback(triggerEditMode, [triggerEditMode]);
-
-  const height = useCallback(
-    (value: string) => {
-      const numberOfValueLines = `${value}`.split("\n").length + 1;
-      const numberOfLines = numberOfValueLines < 3 ? 3 : numberOfValueLines;
-      setCellHeight(numberOfLines * CELL_LINE_HEIGHT);
-    },
-    [setCellHeight]
-  );
+  const height = useCallback((value: string) => {
+    const numberOfValueLines = `${value}`.split("\n").length + 1;
+    const numberOfLines = numberOfValueLines < 3 ? 3 : numberOfValueLines;
+    setCellHeight(numberOfLines * CELL_LINE_HEIGHT);
+  }, []);
 
   // TextArea Handlers =======================================================
 
-  const onTextAreaFocus = useCallback(focus, [focus]);
-
-  const onTextAreaBlur = useCallback(() => setIsSelected(false), [setIsSelected]);
+  const onTextAreaBlur = useCallback(() => setIsSelected(false), []);
 
   const onTextAreaChange = useCallback(
     (event) => {
-      triggerEditMode();
       onCellUpdate(index, id, event.target.value);
+      triggerEditMode();
     },
-    [onCellUpdate, triggerEditMode]
+    [onCellUpdate, id, index, triggerEditMode]
   );
 
   // Feel Handlers ===========================================================
 
   const onFeelBlur = useCallback(
     (newValue: string) => {
-      triggerReadMode(newValue);
       onCellUpdate(index, id, newValue);
+      triggerReadMode(newValue);
     },
-    [onCellUpdate, triggerReadMode]
+    [onCellUpdate, id, index, triggerReadMode]
   );
 
   const previousValue = usePrevious(value);
@@ -185,7 +172,7 @@ export function EditableCell({ value, row: { index }, column: { id }, onCellUpda
         focusNextTextArea(textarea.current);
       }
     },
-    [triggerReadMode, previousValue]
+    [triggerReadMode, onCellUpdate, id, index]
   );
 
   const onFeelChange = useCallback(
@@ -193,50 +180,38 @@ export function EditableCell({ value, row: { index }, column: { id }, onCellUpda
       height(newValue);
       setPreview(newPreview);
     },
-    [setPreview, height]
+    [height]
   );
-  const onFeelLoad = useCallback((newPreview) => setPreview(newPreview), [setPreview]);
 
-  // Sub Components ==========================================================
-
-  const readOnlyElement = useMemo(() => {
-    return <span className="editable-cell-value" dangerouslySetInnerHTML={{ __html: preview }}></span>;
-  }, [preview]);
-
-  const eventHandlerElement = useMemo(() => {
-    return (
-      <textarea
-        className="editable-cell-textarea"
-        ref={textarea}
-        value={typeof value === "object" ? value[id] : value || ""}
-        onChange={onTextAreaChange}
-        onFocus={onTextAreaFocus}
-        onBlur={onTextAreaBlur}
-        readOnly={readOnly}
-      />
-    );
-  }, [textarea, value, index, id, onTextAreaFocus, onTextAreaBlur, onTextAreaChange, readOnly]);
-
-  const feelInputElement = useMemo(() => {
-    return (
-      <FeelInput
-        enabled={isEditMode}
-        value={typeof value === "object" ? value[id] : value || ""}
-        onKeyDown={onFeelKeyDown}
-        onChange={onFeelChange}
-        onLoad={onFeelLoad}
-        options={MONACO_OPTIONS}
-        onBlur={onFeelBlur}
-      />
-    );
-  }, [isEditMode, value, index, id, onFeelChange, onFeelLoad, onFeelKeyDown, onFeelBlur]);
+  const onFeelLoad = useCallback((newPreview) => setPreview(newPreview), []);
 
   return (
     <>
-      <div onDoubleClick={onDoubleClick} onClick={onClick} style={{ height: `${cellHeight}px` }} className={cssClass()}>
-        {readOnlyElement}
-        {eventHandlerElement}
-        {feelInputElement}
+      <div
+        onDoubleClick={triggerEditMode}
+        onClick={onClick}
+        style={{ height: `${cellHeight}px` }}
+        className={cssClass()}
+      >
+        <span className="editable-cell-value" dangerouslySetInnerHTML={{ __html: preview }} />
+        <textarea
+          className="editable-cell-textarea"
+          ref={textarea}
+          value={typeof value === "object" ? value[id] : value || ""}
+          onChange={onTextAreaChange}
+          onFocus={onFocus}
+          onBlur={onTextAreaBlur}
+          readOnly={readOnly}
+        />
+        <FeelInput
+          enabled={isEditMode}
+          value={typeof value === "object" ? value[id] : value || ""}
+          onKeyDown={onFeelKeyDown}
+          onChange={onFeelChange}
+          onLoad={onFeelLoad}
+          options={MONACO_OPTIONS}
+          onBlur={onFeelBlur}
+        />
       </div>
     </>
   );

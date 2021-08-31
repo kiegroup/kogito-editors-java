@@ -96,6 +96,10 @@
   color: gray;
 }
 
+.expression-container .table-component table th:not(.no-clickable-cell) .header-cell-info {
+  cursor: unset
+}
+
 /* LogicTypeSelector */
 .expression-container .logic-type-selector {
   display: flex;

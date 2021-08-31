@@ -18,7 +18,6 @@ import * as React from "react";
 import { DataType } from "./api";
 import { TableResizerProps } from "react-table";
 
-// Extending react-table definitions with missing and custom properties
 declare module "react-table" {
   export interface ContextMenuEvent {
     preventDefault: () => void;

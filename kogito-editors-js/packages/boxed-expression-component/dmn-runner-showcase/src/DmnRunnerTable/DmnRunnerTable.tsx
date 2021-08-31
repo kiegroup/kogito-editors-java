@@ -15,7 +15,7 @@
  */
 
 import * as React from "react";
-import { useCallback, useContext, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import "boxed-expression-component/dist";
 import { ColumnInstance, DataRecord } from "react-table";
 import {
@@ -24,7 +24,6 @@ import {
   TableHeaderVisibility,
   TableOperation,
 } from "boxed-expression-component/dist/api";
-import { BoxedExpressionGlobalContext } from "boxed-expression-component/dist/context";
 import { getColumnsAtLastLevel, Table } from "boxed-expression-component/dist/components";
 import "./DmnRunnerTable.css";
 import { DmnRunnerClause, DmnRunnerRule } from "./DmnRunnerTableTypes";
@@ -80,8 +79,6 @@ export function DmnRunnerTable(props: DmnRunnerTableProps) {
     [i18n]
   );
 
-  const { setSupervisorHash } = useContext(BoxedExpressionGlobalContext);
-
   const getHandlerConfiguration = useMemo(() => {
     const configuration: { [columnGroupType: string]: GroupOperations[] } = {};
     configuration[EMPTY_SYMBOL] = generateHandlerConfigurationByColumn;
@@ -108,7 +105,7 @@ export function DmnRunnerTable(props: DmnRunnerTableProps) {
             width: insideInputClauses.width,
             groupType: DecisionTableColumnType.InputClause,
             cellDelegate: insideInputClauses.cellDelegate,
-          } as any;
+          };
         });
         return {
           groupType: DecisionTableColumnType.InputClause,
@@ -151,7 +148,8 @@ export function DmnRunnerTable(props: DmnRunnerTableProps) {
             cssClasses: "decision-table--output",
             columns: columns,
             appendColumnsOnChildren: true,
-          };
+            dataType: props.output?.[outputIndex]?.dataType,
+          } as ColumnInstance;
         });
       }
       if (outputEntry !== null && typeof outputEntry === "object") {
@@ -173,7 +171,8 @@ export function DmnRunnerTable(props: DmnRunnerTableProps) {
             cssClasses: "decision-table--output",
             columns: columns,
             appendColumnsOnChildren: true,
-          },
+            dataType: props.output?.[outputIndex]?.dataType,
+          } as ColumnInstance,
         ];
       }
       return [
@@ -218,7 +217,7 @@ export function DmnRunnerTable(props: DmnRunnerTableProps) {
   const onRowsUpdate = useCallback(
     (updatedRows, operation?: TableOperation, updatedRowIndex?: number) => {
       const newRows = updatedRows.map((row: any) =>
-        getColumnsAtLastLevel(memoColumns).reduce((filledRow: DataRecord, column: ColumnInstance) => {
+        getColumnsAtLastLevel(memoColumns).reduce((filledRow: DataRecord, column) => {
           if (row.rowDelegate) {
             filledRow[column.accessor] = row[column.accessor];
             filledRow.rowDelegate = row.rowDelegate;
@@ -237,7 +236,7 @@ export function DmnRunnerTable(props: DmnRunnerTableProps) {
   );
 
   const onRowAdding = useCallback(() => {
-    return getColumnsAtLastLevel(memoColumns).reduce((tableRow: DataRecord, column: ColumnInstance) => {
+    return getColumnsAtLastLevel(memoColumns).reduce((tableRow: DataRecord, column) => {
       tableRow[column.accessor] = EMPTY_SYMBOL;
       return tableRow;
     }, {} as DataRecord);

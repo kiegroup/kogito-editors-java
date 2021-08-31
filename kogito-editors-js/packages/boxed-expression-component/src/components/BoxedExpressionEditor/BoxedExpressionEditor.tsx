@@ -17,6 +17,7 @@
 import * as React from "react";
 import { useCallback, useState } from "react";
 import "@patternfly/react-core/dist/styles/base-no-reset.css";
+import "@patternfly/react-styles/css/components/Drawer/drawer.css";
 import { ExpressionProps, PMMLParams } from "../../api";
 import {
   boxedExpressionEditorDictionaries,
