@@ -74,6 +74,7 @@ import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.ListSelect
 import org.kie.workbench.common.dmn.client.widgets.grid.keyboard.KeyboardOperationEditCell;
 import org.kie.workbench.common.dmn.client.widgets.grid.keyboard.KeyboardOperationEscapeGridCell;
 import org.kie.workbench.common.dmn.client.widgets.grid.keyboard.KeyboardOperationInvokeContextMenuForSelectedCell;
+import org.kie.workbench.common.dmn.client.widgets.grid.model.ExpressionEditorChanged;
 import org.kie.workbench.common.dmn.client.widgets.layer.DMNGridLayer;
 import org.kie.workbench.common.dmn.client.widgets.panel.DMNGridPanel;
 import org.kie.workbench.common.dmn.client.widgets.panel.DMNGridPanelContainer;
@@ -141,6 +142,7 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
     private Supplier<ExpressionEditorDefinitions> expressionEditorDefinitionsSupplier;
     private Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent;
     private Event<DomainObjectSelectionEvent> domainObjectSelectionEvent;
+    private Event<ExpressionEditorChanged> editorSelectedEvent;
     private PMMLDocumentMetadataProvider pmmlDocumentMetadataProvider;
 
     private DMNGridPanel gridPanel;
@@ -170,6 +172,7 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
                                     final @DMNEditor Supplier<ExpressionEditorDefinitions> expressionEditorDefinitionsSupplier,
                                     final Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent,
                                     final Event<DomainObjectSelectionEvent> domainObjectSelectionEvent,
+                                    final Event<ExpressionEditorChanged> editorSelectedEvent,
                                     final PMMLDocumentMetadataProvider pmmlDocumentMetadataProvider,
                                     final HTMLAnchorElement tryIt,
                                     final HTMLAnchorElement switchBack,
@@ -191,6 +194,7 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
         this.expressionEditorDefinitionsSupplier = expressionEditorDefinitionsSupplier;
         this.refreshFormPropertiesEvent = refreshFormPropertiesEvent;
         this.domainObjectSelectionEvent = domainObjectSelectionEvent;
+        this.editorSelectedEvent = editorSelectedEvent;
         this.pmmlDocumentMetadataProvider = pmmlDocumentMetadataProvider;
 
         this.tryIt = tryIt;
@@ -346,12 +350,13 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
     }
 
     public void resetExpressionDefinition() {
+        editorSelectedEvent.fire(new ExpressionEditorChanged(nodeUUID));
         hasExpression.setExpression(null);
     }
 
     public void broadcastLiteralExpressionDefinition(final LiteralExpressionProps literalExpressionProps) {
-        setExpressionName(literalExpressionProps);
-        setTypeRef(literalExpressionProps.dataType);
+        editorSelectedEvent.fire(new ExpressionEditorChanged(nodeUUID));
+        setExpressionNameAndDataType(literalExpressionProps);
         if (hasExpression.getExpression() == null) {
             hasExpression.setExpression(new LiteralExpression());
         }
@@ -359,8 +364,8 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
     }
 
     public void broadcastContextExpressionDefinition(final ContextProps contextProps) {
-        setExpressionName(contextProps);
-        setTypeRef(contextProps.dataType);
+        editorSelectedEvent.fire(new ExpressionEditorChanged(nodeUUID));
+        setExpressionNameAndDataType(contextProps);
         if (hasExpression.getExpression() == null) {
             hasExpression.setExpression(new Context());
         }
@@ -368,6 +373,7 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
     }
 
     public void broadcastRelationExpressionDefinition(final RelationProps relationProps) {
+        editorSelectedEvent.fire(new ExpressionEditorChanged(nodeUUID));
         if (hasExpression.getExpression() == null) {
             hasExpression.setExpression(new Relation());
         }
@@ -375,6 +381,7 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
     }
 
     public void broadcastListExpressionDefinition(final ListProps listProps) {
+        editorSelectedEvent.fire(new ExpressionEditorChanged(nodeUUID));
         if (hasExpression.getExpression() == null) {
             hasExpression.setExpression(new List());
         }
@@ -382,8 +389,8 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
     }
 
     public void broadcastInvocationExpressionDefinition(final InvocationProps invocationProps) {
-        setExpressionName(invocationProps);
-        setTypeRef(invocationProps.dataType);
+        editorSelectedEvent.fire(new ExpressionEditorChanged(nodeUUID));
+        setExpressionNameAndDataType(invocationProps);
         if (hasExpression.getExpression() == null) {
             hasExpression.setExpression(new Invocation());
         }
@@ -391,8 +398,8 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
     }
 
     public void broadcastFunctionExpressionDefinition(final FunctionProps functionProps) {
-        setExpressionName(functionProps);
-        setTypeRef(functionProps.dataType);
+        editorSelectedEvent.fire(new ExpressionEditorChanged(nodeUUID));
+        setExpressionNameAndDataType(functionProps);
         if (hasExpression.getExpression() == null) {
             hasExpression.setExpression(new FunctionDefinition());
         }
@@ -431,9 +438,14 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
         return hasName.orElse(fallbackHasName).getValue().getValue();
     }
 
-    private void setExpressionName(final ExpressionProps expressionProps) {
+    private void setExpressionNameAndDataType(final ExpressionProps expressionProps) {
+        setExpressionName(expressionProps.name);
+        setTypeRef(expressionProps.dataType);
+    }
+
+    private void setExpressionName(final String name) {
         final HasName hasName = (HasName) hasExpression;
-        hasName.setName(new Name(expressionProps.name));
+        hasName.setName(new Name(name));
     }
 
     private void setTypeRef(final String dataType) {

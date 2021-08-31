@@ -52,6 +52,7 @@ import org.kie.workbench.common.dmn.client.widgets.grid.ExpressionGridCacheImpl;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.container.CellEditorControlsView;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.ListSelectorView;
 import org.kie.workbench.common.dmn.client.widgets.grid.keyboard.KeyboardOperationEscapeGridCell;
+import org.kie.workbench.common.dmn.client.widgets.grid.model.ExpressionEditorChanged;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.GridCellTuple;
 import org.kie.workbench.common.dmn.client.widgets.layer.DMNGridLayer;
 import org.kie.workbench.common.dmn.client.widgets.panel.DMNGridPanel;
@@ -158,6 +159,9 @@ public class ExpressionEditorViewImplTest {
     private EventSourceMock<DomainObjectSelectionEvent> domainObjectSelectionEvent;
 
     @Mock
+    private EventSourceMock<ExpressionEditorChanged> editorSelectedEvent;
+
+    @Mock
     private PMMLDocumentMetadataProvider pmmlDocumentMetadataProvider;
 
     @Mock
@@ -261,6 +265,7 @@ public class ExpressionEditorViewImplTest {
                                                      expressionEditorDefinitionsSupplier,
                                                      refreshFormPropertiesEvent,
                                                      domainObjectSelectionEvent,
+                                                     editorSelectedEvent,
                                                      pmmlDocumentMetadataProvider,
                                                      tryIt,
                                                      switchBack,
