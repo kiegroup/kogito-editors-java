@@ -132,6 +132,7 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
     private Supplier<ExpressionEditorDefinitions> expressionEditorDefinitionsSupplier;
     private Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent;
     private Event<DomainObjectSelectionEvent> domainObjectSelectionEvent;
+    private PMMLDocumentMetadataProvider pmmlDocumentMetadataProvider;
 
     private DMNGridPanel gridPanel;
     private DMNGridLayer gridLayer;
@@ -180,6 +181,7 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
         this.expressionEditorDefinitionsSupplier = expressionEditorDefinitionsSupplier;
         this.refreshFormPropertiesEvent = refreshFormPropertiesEvent;
         this.domainObjectSelectionEvent = domainObjectSelectionEvent;
+        this.pmmlDocumentMetadataProvider = pmmlDocumentMetadataProvider;
 
         this.tryIt = tryIt;
         this.switchBack = switchBack;
@@ -269,7 +271,8 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
     @Override
     public void activate() {
         DMNLoader.renderBoxedExpressionEditor(".kie-dmn-new-expression-editor",
-                                              ExpressionFiller.buildAndFillJsInteropProp(hasExpression.getExpression(), getExpressionName(), getDataType()));
+                                              ExpressionFiller.buildAndFillJsInteropProp(hasExpression.getExpression(), getExpressionName(), getDataType()),
+                                              buildPmmlParams());
         BoxedExpressionService.registerBroadcastForExpression(this);
     }
 
@@ -428,6 +431,34 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
         dmnExpressionType.classList.toggle("hidden");
         dmnExpressionEditor.classList.toggle("hidden");
         newBoxedExpression.classList.toggle("hidden");
+    }
+
+    private PMMLParam[] buildPmmlParams() {
+        return pmmlDocumentMetadataProvider.getPMMLDocumentNames()
+                .stream()
+                .map(documentToPMMLParamMapper())
+                .toArray(PMMLParam[]::new);
+    }
+
+    private Function<String, PMMLParam> documentToPMMLParamMapper() {
+        return documentName -> {
+            final ModelsFromDocument[] modelsFromDocuments = pmmlDocumentMetadataProvider
+                    .getPMMLDocumentModels(documentName)
+                    .stream()
+                    .map(modelToEntryInfoMapper(documentName))
+                    .toArray(ModelsFromDocument[]::new);
+            return new PMMLParam(documentName, modelsFromDocuments);
+        };
+    }
+
+    private Function<String, ModelsFromDocument> modelToEntryInfoMapper(String documentName) {
+        return modelName -> {
+            final EntryInfo[] parametersFromModel = pmmlDocumentMetadataProvider.getPMMLDocumentModelParameterNames(documentName, modelName)
+                    .stream()
+                    .map(parameter -> new EntryInfo(parameter, UNDEFINED.getText()))
+                    .toArray(EntryInfo[]::new);
+            return new ModelsFromDocument(modelName, parametersFromModel);
+        };
     }
 
     @EventHandler("returnToLink")

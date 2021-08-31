@@ -44,6 +44,7 @@ import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.client.commands.factory.DefaultCanvasCommandFactory;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinition;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinitions;
+import org.kie.workbench.common.dmn.client.editors.expressions.types.function.supplementary.pmml.PMMLDocumentMetadataProvider;
 import org.kie.workbench.common.dmn.client.session.DMNEditorSession;
 import org.kie.workbench.common.dmn.client.widgets.grid.BaseExpressionGrid;
 import org.kie.workbench.common.dmn.client.widgets.grid.ExpressionGridCache;
@@ -157,6 +158,9 @@ public class ExpressionEditorViewImplTest {
     private EventSourceMock<DomainObjectSelectionEvent> domainObjectSelectionEvent;
 
     @Mock
+    private PMMLDocumentMetadataProvider pmmlDocumentMetadataProvider;
+
+    @Mock
     private ExpressionEditorDefinition undefinedExpressionEditorDefinition;
 
     @Mock
@@ -257,6 +261,7 @@ public class ExpressionEditorViewImplTest {
                                                      expressionEditorDefinitionsSupplier,
                                                      refreshFormPropertiesEvent,
                                                      domainObjectSelectionEvent,
+                                                     pmmlDocumentMetadataProvider,
                                                      tryIt,
                                                      switchBack,
                                                      betaBoxedExpressionToggle,
