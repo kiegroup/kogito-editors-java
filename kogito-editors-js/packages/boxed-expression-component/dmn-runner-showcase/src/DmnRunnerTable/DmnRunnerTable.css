@@ -97,7 +97,7 @@
 }
 
 .expression-container .table-component table th:not(.no-clickable-cell) .header-cell-info {
-  cursor: unset
+  cursor: unset;
 }
 
 /* LogicTypeSelector */

@@ -1,6 +1,6 @@
 const CopyPlugin = require("copy-webpack-plugin");
 const path = require("path");
-const { patternflyRules } = require("@kogito-tooling/patternfly-base/patternflyWebpackOptions")
+const { patternflyRules } = require("@kogito-tooling/patternfly-base/patternflyWebpackOptions");
 
 module.exports = () => {
   return {
@@ -15,9 +15,7 @@ module.exports = () => {
     },
     plugins: [
       new CopyPlugin({
-        patterns: [
-          { from: "./public", to: "./" },
-        ],
+        patterns: [{ from: "./public", to: "./" }],
       }),
     ],
     module: {
@@ -37,7 +35,7 @@ module.exports = () => {
                 compilerOptions: {
                   declaration: true,
                   outDir: "dist",
-                  sourceMap: true
+                  sourceMap: true,
                 },
               },
             },
@@ -58,7 +56,12 @@ module.exports = () => {
     resolve: {
       fallback: { path: require.resolve("path-browserify") }, // Required for `minimatch`, as Webpack 5 doesn't add polyfills automatically anymore.
       extensions: [".tsx", ".ts", ".js", ".jsx"],
-      modules: [path.resolve("../../../node_modules"), path.resolve("../../node_modules"), path.resolve("./node_modules"), path.resolve("./src")],
+      modules: [
+        path.resolve("../../../node_modules"),
+        path.resolve("../../node_modules"),
+        path.resolve("./node_modules"),
+        path.resolve("./src"),
+      ],
     },
   };
 };

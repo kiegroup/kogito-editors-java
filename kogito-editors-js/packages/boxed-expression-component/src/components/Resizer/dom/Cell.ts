@@ -74,7 +74,6 @@ export class Cell {
   }
 
   refreshWidthAsLastGroupColumn(index: number): void {
-    console.log(this.isColSpanHeader());
     if (!this.isColSpanHeader() && !this.getParentRow()?.classList.contains("table-row")) {
       return;
     }
@@ -95,14 +94,13 @@ export class Cell {
 
     // if is header uses the headerType, if not (inputs/outputs cells) use the .data-cell class
     const children: HTMLElement[] = [].slice.call(
-      this.isColSpanHeader()
-        ? (refSibling as HTMLElement).querySelectorAll(`.${this.getHeaderType()}`)
-        : (refSibling as HTMLElement).querySelectorAll(".data-cell")
+      (refSibling as HTMLElement).querySelectorAll(`.${this.getHeaderType()}`)
     );
+
     const colSpan = (this.element?.parentNode as HTMLTableHeaderCellElement)?.colSpan;
     if (colSpan > 1) {
       const firstReact = children[0].getBoundingClientRect();
-      const lastReact = children[(colSpan - 1)].getBoundingClientRect();
+      const lastReact = children[colSpan - 1].getBoundingClientRect();
       this.setWidth(lastReact.width + firstReact.width - BORDER * 2);
     } else {
       const childrenRects = children[(index - headerSize) % children.length]?.getBoundingClientRect();

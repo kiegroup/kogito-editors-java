@@ -26,9 +26,7 @@ export const dmnAutoTableI18nDefaults: I18nDefaults<DmnAutoTableI18n> = {
   dictionary: en,
 };
 export const dmnAutoTableDictionaries: I18nDictionaries<DmnAutoTableI18n> = new Map([["en", en]]);
-export const DmnAutoTableI18nContext = React.createContext<I18nContextType<DmnAutoTableI18n>>(
-  {} as never
-);
+export const DmnAutoTableI18nContext = React.createContext<I18nContextType<DmnAutoTableI18n>>({} as never);
 
 export function useDmnAutoTableI18n(): I18nContextType<DmnAutoTableI18n> {
   return useContext(DmnAutoTableI18nContext);

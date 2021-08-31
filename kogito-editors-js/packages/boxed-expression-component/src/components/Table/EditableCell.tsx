@@ -60,7 +60,7 @@ export function EditableCell({ value, row: { index }, column: { id }, onCellUpda
   const [mode, setMode] = useState(READ_MODE);
   const textarea = useRef<HTMLTextAreaElement>(null);
   const [cellHeight, setCellHeight] = useState(CELL_LINE_HEIGHT * 3);
-  const [preview, setPreview] = useState(value || "");
+  const [preview, setPreview] = useState<string>("");
 
   // Common Handlers =========================================================
 
@@ -117,22 +117,16 @@ export function EditableCell({ value, row: { index }, column: { id }, onCellUpda
     }
   }, [onFocus]);
 
-  const height = useCallback((value: string) => {
-    const numberOfValueLines = `${value}`.split("\n").length + 1;
-    const numberOfLines = numberOfValueLines < 3 ? 3 : numberOfValueLines;
-    setCellHeight(numberOfLines * CELL_LINE_HEIGHT);
-  }, []);
-
   // TextArea Handlers =======================================================
 
   const onTextAreaBlur = useCallback(() => setIsSelected(false), []);
 
   const onTextAreaChange = useCallback(
     (event) => {
-      onCellUpdate(index, id, event.target.value);
+      onCellUpdate(index, id, event.target.value.trim());
       triggerEditMode();
     },
-    [onCellUpdate, id, index, triggerEditMode]
+    [triggerEditMode, onCellUpdate, id, index]
   );
 
   // Feel Handlers ===========================================================
@@ -142,7 +136,7 @@ export function EditableCell({ value, row: { index }, column: { id }, onCellUpda
       onCellUpdate(index, id, newValue);
       triggerReadMode(newValue);
     },
-    [onCellUpdate, id, index, triggerReadMode]
+    [triggerReadMode, onCellUpdate, id, index]
   );
 
   const previousValue = usePrevious(value);
@@ -164,7 +158,7 @@ export function EditableCell({ value, row: { index }, column: { id }, onCellUpda
       }
 
       if (isEsc) {
-        onCellUpdate(index, id, previousValue ?? "");
+        onCellUpdate(index, id, previousValue!);
         triggerReadMode(previousValue);
       }
 
@@ -175,13 +169,12 @@ export function EditableCell({ value, row: { index }, column: { id }, onCellUpda
     [triggerReadMode, onCellUpdate, id, index]
   );
 
-  const onFeelChange = useCallback(
-    (_e, newValue, newPreview) => {
-      height(newValue);
-      setPreview(newPreview);
-    },
-    [height]
-  );
+  const onFeelChange = useCallback((_e, newValue, newPreview) => {
+    const numberOfValueLines = `${newValue}`.split("\n").length + 1;
+    const numberOfLines = numberOfValueLines < 3 ? 3 : numberOfValueLines;
+    setCellHeight(numberOfLines * CELL_LINE_HEIGHT);
+    setPreview(newPreview);
+  }, []);
 
   const onFeelLoad = useCallback((newPreview) => setPreview(newPreview), []);
 

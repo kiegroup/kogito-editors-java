@@ -289,9 +289,5 @@ export const TableHeader: React.FunctionComponent<TableHeaderProps> = ({
     }
   }, [headerVisibility, renderHeaderGroups, renderAtLevelInHeaderGroups, renderAtLevelInHeaderGroups]);
 
-  return (
-    <>
-      {header}
-    </>
-  );
+  return <>{header}</>;
 };

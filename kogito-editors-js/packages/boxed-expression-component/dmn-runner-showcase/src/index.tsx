@@ -123,7 +123,6 @@ export const App: React.FunctionComponent = () => {
             </Button>
           </div>
         </div>
-
       </div>
 
       <div className="showcase">

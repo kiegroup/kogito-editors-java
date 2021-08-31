@@ -80,7 +80,7 @@ export const TableBody: React.FunctionComponent<TableBodyProps> = ({
         cellType += " input";
       }
 
-      const tdProp = tdProps(cellIndex, rowIndex)
+      const tdProp = tdProps(cellIndex, rowIndex);
 
       return (
         <Td
