@@ -16,6 +16,7 @@
 package org.kie.workbench.common.dmn.client.editors.expressions;
 
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import javax.enterprise.context.Dependent;
@@ -37,6 +38,7 @@ import org.kie.workbench.common.dmn.api.definition.HasName;
 import org.kie.workbench.common.dmn.api.definition.HasVariable;
 import org.kie.workbench.common.dmn.api.definition.model.Context;
 import org.kie.workbench.common.dmn.api.definition.model.Expression;
+import org.kie.workbench.common.dmn.api.definition.model.FunctionDefinition;
 import org.kie.workbench.common.dmn.api.definition.model.InformationItemPrimary;
 import org.kie.workbench.common.dmn.api.definition.model.Invocation;
 import org.kie.workbench.common.dmn.api.definition.model.List;
@@ -49,14 +51,19 @@ import org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType;
 import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
 import org.kie.workbench.common.dmn.client.commands.factory.DefaultCanvasCommandFactory;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.ContextProps;
+import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.EntryInfo;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.ExpressionProps;
+import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.FunctionProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.InvocationProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.ListProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.LiteralExpressionProps;
+import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.ModelsFromDocument;
+import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.PMMLParam;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.RelationProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.util.BoxedExpressionService;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.util.ExpressionFiller;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinitions;
+import org.kie.workbench.common.dmn.client.editors.expressions.types.function.supplementary.pmml.PMMLDocumentMetadataProvider;
 import org.kie.workbench.common.dmn.client.js.DMNLoader;
 import org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants;
 import org.kie.workbench.common.dmn.client.session.DMNSession;
@@ -83,6 +90,8 @@ import org.uberfire.ext.wires.core.grids.client.widget.grid.impl.KeyboardOperati
 import org.uberfire.ext.wires.core.grids.client.widget.grid.impl.KeyboardOperationMoveUp;
 import org.uberfire.ext.wires.core.grids.client.widget.layer.pinning.TransformMediator;
 import org.uberfire.ext.wires.core.grids.client.widget.layer.pinning.impl.RestrictedMousePanMediator;
+
+import static org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionType.UNDEFINED;
 
 @Templated
 @Dependent
@@ -161,6 +170,7 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
                                     final @DMNEditor Supplier<ExpressionEditorDefinitions> expressionEditorDefinitionsSupplier,
                                     final Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent,
                                     final Event<DomainObjectSelectionEvent> domainObjectSelectionEvent,
+                                    final PMMLDocumentMetadataProvider pmmlDocumentMetadataProvider,
                                     final HTMLAnchorElement tryIt,
                                     final HTMLAnchorElement switchBack,
                                     final HTMLDivElement betaBoxedExpressionToggle,
@@ -372,10 +382,21 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
     }
 
     public void broadcastInvocationExpressionDefinition(final InvocationProps invocationProps) {
+        setExpressionName(invocationProps);
+        setTypeRef(invocationProps.dataType);
         if (hasExpression.getExpression() == null) {
             hasExpression.setExpression(new Invocation());
         }
         ExpressionFiller.fillInvocationExpression((Invocation) hasExpression.getExpression(), invocationProps);
+    }
+
+    public void broadcastFunctionExpressionDefinition(final FunctionProps functionProps) {
+        setExpressionName(functionProps);
+        setTypeRef(functionProps.dataType);
+        if (hasExpression.getExpression() == null) {
+            hasExpression.setExpression(new FunctionDefinition());
+        }
+        ExpressionFiller.fillFunctionExpression((FunctionDefinition) hasExpression.getExpression(), functionProps);
     }
 
     void renderNewBoxedExpression() {

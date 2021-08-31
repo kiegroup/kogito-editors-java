@@ -44,11 +44,17 @@ import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.C
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.ContextProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.EntryInfo;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.ExpressionProps;
+import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.FeelFunctionProps;
+import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.FunctionProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.InvocationProps;
+import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.JavaFunctionProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.ListProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.LiteralExpressionProps;
+import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.PmmlFunctionProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.RelationProps;
 
+import static org.kie.workbench.common.dmn.api.definition.model.LiteralExpressionPMMLDocument.VARIABLE_DOCUMENT;
+import static org.kie.workbench.common.dmn.api.definition.model.LiteralExpressionPMMLDocumentModel.VARIABLE_MODEL;
 import static org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionType.CONTEXT;
 import static org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionType.DECISION_TABLE;
 import static org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionType.FUNCTION;
@@ -56,6 +62,9 @@ import static org.kie.workbench.common.dmn.client.editors.expressions.types.Expr
 import static org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionType.LIST;
 import static org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionType.LITERAL_EXPRESSION;
 import static org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionType.RELATION;
+import static org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionType.UNDEFINED;
+import static org.kie.workbench.common.dmn.client.editors.expressions.types.function.supplementary.java.JavaFunctionEditorDefinition.VARIABLE_CLASS;
+import static org.kie.workbench.common.dmn.client.editors.expressions.types.function.supplementary.java.JavaFunctionEditorDefinition.VARIABLE_METHOD_SIGNATURE;
 
 public class ExpressionFiller {
 
@@ -90,6 +99,14 @@ public class ExpressionFiller {
         invocationExpression.getBinding().addAll(bindingsConvertForInvocationExpression(invocationProps));
     }
 
+    public static void fillFunctionExpression(final FunctionDefinition functionExpression, final FunctionProps functionProps) {
+        final FunctionDefinition.Kind functionKind = FunctionDefinition.Kind.fromValue(functionProps.functionKind);
+        functionExpression.getFormalParameter().clear();
+        functionExpression.getFormalParameter().addAll(formalParametersConvertForFunctionExpression(functionProps));
+        functionExpression.setKind(functionKind);
+        functionExpression.setExpression(wrappedExpressionBasedOnKind(functionKind, functionProps));
+    }
+
     public static ExpressionProps buildAndFillJsInteropProp(final Expression wrappedExpression, final String expressionName, final String dataType) {
         if (wrappedExpression instanceof IsLiteralExpression) {
             final LiteralExpression literalExpression = (LiteralExpression) wrappedExpression;
@@ -108,7 +125,9 @@ public class ExpressionFiller {
             final String invokedFunction = ((LiteralExpression) Optional.ofNullable(invocationExpression.getExpression()).orElse(new LiteralExpression())).getText().getValue();
             return new InvocationProps(expressionName, dataType, invokedFunction, bindingsConvertForInvocationProps(invocationExpression));
         } else if (wrappedExpression instanceof FunctionDefinition) {
-
+            final FunctionDefinition functionExpression = (FunctionDefinition) wrappedExpression;
+            final EntryInfo[] formalParameters = formalParametersConvertForFunctionProps(functionExpression);
+            return specificFunctionPropsBasedOnFunctionKind(expressionName, dataType, functionExpression, formalParameters);
         } else if (wrappedExpression instanceof DecisionTable) {
 
         }
@@ -119,7 +138,7 @@ public class ExpressionFiller {
         final ContextEntry resultContextEntry = !contextExpression.getContextEntry().isEmpty() ?
                 contextExpression.getContextEntry().get(contextExpression.getContextEntry().size() - 1) :
                 new ContextEntry();
-        return buildAndFillJsInteropProp(resultContextEntry.getExpression(), "Result Expression", "<Undefined>");
+        return buildAndFillJsInteropProp(resultContextEntry.getExpression(), "Result Expression", UNDEFINED.getText());
     }
 
     private static ContextEntryProps[] contextEntriesConvertForContextProps(final Context contextExpression) {
@@ -152,7 +171,9 @@ public class ExpressionFiller {
             fillInvocationExpression(invocationExpression, (InvocationProps) props);
             return invocationExpression;
         } else if (FUNCTION.getText().equals(props.logicType)) {
-
+            final FunctionDefinition functionExpression = new FunctionDefinition();
+            fillFunctionExpression(functionExpression, (FunctionProps) props);
+            return functionExpression;
         } else if (DECISION_TABLE.getText().equals(props.logicType)) {
 
         }
@@ -241,6 +262,57 @@ public class ExpressionFiller {
                 .collect(Collectors.toList());
     }
 
+    private static Collection<InformationItem> formalParametersConvertForFunctionExpression(final FunctionProps functionProps) {
+        return Arrays
+                .stream(Optional.ofNullable(functionProps.formalParameters).orElse(new EntryInfo[0]))
+                .map(entryInfo -> {
+                    final InformationItem informationItem = new InformationItem();
+                    informationItem.setName(new Name(entryInfo.name));
+                    informationItem.setTypeRef(BuiltInTypeUtils
+                                                       .findBuiltInTypeByName(entryInfo.dataType)
+                                                       .orElse(BuiltInType.UNDEFINED)
+                                                       .asQName());
+                    return informationItem;
+                })
+                .collect(Collectors.toList());
+    }
+
+    private static Expression wrappedExpressionBasedOnKind(final FunctionDefinition.Kind functionKind, final FunctionProps functionProps) {
+        switch (functionKind) {
+            case JAVA:
+                final JavaFunctionProps javaFunctionProps = (JavaFunctionProps) functionProps;
+                final Context javaWrappedContext = new Context();
+                javaWrappedContext.getContextEntry().add(buildContextEntry(javaFunctionProps.className, VARIABLE_CLASS));
+                javaWrappedContext.getContextEntry().add(buildContextEntry(javaFunctionProps.methodName, VARIABLE_METHOD_SIGNATURE));
+                return javaWrappedContext;
+            case PMML:
+                final PmmlFunctionProps pmmlFunctionProps = (PmmlFunctionProps) functionProps;
+                final Context pmmlWrappedContext = new Context();
+                pmmlWrappedContext.getContextEntry().add(buildContextEntry(pmmlFunctionProps.document, VARIABLE_DOCUMENT));
+                pmmlWrappedContext.getContextEntry().add(buildContextEntry(pmmlFunctionProps.model, VARIABLE_MODEL));
+                return pmmlWrappedContext;
+            default:
+            case FEEL:
+                final FeelFunctionProps feelFunctionProps = (FeelFunctionProps) functionProps;
+                return buildAndFillNestedExpression(
+                        Optional.ofNullable(feelFunctionProps.expression)
+                                .orElse(new LiteralExpressionProps("Nested Literal Expression", UNDEFINED.getText(), ""))
+                );
+        }
+    }
+
+    private static ContextEntry buildContextEntry(final String expressionText, final String variableName) {
+        final ContextEntry entry = new ContextEntry();
+        final InformationItem entryVariable = new InformationItem();
+        final LiteralExpression entryExpression = new LiteralExpression();
+        entryVariable.setName(new Name(variableName));
+        entryVariable.setTypeRef(BuiltInType.STRING.asQName());
+        entryExpression.setText(new Text(expressionText));
+        entry.setVariable(entryVariable);
+        entry.setExpression(entryExpression);
+        return entry;
+    }
+
     private static Column[] columnsConvertForRelationProps(final Relation relationExpression) {
         return relationExpression
                 .getColumn()
@@ -266,7 +338,7 @@ public class ExpressionFiller {
         return listExpression
                 .getExpression()
                 .stream()
-                .map(expression -> buildAndFillJsInteropProp(expression.getExpression(), "List item", "<Undefined>"))
+                .map(expression -> buildAndFillJsInteropProp(expression.getExpression(), "List item", UNDEFINED.getText()))
                 .toArray(ExpressionProps[]::new);
     }
 
@@ -284,5 +356,43 @@ public class ExpressionFiller {
         final EntryInfo entryInfo = new EntryInfo(entryName, entryDataType);
         final ExpressionProps entryExpression = buildAndFillJsInteropProp(expression, entryName, entryDataType);
         return new ContextEntryProps(entryInfo, entryExpression);
+    }
+
+    private static EntryInfo[] formalParametersConvertForFunctionProps(final FunctionDefinition functionExpression) {
+        return functionExpression
+                .getFormalParameter()
+                .stream()
+                .map(parameter -> new EntryInfo(parameter.getName().getValue(), parameter.getTypeRefHolder().getValue().getLocalPart()))
+                .toArray(EntryInfo[]::new);
+    }
+
+    private static FunctionProps specificFunctionPropsBasedOnFunctionKind(final String expressionName, final String dataType, final FunctionDefinition functionExpression, final EntryInfo[] formalParameters) {
+        switch (functionExpression.getKind()) {
+            case JAVA:
+                final String classNameExpression = getEntryAt(functionExpression.getExpression(), 0);
+                final String methodNameExpression = getEntryAt(functionExpression.getExpression(), 1);
+                return new JavaFunctionProps(expressionName, dataType, formalParameters, classNameExpression, methodNameExpression);
+            case PMML:
+                final String documentExpression = getEntryAt(functionExpression.getExpression(), 0);
+                final String modelExpression = getEntryAt(functionExpression.getExpression(), 1);
+                return new PmmlFunctionProps(expressionName, dataType, formalParameters, documentExpression, modelExpression);
+            default:
+            case FEEL:
+                return new FeelFunctionProps(expressionName, dataType, formalParameters,
+                                             buildAndFillJsInteropProp(functionExpression.getExpression(), "Feel Expression", UNDEFINED.getText()));
+        }
+    }
+
+    private static String getEntryAt(final Expression wrappedExpression, final int index) {
+        final Context wrappedContext = (Context) (Optional.ofNullable(wrappedExpression).orElse(new Context()));
+        LiteralExpression entryExpression = new LiteralExpression();
+        String wrappedTextValue = "";
+        if (wrappedContext.getContextEntry().size() > index && wrappedContext.getContextEntry().get(index).getExpression() instanceof LiteralExpression) {
+            entryExpression = (LiteralExpression) wrappedContext.getContextEntry().get(index).getExpression();
+        }
+        if (entryExpression.getText() != null && entryExpression.getText().getValue() != null) {
+            wrappedTextValue = entryExpression.getText().getValue();
+        }
+        return wrappedTextValue;
     }
 }
