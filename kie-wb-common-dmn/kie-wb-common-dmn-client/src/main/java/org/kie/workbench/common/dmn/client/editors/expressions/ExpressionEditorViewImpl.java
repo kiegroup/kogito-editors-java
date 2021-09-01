@@ -37,6 +37,7 @@ import org.kie.workbench.common.dmn.api.definition.HasExpression;
 import org.kie.workbench.common.dmn.api.definition.HasName;
 import org.kie.workbench.common.dmn.api.definition.HasVariable;
 import org.kie.workbench.common.dmn.api.definition.model.Context;
+import org.kie.workbench.common.dmn.api.definition.model.DecisionTable;
 import org.kie.workbench.common.dmn.api.definition.model.Expression;
 import org.kie.workbench.common.dmn.api.definition.model.FunctionDefinition;
 import org.kie.workbench.common.dmn.api.definition.model.InformationItemPrimary;
@@ -51,6 +52,7 @@ import org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType;
 import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
 import org.kie.workbench.common.dmn.client.commands.factory.DefaultCanvasCommandFactory;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.ContextProps;
+import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.DecisionTableProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.EntryInfo;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.ExpressionProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.FunctionProps;
@@ -404,6 +406,15 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
             hasExpression.setExpression(new FunctionDefinition());
         }
         ExpressionFiller.fillFunctionExpression((FunctionDefinition) hasExpression.getExpression(), functionProps);
+    }
+
+    public void broadcastDecisionTableExpressionDefinition(final DecisionTableProps decisionTableProps) {
+        editorSelectedEvent.fire(new ExpressionEditorChanged(nodeUUID));
+        setExpressionNameAndDataType(decisionTableProps);
+        if (hasExpression.getExpression() == null) {
+            hasExpression.setExpression(new DecisionTable());
+        }
+        ExpressionFiller.fillDecisionTableExpression((DecisionTable) hasExpression.getExpression(), decisionTableProps);
     }
 
     void renderNewBoxedExpression() {

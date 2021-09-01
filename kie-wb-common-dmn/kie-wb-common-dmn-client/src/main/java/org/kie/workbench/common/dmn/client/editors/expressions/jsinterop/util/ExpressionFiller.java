@@ -24,24 +24,37 @@ import java.util.stream.IntStream;
 
 import org.kie.workbench.common.dmn.api.definition.HasExpression;
 import org.kie.workbench.common.dmn.api.definition.model.Binding;
+import org.kie.workbench.common.dmn.api.definition.model.BuiltinAggregator;
 import org.kie.workbench.common.dmn.api.definition.model.Context;
 import org.kie.workbench.common.dmn.api.definition.model.ContextEntry;
+import org.kie.workbench.common.dmn.api.definition.model.DecisionRule;
 import org.kie.workbench.common.dmn.api.definition.model.DecisionTable;
 import org.kie.workbench.common.dmn.api.definition.model.Expression;
 import org.kie.workbench.common.dmn.api.definition.model.FunctionDefinition;
+import org.kie.workbench.common.dmn.api.definition.model.HitPolicy;
 import org.kie.workbench.common.dmn.api.definition.model.InformationItem;
+import org.kie.workbench.common.dmn.api.definition.model.InputClause;
 import org.kie.workbench.common.dmn.api.definition.model.Invocation;
 import org.kie.workbench.common.dmn.api.definition.model.IsLiteralExpression;
 import org.kie.workbench.common.dmn.api.definition.model.List;
 import org.kie.workbench.common.dmn.api.definition.model.LiteralExpression;
+import org.kie.workbench.common.dmn.api.definition.model.OutputClause;
 import org.kie.workbench.common.dmn.api.definition.model.Relation;
+import org.kie.workbench.common.dmn.api.definition.model.RuleAnnotationClause;
+import org.kie.workbench.common.dmn.api.definition.model.RuleAnnotationClauseText;
+import org.kie.workbench.common.dmn.api.definition.model.UnaryTests;
 import org.kie.workbench.common.dmn.api.editors.types.BuiltInTypeUtils;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
+import org.kie.workbench.common.dmn.api.property.dmn.QNameHolder;
 import org.kie.workbench.common.dmn.api.property.dmn.Text;
 import org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType;
+import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.Annotation;
+import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.Clause;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.Column;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.ContextEntryProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.ContextProps;
+import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.DecisionTableProps;
+import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.DecisionTableRule;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.EntryInfo;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.ExpressionProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.FeelFunctionProps;
@@ -52,6 +65,7 @@ import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.L
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.LiteralExpressionProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.PmmlFunctionProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.RelationProps;
+import org.kie.workbench.common.stunner.core.util.StringUtils;
 
 import static org.kie.workbench.common.dmn.api.definition.model.LiteralExpressionPMMLDocument.VARIABLE_DOCUMENT;
 import static org.kie.workbench.common.dmn.api.definition.model.LiteralExpressionPMMLDocumentModel.VARIABLE_MODEL;
@@ -107,6 +121,23 @@ public class ExpressionFiller {
         functionExpression.setExpression(wrappedExpressionBasedOnKind(functionKind, functionProps));
     }
 
+    public static void fillDecisionTableExpression(final DecisionTable decisionTableExpression, final DecisionTableProps decisionTableProps) {
+        if (StringUtils.nonEmpty(decisionTableProps.hitPolicy)) {
+            decisionTableExpression.setHitPolicy(HitPolicy.fromValue(decisionTableProps.hitPolicy));
+        }
+        if (StringUtils.nonEmpty(decisionTableProps.aggregation)) {
+            decisionTableExpression.setAggregation(BuiltinAggregator.fromCode(decisionTableProps.aggregation));
+        }
+        decisionTableExpression.getAnnotations().clear();
+        decisionTableExpression.getAnnotations().addAll(annotationsConvertForDecisionTableExpression(decisionTableProps));
+        decisionTableExpression.getInput().clear();
+        decisionTableExpression.getInput().addAll(inputConvertForDecisionTableExpression(decisionTableProps));
+        decisionTableExpression.getOutput().clear();
+        decisionTableExpression.getOutput().addAll(outputConvertForDecisionTableExpression(decisionTableProps));
+        decisionTableExpression.getRule().clear();
+        decisionTableExpression.getRule().addAll(rulesConvertForDecisionTableExpression(decisionTableProps));
+    }
+
     public static ExpressionProps buildAndFillJsInteropProp(final Expression wrappedExpression, final String expressionName, final String dataType) {
         if (wrappedExpression instanceof IsLiteralExpression) {
             final LiteralExpression literalExpression = (LiteralExpression) wrappedExpression;
@@ -129,25 +160,19 @@ public class ExpressionFiller {
             final EntryInfo[] formalParameters = formalParametersConvertForFunctionProps(functionExpression);
             return specificFunctionPropsBasedOnFunctionKind(expressionName, dataType, functionExpression, formalParameters);
         } else if (wrappedExpression instanceof DecisionTable) {
-
+            final DecisionTable decisionTableExpression = (DecisionTable) wrappedExpression;
+            final String hitPolicy = decisionTableExpression.getHitPolicy() != null ? decisionTableExpression.getHitPolicy().value() : null;
+            final String aggregation = decisionTableExpression.getAggregation() != null ? decisionTableExpression.getAggregation().getCode() : "";
+            return new DecisionTableProps(expressionName, dataType, hitPolicy, aggregation,
+                                          annotationsConvertForDecisionTableProps(decisionTableExpression),
+                                          inputConvertForDecisionTableProps(decisionTableExpression),
+                                          outputConvertForDecisionTableProps(decisionTableExpression),
+                                          rulesConvertForDecisionTableProps(decisionTableExpression));
         }
         return new ExpressionProps(expressionName, dataType, null);
     }
 
-    private static ExpressionProps contextResultConvertForContextProps(final Context contextExpression) {
-        final ContextEntry resultContextEntry = !contextExpression.getContextEntry().isEmpty() ?
-                contextExpression.getContextEntry().get(contextExpression.getContextEntry().size() - 1) :
-                new ContextEntry();
-        return buildAndFillJsInteropProp(resultContextEntry.getExpression(), "Result Expression", UNDEFINED.getText());
-    }
-
-    private static ContextEntryProps[] contextEntriesConvertForContextProps(final Context contextExpression) {
-        return contextExpression.getContextEntry()
-                .stream()
-                .limit(contextExpression.getContextEntry().size() - 1)
-                .map(contextEntry -> fromModelToPropsContextEntryMapper(contextEntry.getVariable(), contextEntry.getExpression()))
-                .toArray(ContextEntryProps[]::new);
-    }
+    /** MODEL filling */
 
     private static Expression buildAndFillNestedExpression(final ExpressionProps props) {
         if (LITERAL_EXPRESSION.getText().equals(props.logicType)) {
@@ -175,7 +200,9 @@ public class ExpressionFiller {
             fillFunctionExpression(functionExpression, (FunctionProps) props);
             return functionExpression;
         } else if (DECISION_TABLE.getText().equals(props.logicType)) {
-
+            final DecisionTable decisionTableExpression = new DecisionTable();
+            fillDecisionTableExpression(decisionTableExpression, (DecisionTableProps) props);
+            return decisionTableExpression;
         }
         return null;
     }
@@ -313,6 +340,92 @@ public class ExpressionFiller {
         return entry;
     }
 
+    private static Collection<DecisionRule> rulesConvertForDecisionTableExpression(final DecisionTableProps decisionTableProps) {
+        return Arrays
+                .stream(Optional.ofNullable(decisionTableProps.rules).orElse(new DecisionTableRule[0]))
+                .map(rule -> {
+                    final DecisionRule decisionRule = new DecisionRule();
+                    decisionRule.getAnnotationEntry().addAll(Arrays.stream(rule.annotationEntries).map(annotationEntry -> {
+                        final RuleAnnotationClauseText ruleAnnotationClauseText = new RuleAnnotationClauseText();
+                        ruleAnnotationClauseText.setText(new Text(annotationEntry));
+                        return ruleAnnotationClauseText;
+                    }).collect(Collectors.toList()));
+                    decisionRule.getOutputEntry().addAll(Arrays.stream(rule.outputEntries).map(outputEntry -> {
+                        final LiteralExpression literalExpression = new LiteralExpression();
+                        literalExpression.setText(new Text(outputEntry));
+                        return literalExpression;
+                    }).collect(Collectors.toList()));
+                    decisionRule.getInputEntry().addAll(Arrays.stream(rule.inputEntries).map(inputEntry -> {
+                        final UnaryTests unaryTests = new UnaryTests();
+                        unaryTests.setText(new Text(inputEntry));
+                        return unaryTests;
+                    }).collect(Collectors.toList()));
+                    return decisionRule;
+                })
+                .collect(Collectors.toList());
+    }
+
+    private static Collection<InputClause> inputConvertForDecisionTableExpression(final DecisionTableProps decisionTableProps) {
+        return Arrays
+                .stream(Optional.ofNullable(decisionTableProps.input).orElse(new Clause[0]))
+                .map(input -> {
+                    final InputClause inputClause = new InputClause();
+                    inputClause.getInputExpression().setText(new Text(input.name));
+                    inputClause.getInputExpression().setTypeRefHolder(
+                            new QNameHolder(
+                                    BuiltInTypeUtils
+                                            .findBuiltInTypeByName(input.dataType)
+                                            .orElse(BuiltInType.UNDEFINED)
+                                            .asQName()
+                            ));
+                    return inputClause;
+                })
+                .collect(Collectors.toList());
+    }
+
+    private static Collection<OutputClause> outputConvertForDecisionTableExpression(final DecisionTableProps decisionTableProps) {
+        return Arrays
+                .stream(Optional.ofNullable(decisionTableProps.output).orElse(new Clause[0]))
+                .map(output -> {
+                    final OutputClause outputClause = new OutputClause();
+                    outputClause.setName(output.name);
+                    outputClause.setTypeRef(BuiltInTypeUtils
+                                                    .findBuiltInTypeByName(output.dataType)
+                                                    .orElse(BuiltInType.UNDEFINED)
+                                                    .asQName());
+                    return outputClause;
+                })
+                .collect(Collectors.toList());
+    }
+
+    private static Collection<RuleAnnotationClause> annotationsConvertForDecisionTableExpression(final DecisionTableProps decisionTableProps) {
+        return Arrays
+                .stream(Optional.ofNullable(decisionTableProps.annotations).orElse(new Annotation[0]))
+                .map(annotation -> {
+                    final RuleAnnotationClause ruleAnnotationClause = new RuleAnnotationClause();
+                    ruleAnnotationClause.setName(new Name(annotation.name));
+                    return ruleAnnotationClause;
+                })
+                .collect(Collectors.toList());
+    }
+
+    /** PROPS filling */
+
+    private static ExpressionProps contextResultConvertForContextProps(final Context contextExpression) {
+        final ContextEntry resultContextEntry = !contextExpression.getContextEntry().isEmpty() ?
+                contextExpression.getContextEntry().get(contextExpression.getContextEntry().size() - 1) :
+                new ContextEntry();
+        return buildAndFillJsInteropProp(resultContextEntry.getExpression(), "Result Expression", UNDEFINED.getText());
+    }
+
+    private static ContextEntryProps[] contextEntriesConvertForContextProps(final Context contextExpression) {
+        return contextExpression.getContextEntry()
+                .stream()
+                .limit(contextExpression.getContextEntry().size() - 1)
+                .map(contextEntry -> fromModelToPropsContextEntryMapper(contextEntry.getVariable(), contextEntry.getExpression()))
+                .toArray(ContextEntryProps[]::new);
+    }
+
     private static Column[] columnsConvertForRelationProps(final Relation relationExpression) {
         return relationExpression
                 .getColumn()
@@ -394,5 +507,48 @@ public class ExpressionFiller {
             wrappedTextValue = entryExpression.getText().getValue();
         }
         return wrappedTextValue;
+    }
+
+    private static DecisionTableRule[] rulesConvertForDecisionTableProps(final DecisionTable decisionTableExpression) {
+        return decisionTableExpression
+                .getRule()
+                .stream()
+                .map(rule -> new DecisionTableRule(
+                        rule.getInputEntry().stream().map(inputEntry -> inputEntry.getText().getValue()).toArray(String[]::new),
+                        rule.getOutputEntry().stream().map(outputEntry -> outputEntry.getText().getValue()).toArray(String[]::new),
+                        rule.getAnnotationEntry().stream().map(annotationClauseText -> annotationClauseText.getText().getValue()).toArray(String[]::new)))
+                .toArray(DecisionTableRule[]::new);
+    }
+
+    private static Clause[] inputConvertForDecisionTableProps(final DecisionTable decisionTableExpression) {
+        return decisionTableExpression
+                .getInput()
+                .stream()
+                .map(inputClause -> {
+                    final String name = inputClause.getInputExpression().getText().getValue();
+                    final String dataType = inputClause.getInputExpression().getTypeRefHolder().getValue().getLocalPart();
+                    return new Clause(name, dataType);
+                })
+                .toArray(Clause[]::new);
+    }
+
+    private static Clause[] outputConvertForDecisionTableProps(final DecisionTable decisionTableExpression) {
+        return decisionTableExpression
+                .getOutput()
+                .stream()
+                .map(outputClause -> {
+                    final String name = outputClause.getName();
+                    final String dataType = outputClause.getTypeRef().getLocalPart();
+                    return new Clause(name, dataType);
+                })
+                .toArray(Clause[]::new);
+    }
+
+    private static Annotation[] annotationsConvertForDecisionTableProps(final DecisionTable decisionTableExpression) {
+        return decisionTableExpression
+                .getAnnotations()
+                .stream()
+                .map(ruleAnnotationClause -> new Annotation(ruleAnnotationClause.getName().getValue()))
+                .toArray(Annotation[]::new);
     }
 }
