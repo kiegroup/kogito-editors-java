@@ -97,7 +97,7 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (props
     [editParametersPopoverAppendTo, i18n.editParameters, parameters]
   );
 
-  const evaluateColumns = useCallback(
+  const columns = useMemo(
     () =>
       [
         {
@@ -116,7 +116,7 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (props
           ],
         },
       ] as ColumnInstance[],
-    [headerCellElement, width]
+    [headerCellElement, width, parameters]
   );
 
   const extractContextEntriesFromJavaProps = useCallback(
@@ -220,7 +220,6 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (props
     [extractContextEntriesFromJavaProps, extractContextEntriesFromPmmlProps, props]
   );
 
-  const columns = useRef(evaluateColumns());
   const [selectedFunctionKind, setSelectedFunctionKind] = useState(functionKind);
   const [rows, setRows] = useState(evaluateRows(selectedFunctionKind));
 
@@ -285,7 +284,7 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (props
   );
 
   const spreadFunctionExpressionDefinition = useCallback(() => {
-    const [expressionColumn] = columns.current;
+    const [expressionColumn] = columns;
 
     const updatedDefinition: FunctionProps = extendDefinitionBasedOnFunctionKind(
       {
@@ -325,7 +324,16 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (props
         "expression",
       ]
     );
-  }, [extendDefinitionBasedOnFunctionKind, setSupervisorHash, parameters, props, selectedFunctionKind, rows, width]);
+  }, [
+    columns,
+    extendDefinitionBasedOnFunctionKind,
+    setSupervisorHash,
+    parameters,
+    props,
+    selectedFunctionKind,
+    rows,
+    width,
+  ]);
 
   const getHeaderVisibility = useCallback(() => {
     return props.isHeadless ? TableHeaderVisibility.LastLevel : TableHeaderVisibility.Full;
@@ -350,7 +358,7 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (props
       props.onUpdatingNameAndDataType?.(expressionColumn.label as string, expressionColumn.dataType);
       setWidth(expressionColumn.width as number);
 
-      const [updatedExpressionColumn] = columns.current;
+      const [updatedExpressionColumn] = columns;
       updatedExpressionColumn.label = expressionColumn.label as string;
       updatedExpressionColumn.accessor = expressionColumn.accessor;
       updatedExpressionColumn.dataType = expressionColumn.dataType;
@@ -363,12 +371,6 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (props
     /** Everytime the list of parameters or the function definition change, we need to spread expression's updated definition */
     spreadFunctionExpressionDefinition();
   }, [rows, spreadFunctionExpressionDefinition]);
-
-  useEffect(() => {
-    columns.current = evaluateColumns();
-    // Watching for changes of the parameters, in order to update the columns passed to the table
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [parameters]);
 
   const resetRowCustomFunction = useCallback((row) => {
     setSelectedFunctionKind(FunctionKind.Feel);
@@ -384,7 +386,7 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (props
             items: [{ name: i18n.rowOperations.clear, type: TableOperation.RowClear }],
           },
         ]}
-        columns={columns.current}
+        columns={columns}
         onColumnsUpdate={onColumnsUpdate}
         rows={rows}
         onRowsUpdate={setRows}

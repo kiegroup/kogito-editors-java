@@ -188,6 +188,7 @@ export const TableHandler: React.FunctionComponent<TableHandlerProps> = ({
               generateNextAvailableColumn()
             )
           );
+          return;
         }
       }
       updateColumnsThenRows();
@@ -198,6 +199,7 @@ export const TableHandler: React.FunctionComponent<TableHandlerProps> = ({
       appendOnColumnChildren,
       onColumnsUpdate,
       tableColumns,
+      tableRows,
       updateColumnsThenRows,
     ]
   );

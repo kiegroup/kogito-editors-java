@@ -16,7 +16,7 @@
 
 import "./RelationExpression.css";
 import * as React from "react";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import "@patternfly/react-styles/css/utilities/Text/text.css";
 import {
   Column as RelationColumn,
@@ -34,6 +34,10 @@ import { Column, ColumnInstance, DataRecord } from "react-table";
 export const RelationExpression: React.FunctionComponent<RelationProps> = (relationProps: RelationProps) => {
   const FIRST_COLUMN_NAME = "column-1";
   const { i18n } = useBoxedExpressionEditorI18n();
+
+  useEffect(() => {
+    console.log(relationProps);
+  }, [relationProps])
 
   const handlerConfiguration = [
     {
@@ -54,40 +58,44 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = (relat
     },
   ];
 
-  const storedExpressionDefinition = useRef({} as RelationProps);
-
-  const tableColumns = useRef<RelationColumn[]>(
-    relationProps.columns === undefined
-      ? [{ name: FIRST_COLUMN_NAME, dataType: DataType.Undefined }]
-      : relationProps.columns
+  const columns: RelationColumn[] = useMemo(
+    () =>
+      relationProps.columns === undefined
+        ? [{ name: FIRST_COLUMN_NAME, dataType: DataType.Undefined }]
+        : relationProps.columns,
+    [relationProps]
   );
 
-  const tableRows = useRef<Row[]>(relationProps.rows === undefined ? [[""]] : relationProps.rows);
+  const rows: Row[] = useMemo(() => (relationProps.rows === undefined ? [[""]] : relationProps.rows), [relationProps]);
 
-  const spreadRelationExpressionDefinition = useCallback(() => {
-    const expressionDefinition = {
-      ...relationProps,
-      columns: tableColumns.current,
-      rows: tableRows.current,
-    };
+  const spreadRelationExpressionDefinition = useCallback(
+    (newColumns?: RelationColumn[], newRows?: Row[]) => {
+      const expressionDefinition = {
+        ...relationProps,
+        columns: newColumns ?? columns,
+        rows: newRows ?? rows,
+      };
 
-    executeIfExpressionDefinitionChanged(
-      storedExpressionDefinition.current,
-      expressionDefinition,
-      () => {
-        relationProps.isHeadless
-          ? relationProps.onUpdatingRecursiveExpression?.(expressionDefinition)
-          : window.beeApi?.broadcastRelationExpressionDefinition?.(expressionDefinition);
-        storedExpressionDefinition.current = expressionDefinition;
-      },
-      ["columns", "rows"]
-    );
-  }, [relationProps]);
+      executeIfExpressionDefinitionChanged(
+        relationProps,
+        expressionDefinition,
+        () => {
+          if (relationProps.isHeadless) {
+            relationProps.onUpdatingRecursiveExpression?.(expressionDefinition);
+          } else {
+            window.beeApi?.broadcastRelationExpressionDefinition?.(expressionDefinition);
+          }
+        },
+        ["columns", "rows"]
+      );
+    },
+    [relationProps, columns, rows]
+  );
 
-  const convertColumnsForTheTable = useCallback(
+  const convertColumnsForTheTable = useMemo(
     () =>
       _.map(
-        tableColumns.current,
+        columns,
         (column: RelationColumn) =>
           ({
             label: column.name,
@@ -96,14 +104,14 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = (relat
             ...(column.width ? { width: column.width } : {}),
           } as Column)
       ),
-    []
+    [columns]
   );
 
-  const convertRowsForTheTable = useCallback(
+  const convertRowsForTheTable = useMemo(
     () =>
-      _.map(tableRows.current, (row) =>
+      _.map(rows, (row) =>
         _.reduce(
-          tableColumns.current,
+          columns,
           (tableRow: DataRecord, column, columnIndex) => {
             tableRow[column.name] = row[columnIndex] || "";
             return tableRow;
@@ -111,14 +119,14 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = (relat
           {}
         )
       ),
-    []
+    [rows, columns]
   );
 
-  const onSavingRows = useCallback(
+  const onRowsUpdate = useCallback(
     (rows: DataRecord[]) => {
-      tableRows.current = _.map(rows, (tableRow: DataRecord) =>
+      const newRows = _.map(rows, (tableRow: DataRecord) =>
         _.reduce(
-          tableColumns.current,
+          columns,
           (row: string[], column: RelationColumn) => {
             row.push((tableRow[column.name]! as string) || "");
             return row;
@@ -126,21 +134,27 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = (relat
           []
         )
       );
-      spreadRelationExpressionDefinition();
+      spreadRelationExpressionDefinition(undefined, newRows);
     },
-    [spreadRelationExpressionDefinition]
+    [spreadRelationExpressionDefinition, columns]
   );
 
-  const onSavingColumns = useCallback(
+  const onColumnsUpdate = useCallback(
     (columns) => {
-      tableColumns.current = _.map(columns, (columnInstance: ColumnInstance) => ({
+      const newColumns = _.map(columns, (columnInstance: ColumnInstance) => ({
         name: columnInstance.accessor,
         dataType: columnInstance.dataType,
         width: columnInstance.width,
       }));
-      spreadRelationExpressionDefinition();
+      const newRows = rows.map((tableRow: Row) =>
+        newColumns.reduce((row: string[], column: RelationColumn) => {
+          row.push((tableRow[column.name as any]! as string) || "");
+          return row;
+        }, [])
+      );
+      spreadRelationExpressionDefinition(newColumns, newRows);
     },
-    [spreadRelationExpressionDefinition]
+    [spreadRelationExpressionDefinition, rows, columns]
   );
 
   useEffect(() => {
@@ -152,10 +166,10 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = (relat
     <div className="relation-expression">
       <Table
         editColumnLabel={i18n.editRelation}
-        columns={convertColumnsForTheTable()}
-        rows={convertRowsForTheTable()}
-        onColumnsUpdate={onSavingColumns}
-        onRowsUpdate={onSavingRows}
+        columns={convertColumnsForTheTable}
+        rows={convertRowsForTheTable}
+        onColumnsUpdate={onColumnsUpdate}
+        onRowsUpdate={onRowsUpdate}
         handlerConfiguration={handlerConfiguration}
       />
     </div>

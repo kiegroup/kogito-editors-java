@@ -171,7 +171,9 @@ export const TableHeader: React.FunctionComponent<TableHeaderProps> = ({
           getColumnSearchPredicate(column)
         ) as ColumnInstance;
       }
-      columnToUpdate.width = columnWidth;
+      if (columnToUpdate) {
+        columnToUpdate.width = columnWidth;
+      }
       onColumnsUpdate(tableColumns);
     },
     [onColumnsUpdate, tableColumns]
