@@ -274,10 +274,14 @@ export const Table: React.FunctionComponent<TableProps> = ({
   );
 
   const onGetColumnKey = useCallback(
-    (column: Column) => (getColumnKey ? getColumnKey(column) : column.id!),
+    (column: Column) => {
+      return (getColumnKey ? getColumnKey(column) : column.id!);
+    },
     [getColumnKey]
   );
-  const onGetRowKey = useCallback((row: Row) => (getRowKey ? getRowKey(row) : row.id), [getRowKey]);
+  const onGetRowKey = useCallback((row: Row) => {
+    return (getRowKey ? getRowKey(row) : row.id);
+  }, [getRowKey]);
   const onRowAddingCallback = useCallback(() => (onRowAdding ? onRowAdding() : {}), [onRowAdding]);
   const onGetColumnPrefix = useCallback(() => (getColumnPrefix ? getColumnPrefix() : "column-"), [getColumnPrefix]);
 

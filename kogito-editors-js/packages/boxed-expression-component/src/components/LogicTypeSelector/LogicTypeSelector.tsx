@@ -123,7 +123,7 @@ export const LogicTypeSelector: React.FunctionComponent<LogicTypeSelectorProps> 
     }
     // logicType is enough for deciding when to re-execute this function
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [expression.logicType]);
+  }, [expression]);
 
   const getSelectableLogicTypes = useCallback(
     () =>

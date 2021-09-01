@@ -50,7 +50,11 @@ export function BoxedExpressionEditor(props: BoxedExpressionEditorProps) {
       initialLocale={navigator.language}
       ctx={BoxedExpressionEditorI18nContext}
     >
-      <BoxedExpressionProvider expressionDefinition={expressionDefinition} pmmlParams={props.pmmlParams}>
+      <BoxedExpressionProvider
+        expressionDefinition={expressionDefinition}
+        pmmlParams={props.pmmlParams}
+        isRunnerTable={false}
+      >
         <ExpressionContainer selectedExpression={expressionDefinition} onExpressionChange={onExpressionChange} />
       </BoxedExpressionProvider>
     </I18nDictionariesProvider>

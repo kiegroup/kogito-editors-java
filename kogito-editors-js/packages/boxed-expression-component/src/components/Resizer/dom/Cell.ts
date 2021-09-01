@@ -73,7 +73,26 @@ export class Cell {
     }
   }
 
-  refreshWidthAsLastGroupColumn(index: number): void {
+  refreshWidthAsLastGroupColumn(): void {
+    if (!this.isColSpanHeader()) {
+      return;
+    }
+
+    const refSibling = this.getParent()?.parentElement?.nextSibling;
+
+    if (!refSibling) {
+      return;
+    }
+
+    const children = [].slice.call((refSibling as HTMLElement).querySelectorAll(`.${this.getHeaderType()}`));
+    const childrenRects = children.map((c: HTMLElement) => c.getBoundingClientRect());
+    const x = Math.min(...childrenRects.map((c: DOMRect) => c.x));
+    const right = Math.max(...childrenRects.map((c: DOMRect) => c.right));
+
+    this.setWidth(right - x - BORDER * 2);
+  }
+
+  refreshWidthAsLastGroupColumnRunner(index: number): void {
     if (!this.isColSpanHeader() && !this.getParentRow()?.classList.contains("table-row")) {
       return;
     }

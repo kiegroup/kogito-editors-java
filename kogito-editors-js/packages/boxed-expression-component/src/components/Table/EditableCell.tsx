@@ -66,9 +66,6 @@ export function EditableCell({ value, row: { index }, column: { id }, onCellUpda
 
   useEffect(() => {
     setPreview(value || "");
-  }, [value]);
-
-  useEffect(() => {
     if (textarea.current) {
       textarea.current.value = value || "";
     }
@@ -176,7 +173,12 @@ export function EditableCell({ value, row: { index }, column: { id }, onCellUpda
     setPreview(newPreview);
   }, []);
 
-  const onFeelLoad = useCallback((newPreview) => setPreview(newPreview), []);
+  const onFeelLoad = useCallback((newPreview) => {
+    // function being called before component is rendered
+    if (textarea.current) {
+      setPreview(newPreview);
+    }
+  }, []);
 
   return (
     <>

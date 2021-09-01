@@ -22,13 +22,16 @@ import { BoxedExpressionGlobalContext } from "../../context";
 
 export interface ResizerSupervisorProps {
   children?: React.ReactElement;
+  isRunnerTable: boolean;
 }
 
-export const ResizerSupervisor: React.FunctionComponent<ResizerSupervisorProps> = ({ children }) => {
+export const ResizerSupervisor: React.FunctionComponent<ResizerSupervisorProps> = ({ children, isRunnerTable }) => {
   const { supervisorHash } = useContext(BoxedExpressionGlobalContext);
 
   useEffect(() => {
-    const id = setTimeout(applyDOMSupervisor, 0);
+    const id = setTimeout(() => {
+      applyDOMSupervisor(isRunnerTable)
+    }, 0);
     return () => clearTimeout(id);
   }, [supervisorHash]);
 

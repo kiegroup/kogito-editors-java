@@ -70,13 +70,18 @@ export function usingTestingBoxedExpressionProviderContext(
         modelsFromDocument: [{ model: "model", parametersFromModel: [{ name: "p-1", dataType: DataType.Number }] }],
       },
     ],
+    isRunnerTable: false,
     children,
     ...ctx,
   };
   return {
     ctx: usedCtx,
     wrapper: (
-      <BoxedExpressionProvider expressionDefinition={usedCtx.expressionDefinition} pmmlParams={usedCtx.pmmlParams}>
+      <BoxedExpressionProvider
+        expressionDefinition={usedCtx.expressionDefinition}
+        pmmlParams={usedCtx.pmmlParams}
+        isRunnerTable={false}
+      >
         {usedCtx.children}
       </BoxedExpressionProvider>
     ),

@@ -254,7 +254,7 @@ export function DmnAutoTable(props: Props) {
             initialLocale={navigator.language}
             ctx={DmnAutoTableI18nContext}
           >
-            <BoxedExpressionProvider expressionDefinition={selectedExpression}>
+            <BoxedExpressionProvider expressionDefinition={selectedExpression} isRunnerTable={true}>
               <DmnRunnerTable {...selectedExpression} />
             </BoxedExpressionProvider>
           </I18nDictionariesProvider>

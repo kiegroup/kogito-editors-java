@@ -35,6 +35,9 @@ export const ExpressionContainer: (props: ExpressionContainerProps) => JSX.Eleme
 
   const updateExpressionNameAndDataType = useCallback(
     (updatedName, updatedDataType) => {
+      if (selectedExpression.name === updatedName && selectedExpression.dataType === updatedDataType) {
+        return;
+      }
       onExpressionChange?.({
         ...selectedExpression,
         name: updatedName,

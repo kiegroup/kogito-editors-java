@@ -27,6 +27,7 @@ export interface BoxedExpressionProviderProps {
   expressionDefinition: ExpressionProps;
   /** PMML parameters */
   pmmlParams?: PMMLParams;
+  isRunnerTable: boolean;
   children: React.ReactNode;
 }
 
@@ -50,7 +51,7 @@ export function BoxedExpressionProvider(props: BoxedExpressionProviderProps) {
         setCurrentlyOpenedHandlerCallback,
       }}
     >
-      <ResizerSupervisor>
+      <ResizerSupervisor isRunnerTable={props.isRunnerTable}>
         <div className="boxed-expression-editor" ref={boxedExpressionEditorRef}>
           {props.children}
         </div>
