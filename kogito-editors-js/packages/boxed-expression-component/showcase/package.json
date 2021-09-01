@@ -21,7 +21,7 @@
     "typescript": "^4.2.4"
   },
   "scripts": {
-    "start": "react-app-rewired start",
+    "start": "PORT=3001 react-app-rewired start",
     "build": "react-app-rewired build",
     "predeploy": "yarn build",
     "deploy": "gh-pages -d build"
