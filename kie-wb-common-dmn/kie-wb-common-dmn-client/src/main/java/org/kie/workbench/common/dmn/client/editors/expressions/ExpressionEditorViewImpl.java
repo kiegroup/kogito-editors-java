@@ -287,7 +287,7 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
     @Override
     public void activate() {
         DMNLoader.renderBoxedExpressionEditor(".kie-dmn-new-expression-editor",
-                                              ExpressionFiller.buildAndFillJsInteropProp(hasExpression.getExpression(), getExpressionName(), getDataType()),
+                                              ExpressionFiller.buildAndFillJsInteropProp(hasExpression.getExpression(), getExpressionName(), getTypeRef()),
                                               buildPmmlParams());
         BoxedExpressionService.registerBroadcastForExpression(this);
     }
@@ -434,19 +434,20 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
         event.stopPropagation();
     }
 
-    private String getDataType() {
-        String dataType = null;
-        if (hasExpression instanceof HasVariable) {
-            @SuppressWarnings("unchecked")
-            final HasVariable<InformationItemPrimary> hasVariable = (HasVariable<InformationItemPrimary>) hasExpression;
-            dataType = hasVariable.getVariable().getTypeRef().getLocalPart();
-        }
-        return dataType;
-    }
-
     private String getExpressionName() {
         final HasName fallbackHasName = hasExpression instanceof HasName ? (HasName) hasExpression : HasName.NOP;
         return hasName.orElse(fallbackHasName).getValue().getValue();
+    }
+
+    @SuppressWarnings("unchecked")
+    private String getTypeRef() {
+        QName qName = BuiltInType.UNDEFINED.asQName();
+        if (hasExpression instanceof HasVariable) {
+            qName = ((HasVariable<InformationItemPrimary>) hasExpression).getVariable().getTypeRef();
+        } else if (hasExpression.getExpression() != null && hasExpression.getExpression().asDMNModelInstrumentedBase().getParent() instanceof HasVariable) {
+            qName = ((HasVariable<InformationItemPrimary>) hasExpression.getExpression().asDMNModelInstrumentedBase().getParent()).getVariable().getTypeRef();
+        }
+        return qName.getLocalPart();
     }
 
     private void setExpressionNameAndDataType(final ExpressionProps expressionProps) {
@@ -455,19 +456,20 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
     }
 
     private void setExpressionName(final String name) {
-        final HasName hasName = (HasName) hasExpression;
-        hasName.setName(new Name(name));
+        final HasName fallbackHasName = hasExpression instanceof HasName ? (HasName) hasExpression : HasName.NOP;
+        hasName.orElse(fallbackHasName).setName(new Name(name));
     }
 
+    @SuppressWarnings("unchecked")
     private void setTypeRef(final String dataType) {
         final QName typeRef = BuiltInTypeUtils
                 .findBuiltInTypeByName(dataType)
                 .orElse(BuiltInType.UNDEFINED)
                 .asQName();
         if (hasExpression instanceof HasVariable) {
-            @SuppressWarnings("unchecked")
-            HasVariable<InformationItemPrimary> hasVariable = (HasVariable<InformationItemPrimary>) hasExpression;
-            hasVariable.getVariable().setTypeRef(typeRef);
+            ((HasVariable<InformationItemPrimary>) hasExpression).getVariable().setTypeRef(typeRef);
+        } else if (hasExpression.getExpression() != null && hasExpression.getExpression().asDMNModelInstrumentedBase().getParent() instanceof HasVariable) {
+            ((HasVariable<InformationItemPrimary>) hasExpression.getExpression().asDMNModelInstrumentedBase().getParent()).getVariable().setTypeRef(typeRef);
         }
     }
 
