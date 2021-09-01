@@ -154,18 +154,18 @@ export const Table: React.FunctionComponent<TableProps> = ({
     (rowIndex: number, columnId: string, value: string) => {
       const updatedTableCells = [...rows];
       updatedTableCells[rowIndex][columnId] = value;
-      onRowsUpdateCallback(updatedTableCells);
+      onRowsUpdate?.(updatedTableCells);
     },
-    [onRowsUpdateCallback, rows]
+    [onRowsUpdate, rows]
   );
 
   const onRowUpdate = useCallback(
     (rowIndex: number, updatedRow: DataRecord) => {
       const updatedRows = [...rows];
       updatedRows[rowIndex] = updatedRow;
-      onRowsUpdateCallback(updatedRows);
+      onRowsUpdate?.(updatedRows);
     },
-    [onRowsUpdateCallback, rows]
+    [onRowsUpdate, rows]
   );
 
   const defaultColumn = useMemo(

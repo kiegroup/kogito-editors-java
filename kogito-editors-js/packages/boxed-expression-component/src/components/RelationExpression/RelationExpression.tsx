@@ -16,7 +16,7 @@
 
 import "./RelationExpression.css";
 import * as React from "react";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import "@patternfly/react-styles/css/utilities/Text/text.css";
 import {
   Column as RelationColumn,
@@ -28,16 +28,11 @@ import {
 } from "../../api";
 import { Table } from "../Table";
 import { useBoxedExpressionEditorI18n } from "../../i18n";
-import * as _ from "lodash";
 import { Column, ColumnInstance, DataRecord } from "react-table";
 
 export const RelationExpression: React.FunctionComponent<RelationProps> = (relationProps: RelationProps) => {
   const FIRST_COLUMN_NAME = "column-1";
   const { i18n } = useBoxedExpressionEditorI18n();
-
-  useEffect(() => {
-    console.log(relationProps);
-  }, [relationProps])
 
   const handlerConfiguration = [
     {
@@ -61,7 +56,7 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = (relat
   const columns: RelationColumn[] = useMemo(
     () =>
       relationProps.columns === undefined
-        ? [{ name: FIRST_COLUMN_NAME, dataType: DataType.Undefined }]
+        ? [{ name: FIRST_COLUMN_NAME, accessor: FIRST_COLUMN_NAME, dataType: DataType.Undefined }]
         : relationProps.columns,
     [relationProps]
   );
@@ -94,8 +89,7 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = (relat
 
   const convertColumnsForTheTable = useMemo(
     () =>
-      _.map(
-        columns,
+      columns.map(
         (column: RelationColumn) =>
           ({
             label: column.name,
@@ -109,30 +103,22 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = (relat
 
   const convertRowsForTheTable = useMemo(
     () =>
-      _.map(rows, (row) =>
-        _.reduce(
-          columns,
-          (tableRow: DataRecord, column, columnIndex) => {
-            tableRow[column.name] = row[columnIndex] || "";
-            return tableRow;
-          },
-          {}
-        )
+      rows.map((row) =>
+        columns.reduce((tableRow: DataRecord, column, columnIndex) => {
+          tableRow[column.name] = row[columnIndex] || "";
+          return tableRow;
+        }, {})
       ),
     [rows, columns]
   );
 
   const onRowsUpdate = useCallback(
     (rows: DataRecord[]) => {
-      const newRows = _.map(rows, (tableRow: DataRecord) =>
-        _.reduce(
-          columns,
-          (row: string[], column: RelationColumn) => {
-            row.push((tableRow[column.name]! as string) || "");
-            return row;
-          },
-          []
-        )
+      const newRows = rows.map((tableRow: DataRecord) =>
+        columns.reduce((row: string[], column: RelationColumn) => {
+          row.push((tableRow[column.name]! as string) || "");
+          return row;
+        }, [])
       );
       spreadRelationExpressionDefinition(undefined, newRows);
     },
@@ -141,14 +127,14 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = (relat
 
   const onColumnsUpdate = useCallback(
     (columns) => {
-      const newColumns = _.map(columns, (columnInstance: ColumnInstance) => ({
+      const newColumns = columns.map((columnInstance: ColumnInstance) => ({
         name: columnInstance.accessor,
         dataType: columnInstance.dataType,
         width: columnInstance.width,
       }));
       const newRows = rows.map((tableRow: Row) =>
-        newColumns.reduce((row: string[], column: RelationColumn) => {
-          row.push((tableRow[column.name as any]! as string) || "");
+        newColumns.reduce((row: string[], column: RelationColumn, index: number) => {
+          row.push((tableRow[index]! as string) || "");
           return row;
         }, [])
       );
@@ -156,11 +142,6 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = (relat
     },
     [spreadRelationExpressionDefinition, rows, columns]
   );
-
-  useEffect(() => {
-    /** Function executed only the first time the component is loaded */
-    spreadRelationExpressionDefinition();
-  }, [spreadRelationExpressionDefinition]);
 
   return (
     <div className="relation-expression">

@@ -130,7 +130,6 @@ export function EditableCell({ value, row: { index }, column: { id }, onCellUpda
 
   const onFeelBlur = useCallback(
     (newValue: string) => {
-      onCellUpdate(index, id, newValue);
       triggerReadMode(newValue);
     },
     [triggerReadMode, onCellUpdate, id, index]
@@ -150,12 +149,10 @@ export function EditableCell({ value, row: { index }, column: { id }, onCellUpda
       }
 
       if (isEnter || isTab) {
-        onCellUpdate(index, id, newValue);
         triggerReadMode(newValue);
       }
 
       if (isEsc) {
-        onCellUpdate(index, id, previousValue!);
         triggerReadMode(previousValue);
       }
 
@@ -163,7 +160,7 @@ export function EditableCell({ value, row: { index }, column: { id }, onCellUpda
         focusNextTextArea(textarea.current);
       }
     },
-    [triggerReadMode, onCellUpdate, id, index]
+    [triggerReadMode]
   );
 
   const onFeelChange = useCallback((_e, newValue, newPreview) => {
