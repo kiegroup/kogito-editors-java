@@ -88,6 +88,8 @@ public class ExpressionFiller {
     }
 
     public static void fillContextExpression(final Context contextExpression, final ContextProps contextProps) {
+        contextExpression.getComponentWidths().set(1, contextProps.entryInfoWidth);
+        contextExpression.getComponentWidths().set(2, contextProps.entryExpressionWidth);
         contextExpression.getContextEntry().clear();
         contextExpression.getContextEntry().addAll(contextEntriesConvertForContextExpression(contextProps));
         contextExpression.getContextEntry().add(entryResultConvertForContextExpression(contextProps));
@@ -146,7 +148,9 @@ public class ExpressionFiller {
             return new LiteralExpressionProps(expressionName, dataType, literalExpression.getText().getValue(), width);
         } else if (wrappedExpression instanceof Context) {
             final Context contextExpression = (Context) wrappedExpression;
-            return new ContextProps(expressionName, dataType, contextEntriesConvertForContextProps(contextExpression), contextResultConvertForContextProps(contextExpression));
+            final Double entryInfoWidth = contextExpression.getComponentWidths().get(1);
+            final Double entryExpressionWidth = contextExpression.getComponentWidths().get(2);
+            return new ContextProps(expressionName, dataType, contextEntriesConvertForContextProps(contextExpression), contextResultConvertForContextProps(contextExpression), entryInfoWidth, entryExpressionWidth);
         } else if (wrappedExpression instanceof Relation) {
             final Relation relationExpression = (Relation) wrappedExpression;
             return new RelationProps(expressionName, dataType, columnsConvertForRelationProps(relationExpression), rowsConvertForRelationProps(relationExpression));
