@@ -98,6 +98,8 @@ public class ExpressionFiller {
     public static void fillRelationExpression(final Relation relationExpression, final RelationProps relationProps) {
         relationExpression.getColumn().clear();
         relationExpression.getColumn().addAll(columnsConvertForRelationExpression(relationProps));
+        IntStream.range(0, relationProps.columns.length)     // Skipping # of rows column
+                .forEach(index -> relationExpression.getComponentWidths().set(index + 1, relationProps.columns[index].width));
         relationExpression.getRow().clear();
         relationExpression.getRow().addAll(rowsConvertForRelationExpression(relationProps, relationExpression));
     }
@@ -178,7 +180,9 @@ public class ExpressionFiller {
         return new ExpressionProps(expressionName, dataType, null);
     }
 
-    /** MODEL filling */
+    /**
+     * MODEL filling
+     */
 
     private static Expression buildAndFillNestedExpression(final ExpressionProps props) {
         if (LITERAL_EXPRESSION.getText().equals(props.logicType)) {
@@ -415,7 +419,9 @@ public class ExpressionFiller {
                 .collect(Collectors.toList());
     }
 
-    /** PROPS filling */
+    /**
+     * PROPS filling
+     */
 
     private static ExpressionProps contextResultConvertForContextProps(final Context contextExpression) {
         final ContextEntry resultContextEntry = !contextExpression.getContextEntry().isEmpty() ?
@@ -433,10 +439,12 @@ public class ExpressionFiller {
     }
 
     private static Column[] columnsConvertForRelationProps(final Relation relationExpression) {
-        return relationExpression
-                .getColumn()
-                .stream()
-                .map(informationItem -> new Column(informationItem.getName().getValue(), informationItem.getTypeRef().getLocalPart(), null))
+        return IntStream.range(0, relationExpression.getColumn().size())
+                .mapToObj(index -> {
+                    final InformationItem informationItem = relationExpression.getColumn().get(index);
+                    final Double columnWidth = relationExpression.getComponentWidths().get(index + 1); // Skipping # of rows column
+                    return new Column(informationItem.getName().getValue(), informationItem.getTypeRef().getLocalPart(), columnWidth);
+                })
                 .toArray(Column[]::new);
     }
 
