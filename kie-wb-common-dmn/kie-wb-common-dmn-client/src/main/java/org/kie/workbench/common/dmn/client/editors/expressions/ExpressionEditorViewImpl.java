@@ -210,6 +210,7 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
     @Override
     public void init(final ExpressionEditorView.Presenter presenter) {
         this.presenter = presenter;
+        BoxedExpressionService.registerBroadcastForExpression(this);
     }
 
     @Override
@@ -289,7 +290,6 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
         DMNLoader.renderBoxedExpressionEditor(".kie-dmn-new-expression-editor",
                                               ExpressionFiller.buildAndFillJsInteropProp(hasExpression.getExpression(), getExpressionName(), getTypeRef()),
                                               buildPmmlParams());
-        BoxedExpressionService.registerBroadcastForExpression(this);
     }
 
     @Override
