@@ -83,6 +83,7 @@ import static org.kie.workbench.common.dmn.client.editors.expressions.types.func
 public class ExpressionFiller {
 
     public static void fillLiteralExpression(final LiteralExpression literalExpression, final LiteralExpressionProps literalExpressionProps) {
+        literalExpression.getComponentWidths().set(0, literalExpressionProps.width);
         literalExpression.setText(new Text(literalExpressionProps.content));
     }
 
@@ -141,7 +142,8 @@ public class ExpressionFiller {
     public static ExpressionProps buildAndFillJsInteropProp(final Expression wrappedExpression, final String expressionName, final String dataType) {
         if (wrappedExpression instanceof IsLiteralExpression) {
             final LiteralExpression literalExpression = (LiteralExpression) wrappedExpression;
-            return new LiteralExpressionProps(expressionName, dataType, literalExpression.getText().getValue());
+            final Double width = literalExpression.getComponentWidths().get(0);
+            return new LiteralExpressionProps(expressionName, dataType, literalExpression.getText().getValue(), width);
         } else if (wrappedExpression instanceof Context) {
             final Context contextExpression = (Context) wrappedExpression;
             return new ContextProps(expressionName, dataType, contextEntriesConvertForContextProps(contextExpression), contextResultConvertForContextProps(contextExpression));
@@ -323,7 +325,7 @@ public class ExpressionFiller {
                 final FeelFunctionProps feelFunctionProps = (FeelFunctionProps) functionProps;
                 return buildAndFillNestedExpression(
                         Optional.ofNullable(feelFunctionProps.expression)
-                                .orElse(new LiteralExpressionProps("Nested Literal Expression", UNDEFINED.getText(), ""))
+                                .orElse(new LiteralExpressionProps("Nested Literal Expression", UNDEFINED.getText(), "", null))
                 );
         }
     }

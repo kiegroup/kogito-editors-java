@@ -23,9 +23,11 @@ import static org.kie.workbench.common.dmn.client.editors.expressions.types.Expr
 @JsType
 public class LiteralExpressionProps extends ExpressionProps{
     public final String content;
+    public final Double width;
 
-    public LiteralExpressionProps(final String name, final String dataType, final String content) {
+    public LiteralExpressionProps(final String name, final String dataType, final String content, final Double width) {
         super(name, dataType, LITERAL_EXPRESSION.getText());
         this.content = content;
+        this.width = width;
     }
 }
