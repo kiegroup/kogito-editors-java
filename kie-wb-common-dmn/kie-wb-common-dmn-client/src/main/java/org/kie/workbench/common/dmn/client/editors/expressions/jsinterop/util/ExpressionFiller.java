@@ -112,6 +112,8 @@ public class ExpressionFiller {
 
     public static void fillInvocationExpression(final Invocation invocationExpression, final InvocationProps invocationProps) {
         final LiteralExpression invokedFunction = new LiteralExpression();
+        invocationExpression.getComponentWidths().set(1, invocationProps.entryInfoWidth);
+        invocationExpression.getComponentWidths().set(2, invocationProps.entryExpressionWidth);
         invokedFunction.setText(new Text(invocationProps.invokedFunction));
         invokedFunction.setTypeRef(BuiltInType.STRING.asQName());
         invocationExpression.setExpression(invokedFunction);
@@ -165,7 +167,9 @@ public class ExpressionFiller {
         } else if (wrappedExpression instanceof Invocation) {
             final Invocation invocationExpression = (Invocation) wrappedExpression;
             final String invokedFunction = ((LiteralExpression) Optional.ofNullable(invocationExpression.getExpression()).orElse(new LiteralExpression())).getText().getValue();
-            return new InvocationProps(expressionName, dataType, invokedFunction, bindingsConvertForInvocationProps(invocationExpression));
+            final Double entryInfoWidth = invocationExpression.getComponentWidths().get(1);
+            final Double entryExpressionWidth = invocationExpression.getComponentWidths().get(2);
+            return new InvocationProps(expressionName, dataType, invokedFunction, bindingsConvertForInvocationProps(invocationExpression), entryInfoWidth, entryExpressionWidth);
         } else if (wrappedExpression instanceof FunctionDefinition) {
             final FunctionDefinition functionExpression = (FunctionDefinition) wrappedExpression;
             final EntryInfo[] formalParameters = formalParametersConvertForFunctionProps(functionExpression);

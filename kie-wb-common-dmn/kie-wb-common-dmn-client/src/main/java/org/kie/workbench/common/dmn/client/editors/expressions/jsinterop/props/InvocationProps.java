@@ -24,10 +24,14 @@ import static org.kie.workbench.common.dmn.client.editors.expressions.types.Expr
 public class InvocationProps extends ExpressionProps{
     public final String invokedFunction;
     public final ContextEntryProps[] bindingEntries;
+    public final Double entryInfoWidth;
+    public final Double entryExpressionWidth;
 
-    public InvocationProps(final String name, final String dataType, final String invokedFunction, final ContextEntryProps[] bindingEntries) {
+    public InvocationProps(final String name, final String dataType, final String invokedFunction, final ContextEntryProps[] bindingEntries, final Double entryInfoWidth, final Double entryExpressionWidth) {
         super(name, dataType, INVOCATION.getText());
         this.invokedFunction = invokedFunction;
         this.bindingEntries = bindingEntries;
+        this.entryInfoWidth = entryInfoWidth;
+        this.entryExpressionWidth = entryExpressionWidth;
     }
 }

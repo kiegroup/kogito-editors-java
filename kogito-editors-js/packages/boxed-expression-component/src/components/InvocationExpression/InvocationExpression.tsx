@@ -87,7 +87,7 @@ export const InvocationExpression: React.FunctionComponent<InvocationProps> = ({
     const updatedDefinition: InvocationProps = {
       uid,
       logicType,
-      name: expressionColumn.accessor,
+      name: expressionColumn.label,
       dataType: expressionColumn.dataType,
       bindingEntries: rows as ContextEntries,
       invokedFunction: functionName,
