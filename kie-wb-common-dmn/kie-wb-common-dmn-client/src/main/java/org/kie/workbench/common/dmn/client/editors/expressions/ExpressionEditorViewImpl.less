@@ -35,8 +35,8 @@
 }
 
 .kie-dmn-return-to-link {
-  height: @blockHeight_returnToDRGHeight;
-  display: block;
+  display: flex;
+  align-items: center;
 }
 
 .kie-dmn-return-to-link i {
@@ -73,7 +73,10 @@
     color: #555;
     font-size: 13px;
     padding: 4px;
-    border-radius: 14px;
+    display: flex;
+    flex-grow: 1;
+    align-items: center;
+    user-select: none;
 
     a {
       color: #06c;
@@ -82,16 +85,16 @@
     .beta-description,
     .stable-description {
       padding: 0 3px;
+      flex-grow: 1;
     }
 
-    &,
     .beta-dash,
     .beta-badge,
     .stable-badge,
     .beta-description,
     .stable-description {
       user-select: none;
-      display: inline-block;
+      display: unset;
     }
 
     .beta-badge,
@@ -102,7 +105,7 @@
     &.kie-beta-boxed-expression-editor--enabled {
       .beta-badge,
       .beta-description {
-        display: inline-block;
+        display: unset;
       }
 
       .stable-badge,
