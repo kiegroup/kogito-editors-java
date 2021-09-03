@@ -49,8 +49,8 @@ describe("ContextEntryExpressionCell tests", () => {
               editInfoPopoverLabel: "Edit entry",
             },
           ]}
-          row={{ index: 0 }}
-          column={{ id: "col1" }}
+          rowIndex={0}
+          columnId={"col1"}
           onRowUpdate={_.identity}
         />
       ).wrapper
@@ -73,8 +73,8 @@ describe("ContextEntryExpressionCell tests", () => {
               editInfoPopoverLabel: "Edit entry",
             },
           ]}
-          row={{ index: rowIndex }}
-          column={{ id: columnId }}
+          rowIndex={rowIndex}
+          columnId={"columnId"}
           onRowUpdate={mockedOnRowUpdate}
         />
       ).wrapper

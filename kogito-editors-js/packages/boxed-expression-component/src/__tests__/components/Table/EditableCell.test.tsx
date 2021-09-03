@@ -19,6 +19,7 @@ import * as _ from "lodash";
 import * as React from "react";
 import { EditableCell, EDIT_MODE, READ_MODE } from "../../../components/Table";
 import { usingTestingBoxedExpressionI18nContext } from "../test-utils";
+import { ContextEntryExpressionCell } from "../../../components/ContextExpression";
 
 describe("EditableCell", () => {
   const CELL_SELECTOR = ".editable-cell";
@@ -31,7 +32,7 @@ describe("EditableCell", () => {
     beforeEach(() => {
       container = render(
         usingTestingBoxedExpressionI18nContext(
-          <EditableCell value={initialValue} row={{ index: 0 }} column={{ id: "col1" }} onCellUpdate={_.identity} />
+          <EditableCell value={initialValue} rowIndex={0} columnId={"col1"} onCellUpdate={_.identity} />
         ).wrapper
       ).container;
     });
@@ -50,7 +51,7 @@ describe("EditableCell", () => {
     beforeEach(() => {
       container = render(
         usingTestingBoxedExpressionI18nContext(
-          <EditableCell value={"value"} row={{ index: 0 }} column={{ id: "col1" }} onCellUpdate={_.identity} />
+          <EditableCell value={"value"} rowIndex={0} columnId={"col1"} onCellUpdate={_.identity} />
         ).wrapper
       ).container;
 
@@ -66,7 +67,7 @@ describe("EditableCell", () => {
     beforeEach(() => {
       container = render(
         usingTestingBoxedExpressionI18nContext(
-          <EditableCell value={"value"} row={{ index: 0 }} column={{ id: "col1" }} onCellUpdate={_.identity} />
+          <EditableCell value={"value"} rowIndex={0} columnId={"col1"} onCellUpdate={_.identity} />
         ).wrapper
       ).container;
     });
@@ -82,7 +83,7 @@ describe("EditableCell", () => {
     beforeEach(() => {
       container = render(
         usingTestingBoxedExpressionI18nContext(
-          <EditableCell value={"value"} row={{ index: 0 }} column={{ id: "col1" }} onCellUpdate={_.identity} />
+          <EditableCell value={"value"} rowIndex={0} columnId={"col1"} onCellUpdate={_.identity} />
         ).wrapper
       ).container;
 
@@ -111,12 +112,7 @@ describe("EditableCell", () => {
     beforeEach(() => {
       container = render(
         usingTestingBoxedExpressionI18nContext(
-          <EditableCell
-            value={value}
-            row={{ index: rowIndex }}
-            column={{ id: columnId }}
-            onCellUpdate={mockedOnCellUpdate}
-          />
+          <EditableCell value={value} rowIndex={rowIndex} columnId={columnId} onCellUpdate={mockedOnCellUpdate} />
         ).wrapper
       ).container;
 
