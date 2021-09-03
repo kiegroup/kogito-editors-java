@@ -139,16 +139,7 @@ public class ExpressionFiller {
         decisionTableExpression.getInput().addAll(inputConvertForDecisionTableExpression(decisionTableProps));
         decisionTableExpression.getOutput().clear();
         decisionTableExpression.getOutput().addAll(outputConvertForDecisionTableExpression(decisionTableProps));
-        IntStream.range(0, decisionTableProps.input.length)
-                .forEach(index -> decisionTableExpression.getComponentWidths().set(index + 1, decisionTableProps.input[index].width));
-        IntStream.range(0, decisionTableProps.output.length)
-                .forEach(index -> decisionTableExpression.getComponentWidths().set(
-                        decisionTableProps.input.length + index + 1, decisionTableProps.output[index].width)
-                );
-        IntStream.range(0, decisionTableProps.annotations.length)
-                .forEach(index -> decisionTableExpression.getComponentWidths().set(
-                        decisionTableProps.input.length + decisionTableProps.output.length + index + 1, decisionTableProps.annotations[index].width)
-                );
+        updateComponentWidthsForDecisionTableExpression(decisionTableExpression, decisionTableProps);
         decisionTableExpression.getRule().clear();
         decisionTableExpression.getRule().addAll(rulesConvertForDecisionTableExpression(decisionTableProps));
     }
@@ -427,6 +418,22 @@ public class ExpressionFiller {
                     return ruleAnnotationClause;
                 })
                 .collect(Collectors.toList());
+    }
+
+    private static void updateComponentWidthsForDecisionTableExpression(final DecisionTable decisionTableExpression, final DecisionTableProps decisionTableProps) {
+        final Clause[] inputProps = Optional.ofNullable(decisionTableProps.input).orElse(new Clause[0]);
+        final Clause[] outputProps = Optional.ofNullable(decisionTableProps.output).orElse(new Clause[0]);
+        final Annotation[] annotationProps = Optional.ofNullable(decisionTableProps.annotations).orElse(new Annotation[0]);
+        IntStream.range(0, inputProps.length)
+                .forEach(index -> decisionTableExpression.getComponentWidths().set(index + 1, inputProps[index].width));
+        IntStream.range(0, outputProps.length)
+                .forEach(index -> decisionTableExpression.getComponentWidths().set(
+                        inputProps.length + index + 1, outputProps[index].width)
+                );
+        IntStream.range(0, annotationProps.length)
+                .forEach(index -> decisionTableExpression.getComponentWidths().set(
+                        inputProps.length + outputProps.length + index + 1, annotationProps[index].width)
+                );
     }
 
     /**
