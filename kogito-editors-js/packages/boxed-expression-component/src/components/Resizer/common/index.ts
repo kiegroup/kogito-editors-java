@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export const DEFAULT_MIN_WIDTH = 150;
+export const DEFAULT_MIN_WIDTH = 100;
 
 /*
  * Returns a valid width value.

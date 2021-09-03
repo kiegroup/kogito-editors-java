@@ -98,7 +98,7 @@ public class ExpressionFiller {
     public static void fillRelationExpression(final Relation relationExpression, final RelationProps relationProps) {
         relationExpression.getColumn().clear();
         relationExpression.getColumn().addAll(columnsConvertForRelationExpression(relationProps));
-        IntStream.range(0, relationProps.columns.length)     // Skipping # of rows column
+        IntStream.range(0, relationProps.columns.length)
                 .forEach(index -> relationExpression.getComponentWidths().set(index + 1, relationProps.columns[index].width));
         relationExpression.getRow().clear();
         relationExpression.getRow().addAll(rowsConvertForRelationExpression(relationProps, relationExpression));
@@ -139,6 +139,16 @@ public class ExpressionFiller {
         decisionTableExpression.getInput().addAll(inputConvertForDecisionTableExpression(decisionTableProps));
         decisionTableExpression.getOutput().clear();
         decisionTableExpression.getOutput().addAll(outputConvertForDecisionTableExpression(decisionTableProps));
+        IntStream.range(0, decisionTableProps.input.length)
+                .forEach(index -> decisionTableExpression.getComponentWidths().set(index + 1, decisionTableProps.input[index].width));
+        IntStream.range(0, decisionTableProps.output.length)
+                .forEach(index -> decisionTableExpression.getComponentWidths().set(
+                        decisionTableProps.input.length + index + 1, decisionTableProps.output[index].width)
+                );
+        IntStream.range(0, decisionTableProps.annotations.length)
+                .forEach(index -> decisionTableExpression.getComponentWidths().set(
+                        decisionTableProps.input.length + decisionTableProps.output.length + index + 1, decisionTableProps.annotations[index].width)
+                );
         decisionTableExpression.getRule().clear();
         decisionTableExpression.getRule().addAll(rulesConvertForDecisionTableExpression(decisionTableProps));
     }
@@ -442,7 +452,7 @@ public class ExpressionFiller {
         return IntStream.range(0, relationExpression.getColumn().size())
                 .mapToObj(index -> {
                     final InformationItem informationItem = relationExpression.getColumn().get(index);
-                    final Double columnWidth = relationExpression.getComponentWidths().get(index + 1); // Skipping # of rows column
+                    final Double columnWidth = relationExpression.getComponentWidths().get(index + 1);
                     return new Column(informationItem.getName().getValue(), informationItem.getTypeRef().getLocalPart(), columnWidth);
                 })
                 .toArray(Column[]::new);
@@ -535,34 +545,37 @@ public class ExpressionFiller {
     }
 
     private static Clause[] inputConvertForDecisionTableProps(final DecisionTable decisionTableExpression) {
-        return decisionTableExpression
-                .getInput()
-                .stream()
-                .map(inputClause -> {
+        return IntStream.range(0, decisionTableExpression.getInput().size())
+                .mapToObj(index -> {
+                    final InputClause inputClause = decisionTableExpression.getInput().get(index);
                     final String name = inputClause.getInputExpression().getText().getValue();
                     final String dataType = inputClause.getInputExpression().getTypeRefHolder().getValue().getLocalPart();
-                    return new Clause(name, dataType);
+                    final Double width = decisionTableExpression.getComponentWidths().get(index + 1);
+                    return new Clause(name, dataType, width);
                 })
                 .toArray(Clause[]::new);
     }
 
     private static Clause[] outputConvertForDecisionTableProps(final DecisionTable decisionTableExpression) {
-        return decisionTableExpression
-                .getOutput()
-                .stream()
-                .map(outputClause -> {
+        return IntStream.range(0, decisionTableExpression.getOutput().size())
+                .mapToObj(index -> {
+                    final OutputClause outputClause = decisionTableExpression.getOutput().get(index);
                     final String name = outputClause.getName();
                     final String dataType = outputClause.getTypeRef().getLocalPart();
-                    return new Clause(name, dataType);
+                    final Double width = decisionTableExpression.getComponentWidths().get(decisionTableExpression.getInput().size() + index + 1);
+                    return new Clause(name, dataType, width);
                 })
                 .toArray(Clause[]::new);
     }
 
     private static Annotation[] annotationsConvertForDecisionTableProps(final DecisionTable decisionTableExpression) {
-        return decisionTableExpression
-                .getAnnotations()
-                .stream()
-                .map(ruleAnnotationClause -> new Annotation(ruleAnnotationClause.getName().getValue()))
+        return IntStream.range(0, decisionTableExpression.getAnnotations().size())
+                .mapToObj(index -> {
+                    final RuleAnnotationClause ruleAnnotationClause = decisionTableExpression.getAnnotations().get(index);
+                    final Double width = decisionTableExpression.getComponentWidths()
+                            .get(decisionTableExpression.getInput().size() + decisionTableExpression.getOutput().size() + index + 1);
+                    return new Annotation(ruleAnnotationClause.getName().getValue(), width);
+                })
                 .toArray(Annotation[]::new);
     }
 }

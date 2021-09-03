@@ -22,9 +22,11 @@ import jsinterop.annotations.JsType;
 public class Clause {
     public final String name;
     public final String dataType;
+    public final Double width;
 
-    public Clause(final String name, final String dataType) {
+    public Clause(final String name, final String dataType, final Double width) {
         this.name = name;
         this.dataType = dataType;
+        this.width = width;
     }
 }
