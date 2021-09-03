@@ -106,30 +106,27 @@ export const InvocationExpression: React.FunctionComponent<InvocationProps> = (i
     [headerCellElement, invocationProps.uid, invocationProps.name, invocationProps.dataType, infoWidth, expressionWidth]
   );
 
-  const rows = useMemo(
-    () => {
-      console.log("memo rows", invocationProps.bindingEntries)
-      return invocationProps.bindingEntries ?? [
+  const rows = useMemo(() => {
+    return (
+      invocationProps.bindingEntries ?? [
         {
           entryInfo: {
             name: DEFAULT_PARAMETER_NAME,
-            dataType: DEFAULT_PARAMETER_DATA_TYPE
+            dataType: DEFAULT_PARAMETER_DATA_TYPE,
           },
           entryExpression: {
             name: DEFAULT_PARAMETER_NAME,
-            dataType: DEFAULT_PARAMETER_DATA_TYPE
+            dataType: DEFAULT_PARAMETER_DATA_TYPE,
           },
           editInfoPopoverLabel: i18n.editParameter,
-          nameAndDataTypeSynchronized: true
-        } as DataRecord
-      ];
-    },
-    [invocationProps.bindingEntries, i18n.editParameter]
-  );
+          nameAndDataTypeSynchronized: true,
+        } as DataRecord,
+      ]
+    );
+  }, [invocationProps.bindingEntries, i18n.editParameter]);
 
   const spreadInvocationExpressionDefinition = useCallback(
     (toUpdate?: Partial<InvocationProps>) => {
-
       const updatedDefinition: InvocationProps = {
         uid: invocationProps.uid,
         logicType: invocationProps.logicType,
@@ -197,8 +194,7 @@ export const InvocationExpression: React.FunctionComponent<InvocationProps> = (i
 
   const onRowsUpdate = useCallback(
     (entries) => {
-      console.log("spread, onRowsUpdate", entries);
-      spreadInvocationExpressionDefinition({ bindingEntries: entries });
+      spreadInvocationExpressionDefinition({ bindingEntries: [...entries] });
     },
     [spreadInvocationExpressionDefinition]
   );

@@ -35,6 +35,7 @@ import { TableBody } from "./TableBody";
 import { TableHandler } from "./TableHandler";
 import { TableHeader } from "./TableHeader";
 import { BoxedExpressionGlobalContext } from "../../context";
+import { ContextEntryExpressionCell, ContextEntryInfoCell } from "../ContextExpression";
 
 export const NO_TABLE_CONTEXT_MENU_CLASS = "no-table-context-menu";
 const NUMBER_OF_ROWS_COLUMN = "#";
@@ -145,7 +146,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
 
   const onRowsUpdateCallback = useCallback(
     (rows: DataRecord[], operation?: TableOperation, rowIndex?: number) => {
-      onRowsUpdate?.(rows, operation, rowIndex);
+      onRowsUpdate?.([...rows], operation, rowIndex);
     },
     [onRowsUpdate]
   );
@@ -230,12 +231,31 @@ export const Table: React.FunctionComponent<TableProps> = ({
         if (column.isCountColumn) {
           return cellRef.value;
         } else {
-          console.log("creating this", cellRef.row.index, cellRef.data)
-          return defaultCell ? defaultCell[column.id](cellRef) : <EditableCell {...cellRef} readOnly={readOnlyCells} />;
+          if (column.id === "entryInfo") {
+            return (
+              <ContextEntryInfoCell
+                data={cellRef.data}
+                onRowUpdate={cellRef.onRowUpdate}
+                rowIndex={cellRef.row.index}
+                columnId={cellRef.column.id}
+              />
+            );
+          }
+          if (column.id === "entryExpression") {
+            return (
+              <ContextEntryExpressionCell
+                data={cellRef.data}
+                onRowUpdate={cellRef.onRowUpdate}
+                rowIndex={cellRef.row.index}
+                columnId={cellRef.column.id}
+              />
+            );
+          }
+          return <EditableCell {...cellRef} readOnly={readOnlyCells} />;
         }
       },
     }),
-    [defaultCell, rows]
+    []
   );
 
   const tableInstanceProperties = useMemo(

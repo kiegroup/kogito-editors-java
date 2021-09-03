@@ -28,10 +28,10 @@ export interface ContextEntryInfoCellProps extends CellProps {
 
 export const ContextEntryInfoCell: React.FunctionComponent<ContextEntryInfoCellProps> = ({
   data,
-  row: { index },
+  rowIndex,
   onRowUpdate,
 }) => {
-  const contextEntry: ContextEntryRecord = useMemo(() => data[index], [data, index]);
+  const contextEntry: ContextEntryRecord = useMemo(() => data[rowIndex], [data, rowIndex]);
   const entryInfo: EntryInfo = useMemo(() => contextEntry.entryInfo, [contextEntry.entryInfo]);
   const entryExpression: ExpressionProps = useMemo(() => contextEntry.entryExpression, [contextEntry.entryExpression]);
 
@@ -42,9 +42,9 @@ export const ContextEntryInfoCell: React.FunctionComponent<ContextEntryInfoCellP
         updatedExpression.name = name;
         updatedExpression.dataType = dataType;
       }
-      onRowUpdate(index, { ...contextEntry, entryExpression: updatedExpression, entryInfo: { name, dataType } });
+      onRowUpdate(rowIndex, { ...contextEntry, entryExpression: updatedExpression, entryInfo: { name, dataType } });
     },
-    [contextEntry, index, onRowUpdate]
+    [contextEntry, rowIndex, onRowUpdate]
   );
 
   return (

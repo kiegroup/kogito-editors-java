@@ -80,7 +80,9 @@ export const LogicTypeSelector: React.FunctionComponent<LogicTypeSelectorProps> 
     uid: selectedExpression.uid || nextId(),
     isHeadless,
     onUpdatingNameAndDataType,
-    onUpdatingRecursiveExpression,
+    onUpdatingRecursiveExpression: (e: any) => {
+      onUpdatingRecursiveExpression?.(e)
+    },
   });
 
   const isLogicTypeSelected = (logicType?: LogicType) => !_.isEmpty(logicType) && logicType !== LogicType.Undefined;

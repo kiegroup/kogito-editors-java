@@ -50,7 +50,7 @@ export function BoxedExpressionEditor(props: BoxedExpressionEditorProps) {
       () => {
         setExpressionDefinition(props.expressionDefinition);
       },
-      ["columns", "rows", "bindingEntries"]
+      ["columns", "rows", "bindingEntries", "content"]
     );
   }, [props.expressionDefinition]);
 

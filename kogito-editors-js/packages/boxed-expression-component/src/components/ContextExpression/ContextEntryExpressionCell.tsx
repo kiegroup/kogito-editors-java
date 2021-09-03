@@ -16,8 +16,8 @@
 
 import "./ContextEntryExpressionCell.css";
 import * as React from "react";
-import { useCallback, useEffect, useMemo } from "react";
-import { CellProps, ContextEntries, ContextEntryRecord, DataType, EntryInfo, ExpressionProps } from "../../api";
+import { useCallback, useEffect } from "react";
+import { CellProps, ContextEntries, DataType, ExpressionProps } from "../../api";
 import { DataRecord } from "react-table";
 import { ContextEntryExpression } from "./ContextEntryExpression";
 import * as _ from "lodash";
@@ -29,29 +29,28 @@ export interface ContextEntryExpressionCellProps extends CellProps {
 
 export const ContextEntryExpressionCell: React.FunctionComponent<ContextEntryExpressionCellProps> = ({
   data,
-  row: { index },
+  rowIndex,
   onRowUpdate,
 }) => {
-
   const onUpdatingRecursiveExpression = useCallback(
     (expression: ExpressionProps) => {
-      const updatedEntryInfo = { ...data[index].entryInfo };
-      if (data[index].nameAndDataTypeSynchronized && _.size(expression.name) && _.size(expression.dataType)) {
+      const updatedEntryInfo = { ...data[rowIndex].entryInfo };
+      if (data[rowIndex].nameAndDataTypeSynchronized && _.size(expression.name) && _.size(expression.dataType)) {
         updatedEntryInfo.name = expression.name as string;
         updatedEntryInfo.dataType = expression.dataType as DataType;
       }
-      console.log("context entry expression cell", index, data);
-      onRowUpdate(index, { ...data[index], entryInfo: updatedEntryInfo, entryExpression: expression });
+
+      onRowUpdate(rowIndex, { ...data[rowIndex], entryInfo: updatedEntryInfo, entryExpression: expression });
     },
-    [index, onRowUpdate, data, index]
+    []
   );
 
   return (
     <div className="context-entry-expression-cell">
       <ContextEntryExpression
-        expression={data[index].entryExpression}
+        expression={data[rowIndex].entryExpression}
         onUpdatingRecursiveExpression={onUpdatingRecursiveExpression}
-        onExpressionResetting={data[index].onExpressionResetting}
+        onExpressionResetting={data[rowIndex].onExpressionResetting}
       />
     </div>
   );

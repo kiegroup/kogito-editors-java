@@ -55,17 +55,19 @@ export interface EditableCellProps extends CellProps {
   readOnly?: boolean;
 }
 
-export function EditableCell({ value, row: { index }, column: { id }, onCellUpdate, readOnly }: EditableCellProps) {
+export function EditableCell({ value, rowIndex, columnId, onCellUpdate, readOnly }: EditableCellProps) {
   const [isSelected, setIsSelected] = useState(false);
   const [mode, setMode] = useState(READ_MODE);
-  const textarea = useRef<HTMLTextAreaElement>(null);
   const [cellHeight, setCellHeight] = useState(CELL_LINE_HEIGHT * 3);
   const [preview, setPreview] = useState<string>("");
+  const textarea = useRef<HTMLTextAreaElement>(null);
 
   // Common Handlers =========================================================
 
   useEffect(() => {
-    setPreview(value || "");
+    if (!value) {
+      setPreview("");
+    }
     if (textarea.current) {
       textarea.current.value = value || "";
     }
@@ -82,12 +84,12 @@ export function EditableCell({ value, row: { index }, column: { id }, onCellUpda
       setMode(READ_MODE);
 
       if (value !== newValue) {
-        onCellUpdate(index, id, newValue || value);
+        onCellUpdate(rowIndex, columnId, newValue || value);
       }
 
       focusTextArea(textarea.current);
     },
-    [id, isEditMode, onCellUpdate, index, value]
+    [columnId, isEditMode, onCellUpdate, rowIndex, value]
   );
 
   const triggerEditMode = useCallback(() => {
@@ -106,7 +108,7 @@ export function EditableCell({ value, row: { index }, column: { id }, onCellUpda
     }
     setIsSelected(true);
     focusTextArea(textarea.current);
-  }, [isEditMode, setIsSelected, textarea]);
+  }, [isEditMode]);
 
   const onClick = useCallback(() => {
     if (document.activeElement !== textarea.current) {
@@ -120,10 +122,10 @@ export function EditableCell({ value, row: { index }, column: { id }, onCellUpda
 
   const onTextAreaChange = useCallback(
     (event) => {
-      onCellUpdate(index, id, event.target.value.trim());
+      onCellUpdate(rowIndex, columnId, event.target.value.trim());
       triggerEditMode();
     },
-    [triggerEditMode, onCellUpdate, id, index]
+    [triggerEditMode, onCellUpdate, columnId, rowIndex]
   );
 
   // Feel Handlers ===========================================================
@@ -132,7 +134,7 @@ export function EditableCell({ value, row: { index }, column: { id }, onCellUpda
     (newValue: string) => {
       triggerReadMode(newValue);
     },
-    [triggerReadMode, onCellUpdate, id, index]
+    [triggerReadMode]
   );
 
   const previousValue = usePrevious(value);
@@ -189,7 +191,7 @@ export function EditableCell({ value, row: { index }, column: { id }, onCellUpda
         <textarea
           className="editable-cell-textarea"
           ref={textarea}
-          value={typeof value === "object" ? value[id] : value || ""}
+          value={typeof value === "object" ? value[columnId] : value || ""}
           onChange={onTextAreaChange}
           onFocus={onFocus}
           onBlur={onTextAreaBlur}
@@ -197,7 +199,7 @@ export function EditableCell({ value, row: { index }, column: { id }, onCellUpda
         />
         <FeelInput
           enabled={isEditMode}
-          value={typeof value === "object" ? value[id] : value || ""}
+          value={typeof value === "object" ? value[columnId] : value || ""}
           onKeyDown={onFeelKeyDown}
           onChange={onFeelChange}
           onLoad={onFeelLoad}
