@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { CellProps, ContextEntries } from "../../api";
+import { CellProps, ContextEntries, ContextEntryRecord, EntryInfo, ExpressionProps } from "../../api";
 import * as React from "react";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { DataRecord } from "react-table";
 import { ContextEntryInfo } from "./ContextEntryInfo";
 import * as _ from "lodash";
@@ -31,21 +31,13 @@ export const ContextEntryInfoCell: React.FunctionComponent<ContextEntryInfoCellP
   row: { index },
   onRowUpdate,
 }) => {
-  const contextEntry = data[index];
-
-  const entryInfo = useRef(contextEntry.entryInfo);
-  const entryExpression = useRef(contextEntry.entryExpression);
-
-  useEffect(() => {
-    entryInfo.current = contextEntry.entryInfo;
-  }, [contextEntry.entryInfo]);
-  useEffect(() => {
-    entryExpression.current = contextEntry.entryExpression;
-  }, [contextEntry.entryExpression]);
+  const contextEntry: ContextEntryRecord = useMemo(() => data[index], [data, index]);
+  const entryInfo: EntryInfo = useMemo(() => contextEntry.entryInfo, [contextEntry.entryInfo]);
+  const entryExpression: ExpressionProps = useMemo(() => contextEntry.entryExpression, [contextEntry.entryExpression]);
 
   const onContextEntryUpdate = useCallback(
     (name, dataType) => {
-      const updatedExpression = { ...entryExpression.current };
+      const updatedExpression = { ...entryExpression };
       if (contextEntry.nameAndDataTypeSynchronized && _.size(name) && _.size(dataType)) {
         updatedExpression.name = name;
         updatedExpression.dataType = dataType;
@@ -58,8 +50,8 @@ export const ContextEntryInfoCell: React.FunctionComponent<ContextEntryInfoCellP
   return (
     <div className="context-entry-info-cell">
       <ContextEntryInfo
-        name={entryInfo.current.name}
-        dataType={entryInfo.current.dataType}
+        name={entryInfo.name}
+        dataType={entryInfo.dataType}
         onContextEntryUpdate={onContextEntryUpdate}
         editInfoPopoverLabel={contextEntry.editInfoPopoverLabel}
       />

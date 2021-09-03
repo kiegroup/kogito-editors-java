@@ -142,18 +142,18 @@ export const ListExpression: React.FunctionComponent<ListProps> = ({
   return useMemo(
     () => (
       <div className="list-expression">
-        <Table
-          tableId={uid}
-          headerVisibility={TableHeaderVisibility.None}
-          defaultCell={{ list: ContextEntryExpressionCell }}
-          columns={columns}
-          rows={listItems as DataRecord[]}
-          onRowsUpdate={onRowsUpdate}
-          onRowAdding={onRowAdding}
-          handlerConfiguration={handlerConfiguration}
-          getRowKey={listTableGetRowKey}
-          resetRowCustomFunction={resetRowCustomFunction}
-        />
+        {/*<Table*/}
+        {/*  tableId={uid}*/}
+        {/*  headerVisibility={TableHeaderVisibility.None}*/}
+        {/*  defaultCell={{ list: ContextEntryExpressionCell }}*/}
+        {/*  columns={columns}*/}
+        {/*  rows={listItems as DataRecord[]}*/}
+        {/*  onRowsUpdate={onRowsUpdate}*/}
+        {/*  onRowAdding={onRowAdding}*/}
+        {/*  handlerConfiguration={handlerConfiguration}*/}
+        {/*  getRowKey={listTableGetRowKey}*/}
+        {/*  resetRowCustomFunction={resetRowCustomFunction}*/}
+        {/*/>*/}
       </div>
     ),
     [

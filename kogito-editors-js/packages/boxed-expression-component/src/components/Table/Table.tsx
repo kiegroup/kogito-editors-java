@@ -27,7 +27,7 @@ import {
 } from "react-table";
 import { TableComposable } from "@patternfly/react-table";
 import * as React from "react";
-import { useCallback, useContext, useMemo, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { EditableCell } from "./EditableCell";
 import { TableHeaderVisibility, TableOperation, TableProps } from "../../api";
 import * as _ from "lodash";
@@ -168,22 +168,6 @@ export const Table: React.FunctionComponent<TableProps> = ({
     [onRowsUpdate, rows]
   );
 
-  const defaultColumn = useMemo(
-    () => ({
-      Cell: (cellRef: any) => {
-        const column = cellRef.column as ColumnInstance;
-        if (column.isCountColumn) {
-          return cellRef.value;
-        } else {
-          return defaultCell ? defaultCell[column.id](cellRef) : <EditableCell {...cellRef} readOnly={readOnlyCells} />;
-        }
-        // Table performance optimization: no need to re-render cells, since nested component themselves will re-render
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-      },
-    }),
-    [defaultCell]
-  );
-
   const contextMenuIsAvailable = useCallback((target: HTMLElement) => {
     const targetIsContainedInCurrentTable = target.closest("table") === tableRef.current;
     const contextMenuAvailableForTarget = !target.classList.contains(NO_TABLE_CONTEXT_MENU_CLASS);
@@ -239,17 +223,33 @@ export const Table: React.FunctionComponent<TableProps> = ({
     [getColumnOperations, tableHandlerStateUpdate, contextMenuIsAvailable, tableColumns]
   );
 
-  const tableInstance = useTable(
-    {
+  const defaultColumn = useMemo(
+    () => ({
+      Cell: (cellRef: any) => {
+        const column = cellRef.column as ColumnInstance;
+        if (column.isCountColumn) {
+          return cellRef.value;
+        } else {
+          console.log("creating this", cellRef.row.index, cellRef.data)
+          return defaultCell ? defaultCell[column.id](cellRef) : <EditableCell {...cellRef} readOnly={readOnlyCells} />;
+        }
+      },
+    }),
+    [defaultCell, rows]
+  );
+
+  const tableInstanceProperties = useMemo(
+    () => ({
       columns: tableColumns,
       data: rows,
       onCellUpdate,
       onRowUpdate,
       defaultColumn,
-    },
-    useBlockLayout,
-    useResizeColumns
+    }),
+    [tableColumns, rows, onCellUpdate, onRowUpdate, defaultColumn]
   );
+
+  const tableInstance = useTable(tableInstanceProperties, useBlockLayout, useResizeColumns);
 
   const tdProps = useCallback(
     (columnIndex: number, rowIndex: number) => ({
@@ -275,14 +275,20 @@ export const Table: React.FunctionComponent<TableProps> = ({
 
   const onGetColumnKey = useCallback(
     (column: Column) => {
-      return (getColumnKey ? getColumnKey(column) : column.id!);
+      return getColumnKey ? getColumnKey(column) : column.id!;
     },
     [getColumnKey]
   );
-  const onGetRowKey = useCallback((row: Row) => {
-    return (getRowKey ? getRowKey(row) : row.id);
-  }, [getRowKey]);
-  const onRowAddingCallback = useCallback(() => (onRowAdding ? onRowAdding() : {}), [onRowAdding]);
+
+  const onGetRowKey = useCallback(
+    (row: Row) => {
+      return getRowKey ? getRowKey(row) : row.id;
+    },
+    [getRowKey]
+  );
+  const onRowAddingCallback = useCallback(() => {
+    return onRowAdding ? onRowAdding() : {};
+  }, [onRowAdding]);
   const onGetColumnPrefix = useCallback(() => (getColumnPrefix ? getColumnPrefix() : "column-"), [getColumnPrefix]);
 
   return (

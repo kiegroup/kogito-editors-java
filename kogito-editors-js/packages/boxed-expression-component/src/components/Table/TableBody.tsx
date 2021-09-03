@@ -41,12 +41,14 @@ export interface TableBodyProps {
 export const TableBody: React.FunctionComponent<TableBodyProps> = ({
   tableInstance,
   children,
-  headerVisibility = TableHeaderVisibility.Full,
+  headerVisibility,
   getRowKey,
   getColumnKey,
   onColumnsUpdate,
   tdProps,
 }) => {
+  const headerVisibilityMemo = useMemo(() => headerVisibility ?? TableHeaderVisibility.Full, [headerVisibility])
+
   const renderCell = useCallback(
     (cellIndex: number, cell: Cell, rowIndex: number, inAForm: boolean) => {
       let cellType = cellIndex === 0 ? "counter-cell" : "data-cell";
@@ -140,7 +142,7 @@ export const TableBody: React.FunctionComponent<TableBodyProps> = ({
 
   return (
     <Tbody
-      className={`${headerVisibility === TableHeaderVisibility.None ? "missing-header" : ""}`}
+      className={`${headerVisibilityMemo === TableHeaderVisibility.None ? "missing-header" : ""}`}
       {...tableInstance.getTableBodyProps()}
     >
       {tableInstance.rows.map((row: Row, rowIndex: number) => renderBodyRow(row, rowIndex))}
