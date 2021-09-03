@@ -16,7 +16,7 @@
 
 import "./ContextExpression.css";
 import * as React from "react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import {
   ContextEntries,
   ContextEntryRecord,
@@ -26,7 +26,6 @@ import {
   DEFAULT_ENTRY_INFO_MIN_WIDTH,
   EntryInfo,
   executeIfExpressionDefinitionChanged,
-  ExpressionProps,
   generateNextAvailableEntryName,
   getEntryKey,
   getHandlerConfiguration,
@@ -36,7 +35,7 @@ import {
 } from "../../api";
 import { Table } from "../Table";
 import { useBoxedExpressionEditorI18n } from "../../i18n";
-import { ColumnInstance, DataRecord } from "react-table";
+import { ColumnInstance, DataRecord, Row } from "react-table";
 import { ContextEntryExpressionCell } from "./ContextEntryExpressionCell";
 import * as _ from "lodash";
 import { ContextEntryExpression } from "./ContextEntryExpression";
@@ -47,38 +46,20 @@ import { BoxedExpressionGlobalContext } from "../../context";
 const DEFAULT_CONTEXT_ENTRY_NAME = "ContextEntry-1";
 const DEFAULT_CONTEXT_ENTRY_DATA_TYPE = DataType.Undefined;
 
-export const ContextExpression: React.FunctionComponent<ContextProps> = ({
-  uid,
-  name = DEFAULT_CONTEXT_ENTRY_NAME,
-  dataType = DEFAULT_CONTEXT_ENTRY_DATA_TYPE,
-  onUpdatingNameAndDataType,
-  contextEntries,
-  result = {} as ExpressionProps,
-  renderResult = true,
-  entryInfoWidth = DEFAULT_ENTRY_INFO_MIN_WIDTH,
-  entryExpressionWidth = DEFAULT_ENTRY_EXPRESSION_MIN_WIDTH,
-  isHeadless = false,
-  noHandlerMenu = false,
-  onUpdatingRecursiveExpression,
-}) => {
+export const ContextExpression: React.FunctionComponent<ContextProps> = (contextExpression: ContextProps) => {
   const { i18n } = useBoxedExpressionEditorI18n();
-
-  const storedExpressionDefinition = useRef({} as ContextProps);
-
-  const expressionColumnName = useRef(name);
-  const expressionColumnDataType = useRef(dataType);
-
-  const [resultExpression, setResultExpression] = useState(result);
-  const [infoWidth, setInfoWidth] = useState(entryInfoWidth);
-  const [expressionWidth, setExpressionWidth] = useState(entryExpressionWidth);
+  const [infoWidth, setInfoWidth] = useState(contextExpression.entryInfoWidth ?? DEFAULT_ENTRY_INFO_MIN_WIDTH);
+  const [expressionWidth, setExpressionWidth] = useState(
+    contextExpression.entryExpressionWidth ?? DEFAULT_ENTRY_EXPRESSION_MIN_WIDTH
+  );
   const { setSupervisorHash } = React.useContext(BoxedExpressionGlobalContext);
 
   const columns = useMemo(
     () => [
       {
-        label: expressionColumnName.current,
-        accessor: expressionColumnName.current,
-        dataType: expressionColumnDataType.current,
+        label: contextExpression.name ?? DEFAULT_CONTEXT_ENTRY_NAME,
+        accessor: contextExpression.name ?? DEFAULT_CONTEXT_ENTRY_NAME,
+        dataType: contextExpression.dataType ?? DEFAULT_CONTEXT_ENTRY_DATA_TYPE,
         disableHandlerOnHeader: true,
         columns: [
           {
@@ -98,71 +79,68 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
         ],
       },
     ],
-    [expressionWidth, infoWidth]
+    [expressionWidth, infoWidth, contextExpression.name, contextExpression.dataType]
   );
 
-  const [rows, setRows] = useState(
-    contextEntries || [
-      {
-        entryInfo: {
-          name: DEFAULT_CONTEXT_ENTRY_NAME,
-          dataType: DEFAULT_CONTEXT_ENTRY_DATA_TYPE,
-        },
-        entryExpression: {
-          name: DEFAULT_CONTEXT_ENTRY_NAME,
-          dataType: DEFAULT_CONTEXT_ENTRY_DATA_TYPE,
-        },
-        editInfoPopoverLabel: i18n.editContextEntry,
-        nameAndDataTypeSynchronized: true,
-      } as DataRecord,
-    ]
+  const rows = useMemo(
+    () =>
+      contextExpression.contextEntries || [
+        {
+          entryInfo: {
+            name: DEFAULT_CONTEXT_ENTRY_NAME,
+            dataType: DEFAULT_CONTEXT_ENTRY_DATA_TYPE,
+          },
+          entryExpression: {
+            name: DEFAULT_CONTEXT_ENTRY_NAME,
+            dataType: DEFAULT_CONTEXT_ENTRY_DATA_TYPE,
+          },
+          editInfoPopoverLabel: i18n.editContextEntry,
+          nameAndDataTypeSynchronized: true,
+        } as DataRecord,
+      ],
+    [contextExpression.contextEntries, i18n.editContextEntry]
   );
 
-  const spreadContextExpressionDefinition = useCallback(() => {
-    const updatedDefinition: ContextProps = {
-      uid,
-      logicType: LogicType.Context,
-      name: expressionColumnName.current,
-      dataType: expressionColumnDataType.current,
-      contextEntries: rows as ContextEntries,
-      result: _.omit(resultExpression, "isHeadless"),
-      entryInfoWidth: infoWidth,
-      entryExpressionWidth: expressionWidth,
-    };
+  const spreadContextExpressionDefinition = useCallback(
+    (contextExpressionUpdated: Partial<ContextProps>) => {
+      const updatedDefinition: ContextProps = {
+        uid: contextExpression.uid,
+        logicType: LogicType.Context,
+        name: contextExpression.name ?? DEFAULT_CONTEXT_ENTRY_NAME,
+        dataType: contextExpression.dataType ?? DEFAULT_CONTEXT_ENTRY_DATA_TYPE,
+        contextEntries: rows as ContextEntries,
+        result: _.omit(contextExpression.result, "isHeadless"),
+        entryInfoWidth: infoWidth,
+        entryExpressionWidth: expressionWidth,
+        ...contextExpressionUpdated,
+      };
 
-    executeIfExpressionDefinitionChanged(
-      storedExpressionDefinition.current,
-      updatedDefinition,
-      () => {
-        if (isHeadless) {
-          onUpdatingRecursiveExpression?.(_.omit(updatedDefinition, ["name", "dataType"]));
-        } else {
-          setSupervisorHash(hashfy(updatedDefinition));
-          window.beeApi?.broadcastContextExpressionDefinition?.(updatedDefinition);
-        }
-        storedExpressionDefinition.current = updatedDefinition;
-      },
-      ["name", "dataType", "contextEntries", "result", "entryInfoWidth", "entryExpressionWidth"]
-    );
-  }, [
-    expressionWidth,
-    infoWidth,
-    isHeadless,
-    onUpdatingRecursiveExpression,
-    resultExpression,
-    rows,
-    setSupervisorHash,
-    uid,
-  ]);
+      executeIfExpressionDefinitionChanged(
+        contextExpression,
+        updatedDefinition,
+        () => {
+          if (contextExpression.isHeadless) {
+            contextExpression.onUpdatingRecursiveExpression?.(_.omit(updatedDefinition, ["name", "dataType"]));
+          } else {
+            setSupervisorHash(hashfy(updatedDefinition));
+            window.beeApi?.broadcastContextExpressionDefinition?.(updatedDefinition);
+          }
+        },
+        ["name", "dataType", "contextEntries", "result", "entryInfoWidth", "entryExpressionWidth"]
+      );
+    },
+    [expressionWidth, infoWidth, contextExpression, rows]
+  );
 
   const onColumnsUpdate = useCallback(
     ([expressionColumn]: [ColumnInstance]) => {
-      expressionColumnName.current = expressionColumn.label as string;
-      expressionColumnDataType.current = expressionColumn.dataType;
-      onUpdatingNameAndDataType?.(expressionColumnName.current, expressionColumnDataType.current);
-      spreadContextExpressionDefinition();
+      contextExpression.onUpdatingNameAndDataType?.(expressionColumn.label as string, expressionColumn.dataType);
+      spreadContextExpressionDefinition({
+        name: expressionColumn.label as string,
+        dataType: expressionColumn.dataType,
+      });
     },
-    [onUpdatingNameAndDataType, spreadContextExpressionDefinition]
+    [contextExpression.onUpdatingNameAndDataType, spreadContextExpressionDefinition]
   );
 
   const onRowAdding = useCallback(() => {
@@ -184,48 +162,66 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
     };
   }, [i18n.editContextEntry, rows]);
 
-  const getHeaderVisibility = useCallback(() => {
-    return isHeadless ? TableHeaderVisibility.None : TableHeaderVisibility.SecondToLastLevel;
-  }, [isHeadless]);
+  const onRowsUpdate = useCallback(
+    (entries) => {
+      spreadContextExpressionDefinition({ contextEntries: [...entries] });
+    },
+    [spreadContextExpressionDefinition]
+  );
 
-  useEffect(() => {
-    spreadContextExpressionDefinition();
-  }, [
-    columns,
-    isHeadless,
-    onUpdatingRecursiveExpression,
-    rows,
-    resultExpression,
-    infoWidth,
-    expressionWidth,
-    uid,
-    setSupervisorHash,
-    spreadContextExpressionDefinition,
-  ]);
+  const onUpdatingRecursiveExpression = useCallback((expression: any) => {
+    spreadContextExpressionDefinition({ ...expression });
+  }, [spreadContextExpressionDefinition]);
+
+  const getHeaderVisibility = useMemo(() => {
+    return contextExpression.isHeadless ? TableHeaderVisibility.None : TableHeaderVisibility.SecondToLastLevel;
+  }, [contextExpression.isHeadless]);
+
+  const defaultCell = useMemo(
+    () => ({ entryInfo: ContextEntryInfoCell, entryExpression: ContextEntryExpressionCell }),
+    []
+  );
+
+  const handlerConfiguration = useMemo(
+    () => (contextExpression.noHandlerMenu ? undefined : getHandlerConfiguration(i18n, i18n.contextEntry)),
+    [i18n, contextExpression.noHandlerMenu]
+  );
+
+  const getRowKey = useCallback((row: Row) => {
+    return getEntryKey(row);
+  }, []);
+
+  const resetRowCustomFunction = useCallback((row: DataRecord) => {
+    return resetEntry(row);
+  }, []);
+
+  const onHorizontalResizeStop = useCallback((width: number) => {
+    setExpressionWidth(width);
+  }, []);
 
   return (
-    <div className={`context-expression ${uid}`}>
+    <div className={`context-expression ${contextExpression.uid}`}>
       <Table
-        tableId={uid}
+        tableId={contextExpression.uid}
         headerLevels={1}
-        headerVisibility={getHeaderVisibility()}
-        defaultCell={{ entryInfo: ContextEntryInfoCell, entryExpression: ContextEntryExpressionCell }}
+        headerVisibility={getHeaderVisibility}
+        defaultCell={defaultCell}
         columns={columns}
         rows={rows as DataRecord[]}
         onColumnsUpdate={onColumnsUpdate}
         onRowAdding={onRowAdding}
-        onRowsUpdate={setRows}
-        handlerConfiguration={noHandlerMenu ? undefined : getHandlerConfiguration(i18n, i18n.contextEntry)}
-        getRowKey={useCallback(getEntryKey, [])}
-        resetRowCustomFunction={useCallback(resetEntry, [])}
+        onRowsUpdate={onRowsUpdate}
+        handlerConfiguration={handlerConfiguration}
+        getRowKey={getRowKey}
+        resetRowCustomFunction={resetRowCustomFunction}
       >
-        {renderResult
+        {contextExpression.renderResult
           ? [
               <Resizer
                 key="context-result"
                 width={infoWidth}
                 minWidth={DEFAULT_ENTRY_INFO_MIN_WIDTH}
-                onHorizontalResizeStop={(width) => setInfoWidth(width)}
+                onHorizontalResizeStop={onHorizontalResizeStop}
               >
                 <div className="context-result">{`<result>`}</div>
               </Resizer>,
@@ -233,11 +229,11 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
                 key="context-expression"
                 width={expressionWidth}
                 minWidth={DEFAULT_ENTRY_EXPRESSION_MIN_WIDTH}
-                onHorizontalResizeStop={(width) => setExpressionWidth(width)}
+                onHorizontalResizeStop={onHorizontalResizeStop}
               >
                 <ContextEntryExpression
-                  expression={resultExpression}
-                  onUpdatingRecursiveExpression={setResultExpression}
+                  expression={contextExpression.result ?? {}}
+                  onUpdatingRecursiveExpression={onUpdatingRecursiveExpression}
                 />
               </Resizer>,
             ]

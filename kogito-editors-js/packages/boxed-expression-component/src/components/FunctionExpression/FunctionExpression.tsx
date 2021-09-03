@@ -379,31 +379,31 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (props
 
   return (
     <div className={`function-expression ${props.uid}`}>
-      {/*<Table*/}
-      {/*  handlerConfiguration={[*/}
-      {/*    {*/}
-      {/*      group: _.upperCase(i18n.function),*/}
-      {/*      items: [{ name: i18n.rowOperations.clear, type: TableOperation.RowClear }],*/}
-      {/*    },*/}
-      {/*  ]}*/}
-      {/*  columns={columns}*/}
-      {/*  onColumnsUpdate={onColumnsUpdate}*/}
-      {/*  rows={rows}*/}
-      {/*  onRowsUpdate={setRows}*/}
-      {/*  headerLevels={1}*/}
-      {/*  headerVisibility={getHeaderVisibility()}*/}
-      {/*  controllerCell={useMemo(*/}
-      {/*    () => (*/}
-      {/*      <FunctionKindSelector*/}
-      {/*        selectedFunctionKind={selectedFunctionKind}*/}
-      {/*        onFunctionKindSelect={onFunctionKindSelect}*/}
-      {/*      />*/}
-      {/*    ),*/}
-      {/*    [onFunctionKindSelect, selectedFunctionKind]*/}
-      {/*  )}*/}
-      {/*  defaultCell={{ parameters: ContextEntryExpressionCell }}*/}
-      {/*  resetRowCustomFunction={resetRowCustomFunction}*/}
-      {/*/>*/}
+      <Table
+        handlerConfiguration={[
+          {
+            group: _.upperCase(i18n.function),
+            items: [{ name: i18n.rowOperations.clear, type: TableOperation.RowClear }],
+          },
+        ]}
+        columns={columns}
+        onColumnsUpdate={onColumnsUpdate}
+        rows={rows}
+        onRowsUpdate={setRows}
+        headerLevels={1}
+        headerVisibility={getHeaderVisibility()}
+        controllerCell={useMemo(
+          () => (
+            <FunctionKindSelector
+              selectedFunctionKind={selectedFunctionKind}
+              onFunctionKindSelect={onFunctionKindSelect}
+            />
+          ),
+          [onFunctionKindSelect, selectedFunctionKind]
+        )}
+        defaultCell={{ parameters: ContextEntryExpressionCell }}
+        resetRowCustomFunction={resetRowCustomFunction}
+      />
     </div>
   );
 };

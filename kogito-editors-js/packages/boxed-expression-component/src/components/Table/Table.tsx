@@ -231,27 +231,17 @@ export const Table: React.FunctionComponent<TableProps> = ({
         if (column.isCountColumn) {
           return cellRef.value;
         } else {
-          if (column.id === "entryInfo") {
-            return (
-              <ContextEntryInfoCell
-                data={cellRef.data}
-                onRowUpdate={cellRef.onRowUpdate}
-                rowIndex={cellRef.row.index}
-                columnId={cellRef.column.id}
-              />
-            );
+          if (defaultCell) {
+            return defaultCell[column.id]({ ...cellRef, rowIndex: cellRef.row.index, columnId: cellRef.column.id });
           }
-          if (column.id === "entryExpression") {
-            return (
-              <ContextEntryExpressionCell
-                data={cellRef.data}
-                onRowUpdate={cellRef.onRowUpdate}
-                rowIndex={cellRef.row.index}
-                columnId={cellRef.column.id}
-              />
-            );
-          }
-          return <EditableCell {...cellRef} readOnly={readOnlyCells} />;
+          return (
+            <EditableCell
+              {...cellRef}
+              rowIndex={cellRef.row.index}
+              columnId={cellRef.column.id}
+              readOnly={readOnlyCells}
+            />
+          );
         }
       },
     }),
