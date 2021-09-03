@@ -174,7 +174,8 @@ public class ExpressionFiller {
         } else if (wrappedExpression instanceof FunctionDefinition) {
             final FunctionDefinition functionExpression = (FunctionDefinition) wrappedExpression;
             final EntryInfo[] formalParameters = formalParametersConvertForFunctionProps(functionExpression);
-            return specificFunctionPropsBasedOnFunctionKind(expressionName, dataType, functionExpression, formalParameters);
+            final Double parametersWidth = functionExpression.getComponentWidths().get(1);
+            return specificFunctionPropsBasedOnFunctionKind(expressionName, dataType, functionExpression, formalParameters, parametersWidth);
         } else if (wrappedExpression instanceof DecisionTable) {
             final DecisionTable decisionTableExpression = (DecisionTable) wrappedExpression;
             final String hitPolicy = decisionTableExpression.getHitPolicy() != null ? decisionTableExpression.getHitPolicy().value() : null;
@@ -517,8 +518,7 @@ public class ExpressionFiller {
                 .toArray(EntryInfo[]::new);
     }
 
-    private static FunctionProps specificFunctionPropsBasedOnFunctionKind(final String expressionName, final String dataType, final FunctionDefinition functionExpression, final EntryInfo[] formalParameters) {
-        final Double parametersWidth = functionExpression.getComponentWidths().get(1);
+    private static FunctionProps specificFunctionPropsBasedOnFunctionKind(final String expressionName, final String dataType, final FunctionDefinition functionExpression, final EntryInfo[] formalParameters, final Double parametersWidth) {
         switch (functionExpression.getKind()) {
             case JAVA:
                 final String classNameExpression = getEntryAt(functionExpression.getExpression(), 0);
