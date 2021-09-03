@@ -105,6 +105,7 @@ public class ExpressionFiller {
     }
 
     public static void fillListExpression(final List listExpression, final ListProps listProps) {
+        listExpression.getComponentWidths().set(1, listProps.width);
         listExpression.getExpression().clear();
         listExpression.getExpression().addAll(itemsConvertForListExpression(listProps, listExpression));
     }
@@ -159,7 +160,8 @@ public class ExpressionFiller {
             return new RelationProps(expressionName, dataType, columnsConvertForRelationProps(relationExpression), rowsConvertForRelationProps(relationExpression));
         } else if (wrappedExpression instanceof List) {
             final List listExpression = (List) wrappedExpression;
-            return new ListProps(expressionName, dataType, itemsConvertForListProps(listExpression));
+            final Double width = listExpression.getComponentWidths().get(1);
+            return new ListProps(expressionName, dataType, itemsConvertForListProps(listExpression), width);
         } else if (wrappedExpression instanceof Invocation) {
             final Invocation invocationExpression = (Invocation) wrappedExpression;
             final String invokedFunction = ((LiteralExpression) Optional.ofNullable(invocationExpression.getExpression()).orElse(new LiteralExpression())).getText().getValue();
