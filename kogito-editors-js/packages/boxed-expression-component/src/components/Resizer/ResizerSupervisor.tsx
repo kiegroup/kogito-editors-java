@@ -30,7 +30,7 @@ export const ResizerSupervisor: React.FunctionComponent<ResizerSupervisorProps> 
 
   useEffect(() => {
     const id = setTimeout(() => {
-      applyDOMSupervisor(isRunnerTable)
+      applyDOMSupervisor(isRunnerTable);
     }, 0);
     return () => clearTimeout(id);
   }, [supervisorHash]);

@@ -81,7 +81,7 @@ export const LogicTypeSelector: React.FunctionComponent<LogicTypeSelectorProps> 
     isHeadless,
     onUpdatingNameAndDataType,
     onUpdatingRecursiveExpression: (e: any) => {
-      onUpdatingRecursiveExpression?.(e)
+      onUpdatingRecursiveExpression?.(e);
     },
   });
 

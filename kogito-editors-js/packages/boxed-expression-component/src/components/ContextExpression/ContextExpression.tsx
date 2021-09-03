@@ -169,9 +169,12 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = (context
     [spreadContextExpressionDefinition]
   );
 
-  const onUpdatingRecursiveExpression = useCallback((expression: any) => {
-    spreadContextExpressionDefinition({ ...expression });
-  }, [spreadContextExpressionDefinition]);
+  const onUpdatingRecursiveExpression = useCallback(
+    (expression: any) => {
+      spreadContextExpressionDefinition({ ...expression });
+    },
+    [spreadContextExpressionDefinition]
+  );
 
   const getHeaderVisibility = useMemo(() => {
     return contextExpression.isHeadless ? TableHeaderVisibility.None : TableHeaderVisibility.SecondToLastLevel;

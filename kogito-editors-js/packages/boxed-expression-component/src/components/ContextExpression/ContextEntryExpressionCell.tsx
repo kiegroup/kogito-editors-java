@@ -32,18 +32,15 @@ export const ContextEntryExpressionCell: React.FunctionComponent<ContextEntryExp
   rowIndex,
   onRowUpdate,
 }) => {
-  const onUpdatingRecursiveExpression = useCallback(
-    (expression: ExpressionProps) => {
-      const updatedEntryInfo = { ...data[rowIndex].entryInfo };
-      if (data[rowIndex].nameAndDataTypeSynchronized && _.size(expression.name) && _.size(expression.dataType)) {
-        updatedEntryInfo.name = expression.name as string;
-        updatedEntryInfo.dataType = expression.dataType as DataType;
-      }
+  const onUpdatingRecursiveExpression = useCallback((expression: ExpressionProps) => {
+    const updatedEntryInfo = { ...data[rowIndex].entryInfo };
+    if (data[rowIndex].nameAndDataTypeSynchronized && _.size(expression.name) && _.size(expression.dataType)) {
+      updatedEntryInfo.name = expression.name as string;
+      updatedEntryInfo.dataType = expression.dataType as DataType;
+    }
 
-      onRowUpdate(rowIndex, { ...data[rowIndex], entryInfo: updatedEntryInfo, entryExpression: expression });
-    },
-    []
-  );
+    onRowUpdate(rowIndex, { ...data[rowIndex], entryInfo: updatedEntryInfo, entryExpression: expression });
+  }, []);
 
   return (
     <div className="context-entry-expression-cell">

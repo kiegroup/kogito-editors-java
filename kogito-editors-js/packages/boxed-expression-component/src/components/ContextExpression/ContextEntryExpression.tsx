@@ -57,7 +57,7 @@ export const ContextEntryExpression: React.FunctionComponent<ContextEntryExpress
       <LogicTypeSelector
         isHeadless={true}
         onUpdatingRecursiveExpression={(e) => {
-          onUpdatingRecursiveExpression?.(e)
+          onUpdatingRecursiveExpression?.(e);
         }}
         selectedExpression={expression}
         onLogicTypeUpdating={onLogicTypeUpdating}

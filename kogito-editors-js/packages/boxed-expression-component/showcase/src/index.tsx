@@ -79,29 +79,29 @@ export const App: React.FunctionComponent = () => {
   //Defining global function that will be available in the Window namespace and used by the BoxedExpressionEditor component
   window.beeApi = {
     resetExpressionDefinition: (definition: ExpressionProps) => {
-      setExpressionDefinition(definition)
+      setExpressionDefinition(definition);
     },
     broadcastLiteralExpressionDefinition: (definition: LiteralExpressionProps) => {
-      setExpressionDefinition(definition)
+      setExpressionDefinition(definition);
     },
     broadcastRelationExpressionDefinition: (definition: RelationProps) => {
-      setExpressionDefinition(definition)
+      setExpressionDefinition(definition);
     },
     broadcastContextExpressionDefinition: (definition: ContextProps) => {
-      setExpressionDefinition(definition)
+      setExpressionDefinition(definition);
     },
     broadcastListExpressionDefinition: (definition: ListProps) => {
-      setExpressionDefinition(definition)
+      setExpressionDefinition(definition);
     },
     broadcastInvocationExpressionDefinition: (definition: InvocationProps) => {
-      console.log("index", definition)
-      setExpressionDefinition(definition)
+      console.log("index", definition);
+      setExpressionDefinition(definition);
     },
     broadcastFunctionExpressionDefinition: (definition: FunctionProps) => {
-      setExpressionDefinition(definition)
+      setExpressionDefinition(definition);
     },
     broadcastDecisionTableExpressionDefinition: (definition: DecisionTableProps) => {
-      setExpressionDefinition(definition)
+      setExpressionDefinition(definition);
     },
   };
 

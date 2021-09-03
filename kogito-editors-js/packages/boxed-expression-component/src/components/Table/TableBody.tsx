@@ -47,7 +47,7 @@ export const TableBody: React.FunctionComponent<TableBodyProps> = ({
   onColumnsUpdate,
   tdProps,
 }) => {
-  const headerVisibilityMemo = useMemo(() => headerVisibility ?? TableHeaderVisibility.Full, [headerVisibility])
+  const headerVisibilityMemo = useMemo(() => headerVisibility ?? TableHeaderVisibility.Full, [headerVisibility]);
 
   const renderCell = useCallback(
     (cellIndex: number, cell: Cell, rowIndex: number, inAForm: boolean) => {
