@@ -123,6 +123,7 @@ public class ExpressionFiller {
 
     public static void fillFunctionExpression(final FunctionDefinition functionExpression, final FunctionProps functionProps) {
         final FunctionDefinition.Kind functionKind = FunctionDefinition.Kind.fromValue(functionProps.functionKind);
+        functionExpression.getComponentWidths().set(1, functionProps.parametersWidth);
         functionExpression.getFormalParameter().clear();
         functionExpression.getFormalParameter().addAll(formalParametersConvertForFunctionExpression(functionProps));
         functionExpression.setKind(functionKind);
@@ -517,18 +518,19 @@ public class ExpressionFiller {
     }
 
     private static FunctionProps specificFunctionPropsBasedOnFunctionKind(final String expressionName, final String dataType, final FunctionDefinition functionExpression, final EntryInfo[] formalParameters) {
+        final Double parametersWidth = functionExpression.getComponentWidths().get(1);
         switch (functionExpression.getKind()) {
             case JAVA:
                 final String classNameExpression = getEntryAt(functionExpression.getExpression(), 0);
                 final String methodNameExpression = getEntryAt(functionExpression.getExpression(), 1);
-                return new JavaFunctionProps(expressionName, dataType, formalParameters, classNameExpression, methodNameExpression);
+                return new JavaFunctionProps(expressionName, dataType, formalParameters, parametersWidth, classNameExpression, methodNameExpression);
             case PMML:
                 final String documentExpression = getEntryAt(functionExpression.getExpression(), 0);
                 final String modelExpression = getEntryAt(functionExpression.getExpression(), 1);
-                return new PmmlFunctionProps(expressionName, dataType, formalParameters, documentExpression, modelExpression);
+                return new PmmlFunctionProps(expressionName, dataType, formalParameters, parametersWidth, documentExpression, modelExpression);
             default:
             case FEEL:
-                return new FeelFunctionProps(expressionName, dataType, formalParameters,
+                return new FeelFunctionProps(expressionName, dataType, formalParameters, parametersWidth,
                                              buildAndFillJsInteropProp(functionExpression.getExpression(), "Feel Expression", UNDEFINED.getText()));
         }
     }
