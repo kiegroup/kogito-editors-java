@@ -102,7 +102,7 @@ describe("ImportJavaClasses component tests", () => {
     const secondElement = baseElement.querySelector('[id="com.Author"]')! as HTMLSpanElement;
     expect(secondElement).toBeInTheDocument();
     if (hasThirdElement) {
-      const thirdElement = baseElement.querySelector('[id="com.Test"]')! as HTMLSpanElement
+      const thirdElement = baseElement.querySelector('[id="com.Test"]')! as HTMLSpanElement;
       expect(thirdElement).toBeInTheDocument();
     }
     let checkFirstElement = baseElement.querySelector('[aria-labelledby="com.Book"]')! as HTMLInputElement;
