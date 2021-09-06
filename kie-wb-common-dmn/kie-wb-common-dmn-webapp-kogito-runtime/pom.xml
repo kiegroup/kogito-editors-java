@@ -821,6 +821,20 @@
         </plugins>
       </build>
     </profile>
+    <profile>
+      <id>run-code-coverage</id>
+      <properties>
+        <skipITs>true</skipITs>
+        <code.coverage.disabled>true</code.coverage.disabled>
+      </properties>
+    </profile>
+    <profile>
+      <id>sonarcloud-analysis</id>
+      <properties>
+        <skipITs>true</skipITs>
+        <sonar.skip>true</sonar.skip>
+      </properties>
+    </profile>
   </profiles>
 
 </project>
