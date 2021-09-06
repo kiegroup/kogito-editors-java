@@ -162,7 +162,7 @@ export function DmnAutoTable(props: Props) {
               {(ctx: any) => (
                 <>
                   {createPortal(
-                    <form id={`dmn-auto-form-${rowIndex}`} onSubmit={(data) => ctx?.onSubmit(data)}/>,
+                    <form id={`dmn-auto-form-${rowIndex}`} onSubmit={(data) => ctx?.onSubmit(data)} />,
                     document.getElementById(FORMS_ID)!
                   )}
                   {children}
@@ -223,7 +223,7 @@ export function DmnAutoTable(props: Props) {
     () => (
       <div>
         <EmptyState>
-          <EmptyStateIcon icon={ExclamationIcon}/>
+          <EmptyStateIcon icon={ExclamationIcon} />
           <TextContent>
             <Text component={"h2"}>Error</Text>
           </TextContent>
@@ -257,7 +257,7 @@ export function DmnAutoTable(props: Props) {
           </I18nDictionariesProvider>
         </ErrorBoundary>
       )}
-      <div ref={() => setFormsDivRendered(true)} id={FORMS_ID}/>
+      <div ref={() => setFormsDivRendered(true)} id={FORMS_ID} />
     </>
   );
 }
