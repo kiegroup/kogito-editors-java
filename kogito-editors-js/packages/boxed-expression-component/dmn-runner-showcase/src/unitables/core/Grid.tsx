@@ -2,7 +2,7 @@ import { Bridge, joinName } from "uniforms";
 import * as React from "react";
 import { AutoField } from "./AutoField";
 import { DataType } from "boxed-expression-component/dist/api";
-import { DmnRunnerClause } from "../../DmnRunnerTable/DmnRunnerTableTypes";
+import { DmnRunnerClause } from "../boxed";
 import { DecisionResult, Result } from "../dmn";
 
 export class Grid {
@@ -13,7 +13,7 @@ export class Grid {
   }
 
   public removeInputName(fullName: string) {
-    return fullName.match(/\./) ? fullName.split(".").slice(1).join(".") : fullName;
+    return fullName.match(/\./) ? fullName.split(".").slice(1).join("-") : fullName;
   }
 
   public getDataTypeProps(type: string | undefined) {
@@ -87,6 +87,16 @@ export class Grid {
     return myGrid;
   }
 
+  private deepFlattenOutput(acc: any, entry: string, value: object) {
+    return Object.entries(value).map(([deepEntry, deepValue]) => {
+      if (typeof deepValue === "object" && deepValue !== null) {
+        this.deepFlattenOutput(acc, deepEntry, deepValue);
+      }
+      acc[`${entry}-${deepEntry}`] = deepValue;
+      return acc;
+    });
+  }
+
   public generateBoxedOutputs(
     schema: any,
     decisionResults: Array<DecisionResult[] | undefined>
@@ -132,6 +142,16 @@ export class Grid {
           }
           if (result === false) {
             return "false";
+          }
+          if (typeof result === "object") {
+            return Object.entries(result).reduce((acc: any, [entry, value]) => {
+              if (typeof value === "object" && value !== null) {
+                this.deepFlattenOutput(acc, entry, value);
+              } else {
+                acc[entry] = value;
+              }
+              return acc;
+            }, {});
           }
           return result;
         });

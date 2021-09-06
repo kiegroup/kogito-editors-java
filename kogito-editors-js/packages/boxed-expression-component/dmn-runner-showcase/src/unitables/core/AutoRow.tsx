@@ -1,5 +1,5 @@
 import * as React from "react";
-import { AutoForm, QuickForm, ValidatedForm } from "uniforms";
+import { AutoForm, QuickForm, ValidatedForm } from "uniforms/es6";
 import { BaseRow } from "./BaseRow";
 
 function Auto(parent: any): any {

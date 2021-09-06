@@ -191,7 +191,7 @@ export function EditableCell({ value, rowIndex, columnId, onCellUpdate, readOnly
         <textarea
           className="editable-cell-textarea"
           ref={textarea}
-          value={typeof value === "object" ? value[columnId] : value || ""}
+          value={typeof value === "object" ? value[columnId] : `${value}` || ""}
           onChange={onTextAreaChange}
           onFocus={onFocus}
           onBlur={onTextAreaBlur}
@@ -199,7 +199,7 @@ export function EditableCell({ value, rowIndex, columnId, onCellUpdate, readOnly
         />
         <FeelInput
           enabled={isEditMode}
-          value={typeof value === "object" ? value[columnId] : value || ""}
+          value={typeof value === "object" ? value[columnId] : `${value}` || ""}
           onKeyDown={onFeelKeyDown}
           onChange={onFeelChange}
           onLoad={onFeelLoad}

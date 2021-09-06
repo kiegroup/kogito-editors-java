@@ -99,8 +99,8 @@ export const Resizer: React.FunctionComponent<ResizerProps> = ({
       const cellRect = cell.getRect();
       // Problems with floats.
       return (
-        Number(cellRect.x).toFixed(3) <= Number(currentRect.x).toFixed(3) &&
-        Number(cellRect.right).toFixed(3) >= Number(currentRect.right).toFixed(3)
+        +Number(cellRect.x).toFixed(3) <= +Number(currentRect.x).toFixed(3) &&
+        +Number(cellRect.right).toFixed(3) >= +Number(currentRect.right).toFixed(3)
       );
     };
     const isLastGroupColumn = (cell: Cell) => {

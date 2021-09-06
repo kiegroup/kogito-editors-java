@@ -1,4 +1,4 @@
-import { JSONSchemaBridge } from "uniforms-bridge-json-schema";
+import { JSONSchemaBridge } from "uniforms-bridge-json-schema/es6";
 
 export class DmnTableJsonSchemaBridge extends JSONSchemaBridge {
   public getProps(name: string, props: Record<string, any> = {}) {

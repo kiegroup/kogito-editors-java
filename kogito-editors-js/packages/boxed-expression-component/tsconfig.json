@@ -4,6 +4,7 @@
   "include": ["src"],
   "compilerOptions": {
     "outDir": "dist",
-    "sourceMap": true
+    "sourceMap": true,
+    "target": "es6"
   }
 }

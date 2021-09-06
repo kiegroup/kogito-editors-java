@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Clause, LogicType, TableOperation } from "boxed-expression-component/dist/api";
+import { Clause, TableOperation } from "boxed-expression-component/dist/api";
 import { DmnValidator } from "./DmnValidator";
 import { AutoRow } from "../core";
 import { createPortal } from "react-dom";
@@ -10,8 +10,7 @@ import { EmptyState, EmptyStateBody, EmptyStateIcon } from "@patternfly/react-co
 import { ExclamationIcon } from "@patternfly/react-icons/dist/js/icons/exclamation-icon";
 import { Text, TextContent } from "@patternfly/react-core/dist/js/components/Text";
 import { DmnGrid } from "./DmnGrid";
-import { DmnRunnerRule } from "../../DmnRunnerTable/DmnRunnerTableTypes";
-import { DmnRunnerTable, DmnRunnerTableProps } from "../../DmnRunnerTable";
+import { DmnRunnerRule, DmnRunnerTableBoxed, DmnRunnerTableProps } from "../boxed";
 import { NotificationSeverity } from "@kogito-tooling/notifications/dist/api";
 import { dmnAutoTableDictionaries, DmnAutoTableI18nContext, dmnAutoTableI18nDefaults } from "../i18n";
 import { I18nDictionariesProvider } from "@kogito-tooling/i18n/dist/react-components";
@@ -64,7 +63,7 @@ interface Props {
   setFormError: React.Dispatch<any>;
 }
 
-const FORMS_ID = "forms";
+const FORMS_ID = "unitable-forms";
 
 export function DmnAutoTable(props: Props) {
   const errorBoundaryRef = useRef<ErrorBoundary>(null);
@@ -163,7 +162,7 @@ export function DmnAutoTable(props: Props) {
               {(ctx: any) => (
                 <>
                   {createPortal(
-                    <form id={`dmn-auto-form-${rowIndex}`} onSubmit={(data) => ctx?.onSubmit(data)} />,
+                    <form id={`dmn-auto-form-${rowIndex}`} onSubmit={(data) => ctx?.onSubmit(data)}/>,
                     document.getElementById(FORMS_ID)!
                   )}
                   {children}
@@ -175,10 +174,12 @@ export function DmnAutoTable(props: Props) {
     [bridge, onSubmit, onValidate]
   );
 
-  const selectedExpression: DmnRunnerTableProps | undefined = useMemo(() => {
-    if (grid && props.results) {
+  let selectedExpression: DmnRunnerTableProps | undefined = undefined;
+  selectedExpression = useMemo(() => {
+    const filteredResults = props.results?.filter((result) => result !== undefined);
+    if (grid && filteredResults) {
       const input = grid.generateBoxedInputs();
-      const [outputSet, outputEntries] = grid.generateBoxedOutputs(props.schema ?? {}, props.results);
+      const [outputSet, outputEntries] = grid.generateBoxedOutputs(props.schema ?? {}, filteredResults);
       const output: Clause[] = Array.from(outputSet.values());
 
       const rules = [];
@@ -218,15 +219,11 @@ export function DmnAutoTable(props: Props) {
     getAutoRow,
   ]);
 
-  useEffect(() => {
-    errorBoundaryRef.current?.reset();
-  }, [props.formError]);
-
   const formErrorMessage = useMemo(
     () => (
       <div>
         <EmptyState>
-          <EmptyStateIcon icon={ExclamationIcon} />
+          <EmptyStateIcon icon={ExclamationIcon}/>
           <TextContent>
             <Text component={"h2"}>Error</Text>
           </TextContent>
@@ -255,12 +252,12 @@ export function DmnAutoTable(props: Props) {
             ctx={DmnAutoTableI18nContext}
           >
             <BoxedExpressionProvider expressionDefinition={selectedExpression} isRunnerTable={true}>
-              <DmnRunnerTable {...selectedExpression} />
+              <DmnRunnerTableBoxed {...selectedExpression} />
             </BoxedExpressionProvider>
           </I18nDictionariesProvider>
         </ErrorBoundary>
       )}
-      <div ref={() => setFormsDivRendered(true)} id={FORMS_ID} />
+      <div ref={() => setFormsDivRendered(true)} id={FORMS_ID}/>
     </>
   );
 }

@@ -143,7 +143,7 @@ export const TableBody: React.FunctionComponent<TableBodyProps> = ({
   return (
     <Tbody
       className={`${headerVisibilityMemo === TableHeaderVisibility.None ? "missing-header" : ""}`}
-      {...tableInstance.getTableBodyProps()}
+      {...(tableInstance.getTableBodyProps() as any)}
     >
       {tableInstance.rows.map((row: Row, rowIndex: number) => renderBodyRow(row, rowIndex))}
       {children ? renderAdditiveRow : null}
