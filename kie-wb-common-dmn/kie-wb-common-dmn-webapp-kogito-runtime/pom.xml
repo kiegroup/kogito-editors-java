@@ -828,13 +828,6 @@
         <code.coverage.disabled>true</code.coverage.disabled>
       </properties>
     </profile>
-    <profile>
-      <id>sonarcloud-analysis</id>
-      <properties>
-        <skipITs>true</skipITs>
-        <sonar.skip>true</sonar.skip>
-      </properties>
-    </profile>
   </profiles>
 
 </project>

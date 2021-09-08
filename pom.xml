@@ -1375,24 +1375,5 @@
         </plugins>
       </build>
     </profile>
-
-    <profile>
-      <id>sonarcloud-analysis</id>
-      <properties>
-        <skipITs>true</skipITs>
-        <sonar.skip>true</sonar.skip>
-      </properties>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>gwt-maven-plugin</artifactId>
-            <configuration>
-              <skip>true</skip>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
   </profiles>
 </project>
