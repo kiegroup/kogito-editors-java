@@ -36,10 +36,8 @@ pipeline {
             steps {
                 script {
                     mvnCmd = getMavenCommand('kogito-editors-java')
-                    if (isNormalPRCheck()) {
-                        if (isSonarCloudEnabled()) {
-                            mvnCmd.withProfiles(['run-code-coverage'])
-                        }
+                    if (isNormalPRCheck() && isSonarCloudEnabled()) {
+                        mvnCmd.withProfiles(['run-code-coverage'])
                     }
                     mvnCmd.run('clean install')
                 }
@@ -58,13 +56,15 @@ pipeline {
             }
             steps {
                 script {
-                    getMavenCommand('kogito-editors-java')
-                            .withOptions(['-e', '-nsu'])
-                            .withProperty('sonar.projectKey', 'org.kie.kogito:kogito-editors-java')
-                            .withProperty('sonar.organization', 'kiegroup')
-                            .withProperty('sonar.host.url', 'https://sonarcloud.io')
-                            .withProperty('sonar.login', env['SONARCLOUD_TOKEN'])
-                            .run('validate org.sonarsource.scanner.maven:sonar-maven-plugin:sonar')
+                    if (isSonarCloudEnabled()) {
+                        getMavenCommand('kogito-editors-java')
+                                .withOptions(['-e', '-nsu'])
+                                .withProperty('sonar.projectKey', 'org.kie.kogito:kogito-editors-java')
+                                .withProperty('sonar.organization', 'kiegroup')
+                                .withProperty('sonar.host.url', 'https://sonarcloud.io')
+                                .withProperty('sonar.login', env['SONARCLOUD_TOKEN'])
+                                .run('validate org.sonarsource.scanner.maven:sonar-maven-plugin:sonar')
+                    }
                 }
             }
             post {
