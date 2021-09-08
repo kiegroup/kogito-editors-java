@@ -143,6 +143,8 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = (relat
     [spreadRelationExpressionDefinition]
   );
 
+  const onRowAdding = useCallback(() => ({}), []);
+
   useEffect(() => {
     /** Function executed only the first time the component is loaded */
     spreadRelationExpressionDefinition();
@@ -156,6 +158,7 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = (relat
         rows={convertRowsForTheTable()}
         onColumnsUpdate={onSavingColumns}
         onRowsUpdate={onSavingRows}
+        onRowAdding={onRowAdding}
         handlerConfiguration={handlerConfiguration}
       />
     </div>
