@@ -1290,6 +1290,8 @@
       <properties>
         <jacoco.excludes>*Lexer</jacoco.excludes>
         <code.coverage.disabled>false</code.coverage.disabled>
+        <gwt.compiler.skip>true</gwt.compiler.skip> <!-- org.codehaus.mojo:gwt-maven-plugin -->
+        <gwt.skipCompilation>true</gwt.skipCompilation> <!-- net.ltgt.gwt.maven:gwt-maven-plugin -->
       </properties>
 
       <dependencyManagement>
@@ -1341,13 +1343,6 @@
               </executions>
             </plugin>
             <plugin>
-              <groupId>net.ltgt.gwt.maven</groupId>
-              <artifactId>gwt-maven-plugin</artifactId>
-              <configuration>
-                <skipCompilation>true</skipCompilation>
-              </configuration>
-            </plugin>
-            <plugin>
               <artifactId>maven-surefire-plugin</artifactId>
               <configuration>
                 <systemPropertyVariables>
@@ -1363,13 +1358,6 @@
             <artifactId>jacoco-maven-plugin</artifactId>
             <configuration>
               <skip>${code.coverage.disabled}</skip>
-            </configuration>
-          </plugin>
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>gwt-maven-plugin</artifactId>
-            <configuration>
-              <skip>true</skip>
             </configuration>
           </plugin>
         </plugins>
