@@ -78,31 +78,14 @@ export const App: React.FunctionComponent = () => {
 
   //Defining global function that will be available in the Window namespace and used by the BoxedExpressionEditor component
   window.beeApi = {
-    resetExpressionDefinition: (definition: ExpressionProps) => {
-      setExpressionDefinition(definition);
-    },
-    broadcastLiteralExpressionDefinition: (definition: LiteralExpressionProps) => {
-      setExpressionDefinition(definition);
-    },
-    broadcastRelationExpressionDefinition: (definition: RelationProps) => {
-      setExpressionDefinition(definition);
-    },
-    broadcastContextExpressionDefinition: (definition: ContextProps) => {
-      setExpressionDefinition(definition);
-    },
-    broadcastListExpressionDefinition: (definition: ListProps) => {
-      setExpressionDefinition(definition);
-    },
-    broadcastInvocationExpressionDefinition: (definition: InvocationProps) => {
-      console.log("index", definition);
-      setExpressionDefinition(definition);
-    },
-    broadcastFunctionExpressionDefinition: (definition: FunctionProps) => {
-      setExpressionDefinition(definition);
-    },
-    broadcastDecisionTableExpressionDefinition: (definition: DecisionTableProps) => {
-      setExpressionDefinition(definition);
-    },
+    resetExpressionDefinition: (definition: ExpressionProps) => setExpressionDefinition(definition),
+    broadcastLiteralExpressionDefinition: (definition: LiteralExpressionProps) => setExpressionDefinition(definition),
+    broadcastRelationExpressionDefinition: (definition: RelationProps) => setExpressionDefinition(definition),
+    broadcastContextExpressionDefinition: (definition: ContextProps) => setExpressionDefinition(definition),
+    broadcastListExpressionDefinition: (definition: ListProps) => setExpressionDefinition(definition),
+    broadcastInvocationExpressionDefinition: (definition: InvocationProps) => setExpressionDefinition(definition),
+    broadcastFunctionExpressionDefinition: (definition: FunctionProps) => setExpressionDefinition(definition),
+    broadcastDecisionTableExpressionDefinition: (definition: DecisionTableProps) => setExpressionDefinition(definition),
   };
 
   const copyToClipboard = useCallback(

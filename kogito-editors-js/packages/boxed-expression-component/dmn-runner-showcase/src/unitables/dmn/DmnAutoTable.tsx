@@ -48,12 +48,6 @@ export interface DmnResult {
   messages: DecisionResultMessage[];
 }
 
-export interface Something {
-  grid: DmnGrid;
-  model?: any[];
-  setModel: (model: (previous: any[]) => any[]) => void;
-}
-
 interface Props {
   schema: any;
   tableData?: any;
@@ -228,7 +222,7 @@ export function DmnAutoTable(props: Props) {
             <Text component={"h2"}>Error</Text>
           </TextContent>
           <EmptyStateBody>
-            <p>something happened</p>
+            <p>An error has happened</p>
           </EmptyStateBody>
         </EmptyState>
       </div>
