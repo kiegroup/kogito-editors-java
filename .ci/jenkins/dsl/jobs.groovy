@@ -25,8 +25,7 @@ Map getMultijobPRConfig() {
             jobs : [
                     [
                             id: 'Kogito Tooling Editors Java',
-                            primary: true,
-                            repository: 'kogito-editors-java'
+                            primary: true
                     ]
             ],
             extraEnv : [
