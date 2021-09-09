@@ -8,7 +8,7 @@ changeTarget = env.ghprbTargetBranch ?: CHANGE_TARGET
 
 pipeline {
     agent {
-        label 'kie-rhel7 && kie-mem16g'
+        label 'kie-rhel7 && kie-mem8g'
     }
     tools {
         maven 'kie-maven-3.6.3'
@@ -20,7 +20,6 @@ pipeline {
     }
     environment {
         SONARCLOUD_TOKEN = credentials('SONARCLOUD_TOKEN')
-        MAVEN_OPTS = '-Xms1024m -Xmx4g'
     }
     stages {
         stage('Initialize') {
