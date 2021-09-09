@@ -19,6 +19,7 @@ package com.ait.lienzo.client.core.shape;
 import com.ait.lienzo.client.core.shape.storage.IStorageEngine;
 import com.ait.lienzo.client.core.shape.storage.PrimitiveFastArrayStorageEngine;
 import com.ait.lienzo.shared.core.types.GroupType;
+import com.ait.lienzo.tools.client.collection.NFastArrayList;
 import jsinterop.annotations.JsType;
 
 @JsType
@@ -36,5 +37,38 @@ public class Group extends GroupOf<IPrimitive<?>, Group> {
     @Override
     public final IStorageEngine<IPrimitive<?>> getDefaultStorageEngine() {
         return new PrimitiveFastArrayStorageEngine();
+    }
+
+    public NFastArrayList<IPrimitive<?>> getChildren() {
+        return this.getChildNodes();
+    }
+
+    public IPrimitive<?> getChildrenAt(int index) {
+        return this.getChildNodes().get(index);
+    }
+
+    public static class GroupFactory extends GroupOfFactory<IPrimitive<?>, Group> {
+
+        public GroupFactory() {
+            super(GroupType.GROUP);
+        }
+
+        @Override
+        public boolean addNodeForContainer(final IContainer<?, ?> container, final Node<?> node, final ValidationContext ctx) {
+            final IPrimitive<?> prim = node.asPrimitive();
+
+            if (null != prim) {
+                container.asGroup().add(prim);
+
+                return true;
+            } else {
+                try {
+                    ctx.addBadTypeError(node.getClass().getName() + " is not a Primitive");
+                } catch (ValidationException e) {
+                    return false;
+                }
+            }
+            return false;
+        }
     }
 }

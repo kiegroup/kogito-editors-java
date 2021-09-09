@@ -37,6 +37,8 @@ public class JsLienzoLogger {
         }
     }
 
+
+
     private static void log(String message) {
         DomGlobal.console.log(message);
     }

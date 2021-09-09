@@ -27,7 +27,18 @@ import javax.inject.Inject;
 import com.ait.lienzo.client.core.types.JsLienzo;
 import com.ait.lienzo.client.widget.panel.LienzoBoundsPanel;
 import com.google.gwt.user.client.ui.IsWidget;
+import elemental2.dom.DomGlobal;
 import elemental2.promise.Promise;
+import org.kie.workbench.common.stunner.bpmn.definition.BaseCatchingIntermediateEvent;
+import org.kie.workbench.common.stunner.bpmn.definition.BaseEndEvent;
+import org.kie.workbench.common.stunner.bpmn.definition.BaseGateway;
+import org.kie.workbench.common.stunner.bpmn.definition.BaseStartEvent;
+import org.kie.workbench.common.stunner.bpmn.definition.BaseSubprocess;
+import org.kie.workbench.common.stunner.bpmn.definition.BaseTask;
+import org.kie.workbench.common.stunner.bpmn.definition.BaseThrowingIntermediateEvent;
+import org.kie.workbench.common.stunner.bpmn.definition.DataObject;
+import org.kie.workbench.common.stunner.bpmn.definition.Lane;
+import org.kie.workbench.common.stunner.bpmn.definition.TextAnnotation;
 import org.kie.workbench.common.stunner.client.lienzo.canvas.LienzoCanvas;
 import org.kie.workbench.common.stunner.client.lienzo.canvas.LienzoPanel;
 import org.kie.workbench.common.stunner.client.widgets.editor.EditorSessionCommands;
@@ -41,9 +52,12 @@ import org.kie.workbench.common.stunner.core.client.canvas.util.CanvasFileExport
 import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
 import org.kie.workbench.common.stunner.core.client.service.ClientRuntimeError;
 import org.kie.workbench.common.stunner.core.client.service.ServiceCallback;
+import org.kie.workbench.common.stunner.core.client.shape.Shape;
 import org.kie.workbench.common.stunner.core.client.validation.canvas.CanvasDiagramValidator;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
+import org.kie.workbench.common.stunner.core.graph.Node;
+import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.rule.RuleViolation;
 import org.kie.workbench.common.stunner.core.validation.DiagramElementViolation;
 import org.kie.workbench.common.stunner.core.validation.DomainViolation;
@@ -228,7 +242,7 @@ public class BPMNDiagramEditor {
     }
 
     // TODO: PoC
-    public JsLienzo jsLienzo;
+    public static JsLienzo jsLienzo;
 
     // TODO: PoC
     private void initLienzoType() {
@@ -236,13 +250,93 @@ public class BPMNDiagramEditor {
         LienzoPanel panel = (LienzoPanel) canvas.getView().getPanel();
         LienzoBoundsPanel lienzoPanel = panel.getView();
         jsLienzo = new JsLienzo(lienzoPanel, lienzoPanel.getLayer());
-        setupJsLienzoType(jsLienzo);
+        //setupJsLienzoType(jsLienzo);
+        editor = stunnerEditor;
+        setupJsLienzoTypeNative(jsLienzo);
     }
 
     // TODO: PoC - Move to J2CL impl
     private static native void setupJsLienzoType(Object jsLienzo) /*-{
-        $wnd.jsLienzo = jsLienzo;
+        $wnd.jsLienzoSuper = jsLienzo;
     }-*/;
+
+    private static StunnerEditor editor = null;
+
+    private static void setupJsLienzoTypeNative(JsLienzo jsLienzo) {
+        WindowJSType.linkLienzoJS(jsLienzo);
+        WindowJSType.linkStunnerCommand(() -> logNodes());
+        WindowJSType.linkStunnerOperation(UUID -> performOnNode(UUID));
+    }
+
+    public static void performOnNode(String UUID) {
+        final Node node = editor.getCanvasHandler().getDiagram().getGraph().getNode(UUID);
+
+        if (node.getContent() instanceof View) {
+            View view = (View) node.getContent();
+            DomGlobal.console.log("View: " + view.getDefinition());
+            final Object definition = view.getDefinition();
+
+            // Events
+            if (definition instanceof BaseStartEvent) {
+                jsLienzo.getWiresShape(UUID).setBorderColorEvent("red");
+                jsLienzo.getWiresShape(UUID).setBackgroundColorEvent("blue");
+            } else if (definition instanceof BaseCatchingIntermediateEvent) {
+                jsLienzo.getWiresShape(UUID).setBorderColorEvent("red");
+                jsLienzo.getWiresShape(UUID).setBackgroundColorEvent("blue");
+            } else if (definition instanceof BaseThrowingIntermediateEvent) {
+                jsLienzo.getWiresShape(UUID).setBorderColorEvent("red");
+                jsLienzo.getWiresShape(UUID).setBackgroundColorEvent("blue");
+            } else if (definition instanceof BaseEndEvent) {
+
+                jsLienzo.getWiresShape(UUID).setBorderColorEvent("red");
+                jsLienzo.getWiresShape(UUID).setBackgroundColorEvent("blue");
+                // Tasks
+            } else if (definition instanceof BaseTask) {
+                // Subprocess
+                jsLienzo.getWiresShape(UUID).setBorderColorTask("red");
+                jsLienzo.getWiresShape(UUID).setBackgroundColorTask("blue");
+            } else if (definition instanceof BaseSubprocess) {
+                jsLienzo.getWiresShape(UUID).setBorderColorTask("red");
+                jsLienzo.getWiresShape(UUID).setBackgroundColorTask("blue");
+
+                // Gateway
+            } else if (definition instanceof BaseGateway) {
+                jsLienzo.getWiresShape(UUID).setBorderColorGateway("red");
+                jsLienzo.getWiresShape(UUID).setBackgroundColorGateway("blue");
+
+                // Lane
+            } else if (definition instanceof Lane) {
+                jsLienzo.getWiresShape(UUID).setBorderColorLane("red");
+                jsLienzo.getWiresShape(UUID).setBackgroundColorLane("blue");
+
+                // Text Annotation
+            } else if (definition instanceof TextAnnotation) {
+                jsLienzo.getWiresShape(UUID).setBorderColorTextAnnotation("red");
+                jsLienzo.getWiresShape(UUID).setBackgroundColorTextAnnotation("blue");
+
+                // DataObject
+            } else if (definition instanceof DataObject) {
+                jsLienzo.getWiresShape(UUID).setBorderColorDataObject("red");
+                jsLienzo.getWiresShape(UUID).setBackgroundColorDataObject("blue");
+            }
+        }
+    }
+
+    public static void logNodes() {
+        final Iterable<Node> nodes = editor.getCanvasHandler().getDiagram().getGraph().nodes();
+        final Collection<Shape> shapes = editor.getCanvasHandler().getCanvas().getShapes();
+
+        for (Shape shape : shapes) {
+            DomGlobal.console.log("Shape: " + shape);
+        }
+
+        for (Node node : nodes) {
+            DomGlobal.console.log("Node: " + node.getUUID());
+            View view = (View) node.getContent();
+            DomGlobal.console.log("View: " + view.getDefinition());
+            performOnNode(node.getUUID());
+        }
+    }
 
     void docksInit() {
         diagramPropertiesDock.init();
