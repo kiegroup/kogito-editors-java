@@ -131,66 +131,6 @@ public class JsLienzo {
         return null;
     }
 
-    public void transformAllTasks() {
-        WiresShape[] shapes = getWiresManager().getShapes();
-        for (int i = 0; i < shapes.length; i++) {
-            WiresShape shape = shapes[i];
-            final JsWiresShape wiresShape = getWiresShape(shape.getID());
-            wiresShape.setBackgroundColorTask(("blue"));
-            wiresShape.setBorderColorTask("red");
-        }
-    }
-
-    public void transformAllEvents() {
-        WiresShape[] shapes = getWiresManager().getShapes();
-        for (int i = 0; i < shapes.length; i++) {
-            WiresShape shape = shapes[i];
-            final JsWiresShape wiresShape = getWiresShape(shape.getID());
-            wiresShape.setBackgroundColorEvent(("blue"));
-            wiresShape.setBorderColorEvent("red");
-        }
-    }
-
-    public void transformAllLanes() {
-        WiresShape[] shapes = getWiresManager().getShapes();
-        for (int i = 0; i < shapes.length; i++) {
-            WiresShape shape = shapes[i];
-            final JsWiresShape wiresShape = getWiresShape(shape.getID());
-            wiresShape.setBackgroundColorLane(("blue"));
-            wiresShape.setBorderColorLane("red");
-        }
-    }
-
-    public void transformAllGateways() {
-        WiresShape[] shapes = getWiresManager().getShapes();
-        for (int i = 0; i < shapes.length; i++) {
-            WiresShape shape = shapes[i];
-            final JsWiresShape wiresShape = getWiresShape(shape.getID());
-            wiresShape.setBackgroundColorGateway(("blue"));
-            wiresShape.setBorderColorGateway("red");
-        }
-    }
-
-    public void transformAllDataObjects() {
-        WiresShape[] shapes = getWiresManager().getShapes();
-        for (int i = 0; i < shapes.length; i++) {
-            WiresShape shape = shapes[i];
-            final JsWiresShape wiresShape = getWiresShape(shape.getID());
-            wiresShape.setBackgroundColorDataObject(("blue"));
-            wiresShape.setBorderColorDataObject("red");
-        }
-    }
-
-    public void transformAllTextAnnotations() {
-        WiresShape[] shapes = getWiresManager().getShapes();
-        for (int i = 0; i < shapes.length; i++) {
-            WiresShape shape = shapes[i];
-            final JsWiresShape wiresShape = getWiresShape(shape.getID());
-            wiresShape.setBackgroundColorTextAnnotation(("blue"));
-            wiresShape.setBorderColorTextAnnotation("red");
-        }
-    }
-
     public Group addBadge(String badgeString, String x, String y) {
         final Group badge = new Group();
         badge.setListening(false);

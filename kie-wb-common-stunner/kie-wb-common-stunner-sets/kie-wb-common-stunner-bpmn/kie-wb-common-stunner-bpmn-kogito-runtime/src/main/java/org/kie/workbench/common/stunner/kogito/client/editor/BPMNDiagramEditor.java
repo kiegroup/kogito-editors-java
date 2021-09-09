@@ -24,7 +24,15 @@ import java.util.Map;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import com.ait.lienzo.client.core.shape.Group;
+import com.ait.lienzo.client.core.shape.MultiPath;
+import com.ait.lienzo.client.core.shape.Rectangle;
+import com.ait.lienzo.client.core.shape.Text;
+import com.ait.lienzo.client.core.shape.wires.WiresContainer;
+import com.ait.lienzo.client.core.shape.wires.WiresShape;
+import com.ait.lienzo.client.core.shape.wires.types.JsWiresShape;
 import com.ait.lienzo.client.core.types.JsLienzo;
+import com.ait.lienzo.client.core.types.Point2D;
 import com.ait.lienzo.client.widget.panel.LienzoBoundsPanel;
 import com.google.gwt.user.client.ui.IsWidget;
 import elemental2.dom.DomGlobal;
@@ -66,6 +74,8 @@ import org.kie.workbench.common.stunner.forms.client.widgets.FormsFlushManager;
 import org.kie.workbench.common.stunner.kogito.client.docks.DiagramEditorPreviewAndExplorerDock;
 import org.kie.workbench.common.stunner.kogito.client.docks.DiagramEditorPropertiesDock;
 import org.kie.workbench.common.stunner.kogito.client.service.AbstractKogitoClientDiagramService;
+import org.kie.workbench.common.stunner.svg.client.shape.SVGMutableShape;
+import org.kie.workbench.common.stunner.svg.client.shape.impl.SVGMutableShapeImpl;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.backend.vfs.PathFactory;
 import org.uberfire.client.promise.Promises;
@@ -269,6 +279,7 @@ public class BPMNDiagramEditor {
     }
 
     public static void performOnNode(String UUID) {
+        final Collection shapes = editor.getCanvasHandler().getCanvas().getShapes();
         final Node node = editor.getCanvasHandler().getDiagram().getGraph().getNode(UUID);
 
         if (node.getContent() instanceof View) {
@@ -277,48 +288,55 @@ public class BPMNDiagramEditor {
             final Object definition = view.getDefinition();
 
             // Events
+
+            final JsWiresShape parent = jsLienzo.getWiresShape(UUID);
+
+            if (parent == null) {
+                return;
+            }
+
+            final JsWiresShape wiresShape = jsLienzo.getWiresShape(UUID);
             if (definition instanceof BaseStartEvent) {
-                jsLienzo.getWiresShape(UUID).setBorderColorEvent("red");
-                jsLienzo.getWiresShape(UUID).setBackgroundColorEvent("blue");
+                linkBackgroundColorEvent(wiresShape);
+                linkBorderColorEvent(wiresShape);
             } else if (definition instanceof BaseCatchingIntermediateEvent) {
-                jsLienzo.getWiresShape(UUID).setBorderColorEvent("red");
-                jsLienzo.getWiresShape(UUID).setBackgroundColorEvent("blue");
+                linkBackgroundColorEvent(wiresShape);
+                linkBorderColorEvent(wiresShape);
             } else if (definition instanceof BaseThrowingIntermediateEvent) {
-                jsLienzo.getWiresShape(UUID).setBorderColorEvent("red");
-                jsLienzo.getWiresShape(UUID).setBackgroundColorEvent("blue");
+                linkBackgroundColorEvent(wiresShape);
+                linkBorderColorEvent(wiresShape);
             } else if (definition instanceof BaseEndEvent) {
 
-                jsLienzo.getWiresShape(UUID).setBorderColorEvent("red");
-                jsLienzo.getWiresShape(UUID).setBackgroundColorEvent("blue");
+                linkBackgroundColorEvent(wiresShape);
+                linkBorderColorEvent(wiresShape);
                 // Tasks
             } else if (definition instanceof BaseTask) {
                 // Subprocess
-                jsLienzo.getWiresShape(UUID).setBorderColorTask("red");
-                jsLienzo.getWiresShape(UUID).setBackgroundColorTask("blue");
+                linkBackgroundColorTask(wiresShape);
+                linkBorderColorTask(wiresShape);
             } else if (definition instanceof BaseSubprocess) {
-                jsLienzo.getWiresShape(UUID).setBorderColorTask("red");
-                jsLienzo.getWiresShape(UUID).setBackgroundColorTask("blue");
-
+                linkBackgroundColorTask(wiresShape);
+                linkBorderColorTask(wiresShape);
                 // Gateway
             } else if (definition instanceof BaseGateway) {
-                jsLienzo.getWiresShape(UUID).setBorderColorGateway("red");
-                jsLienzo.getWiresShape(UUID).setBackgroundColorGateway("blue");
-
+                linkBackgroundColorGateway(wiresShape);
+                linkBorderColorGateway(wiresShape);
                 // Lane
             } else if (definition instanceof Lane) {
-                jsLienzo.getWiresShape(UUID).setBorderColorLane("red");
-                jsLienzo.getWiresShape(UUID).setBackgroundColorLane("blue");
-
+                linkBackgroundColorLane(wiresShape);
+                linkBorderColorLane(wiresShape);
                 // Text Annotation
             } else if (definition instanceof TextAnnotation) {
-                jsLienzo.getWiresShape(UUID).setBorderColorTextAnnotation("red");
-                jsLienzo.getWiresShape(UUID).setBackgroundColorTextAnnotation("blue");
-
+                linkBackgroundColorTextAnnotation(wiresShape);
+                linkBorderColorTextAnnotation(wiresShape);
                 // DataObject
             } else if (definition instanceof DataObject) {
-                jsLienzo.getWiresShape(UUID).setBorderColorDataObject("red");
-                jsLienzo.getWiresShape(UUID).setBackgroundColorDataObject("blue");
+                linkBackgroundAndBorderColorDataObject(wiresShape);
             }
+
+            wiresShape.setBackgroundColor("blue");
+            wiresShape.setBorderColor("red");
+
         }
     }
 
@@ -328,6 +346,13 @@ public class BPMNDiagramEditor {
 
         for (Shape shape : shapes) {
             DomGlobal.console.log("Shape: " + shape);
+
+            if (shape instanceof SVGMutableShapeImpl) {
+                SVGMutableShapeImpl svg = (SVGMutableShapeImpl) shape;
+               // svg.getShapeView().setFillColor("green");
+              //  svg.getShapeView().setStrokeColor("red");
+
+            }
         }
 
         for (Node node : nodes) {
@@ -352,4 +377,67 @@ public class BPMNDiagramEditor {
         diagramPropertiesDock.close();
         diagramPreviewAndExplorerDock.close();
     }
+
+// Task
+    public static void linkBackgroundColorTask(JsWiresShape shape) {
+        ((com.ait.lienzo.client.core.shape.Shape) shape.getChild(1)).setUserData("background");
+    }
+
+    public static void linkBorderColorTask(JsWiresShape shape) {
+        ((com.ait.lienzo.client.core.shape.Shape) shape.getChild(2)).setUserData("border");
+    }
+
+    //// DataObject
+
+    public static void linkBackgroundAndBorderColorDataObject(JsWiresShape shape) {
+        ((MultiPath) ((Group) shape.getChild(1)).getChildrenAt(0)).setUserData("background-border");
+    }
+
+
+    //// Text Annotation
+
+    public static void linkBackgroundColorTextAnnotation(JsWiresShape shape) {
+        ((MultiPath) shape.getChild(0)).setUserData("background");
+    }
+
+
+    public static void linkBorderColorTextAnnotation(JsWiresShape shape) {
+        ((Text) shape.getChild(2)).setUserData("border");;
+        ((MultiPath) ((Group) shape.getChild(1)).getChildrenAt(0)).setUserData("border");
+    }
+
+    ///// Lane
+
+    public static void linkBackgroundColorLane(JsWiresShape shape) {
+        ((Rectangle) shape.getChild(1)).setUserData("background");
+    }
+
+
+    public static void linkBorderColorLane(JsWiresShape shape) {
+        ((Rectangle) shape.getChild(1)).setUserData("border");
+        ((Rectangle) shape.getChild(2)).setUserData("border");
+    }
+
+    ///// Event
+
+    public static void linkBackgroundColorEvent(JsWiresShape shape) {
+        ((MultiPath) ((Group) shape.getChild(1)).getChildrenAt(0)).setUserData("background");
+    }
+
+
+    public static void linkBorderColorEvent(JsWiresShape shape) {
+        ((MultiPath) ((Group) ((Group) ((Group) shape.getChild(1)).getChildrenAt(1)).getChildrenAt(0)).getChildrenAt(0)).setUserData("border-fill");
+    }
+
+    ///// Gateway
+
+    public static void linkBackgroundColorGateway(JsWiresShape shape) {
+        ((MultiPath) ((Group) shape.getChild(1)).getChildrenAt(0)).setUserData("background");
+    }
+
+
+    public static void linkBorderColorGateway(JsWiresShape shape) {
+        ((MultiPath) ((Group) ((Group) ((Group) shape.getChild(1)).getChildrenAt(1)).getChildrenAt(0)).getChildrenAt(0)).setUserData("border-fill");
+    }
+
 }
