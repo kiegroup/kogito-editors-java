@@ -216,8 +216,9 @@ public class TaskConverter {
             p.setRuleFlowGroup(executionSet.getRuleFlowGroup());
         } else if (ruleLanguage.getValue().equals(RuleLanguage.DMN)) {
             p.setNamespace(executionSet.getNamespace());
-            p.setDecisionName(executionSet.getDecisionName());
+            p.setDecisionService(executionSet.getDecisionService());
             p.setDmnModelName(executionSet.getDmnModelName());
+
         }
 
         p.setAssignmentsInfo(definition.getDataIOSet().getAssignmentsinfo());

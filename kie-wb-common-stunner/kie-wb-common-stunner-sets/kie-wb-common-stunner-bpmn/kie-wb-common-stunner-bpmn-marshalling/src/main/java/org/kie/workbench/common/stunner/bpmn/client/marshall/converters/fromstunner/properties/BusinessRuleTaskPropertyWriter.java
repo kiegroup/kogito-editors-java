@@ -24,7 +24,7 @@ import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.custompr
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.customproperties.CustomElement;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.customproperties.CustomInput;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.properties.Scripts;
-import org.kie.workbench.common.stunner.bpmn.definition.property.task.DecisionName;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.DecisionService;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.DmnModelName;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.Namespace;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnEntryAction;
@@ -37,7 +37,7 @@ public class BusinessRuleTaskPropertyWriter extends ActivityPropertyWriter {
     private final BusinessRuleTask task;
     private final CustomInput<String> namespace;
     private final CustomInput<String> dmnModelName;
-    private final CustomInput<String> decisionName;
+    private final CustomInput<String> decisionService;
 
     public BusinessRuleTaskPropertyWriter(BusinessRuleTask task, VariableScope variableScope, Set<DataObject> dataObejcts) {
         super(task, variableScope, dataObejcts);
@@ -49,8 +49,8 @@ public class BusinessRuleTaskPropertyWriter extends ActivityPropertyWriter {
         this.dmnModelName = CustomInput.dmnModelName.of(task);
         this.addItemDefinition(this.dmnModelName.typeDef());
 
-        this.decisionName = CustomInput.decisionName.of(task);
-        this.addItemDefinition(this.decisionName.typeDef());
+        this.decisionService = CustomInput.decisionService.of(task);
+        this.addItemDefinition(this.decisionService.typeDef());
     }
 
     public void setImplementation(RuleLanguage ruleLanguage) {
@@ -69,8 +69,8 @@ public class BusinessRuleTaskPropertyWriter extends ActivityPropertyWriter {
         this.dmnModelName.set(dmnModelName.getValue());
     }
 
-    public void setDecisionName(DecisionName decisionName) {
-        this.decisionName.set(decisionName.getValue());
+    public void setDecisionService(DecisionService decisionService) {
+        this.decisionService.set(decisionService.getValue());
     }
 
     public void setOnEntryAction(OnEntryAction onEntryAction) {

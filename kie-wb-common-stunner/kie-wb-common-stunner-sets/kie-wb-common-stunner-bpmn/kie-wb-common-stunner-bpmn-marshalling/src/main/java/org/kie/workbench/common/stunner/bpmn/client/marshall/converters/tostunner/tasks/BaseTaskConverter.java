@@ -54,7 +54,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.service.Generic
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.AdHocAutostart;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.BaseUserTaskExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.BusinessRuleTaskExecutionSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.task.DecisionName;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.DecisionService;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.DmnModelName;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.EmptyTaskExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.IsAsync;
@@ -214,18 +214,18 @@ public abstract class BaseTaskConverter<U extends BaseUserTask<S>, S extends Bas
         RuleLanguage ruleLanguage = new RuleLanguage(p.getImplementation());
         RuleFlowGroup ruleFlowGroup = null;
         Namespace namespace = null;
-        DecisionName decisionName = null;
+        DecisionService decisionService = null;
         DmnModelName dmnModelName = null;
 
         if (ruleLanguage.getValue().equals(RuleLanguage.DRL)) {
             ruleFlowGroup = new RuleFlowGroup(p.getRuleFlowGroup());
             namespace = new Namespace();
-            decisionName = new DecisionName();
+            decisionService = new DecisionService();
             dmnModelName = new DmnModelName();
         } else if (ruleLanguage.getValue().equals(RuleLanguage.DMN)) {
             ruleFlowGroup = new RuleFlowGroup();
             namespace = new Namespace(p.getNamespace());
-            decisionName = new DecisionName(p.getDecisionName());
+            decisionService = new DecisionService(p.getDecisionService());
             dmnModelName = new DmnModelName(p.getDmnModelName());
         }
 
@@ -233,7 +233,7 @@ public abstract class BaseTaskConverter<U extends BaseUserTask<S>, S extends Bas
                 new RuleLanguage(p.getImplementation()),
                 ruleFlowGroup,
                 namespace,
-                decisionName,
+                decisionService,
                 dmnModelName,
                 new OnEntryAction(p.getOnEntryAction()),
                 new OnExitAction(p.getOnExitAction()),

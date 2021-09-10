@@ -31,17 +31,17 @@ import org.kie.workbench.common.stunner.core.definition.annotation.property.Valu
 @Bindable
 @Property
 @FieldDefinition(i18nMode = I18nMode.OVERRIDE_I18N_KEY)
-public class DecisionName implements BPMNProperty {
+public class DecisionService implements BPMNProperty {
 
     @Value
     @FieldValue
     private String value;
 
-    public DecisionName() {
+    public DecisionService() {
         this("");
     }
 
-    public DecisionName(final String value) {
+    public DecisionService(final String value) {
         this.value = value;
     }
 
@@ -60,8 +60,8 @@ public class DecisionName implements BPMNProperty {
 
     @Override
     public boolean equals(Object o) {
-        if (o instanceof DecisionName) {
-            DecisionName other = (DecisionName) o;
+        if (o instanceof DecisionService) {
+            DecisionService other = (DecisionService) o;
             return Objects.equals(value, other.value);
         }
         return false;

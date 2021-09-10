@@ -85,7 +85,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.task.BusinessRu
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.CalledElement;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.Content;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.CreatedBy;
-import org.kie.workbench.common.stunner.bpmn.definition.property.task.DecisionName;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.DecisionService;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.Description;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.DmnModelName;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.Independent;
@@ -1530,7 +1530,7 @@ public class HashCodeAndEqualityTest {
                 .addTrueCase(new BusinessRuleTaskExecutionSet(new RuleLanguage(),
                                                               new RuleFlowGroup(),
                                                               new Namespace(),
-                                                              new DecisionName(),
+                                                              new DecisionService(),
                                                               new DmnModelName(),
                                                               new OnEntryAction(),
                                                               new OnExitAction(),
@@ -1540,7 +1540,7 @@ public class HashCodeAndEqualityTest {
                              new BusinessRuleTaskExecutionSet(new RuleLanguage(),
                                                               new RuleFlowGroup(),
                                                               new Namespace(),
-                                                              new DecisionName(),
+                                                              new DecisionService(),
                                                               new DmnModelName(),
                                                               new OnEntryAction(),
                                                               new OnExitAction(),
@@ -2102,7 +2102,7 @@ public class HashCodeAndEqualityTest {
                                                         new InterruptingConditionalEventExecutionSet(
                                                                 new IsInterrupting(false),
                                                                 new SLADueDate(), new ConditionExpression(
-                                                                        new ScriptTypeValue("drools", "script")))),
+                                                                new ScriptTypeValue("drools", "script")))),
                               new StartConditionalEvent(new BPMNGeneralSet("name", "doc"),
                                                         new BackgroundSet(),
                                                         new FontSet(),
@@ -2164,7 +2164,7 @@ public class HashCodeAndEqualityTest {
                                                                new CancellingConditionalEventExecutionSet(
                                                                        new CancelActivity(false),
                                                                        new SLADueDate(), new ConditionExpression(
-                                                                               new ScriptTypeValue("drools", "script")))),
+                                                                       new ScriptTypeValue("drools", "script")))),
                               new IntermediateConditionalEvent(new BPMNGeneralSet("name", "doc"),
                                                                new BackgroundSet(), new FontSet(),
                                                                new CircleDimensionSet(),

@@ -41,7 +41,7 @@ public class BusinessRuleTaskExecutionSet implements BPMNPropertySet {
     public static final String RULE_LANGUAGE = "ruleLanguage";
     public static final String RULE_FLOW_GROUP = "ruleFlowGroup";
     public static final String NAMESPACE = "namespace";
-    public static final String DECISON_NAME = "decisionName";
+    public static final String DECISON_SERVICE = "decisionService";
     public static final String DMN_MODEL_NAME = "dmnModelName";
 
     @Property
@@ -78,11 +78,11 @@ public class BusinessRuleTaskExecutionSet implements BPMNPropertySet {
             afterElement = "namespace"
     )
     @Valid
-    private DecisionName decisionName;
+    private DecisionService decisionService;
 
     @Property
     @FormField(
-            afterElement = "decisionName"
+            afterElement = "decisionService"
     )
     @Valid
     private DmnModelName dmnModelName;
@@ -118,7 +118,7 @@ public class BusinessRuleTaskExecutionSet implements BPMNPropertySet {
         this(new RuleLanguage(),
              new RuleFlowGroup(),
              new Namespace(),
-             new DecisionName(),
+             new DecisionService(),
              new DmnModelName(),
              new OnEntryAction(new ScriptTypeListValue().addValue(new ScriptTypeValue("java",
                                                                                       ""))),
@@ -132,7 +132,7 @@ public class BusinessRuleTaskExecutionSet implements BPMNPropertySet {
     public BusinessRuleTaskExecutionSet(final @MapsTo("ruleLanguage") RuleLanguage ruleLanguage,
                                         final @MapsTo("ruleFlowGroup") RuleFlowGroup ruleFlowGroup,
                                         final @MapsTo("namespace") Namespace namespace,
-                                        final @MapsTo("decisionName") DecisionName decisionName,
+                                        final @MapsTo("decisionService") DecisionService decisionService,
                                         final @MapsTo("dmnModelName") DmnModelName dmnModelName,
                                         final @MapsTo("onEntryAction") OnEntryAction onEntryAction,
                                         final @MapsTo("onExitAction") OnExitAction onExitAction,
@@ -142,7 +142,7 @@ public class BusinessRuleTaskExecutionSet implements BPMNPropertySet {
         this.ruleLanguage = ruleLanguage;
         this.ruleFlowGroup = ruleFlowGroup;
         this.namespace = namespace;
-        this.decisionName = decisionName;
+        this.decisionService = decisionService;
         this.dmnModelName = dmnModelName;
         this.onEntryAction = onEntryAction;
         this.onExitAction = onExitAction;
@@ -175,12 +175,12 @@ public class BusinessRuleTaskExecutionSet implements BPMNPropertySet {
         this.namespace = namespace;
     }
 
-    public DecisionName getDecisionName() {
-        return decisionName;
+    public DecisionService getDecisionService() {
+        return decisionService;
     }
 
-    public void setDecisionName(DecisionName decisionName) {
-        this.decisionName = decisionName;
+    public void setDecisionService(DecisionService decisionService) {
+        this.decisionService = decisionService;
     }
 
     public DmnModelName getDmnModelName() {
@@ -236,7 +236,7 @@ public class BusinessRuleTaskExecutionSet implements BPMNPropertySet {
         return HashUtil.combineHashCodes(Objects.hashCode(ruleLanguage),
                                          Objects.hashCode(ruleFlowGroup),
                                          Objects.hashCode(namespace),
-                                         Objects.hashCode(decisionName),
+                                         Objects.hashCode(decisionService),
                                          Objects.hashCode(dmnModelName),
                                          Objects.hashCode(onEntryAction),
                                          Objects.hashCode(onExitAction),
@@ -252,7 +252,7 @@ public class BusinessRuleTaskExecutionSet implements BPMNPropertySet {
             return Objects.equals(ruleLanguage, other.ruleLanguage) &&
                     Objects.equals(ruleFlowGroup, other.ruleFlowGroup) &&
                     Objects.equals(namespace, other.namespace) &&
-                    Objects.equals(decisionName, other.decisionName) &&
+                    Objects.equals(decisionService, other.decisionService) &&
                     Objects.equals(dmnModelName, other.dmnModelName) &&
                     Objects.equals(onEntryAction, other.onEntryAction) &&
                     Objects.equals(onExitAction, other.onExitAction) &&

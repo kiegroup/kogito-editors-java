@@ -52,12 +52,12 @@ public class BusinessRuleTaskPropertyReader extends TaskPropertyReader {
         return CustomInput.namespace.of(task).get();
     }
 
-    public String getDecisionName() {
-        return CustomInput.decisionName.of(task).get();
-    }
-
     public String getDmnModelName() {
         return CustomInput.dmnModelName.of(task).get();
+    }
+
+    public String getDecisionService() {
+        return CustomInput.decisionService.of(task).get();
     }
 
     public boolean isAsync() {
@@ -159,6 +159,6 @@ public class BusinessRuleTaskPropertyReader extends TaskPropertyReader {
 
         return dataName.equals("namespace") ||
                 dataName.equals("model") ||
-                dataName.equals("decision");
+                dataName.equals("DecisionService");
     }
 }
