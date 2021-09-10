@@ -20,14 +20,14 @@ import com.ait.lienzo.client.core.shape.Group;
 import com.ait.lienzo.client.core.shape.IContainer;
 import com.ait.lienzo.client.core.shape.IPrimitive;
 import com.ait.lienzo.client.core.shape.MultiPath;
-import com.ait.lienzo.client.core.shape.Rectangle;
 import com.ait.lienzo.client.core.shape.Shape;
-import com.ait.lienzo.client.core.shape.Text;
 import com.ait.lienzo.client.core.shape.wires.MagnetManager;
 import com.ait.lienzo.client.core.shape.wires.WiresContainer;
 import com.ait.lienzo.client.core.shape.wires.WiresLayer;
 import com.ait.lienzo.client.core.shape.wires.WiresMagnet;
 import com.ait.lienzo.client.core.shape.wires.WiresShape;
+import com.ait.lienzo.client.core.types.Attributable;
+import com.ait.lienzo.client.core.types.AttributableColors;
 import com.ait.lienzo.client.core.types.BoundingBox;
 import com.ait.lienzo.client.core.types.Point2D;
 import com.ait.lienzo.tools.client.collection.NFastArrayList;
@@ -39,35 +39,16 @@ public class JsWiresShape {
 
     protected WiresShape shape;
 
+    private Attributable attributable;
+
+    private AttributableColors attributableColors;
+
     public JsWiresShape(WiresShape shape) {
         this.shape = shape;
     }
 
     public String getID() {
         return shape.getID();
-    }
-
-    public Group addBadge(String badgeString, String x, String y) {
-        final Group badge = new Group();
-        badge.setListening(false);
-        badge.setAlpha(0);
-        final Text text = new Text(badgeString, "arial", 12);
-        badge.add(text);
-        final BoundingBox bb = text.getBoundingBox();
-        Rectangle decorator = new Rectangle(bb.getWidth() + 10, bb.getHeight() + 10);
-        decorator.setX(bb.getX() - 5);
-        decorator.setY(bb.getY() - 5);
-        decorator.setFillAlpha(0);
-        decorator.setStrokeColor("black");
-        decorator.setStrokeWidth(2);
-        decorator.setCornerRadius(5);
-        badge.add(decorator);
-        badge.setX(Integer.parseInt(x));
-        badge.setY(Integer.parseInt(y));
-        //add(badge);
-        this.shape.addChild(badge);
-        //animations().alpha(badge, 1, 1500);
-        return badge;
     }
 
     public JsWiresShape getParent() {
@@ -182,6 +163,10 @@ public class JsWiresShape {
         }
     }
 
+    public void draw() {
+        shape.refresh();
+    }
+
     public void setBackgroundColor(String backgroundColor) {
         final JsArray<Shape> shapeJsArray = flatShapes();
 
@@ -204,4 +189,40 @@ public class JsWiresShape {
             }
         }
     }
+
+    public BoundingBox getBounds() {
+        double shapeX = this.getLocation().getX();
+        double shapeY = this.getLocation().getY();
+        double width = this.getBoundingBox().getWidth();
+        double height = this.getBoundingBox().getHeight();
+        final BoundingBox boundingBox = BoundingBox.fromDoubles(shapeX, shapeY, shapeX + width, shapeY + height);
+        return boundingBox;
+    }
+
+    public void addBadge(String badgeString) {
+        if (attributable != null) {
+            attributable.addBadge(this.getID(), badgeString);
+        }
+    }
+
+    public void setAttributable(Attributable attributable) {
+        this.attributable = attributable;
+    }
+
+    public void setAttributableColors(AttributableColors attributableColors) {
+        this.attributableColors = attributableColors;
+    }
+
+    public void performSetBackgroundColor(String backgroundColor) {
+        if (attributableColors != null) {
+            attributableColors.setBackgroundColor(this.getID(), backgroundColor);
+        }
+    }
+
+    public void performSetBorderColor(String borderColor) {
+        if (attributableColors != null) {
+            attributableColors.setBorderColor(this.getID(), borderColor);
+        }
+    }
+
 }

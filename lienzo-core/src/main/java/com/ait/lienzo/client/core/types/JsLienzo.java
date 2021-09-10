@@ -14,11 +14,12 @@ import com.ait.lienzo.client.core.shape.wires.WiresShape;
 import com.ait.lienzo.client.core.shape.wires.types.JsWiresShape;
 import com.ait.lienzo.client.widget.panel.LienzoPanel;
 import com.ait.lienzo.tools.client.collection.NFastArrayList;
+import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLCanvasElement;
 import jsinterop.annotations.JsType;
 
 @JsType
-public class JsLienzo {
+public class JsLienzo implements Attributable {
 
     LienzoPanel panel;
     Layer layer;
@@ -29,10 +30,16 @@ public class JsLienzo {
     // TODO: Static?
     JsLienzoLogger logger;
 
+    AttributableColors attributableColors;
+
     public JsLienzo(LienzoPanel panel, Layer layer) {
         this.panel = panel;
         this.layer = layer;
         this.events = null;
+    }
+
+    public void setAttributableColors(AttributableColors attributableColors) {
+        this.attributableColors = attributableColors;
     }
 
     public Layer getLayer() {
@@ -125,20 +132,49 @@ public class JsLienzo {
         WiresShape[] shapes = getWiresManager().getShapes();
         for (WiresShape shape : shapes) {
             if (id.equals(shape.getID())) {
-                return new JsWiresShape(shape);
+                final JsWiresShape jsWiresShape = new JsWiresShape(shape);
+                jsWiresShape.setAttributable(this);
+                if (attributableColors != null) {
+                    jsWiresShape.setAttributableColors(attributableColors);
+                }
+                return jsWiresShape;
             }
         }
         return null;
     }
 
-    public Group addBadge(String badgeString, String x, String y) {
+    public Group addBadge(String nodeUUID, String badgeString) {
+        JsWiresShape shape = getWiresShape(nodeUUID);
+        if (shape == null) {
+            return null;
+        }
+
+        double shapeX = shape.getLocation().getX();
+        double shapeY = shape.getLocation().getY();
+        double width = shape.getBoundingBox().getWidth();
+        double height = shape.getBoundingBox().getHeight();
+        DomGlobal.console.log("x: " + shapeX);
+        DomGlobal.console.log("y: " + shapeY);
+
+        DomGlobal.console.log("width: " + width);
+        DomGlobal.console.log("height: " + height);
+
+        int midX = (int) (shapeX + (width / 2));
+        int midY = (int) (shapeY + height) + 20;
+
         final Group badge = new Group();
         badge.setListening(false);
         badge.setAlpha(0);
         final Text text = new Text(badgeString, "arial", 12);
+
         badge.add(text);
         final BoundingBox bb = text.getBoundingBox();
         Rectangle decorator = new Rectangle(bb.getWidth() + 10, bb.getHeight() + 10);
+        midX = (midX - ((int) (bb.getWidth() / 2)));
+
+        String x = midX + "";
+        String y = midY + "";
+
         decorator.setX(bb.getX() - 5);
         decorator.setY(bb.getY() - 5);
         decorator.setFillAlpha(0);
@@ -152,4 +188,5 @@ public class JsLienzo {
         animations().alpha(badge, 1, 1500);
         return badge;
     }
+
 }
