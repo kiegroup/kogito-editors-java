@@ -31,6 +31,7 @@ import com.ait.lienzo.client.core.shape.Text;
 import com.ait.lienzo.client.core.shape.wires.WiresContainer;
 import com.ait.lienzo.client.core.shape.wires.WiresShape;
 import com.ait.lienzo.client.core.shape.wires.types.JsWiresShape;
+import com.ait.lienzo.client.core.types.AttributableColors;
 import com.ait.lienzo.client.core.types.JsLienzo;
 import com.ait.lienzo.client.core.types.Point2D;
 import com.ait.lienzo.client.widget.panel.LienzoBoundsPanel;
@@ -273,12 +274,28 @@ public class BPMNDiagramEditor {
     private static StunnerEditor editor = null;
 
     private static void setupJsLienzoTypeNative(JsLienzo jsLienzo) {
+        jsLienzo.setAttributableColors(new AttributableColors() {
+            @Override
+            public void setBackgroundColor(String UUID, String backgroundColor) {
+                deepPerformOnNode(UUID, backgroundColor, null);
+            }
+
+            @Override
+            public void setBorderColor(String UUID, String borderColor) {
+                deepPerformOnNode(UUID, null, borderColor);
+            }
+        });
         WindowJSType.linkLienzoJS(jsLienzo);
         WindowJSType.linkStunnerCommand(() -> logNodes());
         WindowJSType.linkStunnerOperation(UUID -> performOnNode(UUID));
     }
 
+
     public static void performOnNode(String UUID) {
+        deepPerformOnNode(UUID, "blue", "red");
+    }
+
+    public static void deepPerformOnNode(String UUID, String backgroundColor, String borderColor) {
         final Collection shapes = editor.getCanvasHandler().getCanvas().getShapes();
         final Node node = editor.getCanvasHandler().getDiagram().getGraph().getNode(UUID);
 
@@ -334,8 +351,14 @@ public class BPMNDiagramEditor {
                 linkBackgroundAndBorderColorDataObject(wiresShape);
             }
 
-            wiresShape.setBackgroundColor("blue");
-            wiresShape.setBorderColor("red");
+            if (backgroundColor != null) {
+                wiresShape.setBackgroundColor(backgroundColor);
+            }
+
+            if (borderColor != null) {
+                wiresShape.setBorderColor(borderColor);
+            }
+            wiresShape.draw();
 
         }
     }
@@ -424,17 +447,14 @@ public class BPMNDiagramEditor {
         ((MultiPath) ((Group) shape.getChild(1)).getChildrenAt(0)).setUserData("background");
     }
 
-
     public static void linkBorderColorEvent(JsWiresShape shape) {
         ((MultiPath) ((Group) ((Group) ((Group) shape.getChild(1)).getChildrenAt(1)).getChildrenAt(0)).getChildrenAt(0)).setUserData("border-fill");
     }
 
     ///// Gateway
-
     public static void linkBackgroundColorGateway(JsWiresShape shape) {
         ((MultiPath) ((Group) shape.getChild(1)).getChildrenAt(0)).setUserData("background");
     }
-
 
     public static void linkBorderColorGateway(JsWiresShape shape) {
         ((MultiPath) ((Group) ((Group) ((Group) shape.getChild(1)).getChildrenAt(1)).getChildrenAt(0)).getChildrenAt(0)).setUserData("border-fill");
