@@ -14,7 +14,6 @@ import com.ait.lienzo.client.core.shape.wires.WiresShape;
 import com.ait.lienzo.client.core.shape.wires.types.JsWiresShape;
 import com.ait.lienzo.client.widget.panel.LienzoPanel;
 import com.ait.lienzo.tools.client.collection.NFastArrayList;
-import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLCanvasElement;
 import jsinterop.annotations.JsType;
 
@@ -23,23 +22,14 @@ public class JsLienzo implements Attributable {
 
     LienzoPanel panel;
     Layer layer;
-    // TODO: Static?
-    JsLienzoEvents events;
-    // TODO: Static?
-    JsLienzoAnimations animations;
-    // TODO: Static?
-    JsLienzoLogger logger;
-
-    AttributableColors attributableColors;
+    public static JsLienzoEvents events;
+    public static JsLienzoAnimations animations;
+    public static JsLienzoLogger logger;
 
     public JsLienzo(LienzoPanel panel, Layer layer) {
         this.panel = panel;
         this.layer = layer;
         this.events = null;
-    }
-
-    public void setAttributableColors(AttributableColors attributableColors) {
-        this.attributableColors = attributableColors;
     }
 
     public Layer getLayer() {
@@ -134,13 +124,19 @@ public class JsLienzo implements Attributable {
             if (id.equals(shape.getID())) {
                 final JsWiresShape jsWiresShape = new JsWiresShape(shape);
                 jsWiresShape.setAttributable(this);
-                if (attributableColors != null) {
-                    jsWiresShape.setAttributableColors(attributableColors);
-                }
                 return jsWiresShape;
             }
         }
         return null;
+    }
+
+    public void batchChangeColors(String background, String borderColor) {
+        WiresShape[] shapes = getWiresManager().getShapes();
+        for (WiresShape shape : shapes) {
+            final JsWiresShape jsWiresShape = new JsWiresShape(shape);
+            jsWiresShape.setBackgroundColor("blue");
+            jsWiresShape.setBorderColor("red");
+        }
     }
 
     public Group addBadge(String nodeUUID, String badgeString) {
@@ -153,11 +149,6 @@ public class JsLienzo implements Attributable {
         double shapeY = shape.getLocation().getY();
         double width = shape.getBoundingBox().getWidth();
         double height = shape.getBoundingBox().getHeight();
-        DomGlobal.console.log("x: " + shapeX);
-        DomGlobal.console.log("y: " + shapeY);
-
-        DomGlobal.console.log("width: " + width);
-        DomGlobal.console.log("height: " + height);
 
         int midX = (int) (shapeX + (width / 2));
         int midY = (int) (shapeY + height) + 20;
@@ -188,5 +179,4 @@ public class JsLienzo implements Attributable {
         animations().alpha(badge, 1, 1500);
         return badge;
     }
-
 }

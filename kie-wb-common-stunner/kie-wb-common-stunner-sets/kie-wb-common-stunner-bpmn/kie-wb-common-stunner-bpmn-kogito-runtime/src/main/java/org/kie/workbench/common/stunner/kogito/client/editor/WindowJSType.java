@@ -17,38 +17,19 @@
 package org.kie.workbench.common.stunner.kogito.client.editor;
 
 import com.ait.lienzo.client.core.types.JsLienzo;
-import com.google.gwt.user.client.Command;
 import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsPackage;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
 
-@JsType(isNative=true, namespace= JsPackage.GLOBAL, name="window")
+@JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "window")
 public class WindowJSType {
 
     @JsProperty
     private static Object linkedjsLienzo;
 
-    @JsProperty
-    private static JSCommand commandExecute;
-
-    @JsProperty
-    private static JSCommandWithArguments operationExecute;
-
-
     @JsOverlay
     public static final void linkLienzoJS(JsLienzo jsLienzo) {
         linkedjsLienzo = jsLienzo;
     }
-
-    @JsOverlay
-    public static final void linkStunnerCommand(Command command) {
-        commandExecute = new JSCommand(command);
-    }
-
-    @JsOverlay
-    public static final void linkStunnerOperation(JSCommandWithArguments command) {
-        operationExecute = new JSCommandWithArgumentsImpl(command);
-    }
-
 }

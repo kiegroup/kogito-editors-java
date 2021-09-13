@@ -27,7 +27,6 @@ import com.ait.lienzo.client.core.shape.wires.WiresLayer;
 import com.ait.lienzo.client.core.shape.wires.WiresMagnet;
 import com.ait.lienzo.client.core.shape.wires.WiresShape;
 import com.ait.lienzo.client.core.types.Attributable;
-import com.ait.lienzo.client.core.types.AttributableColors;
 import com.ait.lienzo.client.core.types.BoundingBox;
 import com.ait.lienzo.client.core.types.Point2D;
 import com.ait.lienzo.tools.client.collection.NFastArrayList;
@@ -40,8 +39,6 @@ public class JsWiresShape {
     protected WiresShape shape;
 
     private Attributable attributable;
-
-    private AttributableColors attributableColors;
 
     public JsWiresShape(WiresShape shape) {
         this.shape = shape;
@@ -148,16 +145,14 @@ public class JsWiresShape {
             String tag = (String) userData;
 
             switch (tag) {
-                case "border":
+                case "?shapeType=BORDER&renderType=STROKE":
                     shape.setStrokeColor(borderColor);
+                    draw();
                     break;
 
-                case "border-fill":
+                case "?shapeType=BORDER&renderType=FILL":
                     shape.setFillColor(borderColor);
-                    break;
-
-                case "background-border":
-                    shape.setStrokeColor(borderColor);
+                    draw();
                     break;
             }
         }
@@ -178,18 +173,14 @@ public class JsWiresShape {
             }
 
             String tag = (String) userData;
-
-            switch (tag) {
-                case "background":
-                    shape.setFillColor(backgroundColor);
-                    break;
-                case "background-border":
-                    shape.setFillColor(backgroundColor);
-                    break;
+            if (tag.equals("?shapeType=BACKGROUND")) {
+                shape.setFillColor(backgroundColor);
+                draw();
             }
         }
     }
 
+    // Get Absolute Loction Method
     public BoundingBox getBounds() {
         double shapeX = this.getLocation().getX();
         double shapeY = this.getLocation().getY();
@@ -208,21 +199,4 @@ public class JsWiresShape {
     public void setAttributable(Attributable attributable) {
         this.attributable = attributable;
     }
-
-    public void setAttributableColors(AttributableColors attributableColors) {
-        this.attributableColors = attributableColors;
-    }
-
-    public void performSetBackgroundColor(String backgroundColor) {
-        if (attributableColors != null) {
-            attributableColors.setBackgroundColor(this.getID(), backgroundColor);
-        }
-    }
-
-    public void performSetBorderColor(String borderColor) {
-        if (attributableColors != null) {
-            attributableColors.setBorderColor(this.getID(), borderColor);
-        }
-    }
-
 }
