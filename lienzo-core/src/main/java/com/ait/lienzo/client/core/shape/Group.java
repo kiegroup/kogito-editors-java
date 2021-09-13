@@ -43,10 +43,6 @@ public class Group extends GroupOf<IPrimitive<?>, Group> {
         return this.getChildNodes();
     }
 
-    public IPrimitive<?> getChildrenAt(int index) {
-        return this.getChildNodes().get(index);
-    }
-
     public static class GroupFactory extends GroupOfFactory<IPrimitive<?>, Group> {
 
         public GroupFactory() {
