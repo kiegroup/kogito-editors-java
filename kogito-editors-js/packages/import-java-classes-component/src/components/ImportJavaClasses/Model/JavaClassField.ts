@@ -14,12 +14,22 @@
  * limitations under the License.
  */
 
+import { DMNSimpleType, JAVA_TO_DMN_MAP } from "./DMNSimpleType";
+import { JavaClass } from "./JavaClass";
+
 export class JavaClassField {
   public name: string;
   public type: string;
+  public dmnTypeRef: DMNSimpleType | JavaClass;
 
   constructor(name: string, type: string) {
     this.name = name;
     this.type = type;
+    this.dmnTypeRef = (JAVA_TO_DMN_MAP as any)[this.getSimpleName()!] || DMNSimpleType.ANY;
   }
+
+  getSimpleName() {
+    return this.type.split(".").pop();
+  }
+
 }
