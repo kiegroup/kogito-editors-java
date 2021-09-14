@@ -9,7 +9,6 @@ on:
       - '**.md'
       - '**.adoc'
       - '**.txt'
-      - '.github/**'
       - '.ci/jenkins/**'
 jobs:
   build:
