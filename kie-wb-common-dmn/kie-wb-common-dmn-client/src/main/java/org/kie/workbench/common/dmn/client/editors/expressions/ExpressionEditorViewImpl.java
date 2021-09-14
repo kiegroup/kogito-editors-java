@@ -445,7 +445,8 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
         if (hasExpression instanceof HasVariable) {
             qName = ((HasVariable<InformationItemPrimary>) hasExpression).getVariable().getTypeRef();
         } else if (hasExpression.getExpression() != null && hasExpression.getExpression().asDMNModelInstrumentedBase().getParent() instanceof HasVariable) {
-            qName = ((HasVariable<InformationItemPrimary>) hasExpression.getExpression().asDMNModelInstrumentedBase().getParent()).getVariable().getTypeRef();
+            final HasVariable<InformationItemPrimary> parent = (HasVariable<InformationItemPrimary>) hasExpression.getExpression().asDMNModelInstrumentedBase().getParent();
+            qName = parent != null && parent.getVariable() != null ? parent.getVariable().getTypeRef() : BuiltInType.UNDEFINED.asQName();
         }
         return qName.getLocalPart();
     }
