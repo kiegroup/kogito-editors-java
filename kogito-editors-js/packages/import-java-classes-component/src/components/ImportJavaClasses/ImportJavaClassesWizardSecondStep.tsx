@@ -49,7 +49,9 @@ export const ImportJavaClassesWizardSecondStep: React.FunctionComponent<ImportJa
       {retrievedJavaClassFields.length != selectedJavaClasses.length ? (
         <Spinner isSVG diameter="80px" />
       ) : (
-        <ImportJavaClassesWizardFieldListTable selectedJavaClassFields={retrievedJavaClassFields} />
+        <ImportJavaClassesWizardFieldListTable selectedJavaClassFields={retrievedJavaClassFields} readOnly={false} onFetchButtonClick={function (fullClassName) {
+          console.log(fullClassName);
+        } }/>
       )}
     </>
   );

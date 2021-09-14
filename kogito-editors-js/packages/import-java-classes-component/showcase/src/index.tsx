@@ -47,13 +47,13 @@ const Showcase: React.FunctionComponent = () => {
   const lspGetClassFieldsServiceMocked = (className: string) => {
     /* Mocked data retrieved from LSP Service */
     const bookClassFieldsList = new Map<string, string>();
-    bookClassFieldsList.set("author", "string");
-    bookClassFieldsList.set("title", "string");
-    bookClassFieldsList.set("year", "integer");
+    bookClassFieldsList.set("author", "org.kie.test.kogito.Author");
+    bookClassFieldsList.set("title", "java.lang.String");
+    bookClassFieldsList.set("year", "java.lang.Integer");
     const boomClassFieldsList = new Map<string, string>();
-    boomClassFieldsList.set("time", "date");
-    boomClassFieldsList.set("big", "boolean");
-    boomClassFieldsList.set("color", "string");
+    boomClassFieldsList.set("time", "java.util.Date");
+    boomClassFieldsList.set("big", "java.lang.Boolean");
+    boomClassFieldsList.set("color", "java.lang.String");
 
     /* Temporary mocks managing */
     if (className === "org.kie.test.kogito.Book") {

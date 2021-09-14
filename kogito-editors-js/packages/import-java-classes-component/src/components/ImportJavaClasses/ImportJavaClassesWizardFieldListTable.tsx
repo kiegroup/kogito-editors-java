@@ -15,16 +15,24 @@
  */
 
 import * as React from "react";
+import "./ImportJavaClassesWizardFieldListTable.css";
 import { ExpandableRowContent, TableComposable, Tbody, Td, Tr } from "@patternfly/react-table";
 import { JavaClass } from "./Model/JavaClass";
+import { Button } from "@patternfly/react-core";
+import { JavaClassField } from "./Model/JavaClassField";
+import { DMNSimpleType } from "./Model/DMNSimpleType";
 
 export interface ImportJavaClassesWizardFieldListTableProps {
   /** List of the selected classes by user */
   selectedJavaClassFields: JavaClass[];
+  /** In ready only mode, fetch classes mechanism is not enabled */
+  readOnly: boolean;
+  /** Function to call when an Fetch button is clicked */
+  onFetchButtonClick: (fullClassName: string) => void;
 }
 
 export const ImportJavaClassesWizardFieldListTable: React.FunctionComponent<ImportJavaClassesWizardFieldListTableProps> =
-  ({ selectedJavaClassFields }: ImportJavaClassesWizardFieldListTableProps) => {
+  ({ selectedJavaClassFields, readOnly, onFetchButtonClick }: ImportJavaClassesWizardFieldListTableProps) => {
     const [expanded, setExpanded] = React.useState(
       Object.fromEntries(
         selectedJavaClassFields.map((value, index) => [index, Boolean(value.fields && value.fields.length > 0)])
@@ -36,12 +44,18 @@ export const ImportJavaClassesWizardFieldListTable: React.FunctionComponent<Impo
         [pairIndex]: !expanded[pairIndex],
       });
     };
-    const getJavaClassSimpleName = (className: string) => {
-      return className.split(".").pop();
+    const decorateWithRoundBrackets = (typeName: string) => {
+      return "(" + typeName + ")";
     };
-    const decorateWithRoundBrackets = (className: string) => {
-      return " (" + className + ")";
-    };
+    const isFetchable = (field: JavaClassField) => {
+      if (field.dmnTypeRef === DMNSimpleType.ANY) {
+        return true;
+      }
+    }
+    const fetchButton = (field: JavaClassField) => {
+      return <Button className={"fetch-button"} onClick={() => onFetchButtonClick(field.name)} variant="primary" isSmall>Fetch {field.getSimpleName()} class</Button>;
+    }
+
     let rowIndex = -1;
     return (
       <TableComposable aria-label="field-table">
@@ -63,9 +77,9 @@ export const ImportJavaClassesWizardFieldListTable: React.FunctionComponent<Impo
               />
               <Td key={`${rowIndex}_${javaClass.name}`}>
                 <span>
-                  <strong>{getJavaClassSimpleName(javaClass.name)}</strong>
+                  <strong>{javaClass.getSimpleName()}</strong>
                 </span>
-                <span>{decorateWithRoundBrackets(javaClass.name)}</span>
+                <span className={"dmn-type-name"}>(Structure)</span>
               </Td>
             </Tr>
           );
@@ -78,8 +92,9 @@ export const ImportJavaClassesWizardFieldListTable: React.FunctionComponent<Impo
                       <Td key={`${rowIndex}_0`} />
                       <Td key={`${rowIndex}_${field.name}`}>
                         <ExpandableRowContent>
-                          <span>{field.name}</span>
-                          <span>{decorateWithRoundBrackets(field.type)}</span>
+                          <span>{field.getSimpleName()}</span>
+                          <span className={"dmn-type-name"}>{decorateWithRoundBrackets(field.dmnTypeRef.toString())}</span>
+                          {!readOnly && isFetchable(field) ? fetchButton(field) : null}
                         </ExpandableRowContent>
                       </Td>
                     </Tr>
