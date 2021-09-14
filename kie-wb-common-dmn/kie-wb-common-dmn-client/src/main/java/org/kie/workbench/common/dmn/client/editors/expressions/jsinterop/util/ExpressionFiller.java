@@ -18,6 +18,7 @@ package org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.util;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -98,8 +99,9 @@ public class ExpressionFiller {
     public static void fillRelationExpression(final Relation relationExpression, final RelationProps relationProps) {
         relationExpression.getColumn().clear();
         relationExpression.getColumn().addAll(columnsConvertForRelationExpression(relationProps));
-        IntStream.range(0, relationProps.columns.length)
-                .forEach(index -> relationExpression.getComponentWidths().set(index + 1, relationProps.columns[index].width));
+        final int columnsLength = relationProps.columns == null ? 0 : relationProps.columns.length;
+        IntStream.range(0, columnsLength)
+                .forEach(index -> relationExpression.getComponentWidths().set(index + 1, Objects.requireNonNull(relationProps.columns)[index].width));
         relationExpression.getRow().clear();
         relationExpression.getRow().addAll(rowsConvertForRelationExpression(relationProps, relationExpression));
     }
