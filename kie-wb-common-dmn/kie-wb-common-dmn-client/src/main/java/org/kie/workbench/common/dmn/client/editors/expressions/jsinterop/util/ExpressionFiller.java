@@ -183,7 +183,7 @@ public class ExpressionFiller {
             return new DecisionTableProps(expressionName, dataType, hitPolicy, aggregation,
                                           annotationsConvertForDecisionTableProps(decisionTableExpression),
                                           inputConvertForDecisionTableProps(decisionTableExpression),
-                                          outputConvertForDecisionTableProps(decisionTableExpression),
+                                          outputConvertForDecisionTableProps(decisionTableExpression, expressionName, dataType),
                                           rulesConvertForDecisionTableProps(decisionTableExpression));
         }
         return new ExpressionProps(expressionName, dataType, null);
@@ -571,13 +571,17 @@ public class ExpressionFiller {
                 .toArray(Clause[]::new);
     }
 
-    private static Clause[] outputConvertForDecisionTableProps(final DecisionTable decisionTableExpression) {
+    private static Clause[] outputConvertForDecisionTableProps(final DecisionTable decisionTableExpression, final String expressionName, final String expressionDataType) {
         return IntStream.range(0, decisionTableExpression.getOutput().size())
                 .mapToObj(index -> {
                     final OutputClause outputClause = decisionTableExpression.getOutput().get(index);
                     final String name = outputClause.getName();
                     final String dataType = outputClause.getTypeRef().getLocalPart();
                     final Double width = decisionTableExpression.getComponentWidths().get(decisionTableExpression.getInput().size() + index + 1);
+                    // When output clause is empty, then we should use expression name and dataType for it
+                    if (name == null) {
+                        return new Clause(expressionName, expressionDataType, width);
+                    }
                     return new Clause(name, dataType, width);
                 })
                 .toArray(Clause[]::new);
