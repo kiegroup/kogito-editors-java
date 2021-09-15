@@ -158,6 +158,29 @@ public class JsWiresShape {
         }
     }
 
+    public String getBorderColor() {
+        final JsArray<Shape> shapeJsArray = flatShapes();
+
+        for (int i = 0; i < shapeJsArray.length; i++) {
+            final Shape shape = shapeJsArray.getAt(i);
+            final Object userData = shape.getUserData();
+            if (userData == null) {
+                continue;
+            }
+
+            String tag = (String) userData;
+
+            switch (tag) {
+                case "?shapeType=BORDER&renderType=STROKE":
+                    return shape.getStrokeColor();
+
+                case "?shapeType=BORDER&renderType=FILL":
+                    return shape.getFillColor();
+            }
+        }
+        return null;
+    }
+
     public void draw() {
         shape.refresh();
     }
@@ -180,10 +203,37 @@ public class JsWiresShape {
         }
     }
 
-    // Get Absolute Loction Method
+    public String getBackgroundColor() {
+        final JsArray<Shape> shapeJsArray = flatShapes();
+
+        for (int i = 0; i < shapeJsArray.length; i++) {
+            final Shape shape = shapeJsArray.getAt(i);
+            final Object userData = shape.getUserData();
+            if (userData == null) {
+                continue;
+            }
+
+            String tag = (String) userData;
+            if (tag.equals("?shapeType=BACKGROUND")) {
+                return shape.getFillColor();
+            }
+        }
+
+        return null;
+    }
+
     public BoundingBox getBounds() {
         double shapeX = this.getLocation().getX();
         double shapeY = this.getLocation().getY();
+        double width = this.getBoundingBox().getWidth();
+        double height = this.getBoundingBox().getHeight();
+        final BoundingBox boundingBox = BoundingBox.fromDoubles(shapeX, shapeY, shapeX + width, shapeY + height);
+        return boundingBox;
+    }
+
+    public BoundingBox getAbsoluteLocation() {
+        double shapeX = this.getComputedLocation().getX();
+        double shapeY = this.getComputedLocation().getY();
         double width = this.getBoundingBox().getWidth();
         double height = this.getBoundingBox().getHeight();
         final BoundingBox boundingBox = BoundingBox.fromDoubles(shapeX, shapeY, shapeX + width, shapeY + height);

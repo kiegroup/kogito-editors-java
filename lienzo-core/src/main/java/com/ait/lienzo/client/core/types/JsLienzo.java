@@ -179,4 +179,52 @@ public class JsLienzo implements Attributable {
         animations().alpha(badge, 1, 1500);
         return badge;
     }
+
+    public String getBackgroundColor(String UUID) {
+        JsWiresShape shape = getWiresShape(UUID);
+        if (shape == null) {
+            return null;
+        }
+        return shape.getBackgroundColor();
+    }
+
+    public void setBackgroundColor(String UUID, String backgroundColor) {
+        JsWiresShape shape = getWiresShape(UUID);
+        if (shape == null) {
+            return;
+        }
+        shape.setBackgroundColor(backgroundColor);
+    }
+
+    public String getBorderColor(String UUID) {
+        JsWiresShape shape = getWiresShape(UUID);
+        if (shape == null) {
+            return null;
+        }
+        return shape.getBorderColor();
+    }
+
+    public void setBorderColor(String UUID, String borderColor) {
+        JsWiresShape shape = getWiresShape(UUID);
+        if (shape == null) {
+            return;
+        }
+        shape.setBorderColor(borderColor);
+    }
+
+    public BoundingBox getBoundingBox(String UUID) {
+        JsWiresShape shape = getWiresShape(UUID);
+        if (shape == null) {
+            return null;
+        }
+        return shape.getBounds();
+    }
+
+    public BoundingBox getAbsoluteBoundingBox(String UUID) {
+        JsWiresShape shape = getWiresShape(UUID);
+        if (shape == null) {
+            return null;
+        }
+        return shape.getAbsoluteLocation();
+    }
 }

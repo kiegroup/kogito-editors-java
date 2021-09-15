@@ -22,7 +22,7 @@ import jsinterop.annotations.JsPackage;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
 
-@JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "window")
+@JsType(isNative=true, namespace= JsPackage.GLOBAL, name="window")
 public class WindowJSType {
 
     @JsProperty
@@ -32,4 +32,5 @@ public class WindowJSType {
     public static final void linkLienzoJS(JsLienzo jsLienzo) {
         linkedjsLienzo = jsLienzo;
     }
+
 }
