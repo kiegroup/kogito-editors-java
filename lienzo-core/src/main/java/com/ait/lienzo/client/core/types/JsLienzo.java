@@ -227,19 +227,22 @@ public class JsLienzo implements Attributable {
         shape.setBorderColor(borderColor);
     }
 
-    public BoundingBox getBoundingBox(String UUID) {
+    public double[] getBoundingBox(String UUID) {
         JsWiresShape shape = getWiresShape(UUID);
         if (shape == null) {
             return null;
         }
-        return shape.getBounds();
+
+        final BoundingBox bounds = shape.getBounds();
+        return new double[]{bounds.getMinX(), bounds.getMinY(), bounds.getMaxX(), bounds.getMaxY()};
     }
 
-    public BoundingBox getAbsoluteBoundingBox(String UUID) {
+    public double[] getAbsoluteBoundingBox(String UUID) {
         JsWiresShape shape = getWiresShape(UUID);
         if (shape == null) {
             return null;
         }
-        return shape.getAbsoluteLocation();
+        final BoundingBox bounds = shape.getAbsoluteLocation();
+        return new double[]{bounds.getMinX(), bounds.getMinY(), bounds.getMaxX(), bounds.getMaxY()};
     }
 }

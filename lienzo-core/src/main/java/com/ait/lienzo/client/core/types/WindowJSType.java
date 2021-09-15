@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.kogito.client.editor;
+package com.ait.lienzo.client.core.types;
 
-import com.ait.lienzo.client.core.types.JsLienzo;
 import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsPackage;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
 
-@JsType(isNative=true, namespace= JsPackage.GLOBAL, name="window")
+@JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "window")
 public class WindowJSType {
 
     @JsProperty
@@ -32,5 +31,4 @@ public class WindowJSType {
     public static final void linkLienzoJS(JsLienzo jsLienzo) {
         WindowJSType.jsLienzo = jsLienzo;
     }
-
 }

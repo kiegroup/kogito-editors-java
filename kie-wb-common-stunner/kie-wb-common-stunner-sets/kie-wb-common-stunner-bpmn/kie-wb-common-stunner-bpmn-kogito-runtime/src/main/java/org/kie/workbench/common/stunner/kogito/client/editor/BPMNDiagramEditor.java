@@ -25,6 +25,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import com.ait.lienzo.client.core.types.JsLienzo;
+import com.ait.lienzo.client.core.types.WindowJSType;
 import com.ait.lienzo.client.widget.panel.LienzoBoundsPanel;
 import com.google.gwt.user.client.ui.IsWidget;
 import elemental2.promise.Promise;
@@ -227,13 +228,11 @@ public class BPMNDiagramEditor {
         initLienzoType();
     }
 
-    public JsLienzo jsLienzo;
-
     private void initLienzoType() {
         LienzoCanvas canvas = (LienzoCanvas) stunnerEditor.getCanvasHandler().getCanvas();
         LienzoPanel panel = (LienzoPanel) canvas.getView().getPanel();
         LienzoBoundsPanel lienzoPanel = panel.getView();
-        jsLienzo = new JsLienzo(lienzoPanel, lienzoPanel.getLayer());
+        JsLienzo jsLienzo = new JsLienzo(lienzoPanel, lienzoPanel.getLayer());
         setupJsLienzoTypeNative(jsLienzo);
     }
 

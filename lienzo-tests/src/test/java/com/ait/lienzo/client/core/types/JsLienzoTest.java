@@ -82,11 +82,11 @@ public class JsLienzoTest {
         when(jsWiresShape.getBounds()).thenReturn(box);
         doCallRealMethod().when(jsLienzo).getBoundingBox(any());
 
-        BoundingBox box2 = jsLienzo.getBoundingBox("someID");
-        assertEquals(box.getMinX(), box2.getMinX(), 0);
-        assertEquals(box.getMinY(), box2.getMinY(), 0);
-        assertEquals(box.getMaxX(), box2.getMaxX(), 0);
-        assertEquals(box.getMaxY(), box2.getMaxY(), 0);
+        double[] box2 = jsLienzo.getBoundingBox("someID");
+        assertEquals(box.getMinX(), box2[0], 0);
+        assertEquals(box.getMinY(), box2[1], 0);
+        assertEquals(box.getMaxX(), box2[2], 0);
+        assertEquals(box.getMaxY(), box2[3], 0);
     }
 
     @Test
@@ -96,10 +96,10 @@ public class JsLienzoTest {
         when(jsWiresShape.getBounds()).thenReturn(box);
         doCallRealMethod().when(jsLienzo).getBoundingBox(any());
 
-        BoundingBox box2 = jsLienzo.getBoundingBox("someID");
-        assertEquals(box.getMinX(), box2.getMinX(), 0);
-        assertEquals(box.getMinY(), box2.getMinY(), 0);
-        assertEquals(box.getMaxX(), box2.getMaxX(), 0);
-        assertEquals(box.getMaxY(), box2.getMaxY(), 0);
+        double[] box2 = jsLienzo.getBoundingBox("someID");
+        assertEquals(box.getMinX(), box2[0], 0);
+        assertEquals(box.getMinY(), box2[1], 0);
+        assertEquals(box.getMaxX(), box2[2], 0);
+        assertEquals(box.getMaxY(), box2[3], 0);
     }
 }

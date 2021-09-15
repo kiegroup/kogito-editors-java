@@ -23,6 +23,9 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import com.ait.lienzo.client.core.types.JsLienzo;
+import com.ait.lienzo.client.core.types.WindowJSType;
+import com.ait.lienzo.client.widget.panel.LienzoBoundsPanel;
 import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
 import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorDock;
 import org.kie.workbench.common.dmn.client.docks.navigator.common.LazyCanvasFocusUtils;
@@ -40,6 +43,8 @@ import org.kie.workbench.common.dmn.webapp.common.client.docks.preview.PreviewDi
 import org.kie.workbench.common.dmn.webapp.kogito.common.client.editor.AbstractDMNDiagramEditor;
 import org.kie.workbench.common.dmn.webapp.kogito.common.client.tour.GuidedTourBridgeInitializer;
 import org.kie.workbench.common.kogito.client.editor.MultiPageEditorContainerView;
+import org.kie.workbench.common.stunner.client.lienzo.canvas.LienzoCanvas;
+import org.kie.workbench.common.stunner.client.lienzo.canvas.LienzoPanel;
 import org.kie.workbench.common.stunner.client.widgets.editor.EditorSessionCommands;
 import org.kie.workbench.common.stunner.client.widgets.editor.StunnerEditor;
 import org.kie.workbench.common.stunner.core.client.ReadOnlyProvider;
@@ -141,6 +146,19 @@ public class DMNDiagramEditor extends AbstractDMNDiagramEditor {
                 includedModelsPage.reload();
             }
         });
+        initLienzoType();
+    }
+
+    private void initLienzoType() {
+        LienzoCanvas canvas = (LienzoCanvas) stunnerEditor.getCanvasHandler().getCanvas();
+        LienzoPanel panel = (LienzoPanel) canvas.getView().getPanel();
+        LienzoBoundsPanel lienzoPanel = panel.getView();
+        JsLienzo jsLienzo = new JsLienzo(lienzoPanel, lienzoPanel.getLayer());
+        setupJsLienzoTypeNative(jsLienzo);
+    }
+
+    private static void setupJsLienzoTypeNative(JsLienzo jsLienzo) {
+        WindowJSType.linkLienzoJS(jsLienzo);
     }
 
     @Override
