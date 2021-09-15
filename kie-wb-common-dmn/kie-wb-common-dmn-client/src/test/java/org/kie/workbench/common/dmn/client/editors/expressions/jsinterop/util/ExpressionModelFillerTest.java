@@ -1,3 +1,19 @@
+/*
+ * Copyright 2021 Red Hat, Inc. and/or its affiliates.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.util;
 
 import java.util.Collection;
@@ -39,7 +55,7 @@ import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.R
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ExpressionFillerTest {
+public class ExpressionModelFillerTest {
 
     private static final String DATA_TYPE = BuiltInType.UNDEFINED.asQName().getLocalPart();
     private static final String EXPRESSION_NAME = "Expression Name";
@@ -59,7 +75,7 @@ public class ExpressionFillerTest {
         final double width = 100d;
         final LiteralExpressionProps literalExpressionProps = new LiteralExpressionProps(EXPRESSION_NAME, DATA_TYPE, content, width);
 
-        ExpressionFiller.fillLiteralExpression(literalExpression, literalExpressionProps);
+        ExpressionModelFiller.fillLiteralExpression(literalExpression, literalExpressionProps);
 
         assertThat(literalExpression).isNotNull();
         assertThat(literalExpression.getText()).isNotNull();
@@ -79,7 +95,7 @@ public class ExpressionFillerTest {
         final ExpressionProps result = new LiteralExpressionProps("Result Expression", BuiltInType.DATE.asQName().getLocalPart(), resultContent, null);
         final ContextProps contextProps = new ContextProps(EXPRESSION_NAME, DATA_TYPE, contextEntries, result, ENTRY_INFO_WIDTH, ENTRY_EXPRESSION_WIDTH);
 
-        ExpressionFiller.fillContextExpression(contextExpression, contextProps);
+        ExpressionModelFiller.fillContextExpression(contextExpression, contextProps);
 
         assertThat(contextExpression).isNotNull();
         assertThat(contextExpression.getContextEntry()).isNotNull();
@@ -114,7 +130,7 @@ public class ExpressionFillerTest {
         final String[][] rows = new String[][]{new String[]{firstCell, secondCell}, new String[]{thirdCell, fourthCell}};
         final RelationProps relationProps = new RelationProps(EXPRESSION_NAME, DATA_TYPE, columns, rows);
 
-        ExpressionFiller.fillRelationExpression(relationExpression, relationProps);
+        ExpressionModelFiller.fillRelationExpression(relationExpression, relationProps);
 
         assertThat(relationExpression).isNotNull();
         assertThat(relationExpression.getColumn()).isNotNull();
@@ -147,7 +163,7 @@ public class ExpressionFillerTest {
         final Double width = 600d;
         final ListProps listProps = new ListProps(EXPRESSION_NAME, DATA_TYPE, items, width);
 
-        ExpressionFiller.fillListExpression(listExpression, listProps);
+        ExpressionModelFiller.fillListExpression(listExpression, listProps);
 
         assertThat(listExpression).isNotNull();
         assertThat(listExpression.getExpression()).isNotNull();
@@ -167,7 +183,7 @@ public class ExpressionFillerTest {
         };
         final InvocationProps invocationProps = new InvocationProps(EXPRESSION_NAME, DATA_TYPE, invokedFunction, bindingEntries, ENTRY_INFO_WIDTH, ENTRY_EXPRESSION_WIDTH);
 
-        ExpressionFiller.fillInvocationExpression(invocationExpression, invocationProps);
+        ExpressionModelFiller.fillInvocationExpression(invocationExpression, invocationProps);
 
         assertThat(invocationExpression).isNotNull();
         assertThat(invocationExpression.getExpression()).isNotNull();
@@ -191,7 +207,7 @@ public class ExpressionFillerTest {
         final String modelName = "model name";
         final PmmlFunctionProps functionProps = new PmmlFunctionProps(EXPRESSION_NAME, DATA_TYPE, new EntryInfo[]{new EntryInfo(PARAM_NAME, PARAM_DATA_TYPE)}, PARAMETERS_WIDTH, documentName, modelName);
 
-        ExpressionFiller.fillFunctionExpression(functionExpression, functionProps);
+        ExpressionModelFiller.fillFunctionExpression(functionExpression, functionProps);
 
         assertThat(functionExpression).isNotNull();
         assertFormalParameters(functionExpression);
@@ -206,7 +222,7 @@ public class ExpressionFillerTest {
         final String methodName = "method name";
         final JavaFunctionProps functionProps = new JavaFunctionProps(EXPRESSION_NAME, DATA_TYPE, new EntryInfo[]{new EntryInfo(PARAM_NAME, PARAM_DATA_TYPE)}, PARAMETERS_WIDTH, className, methodName);
 
-        ExpressionFiller.fillFunctionExpression(functionExpression, functionProps);
+        ExpressionModelFiller.fillFunctionExpression(functionExpression, functionProps);
 
         assertThat(functionExpression).isNotNull();
         assertFormalParameters(functionExpression);
@@ -221,7 +237,7 @@ public class ExpressionFillerTest {
         final FeelFunctionProps functionProps = new FeelFunctionProps(EXPRESSION_NAME, DATA_TYPE, new EntryInfo[]{new EntryInfo(PARAM_NAME, PARAM_DATA_TYPE)}, PARAMETERS_WIDTH,
                                                                       new LiteralExpressionProps("Nested Literal Expression", BuiltInType.UNDEFINED.asQName().getLocalPart(), nestedContent, null));
 
-        ExpressionFiller.fillFunctionExpression(functionExpression, functionProps);
+        ExpressionModelFiller.fillFunctionExpression(functionExpression, functionProps);
 
         assertThat(functionExpression).isNotNull();
         assertFormalParameters(functionExpression);
@@ -240,18 +256,18 @@ public class ExpressionFillerTest {
         final String inputColumn = "Input column";
         final String inputDataType = BuiltInType.DATE_TIME.asQName().getLocalPart();
         final double inputWidth = 123d;
-        final Clause[] input = new Clause[]{ new Clause(inputColumn, inputDataType, inputWidth) };
+        final Clause[] input = new Clause[]{new Clause(inputColumn, inputDataType, inputWidth)};
         final String outputColumn = "Output column";
         final String outputDataType = BuiltInType.STRING.asQName().getLocalPart();
         final double outputWidth = 223d;
-        final Clause[] output = new Clause[]{ new Clause(outputColumn, outputDataType, outputWidth) };
+        final Clause[] output = new Clause[]{new Clause(outputColumn, outputDataType, outputWidth)};
         final String inputValue = "input value";
         final String outputValue = "output value";
         final String annotationValue = "annotation value";
-        DecisionTableRule[] rules = new DecisionTableRule[]{ new DecisionTableRule(new String[]{inputValue}, new String[]{outputValue}, new String[]{annotationValue}) };
+        DecisionTableRule[] rules = new DecisionTableRule[]{new DecisionTableRule(new String[]{inputValue}, new String[]{outputValue}, new String[]{annotationValue})};
         final DecisionTableProps decisionTableProps = new DecisionTableProps(EXPRESSION_NAME, DATA_TYPE, HitPolicy.COLLECT.value(), BuiltinAggregator.MAX.getCode(), annotations, input, output, rules);
 
-        ExpressionFiller.fillDecisionTableExpression(decisionTableExpression, decisionTableProps);
+        ExpressionModelFiller.fillDecisionTableExpression(decisionTableExpression, decisionTableProps);
 
         assertThat(decisionTableExpression).isNotNull();
         assertThat(decisionTableExpression.getHitPolicy()).isEqualTo(HitPolicy.COLLECT);
@@ -279,9 +295,6 @@ public class ExpressionFillerTest {
         assertThat(decisionTableExpression.getComponentWidths()).element(1).isEqualTo(inputWidth);
         assertThat(decisionTableExpression.getComponentWidths()).element(2).isEqualTo(outputWidth);
         assertThat(decisionTableExpression.getComponentWidths()).element(3).isEqualTo(annotationWidth);
-    }
-
-    public void testBuildAndFillJsInteropProp() {
     }
 
     private ContextEntryProps buildContextEntryProps() {

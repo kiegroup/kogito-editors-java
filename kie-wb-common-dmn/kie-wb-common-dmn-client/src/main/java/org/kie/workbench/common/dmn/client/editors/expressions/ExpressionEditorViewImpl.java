@@ -63,7 +63,8 @@ import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.M
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.PMMLParam;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.RelationProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.util.BoxedExpressionService;
-import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.util.ExpressionFiller;
+import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.util.ExpressionModelFiller;
+import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.util.ExpressionPropsFiller;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinitions;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.function.supplementary.pmml.PMMLDocumentMetadataProvider;
 import org.kie.workbench.common.dmn.client.js.DMNLoader;
@@ -288,7 +289,7 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
     @Override
     public void activate() {
         DMNLoader.renderBoxedExpressionEditor(".kie-dmn-new-expression-editor",
-                                              ExpressionFiller.buildAndFillJsInteropProp(hasExpression.getExpression(), getExpressionName(), getTypeRef()),
+                                              ExpressionPropsFiller.buildAndFillJsInteropProp(hasExpression.getExpression(), getExpressionName(), getTypeRef()),
                                               buildPmmlParams());
     }
 
@@ -362,7 +363,7 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
         if (hasExpression.getExpression() == null) {
             hasExpression.setExpression(new LiteralExpression());
         }
-        ExpressionFiller.fillLiteralExpression((LiteralExpression) hasExpression.getExpression(), literalExpressionProps);
+        ExpressionModelFiller.fillLiteralExpression((LiteralExpression) hasExpression.getExpression(), literalExpressionProps);
     }
 
     public void broadcastContextExpressionDefinition(final ContextProps contextProps) {
@@ -371,7 +372,7 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
         if (hasExpression.getExpression() == null) {
             hasExpression.setExpression(new Context());
         }
-        ExpressionFiller.fillContextExpression((Context) hasExpression.getExpression(), contextProps);
+        ExpressionModelFiller.fillContextExpression((Context) hasExpression.getExpression(), contextProps);
     }
 
     public void broadcastRelationExpressionDefinition(final RelationProps relationProps) {
@@ -379,7 +380,7 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
         if (hasExpression.getExpression() == null) {
             hasExpression.setExpression(new Relation());
         }
-        ExpressionFiller.fillRelationExpression((Relation) hasExpression.getExpression(), relationProps);
+        ExpressionModelFiller.fillRelationExpression((Relation) hasExpression.getExpression(), relationProps);
     }
 
     public void broadcastListExpressionDefinition(final ListProps listProps) {
@@ -387,7 +388,7 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
         if (hasExpression.getExpression() == null) {
             hasExpression.setExpression(new List());
         }
-        ExpressionFiller.fillListExpression((List) hasExpression.getExpression(), listProps);
+        ExpressionModelFiller.fillListExpression((List) hasExpression.getExpression(), listProps);
     }
 
     public void broadcastInvocationExpressionDefinition(final InvocationProps invocationProps) {
@@ -396,7 +397,7 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
         if (hasExpression.getExpression() == null) {
             hasExpression.setExpression(new Invocation());
         }
-        ExpressionFiller.fillInvocationExpression((Invocation) hasExpression.getExpression(), invocationProps);
+        ExpressionModelFiller.fillInvocationExpression((Invocation) hasExpression.getExpression(), invocationProps);
     }
 
     public void broadcastFunctionExpressionDefinition(final FunctionProps functionProps) {
@@ -405,7 +406,7 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
         if (hasExpression.getExpression() == null) {
             hasExpression.setExpression(new FunctionDefinition());
         }
-        ExpressionFiller.fillFunctionExpression((FunctionDefinition) hasExpression.getExpression(), functionProps);
+        ExpressionModelFiller.fillFunctionExpression((FunctionDefinition) hasExpression.getExpression(), functionProps);
     }
 
     public void broadcastDecisionTableExpressionDefinition(final DecisionTableProps decisionTableProps) {
@@ -414,7 +415,7 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
         if (hasExpression.getExpression() == null) {
             hasExpression.setExpression(new DecisionTable());
         }
-        ExpressionFiller.fillDecisionTableExpression((DecisionTable) hasExpression.getExpression(), decisionTableProps);
+        ExpressionModelFiller.fillDecisionTableExpression((DecisionTable) hasExpression.getExpression(), decisionTableProps);
     }
 
     void renderNewBoxedExpression() {
