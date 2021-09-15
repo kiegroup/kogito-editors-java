@@ -42,29 +42,4 @@ public class Group extends GroupOf<IPrimitive<?>, Group> {
     public NFastArrayList<IPrimitive<?>> getChildren() {
         return this.getChildNodes();
     }
-
-    public static class GroupFactory extends GroupOfFactory<IPrimitive<?>, Group> {
-
-        public GroupFactory() {
-            super(GroupType.GROUP);
-        }
-
-        @Override
-        public boolean addNodeForContainer(final IContainer<?, ?> container, final Node<?> node, final ValidationContext ctx) {
-            final IPrimitive<?> prim = node.asPrimitive();
-
-            if (null != prim) {
-                container.asGroup().add(prim);
-
-                return true;
-            } else {
-                try {
-                    ctx.addBadTypeError(node.getClass().getName() + " is not a Primitive");
-                } catch (ValidationException e) {
-                    return false;
-                }
-            }
-            return false;
-        }
-    }
 }

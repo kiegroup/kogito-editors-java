@@ -1,5 +1,8 @@
 package org.kie.lienzo.client;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.ait.lienzo.client.core.shape.GridLayer;
 import com.ait.lienzo.client.core.shape.Line;
 import com.ait.lienzo.client.widget.panel.IsResizable;
@@ -58,34 +61,41 @@ public class BaseLienzoExamples {
 
         JsLienzoExamples jsLienzoExamples = new JsLienzoExamples();
         jsLienzoExamples.examples = this;
-        setupJsLienzoTypes(jsLienzoExamples);
+        WindowJSLienzo.linkJSLienzoExamples(jsLienzoExamples);
     }
+
+    private List<Example> exampleList = new ArrayList<>();
 
     public void createTests(Example... tests) {
         for (Example test : tests) {
+            exampleList.add(test);
             createTest(test);
         }
     }
 
-    // TODO: Move to J2CL impl
-    public static native void setupJsLienzoTypes(Object jsLienzoExamples) /*-{
-        $wnd.jsLienzoExamples = jsLienzoExamples;
-    }-*/;
+    public void goToTest(int index) {
+        Example test = exampleList.get(index);
+        displayTest(test);
+    }
 
     public void createTest(Example test) {
         HTMLDivElement e1 = (HTMLDivElement) document.createElement("div");
-        HTMLDivElement top = (HTMLDivElement) document.getElementById("top");
         elemental2.dom.Text e1Text = document.createTextNode(test.getTitle());
         e1.appendChild(e1Text);
         e1.addEventListener("click", evt -> {
-            top.style.display = Display.NONE.getCssName();
-            createPanel(test);
-            this.test = test;
-            this.test.init(lienzo, top);
-            this.test.run();
+            displayTest(test);
         });
         Element links = document.getElementById("nav");
         links.appendChild(e1);
+    }
+
+    private void displayTest(Example test) {
+        HTMLDivElement top = (HTMLDivElement) document.getElementById("top");
+        top.style.display = Display.NONE.getCssName();
+        createPanel(test);
+        this.test = test;
+        this.test.init(lienzo, top);
+        this.test.run();
     }
 
     private void createPanel(Example test) {
