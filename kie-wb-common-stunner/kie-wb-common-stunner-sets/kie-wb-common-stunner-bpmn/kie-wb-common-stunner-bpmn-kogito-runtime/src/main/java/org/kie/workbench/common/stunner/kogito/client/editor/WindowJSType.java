@@ -26,11 +26,11 @@ import jsinterop.annotations.JsType;
 public class WindowJSType {
 
     @JsProperty
-    private static Object linkedjsLienzo;
+    private static Object jsLienzo;
 
     @JsOverlay
     public static final void linkLienzoJS(JsLienzo jsLienzo) {
-        linkedjsLienzo = jsLienzo;
+        WindowJSType.jsLienzo = jsLienzo;
     }
 
 }
