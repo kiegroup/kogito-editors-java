@@ -57,16 +57,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class ExpressionModelFillerTest {
 
-    private static final String DATA_TYPE = BuiltInType.UNDEFINED.asQName().getLocalPart();
-    private static final String EXPRESSION_NAME = "Expression Name";
-    public static final String ENTRY_INFO_NAME = "Entry Info";
-    public static final String ENTRY_INFO_DATA_TYPE = BuiltInType.STRING.asQName().getLocalPart();
-    public static final String ENTRY_EXPRESSION_CONTENT = "content";
-    public static final Double ENTRY_INFO_WIDTH = 200d;
-    public static final Double ENTRY_EXPRESSION_WIDTH = 350d;
-    public static final Double PARAMETERS_WIDTH = 450d;
-    public static final String PARAM_NAME = "p-1";
-    public static final String PARAM_DATA_TYPE = BuiltInType.BOOLEAN.asQName().getLocalPart();
+    public static final String EXPRESSION_NAME = "Expression Name";
+    public static final String DATA_TYPE = BuiltInType.UNDEFINED.asQName().getLocalPart();
+    private static final String ENTRY_INFO_NAME = "Entry Info";
+    private static final String ENTRY_INFO_DATA_TYPE = BuiltInType.STRING.asQName().getLocalPart();
+    private static final String ENTRY_EXPRESSION_CONTENT = "content";
+    private static final Double ENTRY_INFO_WIDTH = 200d;
+    private static final Double ENTRY_EXPRESSION_WIDTH = 350d;
+    private static final Double PARAMETERS_WIDTH = 450d;
+    private static final String PARAM_NAME = "p-1";
+    private static final String PARAM_DATA_TYPE = BuiltInType.BOOLEAN.asQName().getLocalPart();
 
     @Test
     public void testFillLiteralExpression() {
