@@ -172,6 +172,7 @@ export const TableHandler: React.FunctionComponent<TableHandlerProps> = ({
         children!.push(generateNextAvailableColumn());
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [generateNextAvailableColumn, selectedColumn, tableColumns]
   );
 
