@@ -215,7 +215,6 @@ public class ExpressionModelFiller {
                                 final String cell = row.length <= columnIndex ? "" : row[columnIndex];
                                 final LiteralExpression wrappedExpression = new LiteralExpression();
                                 wrappedExpression.setText(new Text(cell));
-                                wrappedExpression.setTypeRef(BuiltInType.STRING.asQName());
                                 return HasExpression.wrap(relationExpression, wrappedExpression);
                             }).collect(Collectors.toList())
                     );
