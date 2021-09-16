@@ -106,7 +106,7 @@ public class ExpressionPropsFiller {
     private static ContextEntryProps[] contextEntriesConvertForContextProps(final Context contextExpression) {
         return contextExpression.getContextEntry()
                 .stream()
-                .limit(contextExpression.getContextEntry().size() - 1)
+                .limit(contextExpression.getContextEntry().size() - 1L)
                 .map(contextEntry -> fromModelToPropsContextEntryMapper(contextEntry.getVariable(), contextEntry.getExpression()))
                 .toArray(ContextEntryProps[]::new);
     }
