@@ -150,31 +150,31 @@ public class ExpressionModelFiller {
     }
 
     private static Expression buildAndFillNestedExpression(final ExpressionProps props) {
-        if (LITERAL_EXPRESSION.getText().equals(props.logicType)) {
+        if (Objects.equals(LITERAL_EXPRESSION.getText(), props.logicType)) {
             final LiteralExpression literalExpression = new LiteralExpression();
             fillLiteralExpression(literalExpression, (LiteralExpressionProps) props);
             return literalExpression;
-        } else if (CONTEXT.getText().equals(props.logicType)) {
+        } else if (Objects.equals(CONTEXT.getText(), props.logicType)) {
             final Context contextExpression = new Context();
             fillContextExpression(contextExpression, (ContextProps) props);
             return contextExpression;
-        } else if (RELATION.getText().equals(props.logicType)) {
+        } else if (Objects.equals(RELATION.getText(), props.logicType)) {
             final Relation relationExpression = new Relation();
             fillRelationExpression(relationExpression, (RelationProps) props);
             return relationExpression;
-        } else if (LIST.getText().equals(props.logicType)) {
+        } else if (Objects.equals(LIST.getText(), props.logicType)) {
             final List listExpression = new List();
             fillListExpression(listExpression, (ListProps) props);
             return listExpression;
-        } else if (INVOCATION.getText().equals(props.logicType)) {
+        } else if (Objects.equals(INVOCATION.getText(), props.logicType)) {
             final Invocation invocationExpression = new Invocation();
             fillInvocationExpression(invocationExpression, (InvocationProps) props);
             return invocationExpression;
-        } else if (FUNCTION.getText().equals(props.logicType)) {
+        } else if (Objects.equals(FUNCTION.getText(), props.logicType)) {
             final FunctionDefinition functionExpression = new FunctionDefinition();
             fillFunctionExpression(functionExpression, (FunctionProps) props);
             return functionExpression;
-        } else if (DECISION_TABLE.getText().equals(props.logicType)) {
+        } else if (Objects.equals(DECISION_TABLE.getText(), props.logicType)) {
             final DecisionTable decisionTableExpression = new DecisionTable();
             fillDecisionTableExpression(decisionTableExpression, (DecisionTableProps) props);
             return decisionTableExpression;
