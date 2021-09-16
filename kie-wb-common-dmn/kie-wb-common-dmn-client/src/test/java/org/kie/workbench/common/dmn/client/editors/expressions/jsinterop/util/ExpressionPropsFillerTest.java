@@ -68,8 +68,9 @@ public class ExpressionPropsFillerTest {
 
         final ExpressionProps expressionProps = ExpressionPropsFiller.buildAndFillJsInteropProp(literalExpression, null, null);
 
-        assertThat(expressionProps).isNotNull();
-        assertThat(expressionProps).isExactlyInstanceOf(LiteralExpressionProps.class);
+        assertThat(expressionProps)
+                .isNotNull()
+                .isExactlyInstanceOf(LiteralExpressionProps.class);
         assertThat(((LiteralExpressionProps) expressionProps).content).isEqualTo(contentValue);
         assertThat(((LiteralExpressionProps) expressionProps).width).isEqualTo(literalExpression.getComponentWidths().get(0));
     }
@@ -82,10 +83,12 @@ public class ExpressionPropsFillerTest {
 
         final ExpressionProps expressionProps = ExpressionPropsFiller.buildAndFillJsInteropProp(contextExpression, null, null);
 
-        assertThat(expressionProps).isNotNull();
-        assertThat(expressionProps).isExactlyInstanceOf(ContextProps.class);
-        assertThat(((ContextProps) expressionProps).contextEntries).isNotNull();
-        assertThat(((ContextProps) expressionProps).contextEntries).hasSize(1);
+        assertThat(expressionProps)
+                .isNotNull()
+                .isExactlyInstanceOf(ContextProps.class);
+        assertThat(((ContextProps) expressionProps).contextEntries)
+                .isNotNull()
+                .hasSize(1);
         assertThat(((ContextProps) expressionProps).contextEntries[0]).isNotNull();
         assertThat(((ContextProps) expressionProps).contextEntries[0].entryInfo.name).isEqualTo(ENTRY_NAME);
         assertThat(((ContextProps) expressionProps).contextEntries[0].entryInfo.dataType).isEqualTo(ENTRY_DATA_TYPE.getLocalPart());
@@ -110,18 +113,21 @@ public class ExpressionPropsFillerTest {
 
         final ExpressionProps expressionProps = ExpressionPropsFiller.buildAndFillJsInteropProp(relationExpression, null, null);
 
-        assertThat(expressionProps).isNotNull();
-        assertThat(expressionProps).isExactlyInstanceOf(RelationProps.class);
-        assertThat(((RelationProps) expressionProps).columns).isNotNull();
-        assertThat(((RelationProps) expressionProps).columns).hasSize(2);
+        assertThat(expressionProps)
+                .isNotNull()
+                .isExactlyInstanceOf(RelationProps.class);
+        assertThat(((RelationProps) expressionProps).columns)
+                .isNotNull()
+                .hasSize(2);
         assertThat(((RelationProps) expressionProps).columns[0].name).isEqualTo(firstColumnName);
         assertThat(((RelationProps) expressionProps).columns[0].dataType).isEqualTo(firstColumnDataType.getLocalPart());
         assertThat(((RelationProps) expressionProps).columns[0].width).isEqualTo(relationExpression.getComponentWidths().get(1));
         assertThat(((RelationProps) expressionProps).columns[1].name).isEqualTo(secondColumnName);
         assertThat(((RelationProps) expressionProps).columns[1].dataType).isEqualTo(secondColumnDataType.getLocalPart());
         assertThat(((RelationProps) expressionProps).columns[1].width).isEqualTo(relationExpression.getComponentWidths().get(2));
-        assertThat(((RelationProps) expressionProps).rows).isNotNull();
-        assertThat(((RelationProps) expressionProps).rows).hasSize(1);
+        assertThat(((RelationProps) expressionProps).rows)
+                .isNotNull()
+                .hasSize(1);
         assertThat(((RelationProps) expressionProps).rows[0]).hasSize(2);
         assertThat(((RelationProps) expressionProps).rows[0][0]).isEqualTo(firstCellValue);
         assertThat(((RelationProps) expressionProps).rows[0][1]).isEqualTo(secondCellValue);
@@ -135,11 +141,13 @@ public class ExpressionPropsFillerTest {
 
         final ExpressionProps expressionProps = ExpressionPropsFiller.buildAndFillJsInteropProp(listExpression, null, null);
 
-        assertThat(expressionProps).isNotNull();
-        assertThat(expressionProps).isExactlyInstanceOf(ListProps.class);
+        assertThat(expressionProps)
+                .isNotNull()
+                .isExactlyInstanceOf(ListProps.class);
         assertThat(((ListProps) expressionProps).width).isEqualTo(listExpression.getComponentWidths().get(1));
-        assertThat(((ListProps) expressionProps).items).isNotNull();
-        assertThat(((ListProps) expressionProps).items).hasSize(2);
+        assertThat(((ListProps) expressionProps).items)
+                .isNotNull()
+                .hasSize(2);
         final ExpressionProps firstItem = ((ListProps) expressionProps).items[0];
         assertThat(firstItem).isExactlyInstanceOf(LiteralExpressionProps.class);
         assertThat(((LiteralExpressionProps) firstItem).content).isEqualTo(firstValue);
@@ -163,16 +171,19 @@ public class ExpressionPropsFillerTest {
 
         final ExpressionProps expressionProps = ExpressionPropsFiller.buildAndFillJsInteropProp(invocationExpression, null, null);
 
-        assertThat(expressionProps).isNotNull();
-        assertThat(expressionProps).isExactlyInstanceOf(InvocationProps.class);
+        assertThat(expressionProps)
+                .isNotNull()
+                .isExactlyInstanceOf(InvocationProps.class);
         assertThat(((InvocationProps) expressionProps).invokedFunction).isEqualTo(invokedFunctionText);
-        assertThat(((InvocationProps) expressionProps).bindingEntries).isNotNull();
-        assertThat(((InvocationProps) expressionProps).bindingEntries).hasSize(1);
+        assertThat(((InvocationProps) expressionProps).bindingEntries)
+                .isNotNull()
+                .hasSize(1);
         assertThat(((InvocationProps) expressionProps).bindingEntries[0].entryInfo).isNotNull();
         assertThat(((InvocationProps) expressionProps).bindingEntries[0].entryInfo.name).isEqualTo(ENTRY_NAME);
         assertThat(((InvocationProps) expressionProps).bindingEntries[0].entryInfo.dataType).isEqualTo(ENTRY_DATA_TYPE.getLocalPart());
-        assertThat(((InvocationProps) expressionProps).bindingEntries[0].entryExpression).isNotNull();
-        assertThat(((InvocationProps) expressionProps).bindingEntries[0].entryExpression).isExactlyInstanceOf(LiteralExpressionProps.class);
+        assertThat(((InvocationProps) expressionProps).bindingEntries[0].entryExpression)
+                .isNotNull()
+                .isExactlyInstanceOf(LiteralExpressionProps.class);
         assertThat(((InvocationProps) expressionProps).entryInfoWidth).isEqualTo(invocationExpression.getComponentWidths().get(1));
         assertThat(((InvocationProps) expressionProps).entryExpressionWidth).isEqualTo(invocationExpression.getComponentWidths().get(2));
     }
@@ -188,8 +199,9 @@ public class ExpressionPropsFillerTest {
 
         final ExpressionProps expressionProps = ExpressionPropsFiller.buildAndFillJsInteropProp(pmmlFunctionExpression, null, null);
 
-        assertThat(expressionProps).isNotNull();
-        assertThat(expressionProps).isExactlyInstanceOf(PmmlFunctionProps.class);
+        assertThat(expressionProps)
+                .isNotNull()
+                .isExactlyInstanceOf(PmmlFunctionProps.class);
         assertThat(((PmmlFunctionProps) expressionProps).functionKind).isEqualTo(FunctionDefinition.Kind.PMML.name());
         assertFormalParameters((PmmlFunctionProps) expressionProps);
         assertThat(((PmmlFunctionProps) expressionProps).document).isEqualTo(documentName);
@@ -208,8 +220,9 @@ public class ExpressionPropsFillerTest {
 
         final ExpressionProps expressionProps = ExpressionPropsFiller.buildAndFillJsInteropProp(javaFunctionExpression, null, null);
 
-        assertThat(expressionProps).isNotNull();
-        assertThat(expressionProps).isExactlyInstanceOf(JavaFunctionProps.class);
+        assertThat(expressionProps)
+                .isNotNull()
+                .isExactlyInstanceOf(JavaFunctionProps.class);
         assertThat(((JavaFunctionProps) expressionProps).functionKind).isEqualTo("Java");
         assertFormalParameters((JavaFunctionProps) expressionProps);
         assertThat(((JavaFunctionProps) expressionProps).className).isEqualTo(className);
@@ -226,8 +239,9 @@ public class ExpressionPropsFillerTest {
 
         final ExpressionProps expressionProps = ExpressionPropsFiller.buildAndFillJsInteropProp(feelFunctionExpression, null, null);
 
-        assertThat(expressionProps).isNotNull();
-        assertThat(expressionProps).isExactlyInstanceOf(FeelFunctionProps.class);
+        assertThat(expressionProps)
+                .isNotNull()
+                .isExactlyInstanceOf(FeelFunctionProps.class);
         assertThat(((FeelFunctionProps) expressionProps).functionKind).isEqualTo(FunctionDefinition.Kind.FEEL.name());
         assertFormalParameters((FeelFunctionProps) expressionProps);
         assertThat(((FeelFunctionProps) expressionProps).expression).isExactlyInstanceOf(RelationProps.class);
@@ -251,21 +265,25 @@ public class ExpressionPropsFillerTest {
 
         final ExpressionProps expressionProps = ExpressionPropsFiller.buildAndFillJsInteropProp(decisionTableExpression, null, null);
 
-        assertThat(expressionProps).isNotNull();
-        assertThat(expressionProps).isExactlyInstanceOf(DecisionTableProps.class);
+        assertThat(expressionProps)
+                .isNotNull()
+                .isExactlyInstanceOf(DecisionTableProps.class);
         assertThat(((DecisionTableProps) expressionProps).hitPolicy).isEqualTo(HitPolicy.ANY.value());
         assertThat(((DecisionTableProps) expressionProps).aggregation).isNullOrEmpty();
-        assertThat(((DecisionTableProps) expressionProps).annotations).isNotNull();
-        assertThat(((DecisionTableProps) expressionProps).annotations).hasSize(1);
+        assertThat(((DecisionTableProps) expressionProps).annotations)
+                .isNotNull()
+                .hasSize(1);
         assertThat(((DecisionTableProps) expressionProps).annotations[0].name).isEqualTo(annotationColumnName);
         assertThat(((DecisionTableProps) expressionProps).annotations[0].width).isEqualTo(decisionTableExpression.getComponentWidths().get(3));
-        assertThat(((DecisionTableProps) expressionProps).output).isNotNull();
-        assertThat(((DecisionTableProps) expressionProps).output).hasSize(1);
+        assertThat(((DecisionTableProps) expressionProps).output)
+                .isNotNull()
+                .hasSize(1);
         assertThat(((DecisionTableProps) expressionProps).output[0].name).isEqualTo(outputColumnName);
         assertThat(((DecisionTableProps) expressionProps).output[0].dataType).isEqualTo(outputColumnTypeRef.getLocalPart());
         assertThat(((DecisionTableProps) expressionProps).output[0].width).isEqualTo(decisionTableExpression.getComponentWidths().get(2));
-        assertThat(((DecisionTableProps) expressionProps).input).isNotNull();
-        assertThat(((DecisionTableProps) expressionProps).input).hasSize(1);
+        assertThat(((DecisionTableProps) expressionProps).input)
+                .isNotNull()
+                .hasSize(1);
         assertThat(((DecisionTableProps) expressionProps).input[0].name).isEqualTo(inputColumnName);
         assertThat(((DecisionTableProps) expressionProps).input[0].dataType).isEqualTo(inputColumnTypeRef.getLocalPart());
         assertThat(((DecisionTableProps) expressionProps).input[0].width).isEqualTo(decisionTableExpression.getComponentWidths().get(1));
@@ -315,8 +333,9 @@ public class ExpressionPropsFillerTest {
     }
 
     private void assertFormalParameters(FunctionProps expressionProps) {
-        assertThat(expressionProps.formalParameters).isNotNull();
-        assertThat(expressionProps.formalParameters).hasSize(1);
+        assertThat(expressionProps.formalParameters)
+                .isNotNull()
+                .hasSize(1);
         assertThat(expressionProps.formalParameters[0].name).isEqualTo(ENTRY_NAME);
         assertThat(expressionProps.formalParameters[0].dataType).isEqualTo(ENTRY_DATA_TYPE.getLocalPart());
     }

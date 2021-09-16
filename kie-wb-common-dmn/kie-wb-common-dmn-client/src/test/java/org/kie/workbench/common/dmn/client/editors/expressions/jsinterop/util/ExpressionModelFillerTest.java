@@ -17,6 +17,7 @@
 package org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.util;
 
 import java.util.Collection;
+import java.util.function.Consumer;
 
 import org.junit.Test;
 import org.kie.workbench.common.dmn.api.definition.HasExpression;
@@ -29,6 +30,7 @@ import org.kie.workbench.common.dmn.api.definition.model.DecisionRule;
 import org.kie.workbench.common.dmn.api.definition.model.DecisionTable;
 import org.kie.workbench.common.dmn.api.definition.model.FunctionDefinition;
 import org.kie.workbench.common.dmn.api.definition.model.HitPolicy;
+import org.kie.workbench.common.dmn.api.definition.model.InformationItem;
 import org.kie.workbench.common.dmn.api.definition.model.InputClause;
 import org.kie.workbench.common.dmn.api.definition.model.Invocation;
 import org.kie.workbench.common.dmn.api.definition.model.List;
@@ -77,39 +79,52 @@ public class ExpressionModelFillerTest {
 
         ExpressionModelFiller.fillLiteralExpression(literalExpression, literalExpressionProps);
 
-        assertThat(literalExpression).isNotNull();
-        assertThat(literalExpression.getText()).isNotNull();
-        assertThat(literalExpression.getText().getValue()).isNotNull();
-        assertThat(literalExpression.getText().getValue()).isEqualTo(content);
-        assertThat(literalExpression.getComponentWidths()).isNotEmpty();
-        assertThat(literalExpression.getComponentWidths()).first().isEqualTo(width);
+        assertThat(literalExpression)
+                .isNotNull();
+        assertThat(literalExpression.getText())
+                .isNotNull();
+        assertThat(literalExpression.getText().getValue())
+                .isNotNull().isEqualTo(content);
+        assertThat(literalExpression.getComponentWidths())
+                .isNotEmpty()
+                .first().isEqualTo(width);
     }
 
     @Test
     public void testFillContextExpression() {
-        final String resultContent = "";
         final Context contextExpression = new Context();
         final ContextEntryProps[] contextEntries = new ContextEntryProps[]{
                 buildContextEntryProps()
         };
-        final ExpressionProps result = new LiteralExpressionProps("Result Expression", BuiltInType.DATE.asQName().getLocalPart(), resultContent, null);
+        final ExpressionProps result = new LiteralExpressionProps("Result Expression", BuiltInType.DATE.asQName().getLocalPart(), "", null);
         final ContextProps contextProps = new ContextProps(EXPRESSION_NAME, DATA_TYPE, contextEntries, result, ENTRY_INFO_WIDTH, ENTRY_EXPRESSION_WIDTH);
 
         ExpressionModelFiller.fillContextExpression(contextExpression, contextProps);
 
         assertThat(contextExpression).isNotNull();
-        assertThat(contextExpression.getContextEntry()).isNotNull();
-        assertThat(contextExpression.getContextEntry()).hasSize(2);
-        assertThat(contextExpression.getContextEntry()).first().extracting(ContextEntry::getVariable).isNotNull();
-        assertThat(contextExpression.getContextEntry()).first().extracting(entry -> entry.getVariable().getValue().getValue()).isEqualTo(ENTRY_INFO_NAME);
-        assertThat(contextExpression.getContextEntry()).first().extracting(entry -> entry.getVariable().getTypeRef().getLocalPart()).isEqualTo(ENTRY_INFO_DATA_TYPE);
-        assertThat(contextExpression.getContextEntry()).first().extracting(ContextEntry::getExpression).isNotNull();
-        assertThat(contextExpression.getContextEntry()).first().extracting(ContextEntry::getExpression).isExactlyInstanceOf(LiteralExpression.class);
-        assertThat(contextExpression.getContextEntry()).first().extracting(entry -> ((LiteralExpression) entry.getExpression()).getText().getValue()).isEqualTo(ENTRY_EXPRESSION_CONTENT);
-        assertThat(contextExpression.getContextEntry()).last().extracting(ContextEntry::getVariable).isNull();
-        assertThat(contextExpression.getContextEntry()).last().extracting(ContextEntry::getExpression).isNotNull();
-        assertThat(contextExpression.getContextEntry()).last().extracting(ContextEntry::getExpression).isExactlyInstanceOf(LiteralExpression.class);
-        assertThat(contextExpression.getContextEntry()).last().extracting(entry -> ((LiteralExpression) entry.getExpression()).getText().getValue()).isEqualTo(resultContent);
+        assertThat(contextExpression.getContextEntry())
+                .isNotNull()
+                .hasSize(2);
+        assertThat(contextExpression.getContextEntry())
+                .first()
+                .satisfies(contextEntry -> {
+                    assertThat(contextEntry).extracting(ContextEntry::getVariable).isNotNull();
+                    assertThat(contextEntry).extracting(entry -> entry.getVariable().getValue().getValue()).isEqualTo(ENTRY_INFO_NAME);
+                    assertThat(contextEntry).extracting(entry -> entry.getVariable().getTypeRef().getLocalPart()).isEqualTo(ENTRY_INFO_DATA_TYPE);
+                    assertThat(contextEntry).extracting(ContextEntry::getExpression)
+                            .isNotNull()
+                            .isExactlyInstanceOf(LiteralExpression.class);
+                });
+
+        assertThat(contextExpression.getContextEntry())
+                .last()
+                .satisfies(contextEntry -> {
+                    assertThat(contextEntry).extracting(ContextEntry::getVariable).isNull();
+                    assertThat(contextEntry).extracting(ContextEntry::getExpression)
+                            .isNotNull()
+                            .isExactlyInstanceOf(LiteralExpression.class);
+                });
+
         assertEntryWidths(contextExpression.getComponentWidths());
     }
 
@@ -133,24 +148,25 @@ public class ExpressionModelFillerTest {
         ExpressionModelFiller.fillRelationExpression(relationExpression, relationProps);
 
         assertThat(relationExpression).isNotNull();
-        assertThat(relationExpression.getColumn()).isNotNull();
-        assertThat(relationExpression.getColumn()).hasSize(2);
-        assertThat(relationExpression.getColumn()).first().extracting(HasName::getValue).isNotNull();
-        assertThat(relationExpression.getColumn()).first().extracting(informationItem -> informationItem.getValue().getValue()).isEqualTo(firstColumnName);
-        assertThat(relationExpression.getColumn()).first().extracting(informationItem -> informationItem.getTypeRef().getLocalPart()).isEqualTo(firstColumnDataType);
-        assertThat(relationExpression.getColumn()).last().extracting(HasName::getValue).isNotNull();
-        assertThat(relationExpression.getColumn()).last().extracting(informationItem -> informationItem.getValue().getValue()).isEqualTo(secondColumnName);
-        assertThat(relationExpression.getColumn()).last().extracting(informationItem -> informationItem.getTypeRef().getLocalPart()).isEqualTo(secondColumnDataType);
-        assertThat(relationExpression.getRow()).isNotNull();
-        assertThat(relationExpression.getRow()).hasSize(2);
-        assertThat(relationExpression.getRow()).first().extracting(list -> list.getExpression().size()).isEqualTo(2);
-        assertThat(relationExpression.getRow()).first().extracting(list -> list.getExpression().get(0).getExpression()).isExactlyInstanceOf(LiteralExpression.class);
-        assertThat(relationExpression.getRow()).first().extracting(list -> ((LiteralExpression) list.getExpression().get(0).getExpression()).getText().getValue()).isEqualTo(firstCell);
-        assertThat(relationExpression.getRow()).first().extracting(list -> ((LiteralExpression) list.getExpression().get(1).getExpression()).getText().getValue()).isEqualTo(secondCell);
-        assertThat(relationExpression.getRow()).last().extracting(list -> list.getExpression().size()).isEqualTo(2);
-        assertThat(relationExpression.getRow()).last().extracting(list -> list.getExpression().get(0).getExpression()).isExactlyInstanceOf(LiteralExpression.class);
-        assertThat(relationExpression.getRow()).last().extracting(list -> ((LiteralExpression) list.getExpression().get(0).getExpression()).getText().getValue()).isEqualTo(thirdCell);
-        assertThat(relationExpression.getRow()).last().extracting(list -> ((LiteralExpression) list.getExpression().get(1).getExpression()).getText().getValue()).isEqualTo(fourthCell);
+        assertThat(relationExpression.getColumn())
+                .isNotNull()
+                .hasSize(2);
+        assertThat(relationExpression.getColumn())
+                .first()
+                .satisfies(checkRelationColumn(firstColumnName, firstColumnDataType));
+        assertThat(relationExpression.getColumn())
+                .last()
+                .satisfies(checkRelationColumn(secondColumnName, secondColumnDataType));
+
+        assertThat(relationExpression.getRow())
+                .isNotNull()
+                .hasSize(2);
+        assertThat(relationExpression.getRow())
+                .first()
+                .satisfies(checkRelationRow(firstCell, secondCell));
+        assertThat(relationExpression.getRow())
+                .last()
+                .satisfies(checkRelationRow(thirdCell, fourthCell));
         assertThat(relationExpression.getComponentWidths()).element(1).isEqualTo(firstColumnWidth);
         assertThat(relationExpression.getComponentWidths()).element(2).isEqualTo(secondColumnWidth);
     }
@@ -166,10 +182,12 @@ public class ExpressionModelFillerTest {
         ExpressionModelFiller.fillListExpression(listExpression, listProps);
 
         assertThat(listExpression).isNotNull();
-        assertThat(listExpression.getExpression()).isNotNull();
-        assertThat(listExpression.getExpression()).hasSize(1);
-        assertThat(listExpression.getExpression()).first().extracting(HasExpression::getExpression).isNotNull();
-        assertThat(listExpression.getExpression()).first().extracting(HasExpression::getExpression).isExactlyInstanceOf(LiteralExpression.class);
+        assertThat(listExpression.getExpression())
+                .isNotNull()
+                .hasSize(1);
+        assertThat(listExpression.getExpression()).first().extracting(HasExpression::getExpression)
+                .isNotNull()
+                .isExactlyInstanceOf(LiteralExpression.class);
         assertThat(listExpression.getExpression()).first().extracting(item -> ((LiteralExpression) item.getExpression()).getText().getValue()).isEqualTo(nestedContent);
         assertThat(listExpression.getComponentWidths()).element(1).isEqualTo(width);
     }
@@ -186,17 +204,22 @@ public class ExpressionModelFillerTest {
         ExpressionModelFiller.fillInvocationExpression(invocationExpression, invocationProps);
 
         assertThat(invocationExpression).isNotNull();
-        assertThat(invocationExpression.getExpression()).isNotNull();
-        assertThat(invocationExpression.getExpression()).isExactlyInstanceOf(LiteralExpression.class);
+        assertThat(invocationExpression.getExpression())
+                .isNotNull()
+                .isExactlyInstanceOf(LiteralExpression.class);
         assertThat(((LiteralExpression) invocationExpression.getExpression()).getText().getValue()).isEqualTo(invokedFunction);
-        assertThat(invocationExpression.getBinding()).isNotNull();
-        assertThat(invocationExpression.getBinding()).hasSize(1);
-        assertThat(invocationExpression.getBinding()).first().extracting(Binding::getVariable).isNotNull();
-        assertThat(invocationExpression.getBinding()).first().extracting(entry -> entry.getVariable().getValue().getValue()).isEqualTo(ENTRY_INFO_NAME);
-        assertThat(invocationExpression.getBinding()).first().extracting(entry -> entry.getVariable().getTypeRef().getLocalPart()).isEqualTo(ENTRY_INFO_DATA_TYPE);
-        assertThat(invocationExpression.getBinding()).first().extracting(Binding::getExpression).isNotNull();
-        assertThat(invocationExpression.getBinding()).first().extracting(Binding::getExpression).isExactlyInstanceOf(LiteralExpression.class);
-        assertThat(invocationExpression.getBinding()).first().extracting(entry -> ((LiteralExpression) entry.getExpression()).getText().getValue()).isEqualTo(ENTRY_EXPRESSION_CONTENT);
+        assertThat(invocationExpression.getBinding())
+                .isNotNull()
+                .hasSize(1);
+        assertThat(invocationExpression.getBinding()).first()
+                .satisfies(binding -> {
+                    assertThat(binding).extracting(Binding::getVariable).isNotNull();
+                    assertThat(binding).extracting(entry -> entry.getVariable().getValue().getValue()).isEqualTo(ENTRY_INFO_NAME);
+                    assertThat(binding).extracting(entry -> entry.getVariable().getTypeRef().getLocalPart()).isEqualTo(ENTRY_INFO_DATA_TYPE);
+                    assertThat(binding).extracting(Binding::getExpression)
+                            .isNotNull()
+                            .isExactlyInstanceOf(LiteralExpression.class);
+                });
         assertEntryWidths(invocationExpression.getComponentWidths());
     }
 
@@ -242,8 +265,9 @@ public class ExpressionModelFillerTest {
         assertThat(functionExpression).isNotNull();
         assertFormalParameters(functionExpression);
         assertParameterWidth(functionExpression);
-        assertThat(functionExpression.getExpression()).isNotNull();
-        assertThat(functionExpression.getExpression()).isExactlyInstanceOf(LiteralExpression.class);
+        assertThat(functionExpression.getExpression())
+                .isNotNull()
+                .isExactlyInstanceOf(LiteralExpression.class);
         assertThat(((LiteralExpression) functionExpression.getExpression()).getText().getValue()).isEqualTo(nestedContent);
     }
 
@@ -271,27 +295,38 @@ public class ExpressionModelFillerTest {
 
         assertThat(decisionTableExpression).isNotNull();
         assertThat(decisionTableExpression.getHitPolicy()).isEqualTo(HitPolicy.COLLECT);
-        assertThat(decisionTableExpression.getAggregation()).isEqualTo(BuiltinAggregator.MAX);
-        assertThat(decisionTableExpression.getAnnotations()).isNotNull();
-        assertThat(decisionTableExpression.getAnnotations()).hasSize(1);
-        assertThat(decisionTableExpression.getAnnotations()).first().extracting(annotation -> annotation.getValue().getValue()).isEqualTo(annotationName);
-        assertThat(decisionTableExpression.getInput()).isNotNull();
-        assertThat(decisionTableExpression.getInput()).hasSize(1);
-        assertThat(decisionTableExpression.getInput()).first().extracting(InputClause::getInputExpression).isNotNull();
-        assertThat(decisionTableExpression.getInput()).first().extracting(inputClause -> inputClause.getInputExpression().getText().getValue()).isEqualTo(inputColumn);
-        assertThat(decisionTableExpression.getInput()).first().extracting(inputClause -> inputClause.getInputExpression().getTypeRef().getLocalPart()).isEqualTo(inputDataType);
-        assertThat(decisionTableExpression.getOutput()).isNotNull();
-        assertThat(decisionTableExpression.getOutput()).hasSize(1);
-        assertThat(decisionTableExpression.getOutput()).first().extracting(OutputClause::getName).isEqualTo(outputColumn);
-        assertThat(decisionTableExpression.getOutput()).first().extracting(outputClause -> outputClause.getTypeRef().getLocalPart()).isEqualTo(outputDataType);
-        assertThat(decisionTableExpression.getRule()).isNotNull();
-        assertThat(decisionTableExpression.getRule()).hasSize(1);
-        assertThat(decisionTableExpression.getRule()).first().extracting(rule -> rule.getInputEntry().size()).isEqualTo(1);
-        assertThat(decisionTableExpression.getRule()).first().extracting(DecisionRule::getInputEntry).extracting(inputEntry -> inputEntry.get(0).getText().getValue()).isEqualTo(inputValue);
-        assertThat(decisionTableExpression.getRule()).first().extracting(DecisionRule::getOutputEntry).extracting(outputEntry -> outputEntry.get(0).getText().getValue()).isEqualTo(outputValue);
-        assertThat(decisionTableExpression.getRule()).first().extracting(DecisionRule::getAnnotationEntry).extracting(annotationEntry -> annotationEntry.get(0).getText().getValue()).isEqualTo(annotationValue);
-        assertThat(decisionTableExpression.getComponentWidths()).isNotNull();
-        assertThat(decisionTableExpression.getComponentWidths()).hasSize(4);
+        assertThat(decisionTableExpression.getAggregation()).isEqualTo(BuiltinAggregator.MAX).isNotNull();
+        assertThat(decisionTableExpression.getAnnotations())
+                .hasSize(1)
+                .first().extracting(annotation -> annotation.getValue().getValue()).isEqualTo(annotationName);
+        assertThat(decisionTableExpression.getInput())
+                .isNotNull()
+                .hasSize(1)
+                .first()
+                .satisfies(inputRef -> {
+                    assertThat(inputRef).extracting(InputClause::getInputExpression).isNotNull();
+                    assertThat(inputRef).extracting(inputClause -> inputClause.getInputExpression().getText().getValue()).isEqualTo(inputColumn);
+                    assertThat(inputRef).extracting(inputClause -> inputClause.getInputExpression().getTypeRef().getLocalPart()).isEqualTo(inputDataType);
+                });
+        assertThat(decisionTableExpression.getOutput())
+                .isNotNull()
+                .hasSize(1)
+                .first()
+                .satisfies(outputRef -> {
+                    assertThat(outputRef).extracting(OutputClause::getName).isEqualTo(outputColumn);
+                    assertThat(outputRef).extracting(outputClause -> outputClause.getTypeRef().getLocalPart()).isEqualTo(outputDataType);
+                });
+
+        assertThat(decisionTableExpression.getRule())
+                .isNotNull()
+                .hasSize(1)
+                .first()
+                .satisfies(ruleRef -> {
+                    assertThat(ruleRef).extracting(rule -> rule.getInputEntry().size()).isEqualTo(1);
+                    assertThat(ruleRef).extracting(DecisionRule::getInputEntry).extracting(inputEntry -> inputEntry.get(0).getText().getValue()).isEqualTo(inputValue);
+                    assertThat(ruleRef).extracting(DecisionRule::getOutputEntry).extracting(outputEntry -> outputEntry.get(0).getText().getValue()).isEqualTo(outputValue);
+                    assertThat(ruleRef).extracting(DecisionRule::getAnnotationEntry).extracting(annotationEntry -> annotationEntry.get(0).getText().getValue()).isEqualTo(annotationValue);
+                });
         assertThat(decisionTableExpression.getComponentWidths()).element(1).isEqualTo(inputWidth);
         assertThat(decisionTableExpression.getComponentWidths()).element(2).isEqualTo(outputWidth);
         assertThat(decisionTableExpression.getComponentWidths()).element(3).isEqualTo(annotationWidth);
@@ -302,30 +337,56 @@ public class ExpressionModelFillerTest {
     }
 
     private void assertEntryWidths(final Collection<Double> componentWidths) {
-        assertThat(componentWidths).isNotNull();
-        assertThat(componentWidths).hasSize(3);
+        assertThat(componentWidths)
+                .isNotNull()
+                .hasSize(3);
         assertThat(componentWidths).element(1).isEqualTo(ENTRY_INFO_WIDTH);
         assertThat(componentWidths).element(2).isEqualTo(ENTRY_EXPRESSION_WIDTH);
     }
 
-    private void assertFormalParameters(FunctionDefinition functionExpression) {
-        assertThat(functionExpression.getFormalParameter()).isNotNull();
-        assertThat(functionExpression.getFormalParameter()).hasSize(1);
-        assertThat(functionExpression.getFormalParameter()).first().extracting(param -> param.getValue().getValue()).isEqualTo(PARAM_NAME);
-        assertThat(functionExpression.getFormalParameter()).first().extracting(param -> param.getTypeRef().getLocalPart()).isEqualTo(PARAM_DATA_TYPE);
+    private Consumer<List> checkRelationRow(final String firstCell, final String secondCell) {
+        return param -> {
+            assertThat(param).extracting(list -> list.getExpression().size()).isEqualTo(2);
+            assertThat(param).extracting(list -> list.getExpression().get(0).getExpression()).isExactlyInstanceOf(LiteralExpression.class);
+            assertThat(param).extracting(list -> ((LiteralExpression) list.getExpression().get(0).getExpression()).getText().getValue()).isEqualTo(firstCell);
+            assertThat(param).extracting(list -> ((LiteralExpression) list.getExpression().get(1).getExpression()).getText().getValue()).isEqualTo(secondCell);
+        };
     }
 
+    private Consumer<InformationItem> checkRelationColumn(final String columnName, final String columnDataType) {
+        return param -> {
+            assertThat(param).extracting(HasName::getValue).isNotNull();
+            assertThat(param).extracting(informationItem -> informationItem.getValue().getValue()).isEqualTo(columnName);
+            assertThat(param).extracting(informationItem -> informationItem.getTypeRef().getLocalPart()).isEqualTo(columnDataType);
+        };
+    }
+
+    private void assertFormalParameters(FunctionDefinition functionExpression) {
+        assertThat(functionExpression.getFormalParameter())
+                .isNotNull()
+                .hasSize(1)
+                .first()
+                .satisfies(param -> {
+                    assertThat(param.getValue().getValue()).isEqualTo(PARAM_NAME);
+                    assertThat(param.getTypeRef().getLocalPart()).isEqualTo(PARAM_DATA_TYPE);
+                });
+    }
+
+
     private void assertParameterWidth(FunctionDefinition functionExpression) {
-        assertThat(functionExpression.getComponentWidths()).isNotNull();
-        assertThat(functionExpression.getComponentWidths()).hasSize(2);
-        assertThat(functionExpression.getComponentWidths()).element(1).isEqualTo(PARAMETERS_WIDTH);
+        assertThat(functionExpression.getComponentWidths())
+                .isNotNull()
+                .hasSize(2)
+                .element(1).isEqualTo(PARAMETERS_WIDTH);
     }
 
     private void assertNestedContextEntries(FunctionDefinition functionExpression, String documentName, String modelName) {
-        assertThat(functionExpression.getExpression()).isNotNull();
-        assertThat(functionExpression.getExpression()).isExactlyInstanceOf(Context.class);
-        assertThat(((Context) functionExpression.getExpression()).getContextEntry()).isNotNull();
-        assertThat(((Context) functionExpression.getExpression()).getContextEntry()).hasSize(2);
+        assertThat(functionExpression.getExpression())
+                .isNotNull()
+                .isExactlyInstanceOf(Context.class);
+        assertThat(((Context) functionExpression.getExpression()).getContextEntry())
+                .isNotNull()
+                .hasSize(2);
         assertThat(((Context) functionExpression.getExpression()).getContextEntry()).first().extracting(ContextEntry::getExpression).isExactlyInstanceOf(LiteralExpression.class);
         assertThat(((Context) functionExpression.getExpression()).getContextEntry()).first().extracting(contextEntry -> ((LiteralExpression) contextEntry.getExpression()).getText().getValue()).isEqualTo(documentName);
         assertThat(((Context) functionExpression.getExpression()).getContextEntry()).last().extracting(ContextEntry::getExpression).isExactlyInstanceOf(LiteralExpression.class);
