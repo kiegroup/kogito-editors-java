@@ -47,7 +47,7 @@ import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.F
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.InvocationProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.JavaFunctionProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.ListProps;
-import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.LiteralExpressionProps;
+import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.LiteralProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.PmmlFunctionProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.RelationProps;
 
@@ -59,7 +59,7 @@ public class ExpressionPropsFiller {
         if (wrappedExpression instanceof IsLiteralExpression) {
             final LiteralExpression literalExpression = (LiteralExpression) wrappedExpression;
             final Double width = literalExpression.getComponentWidths().get(0);
-            return new LiteralExpressionProps(expressionName, dataType, literalExpression.getText().getValue(), width);
+            return new LiteralProps(expressionName, dataType, literalExpression.getText().getValue(), width);
         } else if (wrappedExpression instanceof Context) {
             final Context contextExpression = (Context) wrappedExpression;
             final Double entryInfoWidth = contextExpression.getComponentWidths().get(1);

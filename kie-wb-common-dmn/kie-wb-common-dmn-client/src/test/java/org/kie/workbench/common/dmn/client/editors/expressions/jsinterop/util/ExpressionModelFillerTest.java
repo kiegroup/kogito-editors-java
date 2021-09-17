@@ -51,7 +51,7 @@ import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.F
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.InvocationProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.JavaFunctionProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.ListProps;
-import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.LiteralExpressionProps;
+import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.LiteralProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.PmmlFunctionProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.RelationProps;
 
@@ -75,9 +75,9 @@ public class ExpressionModelFillerTest {
         final LiteralExpression literalExpression = new LiteralExpression();
         final String content = "content";
         final double width = 100d;
-        final LiteralExpressionProps literalExpressionProps = new LiteralExpressionProps(EXPRESSION_NAME, DATA_TYPE, content, width);
+        final LiteralProps literalProps = new LiteralProps(EXPRESSION_NAME, DATA_TYPE, content, width);
 
-        ExpressionModelFiller.fillLiteralExpression(literalExpression, literalExpressionProps);
+        ExpressionModelFiller.fillLiteralExpression(literalExpression, literalProps);
 
         assertThat(literalExpression)
                 .isNotNull();
@@ -96,7 +96,7 @@ public class ExpressionModelFillerTest {
         final ContextEntryProps[] contextEntries = new ContextEntryProps[]{
                 buildContextEntryProps()
         };
-        final ExpressionProps result = new LiteralExpressionProps("Result Expression", BuiltInType.DATE.asQName().getLocalPart(), "", null);
+        final ExpressionProps result = new LiteralProps("Result Expression", BuiltInType.DATE.asQName().getLocalPart(), "", null);
         final ContextProps contextProps = new ContextProps(EXPRESSION_NAME, DATA_TYPE, contextEntries, result, ENTRY_INFO_WIDTH, ENTRY_EXPRESSION_WIDTH);
 
         ExpressionModelFiller.fillContextExpression(contextExpression, contextProps);
@@ -175,7 +175,7 @@ public class ExpressionModelFillerTest {
     public void testFillListExpression() {
         final List listExpression = new List();
         final String nestedContent = "nested content";
-        final ExpressionProps[] items = new ExpressionProps[]{new LiteralExpressionProps("Nested Literal Expression", BuiltInType.UNDEFINED.asQName().getLocalPart(), nestedContent, null)};
+        final ExpressionProps[] items = new ExpressionProps[]{new LiteralProps("Nested Literal Expression", BuiltInType.UNDEFINED.asQName().getLocalPart(), nestedContent, null)};
         final Double width = 600d;
         final ListProps listProps = new ListProps(EXPRESSION_NAME, DATA_TYPE, items, width);
 
@@ -258,7 +258,7 @@ public class ExpressionModelFillerTest {
         final FunctionDefinition functionExpression = new FunctionDefinition();
         final String nestedContent = "Nested Content";
         final FeelFunctionProps functionProps = new FeelFunctionProps(EXPRESSION_NAME, DATA_TYPE, new EntryInfo[]{new EntryInfo(PARAM_NAME, PARAM_DATA_TYPE)}, PARAMETERS_WIDTH,
-                                                                      new LiteralExpressionProps("Nested Literal Expression", BuiltInType.UNDEFINED.asQName().getLocalPart(), nestedContent, null));
+                                                                      new LiteralProps("Nested Literal Expression", BuiltInType.UNDEFINED.asQName().getLocalPart(), nestedContent, null));
 
         ExpressionModelFiller.fillFunctionExpression(functionExpression, functionProps);
 
@@ -333,7 +333,7 @@ public class ExpressionModelFillerTest {
     }
 
     private ContextEntryProps buildContextEntryProps() {
-        return new ContextEntryProps(new EntryInfo(ENTRY_INFO_NAME, ENTRY_INFO_DATA_TYPE), new LiteralExpressionProps("Nested Expression", BuiltInType.UNDEFINED.asQName().getLocalPart(), ENTRY_EXPRESSION_CONTENT, null));
+        return new ContextEntryProps(new EntryInfo(ENTRY_INFO_NAME, ENTRY_INFO_DATA_TYPE), new LiteralProps("Nested Expression", BuiltInType.UNDEFINED.asQName().getLocalPart(), ENTRY_EXPRESSION_CONTENT, null));
     }
 
     private void assertEntryWidths(final Collection<Double> componentWidths) {

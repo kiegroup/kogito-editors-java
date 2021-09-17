@@ -62,7 +62,7 @@ import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.F
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.InvocationProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.JavaFunctionProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.ListProps;
-import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.LiteralExpressionProps;
+import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.LiteralProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.PmmlFunctionProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.RelationProps;
 import org.kie.workbench.common.stunner.core.util.StringUtils;
@@ -82,9 +82,9 @@ import static org.kie.workbench.common.dmn.client.editors.expressions.types.func
 
 public class ExpressionModelFiller {
 
-    public static void fillLiteralExpression(final LiteralExpression literalExpression, final LiteralExpressionProps literalExpressionProps) {
-        literalExpression.getComponentWidths().set(0, literalExpressionProps.width);
-        literalExpression.setText(new Text(literalExpressionProps.content));
+    public static void fillLiteralExpression(final LiteralExpression literalExpression, final LiteralProps literalProps) {
+        literalExpression.getComponentWidths().set(0, literalProps.width);
+        literalExpression.setText(new Text(literalProps.content));
     }
 
     public static void fillContextExpression(final Context contextExpression, final ContextProps contextProps) {
@@ -152,7 +152,7 @@ public class ExpressionModelFiller {
     private static Expression buildAndFillNestedExpression(final ExpressionProps props) {
         if (Objects.equals(LITERAL_EXPRESSION.getText(), props.logicType)) {
             final LiteralExpression literalExpression = new LiteralExpression();
-            fillLiteralExpression(literalExpression, (LiteralExpressionProps) props);
+            fillLiteralExpression(literalExpression, (LiteralProps) props);
             return literalExpression;
         } else if (Objects.equals(CONTEXT.getText(), props.logicType)) {
             final Context contextExpression = new Context();
@@ -297,7 +297,7 @@ public class ExpressionModelFiller {
                 final FeelFunctionProps feelFunctionProps = (FeelFunctionProps) functionProps;
                 return buildAndFillNestedExpression(
                         Optional.ofNullable(feelFunctionProps.expression)
-                                .orElse(new LiteralExpressionProps("Nested Literal Expression", UNDEFINED.getText(), "", null))
+                                .orElse(new LiteralProps("Nested Literal Expression", UNDEFINED.getText(), "", null))
                 );
         }
     }

@@ -48,7 +48,7 @@ import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.F
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.InvocationProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.JavaFunctionProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.ListProps;
-import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.LiteralExpressionProps;
+import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.LiteralProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.PmmlFunctionProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.RelationProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionType;
@@ -70,9 +70,9 @@ public class ExpressionPropsFillerTest {
 
         assertThat(expressionProps)
                 .isNotNull()
-                .isExactlyInstanceOf(LiteralExpressionProps.class);
-        assertThat(((LiteralExpressionProps) expressionProps).content).isEqualTo(contentValue);
-        assertThat(((LiteralExpressionProps) expressionProps).width).isEqualTo(literalExpression.getComponentWidths().get(0));
+                .isExactlyInstanceOf(LiteralProps.class);
+        assertThat(((LiteralProps) expressionProps).content).isEqualTo(contentValue);
+        assertThat(((LiteralProps) expressionProps).width).isEqualTo(literalExpression.getComponentWidths().get(0));
     }
 
     @Test
@@ -149,11 +149,11 @@ public class ExpressionPropsFillerTest {
                 .isNotNull()
                 .hasSize(2);
         final ExpressionProps firstItem = ((ListProps) expressionProps).items[0];
-        assertThat(firstItem).isExactlyInstanceOf(LiteralExpressionProps.class);
-        assertThat(((LiteralExpressionProps) firstItem).content).isEqualTo(firstValue);
+        assertThat(firstItem).isExactlyInstanceOf(LiteralProps.class);
+        assertThat(((LiteralProps) firstItem).content).isEqualTo(firstValue);
         final ExpressionProps secondItem = ((ListProps) expressionProps).items[1];
-        assertThat(secondItem).isExactlyInstanceOf(LiteralExpressionProps.class);
-        assertThat(((LiteralExpressionProps) secondItem).content).isEqualTo(secondValue);
+        assertThat(secondItem).isExactlyInstanceOf(LiteralProps.class);
+        assertThat(((LiteralProps) secondItem).content).isEqualTo(secondValue);
 
     }
 
@@ -183,7 +183,7 @@ public class ExpressionPropsFillerTest {
         assertThat(((InvocationProps) expressionProps).bindingEntries[0].entryInfo.dataType).isEqualTo(ENTRY_DATA_TYPE.getLocalPart());
         assertThat(((InvocationProps) expressionProps).bindingEntries[0].entryExpression)
                 .isNotNull()
-                .isExactlyInstanceOf(LiteralExpressionProps.class);
+                .isExactlyInstanceOf(LiteralProps.class);
         assertThat(((InvocationProps) expressionProps).entryInfoWidth).isEqualTo(invocationExpression.getComponentWidths().get(1));
         assertThat(((InvocationProps) expressionProps).entryExpressionWidth).isEqualTo(invocationExpression.getComponentWidths().get(2));
     }

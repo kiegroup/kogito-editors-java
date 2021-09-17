@@ -21,11 +21,11 @@ import jsinterop.annotations.JsType;
 import static org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionType.LITERAL_EXPRESSION;
 
 @JsType
-public class LiteralExpressionProps extends ExpressionProps{
+public class LiteralProps extends ExpressionProps{
     public final String content;
     public final Double width;
 
-    public LiteralExpressionProps(final String name, final String dataType, final String content, final Double width) {
+    public LiteralProps(final String name, final String dataType, final String content, final Double width) {
         super(name, dataType, LITERAL_EXPRESSION.getText());
         this.content = content;
         this.width = width;

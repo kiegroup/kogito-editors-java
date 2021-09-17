@@ -58,7 +58,7 @@ import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.E
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.FunctionProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.InvocationProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.ListProps;
-import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.LiteralExpressionProps;
+import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.LiteralProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.ModelsFromDocument;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.PMMLParam;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.RelationProps;
@@ -357,13 +357,13 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
         hasExpression.setExpression(null);
     }
 
-    public void broadcastLiteralExpressionDefinition(final LiteralExpressionProps literalExpressionProps) {
+    public void broadcastLiteralExpressionDefinition(final LiteralProps literalProps) {
         editorSelectedEvent.fire(new ExpressionEditorChanged(nodeUUID));
-        setExpressionNameAndDataType(literalExpressionProps);
+        setExpressionNameAndDataType(literalProps);
         if (hasExpression.getExpression() == null) {
             hasExpression.setExpression(new LiteralExpression());
         }
-        ExpressionModelFiller.fillLiteralExpression((LiteralExpression) hasExpression.getExpression(), literalExpressionProps);
+        ExpressionModelFiller.fillLiteralExpression((LiteralExpression) hasExpression.getExpression(), literalProps);
     }
 
     public void broadcastContextExpressionDefinition(final ContextProps contextProps) {
