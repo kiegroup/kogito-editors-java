@@ -352,8 +352,9 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
         preventDefault(event);
     }
 
-    public void resetExpressionDefinition() {
+    public void resetExpressionDefinition(final ExpressionProps expressionProps) {
         editorSelectedEvent.fire(new ExpressionEditorChanged(nodeUUID));
+        setExpressionNameAndDataType(expressionProps);
         hasExpression.setExpression(null);
     }
 
