@@ -24,7 +24,6 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import com.ait.lienzo.client.core.types.JsLienzo;
-import com.ait.lienzo.client.core.types.WindowJSType;
 import com.ait.lienzo.client.widget.panel.LienzoBoundsPanel;
 import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
 import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorDock;

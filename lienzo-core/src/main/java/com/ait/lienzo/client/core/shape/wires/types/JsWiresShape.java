@@ -31,6 +31,7 @@ import com.ait.lienzo.client.core.types.BoundingBox;
 import com.ait.lienzo.client.core.types.Point2D;
 import com.ait.lienzo.tools.client.collection.NFastArrayList;
 import elemental2.core.JsArray;
+import elemental2.dom.DomGlobal;
 import jsinterop.annotations.JsType;
 
 @JsType
@@ -143,7 +144,7 @@ public class JsWiresShape {
             }
 
             String tag = (String) userData;
-
+            DomGlobal.console.log("Tag is:" + tag);
             switch (tag) {
                 case "?shapeType=BORDER&renderType=STROKE":
                     shape.setStrokeColor(borderColor);
@@ -181,11 +182,7 @@ public class JsWiresShape {
         return null;
     }
 
-    public void draw() {
-        shape.refresh();
-    }
-
-    public void setBackgroundColor(String backgroundColor) {
+    public Shape getBorderColorShape() {
         final JsArray<Shape> shapeJsArray = flatShapes();
 
         for (int i = 0; i < shapeJsArray.length; i++) {
@@ -196,10 +193,45 @@ public class JsWiresShape {
             }
 
             String tag = (String) userData;
-            if (tag.equals("?shapeType=BACKGROUND")) {
-                shape.setFillColor(backgroundColor);
-                draw();
+
+            switch (tag) {
+                case "?shapeType=BORDER&renderType=STROKE":
+                    return shape;
+
+                case "?shapeType=BORDER&renderType=FILL":
+                    return shape;
             }
+        }
+        return null;
+    }
+
+    public void draw() {
+        shape.refresh();
+    }
+
+    public void setBackgroundColor(String backgroundColor) {
+        final JsArray<Shape> shapeJsArray = flatShapes();
+
+        if (hasBackgroundColor()) {
+            for (int i = 0; i < shapeJsArray.length; i++) {
+                final Shape shape = shapeJsArray.getAt(i);
+                final Object userData = shape.getUserData();
+                if (userData == null) {
+                    continue;
+                }
+
+                String tag = (String) userData;
+
+                DomGlobal.console.log("Tag is:" + tag);
+
+                if (tag.equals("?shapeType=BACKGROUND")) {
+                    shape.setFillColor(backgroundColor);
+                    draw();
+                }
+            }
+        } else {
+            Shape shape = getBorderColorShape();
+            shape.setFillColor(backgroundColor);
         }
     }
 
@@ -222,6 +254,25 @@ public class JsWiresShape {
         return null;
     }
 
+    public boolean hasBackgroundColor() {
+        final JsArray<Shape> shapeJsArray = flatShapes();
+
+        for (int i = 0; i < shapeJsArray.length; i++) {
+            final Shape shape = shapeJsArray.getAt(i);
+            final Object userData = shape.getUserData();
+            if (userData == null) {
+                continue;
+            }
+
+            String tag = (String) userData;
+            if (tag.equals("?shapeType=BACKGROUND")) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public BoundingBox getBounds() {
         double shapeX = this.getLocation().getX();
         double shapeY = this.getLocation().getY();
@@ -232,6 +283,8 @@ public class JsWiresShape {
     }
 
     public BoundingBox getAbsoluteLocation() {
+        //   asGroup().getAbsoluteLocation()
+
         double shapeX = this.getComputedLocation().getX();
         double shapeY = this.getComputedLocation().getY();
         double width = this.getBoundingBox().getWidth();

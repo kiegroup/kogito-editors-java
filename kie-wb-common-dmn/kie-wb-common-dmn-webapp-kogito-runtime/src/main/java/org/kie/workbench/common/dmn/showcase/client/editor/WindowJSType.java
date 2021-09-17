@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2021 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,28 +14,22 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.kogito.client.editor;
+package org.kie.workbench.common.dmn.showcase.client.editor;
 
-import com.google.gwt.user.client.Command;
-import jsinterop.annotations.JsIgnore;
+import com.ait.lienzo.client.core.types.JsLienzo;
+import jsinterop.annotations.JsOverlay;
+import jsinterop.annotations.JsPackage;
+import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
 
-@JsType
-public class JSCommand implements Command {
+@JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "window")
+public class WindowJSType {
 
-    private Command command;
+    @JsProperty
+    private static Object jsLienzo;
 
-    public JSCommand(Command command) {
-        this.command = command;
-    }
-
-    @Override
-    @JsIgnore
-    public void execute() {
-        command.execute();
-    }
-
-    public void logNodes() {
-        command.execute();
+    @JsOverlay
+    public static final void linkLienzoJS(JsLienzo jsLienzo) {
+        WindowJSType.jsLienzo = jsLienzo;
     }
 }

@@ -25,7 +25,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import com.ait.lienzo.client.core.types.JsLienzo;
-import com.ait.lienzo.client.core.types.WindowJSType;
 import com.ait.lienzo.client.widget.panel.LienzoBoundsPanel;
 import com.google.gwt.user.client.ui.IsWidget;
 import elemental2.promise.Promise;
