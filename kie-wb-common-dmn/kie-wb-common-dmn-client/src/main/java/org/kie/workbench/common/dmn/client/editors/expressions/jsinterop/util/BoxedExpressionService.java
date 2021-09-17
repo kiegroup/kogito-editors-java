@@ -16,70 +16,65 @@
 
 package org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.util;
 
+import jsinterop.annotations.JsMethod;
+import jsinterop.annotations.JsPackage;
+import jsinterop.annotations.JsType;
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorViewImpl;
+import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.ContextProps;
+import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.DecisionTableProps;
+import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.ExpressionProps;
+import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.FunctionProps;
+import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.InvocationProps;
+import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.ListProps;
+import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.LiteralProps;
+import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.RelationProps;
 
+@JsType(namespace = JsPackage.GLOBAL, name = "beeApiWrapper")
 public class BoxedExpressionService {
-    public static void registerBroadcastForExpression(final ExpressionEditorViewImpl boxedExpressionEditorPanel) {
-        createNamespace();
-        registerResetExpressionDefinition(boxedExpressionEditorPanel);
-        registerBroadcastForLiteralExpression(boxedExpressionEditorPanel);
-        registerBroadcastForContextExpression(boxedExpressionEditorPanel);
-        registerBroadcastForRelationExpression(boxedExpressionEditorPanel);
-        registerBroadcastForListExpression(boxedExpressionEditorPanel);
-        registerBroadcastForInvocationExpression(boxedExpressionEditorPanel);
-        registerBroadcastForFunctionExpression(boxedExpressionEditorPanel);
-        registerBroadcastForDecisionTableExpression(boxedExpressionEditorPanel);
+
+    private static ExpressionEditorViewImpl expressionEditor;
+
+    public static void registerBroadcastForExpression(final ExpressionEditorViewImpl expressionEditor) {
+        BoxedExpressionService.expressionEditor = expressionEditor;
     }
 
-    private static native void createNamespace()/*-{
-        $wnd["beeApiWrapper"] = {};
-    }-*/;
+    @JsMethod
+    public static void resetExpressionDefinition(final ExpressionProps expressionProps) {
+        expressionEditor.resetExpressionDefinition(expressionProps);
+    }
 
-    private static native void registerResetExpressionDefinition(final ExpressionEditorViewImpl boxedExpressionEditorPanel)/*-{
-        $wnd["beeApiWrapper"].resetExpressionDefinition = function() {
-            return boxedExpressionEditorPanel.@ExpressionEditorViewImpl::resetExpressionDefinition(*)();
-        };
-    }-*/;
+    @JsMethod
+    public static void broadcastLiteralExpressionDefinition(final LiteralProps literalProps) {
+        expressionEditor.broadcastLiteralExpressionDefinition(literalProps);
+    }
 
-    private static native void registerBroadcastForLiteralExpression(final ExpressionEditorViewImpl boxedExpressionEditorPanel)/*-{
-        $wnd["beeApiWrapper"].broadcastLiteralExpressionDefinition = function(literalExpressionDefinition) {
-            return boxedExpressionEditorPanel.@ExpressionEditorViewImpl::broadcastLiteralExpressionDefinition(*)(literalExpressionDefinition);
-        };
-    }-*/;
+    @JsMethod
+    public static void broadcastContextExpressionDefinition(final ContextProps contextProps) {
+        expressionEditor.broadcastContextExpressionDefinition(contextProps);
+    }
 
-    private static native void registerBroadcastForContextExpression(final ExpressionEditorViewImpl boxedExpressionEditorPanel)/*-{
-        $wnd["beeApiWrapper"].broadcastContextExpressionDefinition = function(contextExpressionDefinition) {
-            return boxedExpressionEditorPanel.@ExpressionEditorViewImpl::broadcastContextExpressionDefinition(*)(contextExpressionDefinition);
-        };
-    }-*/;
+    @JsMethod
+    public static void broadcastRelationExpressionDefinition(final RelationProps relationProps) {
+        expressionEditor.broadcastRelationExpressionDefinition(relationProps);
+    }
 
-    private static native void registerBroadcastForRelationExpression(final ExpressionEditorViewImpl boxedExpressionEditorPanel)/*-{
-        $wnd["beeApiWrapper"].broadcastRelationExpressionDefinition = function(relationExpressionDefinition) {
-            return boxedExpressionEditorPanel.@ExpressionEditorViewImpl::broadcastRelationExpressionDefinition(*)(relationExpressionDefinition);
-        };
-    }-*/;
+    @JsMethod
+    public static void broadcastListExpressionDefinition(final ListProps listProps) {
+        expressionEditor.broadcastListExpressionDefinition(listProps);
+    }
 
-    private static native void registerBroadcastForListExpression(final ExpressionEditorViewImpl boxedExpressionEditorPanel)/*-{
-        $wnd["beeApiWrapper"].broadcastListExpressionDefinition = function(listExpressionDefinition) {
-            return boxedExpressionEditorPanel.@ExpressionEditorViewImpl::broadcastListExpressionDefinition(*)(listExpressionDefinition);
-        };
-    }-*/;
+    @JsMethod
+    public static void broadcastInvocationExpressionDefinition(final InvocationProps invocationProps) {
+        expressionEditor.broadcastInvocationExpressionDefinition(invocationProps);
+    }
 
-    private static native void registerBroadcastForInvocationExpression(final ExpressionEditorViewImpl boxedExpressionEditorPanel)/*-{
-        $wnd["beeApiWrapper"].broadcastInvocationExpressionDefinition = function(invocationExpressionDefinition) {
-            return boxedExpressionEditorPanel.@ExpressionEditorViewImpl::broadcastInvocationExpressionDefinition(*)(invocationExpressionDefinition);
-        };
-    }-*/;
+    @JsMethod
+    public static void broadcastFunctionExpressionDefinition(final FunctionProps functionProps) {
+        expressionEditor.broadcastFunctionExpressionDefinition(functionProps);
+    }
 
-    private static native void registerBroadcastForFunctionExpression(final ExpressionEditorViewImpl boxedExpressionEditorPanel)/*-{
-        $wnd["beeApiWrapper"].broadcastFunctionExpressionDefinition = function(functionExpressionDefinition) {
-            return boxedExpressionEditorPanel.@ExpressionEditorViewImpl::broadcastFunctionExpressionDefinition(*)(functionExpressionDefinition);
-        };
-    }-*/;
-
-    private static native void registerBroadcastForDecisionTableExpression(final ExpressionEditorViewImpl boxedExpressionEditorPanel)/*-{
-        $wnd["beeApiWrapper"].broadcastDecisionTableExpressionDefinition = function(decisionTableExpressionDefinition) {
-            return boxedExpressionEditorPanel.@ExpressionEditorViewImpl::broadcastDecisionTableExpressionDefinition(*)(decisionTableExpressionDefinition);
-        };
-    }-*/;
+    @JsMethod
+    public static void broadcastDecisionTableExpressionDefinition(final DecisionTableProps decisionTableProps) {
+        expressionEditor.broadcastDecisionTableExpressionDefinition(decisionTableProps);
+    }
 }
