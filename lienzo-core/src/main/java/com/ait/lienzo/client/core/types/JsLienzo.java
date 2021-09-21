@@ -227,42 +227,50 @@ public class JsLienzo implements Attributable {
         shape.setBorderColor(borderColor);
     }
 
-    public double[] getLocation(String UUID) {
+    public NFastArrayList<Double> getLocation(String UUID) {
         JsWiresShape shape = getWiresShape(UUID);
         if (shape == null) {
             return null;
         }
 
         final Point2D location = shape.getLocationXY();
-        return new double[]{location.getX(), location.getY()};
+        NFastArrayList<Double> locationArray = new NFastArrayList<>();
+        locationArray.add(location.getX());
+        locationArray.add(location.getY());
+        return locationArray;
     }
 
-    public double[] getAbsoluteLocation(String UUID) {
+    public NFastArrayList<Double> getAbsoluteLocation(String UUID) {
         JsWiresShape shape = getWiresShape(UUID);
         if (shape == null) {
             return null;
         }
-
-        final Point2D locaition = shape.getAbsoluteLocation();
-        return new double[]{locaition.getX(), locaition.getY()};
+        final Point2D location = shape.getAbsoluteLocation();
+        NFastArrayList<Double> locationArray = new NFastArrayList<>();
+        locationArray.add(location.getX());
+        locationArray.add(location.getY());
+        return locationArray;
     }
 
-    public double[] getDimensions(String UUID) {
+    public NFastArrayList<Double> getDimensions(String UUID) {
         JsWiresShape shape = getWiresShape(UUID);
         if (shape == null) {
             return null;
         }
         final Point2D dimensions = shape.getBounds();
-        return new double[]{dimensions.getX(), dimensions.getY()};
+        NFastArrayList<Double> dimensionsArray = new NFastArrayList<>();
+        dimensionsArray.add(dimensions.getX());
+        dimensionsArray.add(dimensions.getY());
+        return dimensionsArray;
     }
 
-    public String[] getNodeIds() {
-            WiresShape[] shapes = getWiresManager().getShapes();
-            String[] ids = new String[shapes.length];
-            for (int i = 0; i < shapes.length; i++) {
-                WiresShape shape = shapes[i];
-                ids[i] = shape.getID();
+    public NFastArrayList<String> getNodeIds() {
+        WiresShape[] shapes = getWiresManager().getShapes();
+        NFastArrayList<String> ids = new NFastArrayList<>();
+        for (int i = 0; i < shapes.length; i++) {
+            WiresShape shape = shapes[i];
+            ids.add(shape.getID());
         }
-            return ids;
+        return ids;
     }
 }
