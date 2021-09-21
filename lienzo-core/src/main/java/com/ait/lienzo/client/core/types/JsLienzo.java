@@ -227,22 +227,42 @@ public class JsLienzo implements Attributable {
         shape.setBorderColor(borderColor);
     }
 
-    public double[] getBoundingBox(String UUID) {
+    public double[] getLocation(String UUID) {
         JsWiresShape shape = getWiresShape(UUID);
         if (shape == null) {
             return null;
         }
 
-        final BoundingBox bounds = shape.getBounds();
-        return new double[]{bounds.getMinX(), bounds.getMinY(), bounds.getMaxX(), bounds.getMaxY()};
+        final Point2D location = shape.getLocationXY();
+        return new double[]{location.getX(), location.getY()};
     }
 
-    public double[] getAbsoluteBoundingBox(String UUID) {
+    public double[] getAbsoluteLocation(String UUID) {
         JsWiresShape shape = getWiresShape(UUID);
         if (shape == null) {
             return null;
         }
-        final BoundingBox bounds = shape.getAbsoluteLocation();
-        return new double[]{bounds.getMinX(), bounds.getMinY(), bounds.getMaxX(), bounds.getMaxY()};
+
+        final Point2D locaition = shape.getAbsoluteLocation();
+        return new double[]{locaition.getX(), locaition.getY()};
+    }
+
+    public double[] getDimensions(String UUID) {
+        JsWiresShape shape = getWiresShape(UUID);
+        if (shape == null) {
+            return null;
+        }
+        final Point2D dimensions = shape.getBounds();
+        return new double[]{dimensions.getX(), dimensions.getY()};
+    }
+
+    public String[] getNodeIds() {
+            WiresShape[] shapes = getWiresManager().getShapes();
+            String[] ids = new String[shapes.length];
+            for (int i = 0; i < shapes.length; i++) {
+                WiresShape shape = shapes[i];
+                ids[i] = shape.getID();
+        }
+            return ids;
     }
 }

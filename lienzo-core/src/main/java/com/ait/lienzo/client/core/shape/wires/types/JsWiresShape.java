@@ -16,6 +16,8 @@
 
 package com.ait.lienzo.client.core.shape.wires.types;
 
+import java.awt.Point;
+
 import com.ait.lienzo.client.core.shape.Group;
 import com.ait.lienzo.client.core.shape.IContainer;
 import com.ait.lienzo.client.core.shape.IPrimitive;
@@ -273,24 +275,21 @@ public class JsWiresShape {
         return false;
     }
 
-    public BoundingBox getBounds() {
-        double shapeX = this.getLocation().getX();
-        double shapeY = this.getLocation().getY();
+    public Point2D getBounds() {
         double width = this.getBoundingBox().getWidth();
         double height = this.getBoundingBox().getHeight();
-        final BoundingBox boundingBox = BoundingBox.fromDoubles(shapeX, shapeY, shapeX + width, shapeY + height);
-        return boundingBox;
+        return new Point2D(width, height);
     }
 
-    public BoundingBox getAbsoluteLocation() {
-        //   asGroup().getAbsoluteLocation()
+    public Point2D getLocationXY() {
+        double shapeX = this.getLocation().getX();
+        double shapeY = this.getLocation().getY();
+        return new Point2D(shapeX, shapeY);
+    }
 
-        double shapeX = this.getComputedLocation().getX();
-        double shapeY = this.getComputedLocation().getY();
-        double width = this.getBoundingBox().getWidth();
-        double height = this.getBoundingBox().getHeight();
-        final BoundingBox boundingBox = BoundingBox.fromDoubles(shapeX, shapeY, shapeX + width, shapeY + height);
-        return boundingBox;
+    public Point2D getAbsoluteLocation() {
+        final Point2D absoluteLocation = asGroup().getAbsoluteLocation();
+        return absoluteLocation;
     }
 
     public void addBadge(String badgeString) {
