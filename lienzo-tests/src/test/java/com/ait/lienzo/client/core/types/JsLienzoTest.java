@@ -17,6 +17,7 @@ package com.ait.lienzo.client.core.types;
 
 import com.ait.lienzo.client.core.shape.wires.types.JsWiresShape;
 import com.ait.lienzo.test.LienzoMockitoTestRunner;
+import com.ait.lienzo.tools.client.collection.NFastArrayList;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -76,30 +77,38 @@ public class JsLienzoTest {
     }
 
     @Test
-    public void testGetBoundingBox() {
+    public void testGetLocation() {
         when(jsLienzo.getWiresShape(anyString())).thenReturn(jsWiresShape);
-        BoundingBox box = BoundingBox.fromDoubles(100.0, 100.0, 200.0, 200.0);
-        when(jsWiresShape.getBounds()).thenReturn(box);
-        doCallRealMethod().when(jsLienzo).getBoundingBox(any());
+        Point2D location = new Point2D(100.0, 100.0);
+        when(jsWiresShape.getLocationXY()).thenReturn(location);
+        doCallRealMethod().when(jsLienzo).getLocation(any());
 
-        double[] box2 = jsLienzo.getBoundingBox("someID");
-        assertEquals(box.getMinX(), box2[0], 0);
-        assertEquals(box.getMinY(), box2[1], 0);
-        assertEquals(box.getMaxX(), box2[2], 0);
-        assertEquals(box.getMaxY(), box2[3], 0);
+        NFastArrayList<Double> location2 = jsLienzo.getLocation("someID");
+        assertEquals(location.getX(), location2.get(0), 0);
+        assertEquals(location.getY(), location2.get(1), 0);
     }
 
     @Test
-    public void testGetAbsoluteBoundingBox() {
+    public void testGetAbsoluteLocation() {
         when(jsLienzo.getWiresShape(anyString())).thenReturn(jsWiresShape);
-        BoundingBox box = BoundingBox.fromDoubles(100.0, 100.0, 200.0, 200.0);
-        when(jsWiresShape.getBounds()).thenReturn(box);
-        doCallRealMethod().when(jsLienzo).getBoundingBox(any());
+        Point2D location = new Point2D(100.0, 100.0);
+        when(jsWiresShape.getAbsoluteLocation()).thenReturn(location);
+        doCallRealMethod().when(jsLienzo).getAbsoluteLocation(any());
 
-        double[] box2 = jsLienzo.getBoundingBox("someID");
-        assertEquals(box.getMinX(), box2[0], 0);
-        assertEquals(box.getMinY(), box2[1], 0);
-        assertEquals(box.getMaxX(), box2[2], 0);
-        assertEquals(box.getMaxY(), box2[3], 0);
+        NFastArrayList<Double> location2 = jsLienzo.getAbsoluteLocation("someID");
+        assertEquals(location.getX(), location2.get(0), 0);
+        assertEquals(location.getY(), location2.get(1), 0);
+    }
+
+    @Test
+    public void testGetDimensions() {
+        when(jsLienzo.getWiresShape(anyString())).thenReturn(jsWiresShape);
+        Point2D dimensions = new Point2D(100.0, 100.0);
+        when(jsWiresShape.getBounds()).thenReturn(dimensions);
+        doCallRealMethod().when(jsLienzo).getDimensions(any());
+
+        NFastArrayList<Double> dimensions2 = jsLienzo.getDimensions("someID");
+        assertEquals(dimensions.getX(), dimensions2.get(0), 0);
+        assertEquals(dimensions.getY(), dimensions2.get(1), 0);
     }
 }
