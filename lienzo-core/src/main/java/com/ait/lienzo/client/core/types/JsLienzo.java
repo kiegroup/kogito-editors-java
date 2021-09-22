@@ -33,7 +33,7 @@ import elemental2.dom.HTMLCanvasElement;
 import jsinterop.annotations.JsType;
 
 @JsType
-public class JsLienzo implements Attributable {
+public class JsLienzo {
 
     LienzoPanel panel;
     Layer layer;
@@ -138,61 +138,10 @@ public class JsLienzo implements Attributable {
         for (WiresShape shape : shapes) {
             if (id.equals(shape.getID())) {
                 final JsWiresShape jsWiresShape = new JsWiresShape(shape);
-                jsWiresShape.setAttributable(this);
                 return jsWiresShape;
             }
         }
         return null;
-    }
-
-    public void batchChangeColors(String background, String borderColor) {
-        WiresShape[] shapes = getWiresManager().getShapes();
-        for (WiresShape shape : shapes) {
-            final JsWiresShape jsWiresShape = new JsWiresShape(shape);
-            jsWiresShape.setBackgroundColor("blue");
-            jsWiresShape.setBorderColor("red");
-        }
-    }
-
-    public Group addBadge(String nodeUUID, String badgeString) {
-        JsWiresShape shape = getWiresShape(nodeUUID);
-        if (shape == null) {
-            return null;
-        }
-
-        double shapeX = shape.getLocation().getX();
-        double shapeY = shape.getLocation().getY();
-        double width = shape.getBoundingBox().getWidth();
-        double height = shape.getBoundingBox().getHeight();
-
-        int midX = (int) (shapeX + (width / 2));
-        int midY = (int) (shapeY + height) + 20;
-
-        final Group badge = new Group();
-        badge.setListening(false);
-        badge.setAlpha(0);
-        final Text text = new Text(badgeString, "arial", 12);
-
-        badge.add(text);
-        final BoundingBox bb = text.getBoundingBox();
-        Rectangle decorator = new Rectangle(bb.getWidth() + 10, bb.getHeight() + 10);
-        midX = (midX - ((int) (bb.getWidth() / 2)));
-
-        String x = midX + "";
-        String y = midY + "";
-
-        decorator.setX(bb.getX() - 5);
-        decorator.setY(bb.getY() - 5);
-        decorator.setFillAlpha(0);
-        decorator.setStrokeColor("black");
-        decorator.setStrokeWidth(2);
-        decorator.setCornerRadius(5);
-        badge.add(decorator);
-        badge.setX(Integer.parseInt(x));
-        badge.setY(Integer.parseInt(y));
-        add(badge);
-        animations().alpha(badge, 1, 1500);
-        return badge;
     }
 
     public String getBackgroundColor(String UUID) {

@@ -16,8 +16,6 @@
 
 package com.ait.lienzo.client.core.shape.wires.types;
 
-import java.awt.Point;
-
 import com.ait.lienzo.client.core.shape.Group;
 import com.ait.lienzo.client.core.shape.IContainer;
 import com.ait.lienzo.client.core.shape.IPrimitive;
@@ -28,20 +26,16 @@ import com.ait.lienzo.client.core.shape.wires.WiresContainer;
 import com.ait.lienzo.client.core.shape.wires.WiresLayer;
 import com.ait.lienzo.client.core.shape.wires.WiresMagnet;
 import com.ait.lienzo.client.core.shape.wires.WiresShape;
-import com.ait.lienzo.client.core.types.Attributable;
 import com.ait.lienzo.client.core.types.BoundingBox;
 import com.ait.lienzo.client.core.types.Point2D;
 import com.ait.lienzo.tools.client.collection.NFastArrayList;
 import elemental2.core.JsArray;
-import elemental2.dom.DomGlobal;
 import jsinterop.annotations.JsType;
 
 @JsType
 public class JsWiresShape {
 
     protected WiresShape shape;
-
-    private Attributable attributable;
 
     public JsWiresShape(WiresShape shape) {
         this.shape = shape;
@@ -146,7 +140,6 @@ public class JsWiresShape {
             }
 
             String tag = (String) userData;
-            DomGlobal.console.log("Tag is:" + tag);
             switch (tag) {
                 case "?shapeType=BORDER&renderType=STROKE":
                     shape.setStrokeColor(borderColor);
@@ -224,8 +217,6 @@ public class JsWiresShape {
 
                 String tag = (String) userData;
 
-                DomGlobal.console.log("Tag is:" + tag);
-
                 if (tag.equals("?shapeType=BACKGROUND")) {
                     shape.setFillColor(backgroundColor);
                     draw();
@@ -234,6 +225,7 @@ public class JsWiresShape {
         } else {
             Shape shape = getBorderColorShape();
             shape.setFillColor(backgroundColor);
+            draw();
         }
     }
 
@@ -290,15 +282,5 @@ public class JsWiresShape {
     public Point2D getAbsoluteLocation() {
         final Point2D absoluteLocation = asGroup().getAbsoluteLocation();
         return absoluteLocation;
-    }
-
-    public void addBadge(String badgeString) {
-        if (attributable != null) {
-            attributable.addBadge(this.getID(), badgeString);
-        }
-    }
-
-    public void setAttributable(Attributable attributable) {
-        this.attributable = attributable;
     }
 }
