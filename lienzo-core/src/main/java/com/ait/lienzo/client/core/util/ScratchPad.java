@@ -19,6 +19,7 @@ package com.ait.lienzo.client.core.util;
 import com.ait.lienzo.client.core.Context2D;
 import com.ait.lienzo.client.core.config.LienzoCore;
 import com.ait.lienzo.shared.core.types.DataURLType;
+import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLCanvasElement;
 import elemental2.dom.HTMLImageElement;
 
@@ -38,7 +39,7 @@ public final class ScratchPad {
         m_high = high;
 
         if (LienzoCore.IS_CANVAS_SUPPORTED) {
-            m_element = LienzoCore.createCanvas();
+            m_element = (HTMLCanvasElement) DomGlobal.document.createElement("canvas");;
 
             m_element.width = wide;
 
