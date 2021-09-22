@@ -150,10 +150,12 @@ public class DMNDiagramEditor extends AbstractDMNDiagramEditor {
 
     private void initLienzoType() {
         LienzoCanvas canvas = (LienzoCanvas) stunnerEditor.getCanvasHandler().getCanvas();
-        LienzoPanel panel = (LienzoPanel) canvas.getView().getPanel();
-        LienzoBoundsPanel lienzoPanel = panel.getView();
-        JsLienzo jsLienzo = new JsLienzo(lienzoPanel, lienzoPanel.getLayer());
-        setupJsLienzoTypeNative(jsLienzo);
+        if (canvas != null) {
+            LienzoPanel panel = (LienzoPanel) canvas.getView().getPanel();
+            LienzoBoundsPanel lienzoPanel = panel.getView();
+            JsLienzo jsLienzo = new JsLienzo(lienzoPanel, lienzoPanel.getLayer());
+            setupJsLienzoTypeNative(jsLienzo);
+        }
     }
 
     private static void setupJsLienzoTypeNative(JsLienzo jsLienzo) {
