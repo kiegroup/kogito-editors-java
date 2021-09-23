@@ -24,9 +24,10 @@ export enum DMNSimpleType {
   DATE_TIME = "date and time",
   ANY = "Any",
   DATE = "date",
-  CONTEXT = "context"
+  CONTEXT = "context",
+  UNDEFINED = "<Undefined>"
 }
-//TODO: TO be checked (and extend to simple types ?)
+/* It refers to "JavaBackedType" class determineTypeFromClass() method */
 export const JAVA_TO_DMN_MAP = {
   /* Number types */
   AtomicInteger: DMNSimpleType.NUMBER,
@@ -34,29 +35,45 @@ export const JAVA_TO_DMN_MAP = {
   BigDecimal: DMNSimpleType.NUMBER,
   BigInteger: DMNSimpleType.NUMBER,
   Byte: DMNSimpleType.NUMBER,
+  byte: DMNSimpleType.NUMBER,
   Double: DMNSimpleType.NUMBER,
+  double: DMNSimpleType.NUMBER,
   DoubleAccumulator: DMNSimpleType.NUMBER,
   DoubleAdder: DMNSimpleType.NUMBER,
   Float: DMNSimpleType.NUMBER,
+  float: DMNSimpleType.NUMBER,
   Integer: DMNSimpleType.NUMBER,
+  int: DMNSimpleType.NUMBER,
   Long: DMNSimpleType.NUMBER,
+  long: DMNSimpleType.NUMBER,
   LongAccumulator: DMNSimpleType.NUMBER,
   LongAdder: DMNSimpleType.NUMBER,
   Number: DMNSimpleType.NUMBER,
   Short: DMNSimpleType.NUMBER,
+  short: DMNSimpleType.NUMBER,
   Striped64: DMNSimpleType.NUMBER,
   /* String types */
   Character: DMNSimpleType.STRING,
+  char: DMNSimpleType.STRING,
   String: DMNSimpleType.STRING,
+  /* Date types */
   LocalDate: DMNSimpleType.DATE,
+  /* Time types */
   LocalTime: DMNSimpleType.TIME,
   OffsetTime: DMNSimpleType.TIME,
+  /* DateTime types */
   ZonedDateTime: DMNSimpleType.DATE_TIME,
   OffsetDateTime: DMNSimpleType.DATE_TIME,
   LocalDateTime: DMNSimpleType.DATE_TIME,
   Date: DMNSimpleType.DATE_TIME,
+  /* Duration types */
   Duration: DMNSimpleType.DURATION_DAYS_TIME,
-  ChronoPeriod: DMNSimpleType.DURATION_YEAR_MONTH,
+  ChronoPeriod: DMNSimpleType.DURATION_DAYS_TIME,
   /* Boolean */
   Boolean: DMNSimpleType.BOOLEAN,
+  /* Context */
+  Map: DMNSimpleType.CONTEXT,
+  LinkedHashMap: DMNSimpleType.CONTEXT,
+  HashMap: DMNSimpleType.CONTEXT,
+  TreeMap: DMNSimpleType.CONTEXT
 };

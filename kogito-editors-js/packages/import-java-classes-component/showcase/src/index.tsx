@@ -50,10 +50,12 @@ const Showcase: React.FunctionComponent = () => {
     bookClassFieldsList.set("author", "org.kie.test.kogito.Author");
     bookClassFieldsList.set("title", "java.lang.String");
     bookClassFieldsList.set("year", "java.lang.Integer");
+    bookClassFieldsList.set("boom", "org.kie.test.kogito.Boom");
     const boomClassFieldsList = new Map<string, string>();
     boomClassFieldsList.set("time", "java.util.Date");
     boomClassFieldsList.set("big", "java.lang.Boolean");
     boomClassFieldsList.set("color", "java.lang.String");
+    boomClassFieldsList.set("countdown", "java.time.Duration");
 
     /* Temporary mocks managing */
     if (className === "org.kie.test.kogito.Book") {

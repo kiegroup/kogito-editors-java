@@ -18,17 +18,21 @@ import { DMNSimpleType, JAVA_TO_DMN_MAP } from "./DMNSimpleType";
 import { JavaClass } from "./JavaClass";
 
 export class JavaClassField {
+  /* Field Name */
   public name: string;
+  /* The Java Type of the field (eg. java.lang.String OR com.mypackace.Test) */
   public type: string;
+  /* The DMN Type reference */
   public dmnTypeRef: DMNSimpleType | JavaClass;
 
   constructor(name: string, type: string) {
     this.name = name;
     this.type = type;
-    this.dmnTypeRef = (JAVA_TO_DMN_MAP as any)[this.getSimpleName()!] || DMNSimpleType.ANY;
+    this.dmnTypeRef = (JAVA_TO_DMN_MAP as any)[this.getJavaSimpleNameType()!] || DMNSimpleType.ANY;
   }
 
-  getSimpleName() {
+  /* It returns the Java Type without the package (eg. com.mypackage.Test -> Test) */
+  getJavaSimpleNameType() {
     return this.type.split(".").pop();
   }
 
