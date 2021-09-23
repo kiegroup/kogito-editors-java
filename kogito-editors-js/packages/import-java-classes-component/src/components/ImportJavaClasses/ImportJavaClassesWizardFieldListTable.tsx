@@ -53,7 +53,7 @@ export const ImportJavaClassesWizardFieldListTable: React.FunctionComponent<Impo
       }
     }
     const fetchButton = (field: JavaClassField) => {
-      return <Button className={"fetch-button"} onClick={() => onFetchButtonClick(field.name)} variant="primary" isSmall>Fetch {field.getSimpleName()} class</Button>;
+      return <Button className={"fetch-button"} onClick={() => onFetchButtonClick(field.name)} variant="primary" isSmall>Fetch {field.getJavaSimpleNameType()} class</Button>;
     }
 
     let rowIndex = -1;
@@ -92,7 +92,7 @@ export const ImportJavaClassesWizardFieldListTable: React.FunctionComponent<Impo
                       <Td key={`${rowIndex}_0`} />
                       <Td key={`${rowIndex}_${field.name}`}>
                         <ExpandableRowContent>
-                          <span>{field.getSimpleName()}</span>
+                          <span>{field.name}</span>
                           <span className={"dmn-type-name"}>{decorateWithRoundBrackets(field.dmnTypeRef.toString())}</span>
                           {!readOnly && isFetchable(field) ? fetchButton(field) : null}
                         </ExpandableRowContent>
