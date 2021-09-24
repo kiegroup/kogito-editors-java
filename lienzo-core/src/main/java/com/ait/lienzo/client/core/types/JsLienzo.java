@@ -18,17 +18,15 @@ package com.ait.lienzo.client.core.types;
 import com.ait.lienzo.client.core.Context2D;
 import com.ait.lienzo.client.core.NativeContext2D;
 import com.ait.lienzo.client.core.shape.ContainerNode;
-import com.ait.lienzo.client.core.shape.Group;
 import com.ait.lienzo.client.core.shape.IPrimitive;
 import com.ait.lienzo.client.core.shape.Layer;
-import com.ait.lienzo.client.core.shape.Rectangle;
-import com.ait.lienzo.client.core.shape.Text;
 import com.ait.lienzo.client.core.shape.Viewport;
 import com.ait.lienzo.client.core.shape.wires.WiresManager;
 import com.ait.lienzo.client.core.shape.wires.WiresShape;
 import com.ait.lienzo.client.core.shape.wires.types.JsWiresShape;
 import com.ait.lienzo.client.widget.panel.LienzoPanel;
 import com.ait.lienzo.tools.client.collection.NFastArrayList;
+import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLCanvasElement;
 import jsinterop.annotations.JsType;
 
@@ -196,9 +194,21 @@ public class JsLienzo {
         }
         final Point2D location = shape.getAbsoluteLocation();
         NFastArrayList<Double> locationArray = new NFastArrayList<>();
+        calculatePanelOffset(location);
         locationArray.add(location.getX());
         locationArray.add(location.getY());
+
         return locationArray;
+    }
+
+    protected void calculatePanelOffset(Point2D location) {
+        final elemental2.dom.HTMLElement editorPanel = (elemental2.dom.HTMLElement) DomGlobal.document.getElementById("canvasPanel");
+        if (editorPanel != null) {
+            final double canvasX = location.getX() + editorPanel.offsetLeft;
+            final double canvasY = location.getY() + editorPanel.offsetTop;
+            location.setX(canvasX);
+            location.setY(canvasY);
+        }
     }
 
     public NFastArrayList<Double> getDimensions(String UUID) {

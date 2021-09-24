@@ -224,8 +224,10 @@ public class JsWiresShape {
             }
         } else {
             Shape shape = getBorderColorShape();
-            shape.setFillColor(backgroundColor);
-            draw();
+            if (shape != null) {
+                shape.setFillColor(backgroundColor);
+                draw();
+            }
         }
     }
 

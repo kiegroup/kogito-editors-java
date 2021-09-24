@@ -26,6 +26,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doCallRealMethod;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -91,6 +92,8 @@ public class JsLienzoTest {
     @Test
     public void testGetAbsoluteLocation() {
         when(jsLienzo.getWiresShape(anyString())).thenReturn(jsWiresShape);
+        doNothing().when(jsLienzo).calculatePanelOffset(any());
+
         Point2D location = new Point2D(100.0, 100.0);
         when(jsWiresShape.getAbsoluteLocation()).thenReturn(location);
         doCallRealMethod().when(jsLienzo).getAbsoluteLocation(any());
