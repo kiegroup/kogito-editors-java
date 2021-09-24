@@ -61,7 +61,12 @@ export const ImportJavaClassesWizard: React.FunctionComponent<ImportJavaClassesW
     },
     {
       name: i18n.modalWizard.secondStep.stepName,
-      component: <ImportJavaClassesWizardSecondStep selectedJavaClasses={selectedJavaClasses} />,
+      component: (
+        <ImportJavaClassesWizardSecondStep
+          selectedJavaClasses={selectedJavaClasses}
+          onSelectedJavaClassesUpdated={updateSelectedClasses}
+        />
+      ),
       enableNext: false,
       canJumpTo: selectedJavaClasses.length > 0,
     },

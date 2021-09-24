@@ -21,7 +21,7 @@ declare global {
     renderImportJavaClasses: (selector: string, buttonDisabledStatus: boolean, buttonTooltipMessage?: string) => void;
     envelopeMock: {
       lspGetClassServiceMocked: (value: string) => string[];
-      lspGetClassFieldsServiceMocked: (className: string) => Map<string, string>;
+      lspGetClassFieldsServiceMocked: (className: string) => Promise<Map<string, string>>;
     };
   }
 }
