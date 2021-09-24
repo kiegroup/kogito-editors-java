@@ -25,8 +25,4 @@ export class JavaClass {
     this.fields = fields;
   }
 
-  getSimpleName() {
-    return this.name.split(".").pop();
-  }
-
 }

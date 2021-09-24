@@ -44,7 +44,7 @@ const Showcase: React.FunctionComponent = () => {
       return [];
     }
   };
-  const lspGetClassFieldsServiceMocked = (className: string) => {
+  const lspGetClassFieldsServiceMocked = async (className: string) => {
     /* Mocked data retrieved from LSP Service */
     const bookClassFieldsList = new Map<string, string>();
     bookClassFieldsList.set("author", "org.kie.test.kogito.Author");
@@ -56,16 +56,25 @@ const Showcase: React.FunctionComponent = () => {
     boomClassFieldsList.set("big", "java.lang.Boolean");
     boomClassFieldsList.set("color", "java.lang.String");
     boomClassFieldsList.set("countdown", "java.time.Duration");
+    const authorClassFieldsList = new Map<string, string>();
+    authorClassFieldsList.set("age", "int");
+    authorClassFieldsList.set("name", "java.lang.String");
+
+    await delay();
 
     /* Temporary mocks managing */
     if (className === "org.kie.test.kogito.Book") {
       return bookClassFieldsList;
     } else if (className === "org.kie.test.kogito.Boom") {
       return boomClassFieldsList;
+    } else if (className === "org.kie.test.kogito.Author") {
+      return authorClassFieldsList;
     } else {
       return new Map<string, string>();
     }
   };
+
+  const delay = () => new Promise(res => setTimeout(res, Math.random() * (3000 - 1000) + 1000));
 
   window.envelopeMock = {
     lspGetClassServiceMocked: (value: string) => lspGetClassServiceMocked(value),
