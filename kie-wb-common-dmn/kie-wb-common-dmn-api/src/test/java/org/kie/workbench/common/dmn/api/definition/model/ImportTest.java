@@ -26,6 +26,7 @@ import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 import static org.kie.workbench.common.stunner.core.util.StringUtils.isEmpty;
 import static org.mockito.Mockito.mock;
 
@@ -204,5 +205,55 @@ public class ImportTest {
         final String uuid = import1.getUuid();
 
         assertFalse(isEmpty(uuid));
+    }
+
+    @Test
+    public void testEqualsNotIgnoringId_DifferentId() {
+        final Id id1 = new Id();
+        final Id id2 = new Id();
+        final Import import1 = new Import();
+        final Import import2 = new Import();
+
+        import1.setId(id1);
+        import2.setId(id2);
+
+        assertFalse(import1.equals(import2, false));
+    }
+
+    @Test
+    public void testEqualsNotIgnoringId_SameId() {
+        final Id same = new Id();
+        final Import import1 = new Import();
+        final Import import2 = new Import();
+
+        import1.setId(same);
+        import2.setId(same);
+
+        assertTrue(import1.equals(import2, false));
+    }
+
+    @Test
+    public void testEqualsIgnoringId_DifferentId() {
+        final Id id1 = new Id();
+        final Id id2 = new Id();
+        final Import import1 = new Import();
+        final Import import2 = new Import();
+
+        import1.setId(id1);
+        import2.setId(id2);
+
+        assertTrue(import1.equals(import2, true));
+    }
+
+    @Test
+    public void testEqualsIgnoringId_SameId() {
+        final Id same = new Id();
+        final Import import1 = new Import();
+        final Import import2 = new Import();
+
+        import1.setId(same);
+        import2.setId(same);
+
+        assertTrue(import1.equals(import2, true));
     }
 }

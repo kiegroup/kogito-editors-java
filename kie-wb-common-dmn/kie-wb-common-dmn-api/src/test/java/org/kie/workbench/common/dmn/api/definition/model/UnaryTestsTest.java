@@ -23,8 +23,10 @@ import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.Text;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.kie.workbench.common.dmn.api.definition.model.ConstraintType.NONE;
 
 public class UnaryTestsTest {
@@ -52,5 +54,55 @@ public class UnaryTestsTest {
         assertEquals(TEXT_VALUE, target.getText().getValue());
         assertEquals(EXPRESSION_LANGUAGE, target.getExpressionLanguage().getValue());
         assertEquals(NONE, target.getConstraintType());
+    }
+
+    @Test
+    public void testEqualsNotIgnoringId_DifferentId() {
+        final Id id1 = new Id();
+        final Id id2 = new Id();
+        final UnaryTests unaryTests1 = new UnaryTests();
+        final UnaryTests unaryTests2 = new UnaryTests();
+
+        unaryTests1.setId(id1);
+        unaryTests2.setId(id2);
+
+        assertFalse(unaryTests1.equals(unaryTests2, false));
+    }
+
+    @Test
+    public void testEqualsNotIgnoringId_SameId() {
+        final Id same = new Id();
+        final UnaryTests unaryTests1 = new UnaryTests();
+        final UnaryTests unaryTests2 = new UnaryTests();
+
+        unaryTests1.setId(same);
+        unaryTests2.setId(same);
+
+        assertTrue(unaryTests1.equals(unaryTests2, false));
+    }
+
+    @Test
+    public void testEqualsIgnoringId_DifferentId() {
+        final Id id1 = new Id();
+        final Id id2 = new Id();
+        final UnaryTests unaryTests1 = new UnaryTests();
+        final UnaryTests unaryTests2 = new UnaryTests();
+
+        unaryTests1.setId(id1);
+        unaryTests2.setId(id2);
+
+        assertTrue(unaryTests1.equals(unaryTests2, true));
+    }
+
+    @Test
+    public void testEqualsIgnoringId_SameId() {
+        final Id same = new Id();
+        final UnaryTests unaryTests1 = new UnaryTests();
+        final UnaryTests unaryTests2 = new UnaryTests();
+
+        unaryTests1.setId(same);
+        unaryTests2.setId(same);
+
+        assertTrue(unaryTests1.equals(unaryTests2, true));
     }
 }

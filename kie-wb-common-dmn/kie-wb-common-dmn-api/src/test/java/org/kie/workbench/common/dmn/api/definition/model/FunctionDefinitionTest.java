@@ -31,11 +31,15 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -117,5 +121,87 @@ public class FunctionDefinitionTest {
     @Test
     public void testKindFromValueWithDefault() {
         assertEquals(Kind.FEEL, Kind.fromValue("Something"));
+    }
+
+    @Test
+    public void testEqualsNotIgnoringId_DifferentId() {
+        final Id id1 = new Id();
+        final Id id2 = new Id();
+        final FunctionDefinition functionDefinition1 = new FunctionDefinition();
+        final FunctionDefinition functionDefinition2 = new FunctionDefinition();
+
+        functionDefinition1.setId(id1);
+        functionDefinition2.setId(id2);
+
+        assertFalse(functionDefinition1.equals(functionDefinition2, false));
+    }
+
+    @Test
+    public void testEqualsNotIgnoringId_SameId() {
+        final Id same = new Id();
+        final FunctionDefinition functionDefinition1 = new FunctionDefinition();
+        final FunctionDefinition functionDefinition2 = new FunctionDefinition();
+        final InformationItem formalParameter = mock(InformationItem.class);
+        final Expression expression1 = mock(Expression.class);
+        final Expression expression2 = mock(Expression.class);
+
+        when(expression1.equals(expression2, false)).thenReturn(true);
+
+        functionDefinition1.setId(same);
+        functionDefinition1.setExpression(expression1);
+        functionDefinition1.getFormalParameter().add(formalParameter);
+
+        functionDefinition2.setId(same);
+        functionDefinition2.setExpression(expression2);
+        functionDefinition2.getFormalParameter().add(formalParameter);
+
+        final boolean result = functionDefinition1.equals(functionDefinition2, false);
+
+        assertTrue(result);
+
+        verify(formalParameter, never()).equals(formalParameter, true);
+        verify(expression1, never()).equals(expression2, true);
+    }
+
+    @Test
+    public void testEqualsIgnoringId_DifferentId() {
+        final Id id1 = new Id();
+        final Id id2 = new Id();
+        testEqualsIgnoringId(id1, id2);
+    }
+
+    @Test
+    public void testEqualsIgnoringId_SameId() {
+        final Id same = new Id();
+        testEqualsIgnoringId(same, same);
+    }
+
+    private void testEqualsIgnoringId(final Id id1, final Id id2) {
+        final FunctionDefinition functionDefinition1 = new FunctionDefinition();
+        final FunctionDefinition functionDefinition2 = new FunctionDefinition();
+        final InformationItem formalParameter = mock(InformationItem.class);
+        final Expression expression1 = mock(Expression.class);
+        final Expression expression2 = mock(Expression.class);
+
+        when(formalParameter.equals(formalParameter, true)).thenReturn(true);
+        when(expression1.equals(expression2, true)).thenReturn(true);
+
+        functionDefinition1.setId(id1);
+        functionDefinition1.setExpression(expression1);
+        functionDefinition1.getFormalParameter().add(formalParameter);
+
+        functionDefinition2.setId(id2);
+        functionDefinition2.setExpression(expression2);
+        functionDefinition2.getFormalParameter().add(formalParameter);
+
+        final boolean result = functionDefinition1.equals(functionDefinition2, true);
+
+        assertTrue(result);
+
+        verify(formalParameter).equals(formalParameter, true);
+        verify(expression1).equals(expression2, true);
+
+        verify(formalParameter, never()).equals(formalParameter, false);
+        verify(expression1, never()).equals(expression2, false);
     }
 }

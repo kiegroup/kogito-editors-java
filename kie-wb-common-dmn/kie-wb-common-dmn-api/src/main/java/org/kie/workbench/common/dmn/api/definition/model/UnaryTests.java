@@ -50,7 +50,8 @@ import static org.kie.workbench.common.forms.adf.engine.shared.formGeneration.pr
         startElement = "id")
 public class UnaryTests extends DMNElement implements IsUnaryTests,
                                                       HasText,
-                                                      DomainObject {
+                                                      DomainObject,
+                                                      HasEqualsIgnoreId {
 
     @Category
     private static final String stunnerCategory = Categories.DOMAIN_OBJECTS;
@@ -153,7 +154,12 @@ public class UnaryTests extends DMNElement implements IsUnaryTests,
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(final Object other) {
+        return equals(other, false);
+    }
+
+    @Override
+    public boolean equals(final Object o, final boolean ignoreId) {
         if (this == o) {
             return true;
         }
@@ -163,8 +169,10 @@ public class UnaryTests extends DMNElement implements IsUnaryTests,
 
         final UnaryTests that = (UnaryTests) o;
 
-        if (id != null ? !id.equals(that.id) : that.id != null) {
-            return false;
+        if (!ignoreId) {
+            if (id != null ? !id.equals(that.id) : that.id != null) {
+                return false;
+            }
         }
         if (description != null ? !description.equals(that.description) : that.description != null) {
             return false;

@@ -30,11 +30,15 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -91,6 +95,116 @@ public class InputClauseTest {
         assertNotEquals(UNARY_ID, target.getInputValues().getId().getValue());
         assertEquals(TEXT, target.getInputValues().getText().getValue());
         assertEquals(ConstraintType.ENUMERATION, target.getInputValues().getConstraintType());
+    }
+
+    @Test
+    public void testEqualsNotIgnoringId_WithDifferentId() {
+        final Id id1 = new Id();
+        final Id id2 = new Id();
+        final InputClause inputClause1 = new InputClause();
+        final InputClause inputClause2 = new InputClause();
+
+        inputClause1.setId(id1);
+        inputClause2.setId(id2);
+
+        assertFalse(inputClause1.equals(inputClause2, false));
+    }
+
+    @Test
+    public void testEqualsNotIgnoringId_WithSameId() {
+        final Id same = new Id();
+        final InputClause inputClause1 = new InputClause();
+        final InputClause inputClause2 = new InputClause();
+        final InputClauseUnaryTests value1 = mock(InputClauseUnaryTests.class);
+        final InputClauseUnaryTests value2 = mock(InputClauseUnaryTests.class);
+        final InputClauseLiteralExpression expression1 = mock(InputClauseLiteralExpression.class);
+        final InputClauseLiteralExpression expression2 = mock(InputClauseLiteralExpression.class);
+
+        when(value1.equals(value2, false)).thenReturn(true);
+        when(expression1.equals(expression2, false)).thenReturn(true);
+
+        inputClause1.setId(same);
+        inputClause1.setInputValues(value1);
+        inputClause1.setInputExpression(expression1);
+
+        inputClause2.setId(same);
+        inputClause2.setInputValues(value2);
+        inputClause2.setInputExpression(expression2);
+
+        final boolean result = inputClause1.equals(inputClause2, false);
+
+        assertTrue(result);
+
+        verify(value1).equals(value2, false);
+        verify(expression1).equals(expression2, false);
+
+        verify(value1, never()).equals(value2, true);
+        verify(expression1, never()).equals(expression2, true);
+    }
+
+    @Test
+    public void testEqualsIgnoringId_DifferentId() {
+        final Id id1 = new Id();
+        final Id id2 = new Id();
+        final InputClause inputClause1 = new InputClause();
+        final InputClause inputClause2 = new InputClause();
+        final InputClauseUnaryTests value1 = mock(InputClauseUnaryTests.class);
+        final InputClauseUnaryTests value2 = mock(InputClauseUnaryTests.class);
+        final InputClauseLiteralExpression expression1 = mock(InputClauseLiteralExpression.class);
+        final InputClauseLiteralExpression expression2 = mock(InputClauseLiteralExpression.class);
+
+        when(value1.equals(value2, true)).thenReturn(true);
+        when(expression1.equals(expression2, true)).thenReturn(true);
+
+        inputClause1.setId(id1);
+        inputClause1.setInputValues(value1);
+        inputClause1.setInputExpression(expression1);
+
+        inputClause2.setId(id2);
+        inputClause2.setInputValues(value2);
+        inputClause2.setInputExpression(expression2);
+
+        final boolean result = inputClause1.equals(inputClause2, true);
+
+        assertTrue(result);
+
+        verify(value1).equals(value2, true);
+        verify(expression1).equals(expression2, true);
+
+        verify(value1, never()).equals(value2, false);
+        verify(expression1, never()).equals(expression2, false);
+    }
+
+    @Test
+    public void testEqualsIgnoringId_SameId() {
+        final Id same = new Id();
+        final InputClause inputClause1 = new InputClause();
+        final InputClause inputClause2 = new InputClause();
+        final InputClauseUnaryTests value1 = mock(InputClauseUnaryTests.class);
+        final InputClauseUnaryTests value2 = mock(InputClauseUnaryTests.class);
+        final InputClauseLiteralExpression expression1 = mock(InputClauseLiteralExpression.class);
+        final InputClauseLiteralExpression expression2 = mock(InputClauseLiteralExpression.class);
+
+        when(value1.equals(value2, true)).thenReturn(true);
+        when(expression1.equals(expression2, true)).thenReturn(true);
+
+        inputClause1.setId(same);
+        inputClause1.setInputValues(value1);
+        inputClause1.setInputExpression(expression1);
+
+        inputClause2.setId(same);
+        inputClause2.setInputValues(value2);
+        inputClause2.setInputExpression(expression2);
+
+        final boolean result = inputClause1.equals(inputClause2, true);
+
+        assertTrue(result);
+
+        verify(value1).equals(value2, true);
+        verify(expression1).equals(expression2, true);
+
+        verify(value1, never()).equals(value2, false);
+        verify(expression1, never()).equals(expression2, false);
     }
 
     private InputClauseUnaryTests buildInputClauseUnaryTests() {

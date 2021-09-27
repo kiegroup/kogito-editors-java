@@ -21,8 +21,10 @@ import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.Text;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class OutputClauseUnaryTestsTest {
 
@@ -43,5 +45,43 @@ public class OutputClauseUnaryTestsTest {
         assertNotEquals(UNARY_ID, target.getId().getValue());
         assertEquals(TEXT, target.getText().getValue());
         assertEquals(ConstraintType.ENUMERATION, target.getConstraintType());
+    }
+
+    @Test
+    public void testEqualsNotIgnoringId_DifferentId() {
+        final Id id1 = new Id();
+        final Id id2 = new Id();
+        final OutputClauseUnaryTests output1 = new OutputClauseUnaryTests(id1, null, null);
+        final OutputClauseUnaryTests output2 = new OutputClauseUnaryTests(id2, null, null);
+
+        assertFalse(output1.equals(output2, false));
+    }
+
+    @Test
+    public void testEqualsNotIgnoringId_SameId() {
+        final Id same = new Id();
+        final OutputClauseUnaryTests output1 = new OutputClauseUnaryTests(same, null, null);
+        final OutputClauseUnaryTests output2 = new OutputClauseUnaryTests(same, null, null);
+
+        assertTrue(output1.equals(output2, false));
+    }
+
+    @Test
+    public void testEqualsIgnoringId_DifferentId() {
+        final Id id1 = new Id();
+        final Id id2 = new Id();
+        final OutputClauseUnaryTests output1 = new OutputClauseUnaryTests(id1, null, null);
+        final OutputClauseUnaryTests output2 = new OutputClauseUnaryTests(id2, null, null);
+
+        assertTrue(output1.equals(output2, true));
+    }
+
+    @Test
+    public void testEqualsIgnoringId_SameId() {
+        final Id same = new Id();
+        final OutputClauseUnaryTests output1 = new OutputClauseUnaryTests(same, null, null);
+        final OutputClauseUnaryTests output2 = new OutputClauseUnaryTests(same, null, null);
+
+        assertTrue(output1.equals(output2, true));
     }
 }

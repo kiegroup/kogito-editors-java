@@ -51,7 +51,8 @@ import static java.util.Collections.singletonList;
 @Definition
 @FormDefinition(policy = FieldPolicy.ONLY_MARKED, startElement = "id")
 public class InformationItem extends NamedElement implements DMNPropertySet,
-                                                             IsInformationItem {
+                                                             IsInformationItem,
+                                                             HasEqualsIgnoreId {
 
     @Category
     private static final String stunnerCategory = Categories.DOMAIN_OBJECTS;
@@ -155,7 +156,12 @@ public class InformationItem extends NamedElement implements DMNPropertySet,
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(final Object other) {
+        return equals(other, false);
+    }
+
+    @Override
+    public boolean equals(final Object o, final boolean ignoreId) {
         if (this == o) {
             return true;
         }
@@ -165,9 +171,12 @@ public class InformationItem extends NamedElement implements DMNPropertySet,
 
         final InformationItem that = (InformationItem) o;
 
-        if (id != null ? !id.equals(that.id) : that.id != null) {
-            return false;
+        if (!ignoreId) {
+            if (id != null ? !id.equals(that.id) : that.id != null) {
+                return false;
+            }
         }
+
         if (description != null ? !description.equals(that.description) : that.description != null) {
             return false;
         }

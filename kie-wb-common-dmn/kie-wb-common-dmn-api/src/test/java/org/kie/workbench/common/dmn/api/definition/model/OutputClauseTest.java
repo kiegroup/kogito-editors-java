@@ -30,11 +30,15 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -92,6 +96,91 @@ public class OutputClauseTest {
         assertNotEquals(UNARY_ID, target.getOutputValues().getId().getValue());
         assertEquals(TEXT, target.getOutputValues().getText().getValue());
         assertEquals(ConstraintType.ENUMERATION, target.getOutputValues().getConstraintType());
+    }
+
+    @Test
+    public void testEqualsNotIgnoringId_DifferentId() {
+        final Id id1 = new Id();
+        final Id id2 = new Id();
+        final OutputClause outputClause1 = new OutputClause();
+        final OutputClause outputClause2 = new OutputClause();
+
+        outputClause1.setId(id1);
+        outputClause2.setId(id2);
+
+        assertFalse(outputClause1.equals(outputClause2, false));
+    }
+
+    @Test
+    public void testEqualsNotIgnoringId_SameId() {
+        final Id same = new Id();
+        final OutputClause outputClause1 = new OutputClause();
+        final OutputClause outputClause2 = new OutputClause();
+        final OutputClauseUnaryTests outputClauseUnaryTests1 = mock(OutputClauseUnaryTests.class);
+        final OutputClauseUnaryTests outputClauseUnaryTests2 = mock(OutputClauseUnaryTests.class);
+        final OutputClauseLiteralExpression outputLiteral1 = mock(OutputClauseLiteralExpression.class);
+        final OutputClauseLiteralExpression outputLiteral2 = mock(OutputClauseLiteralExpression.class);
+
+        when(outputClauseUnaryTests1.equals(outputClauseUnaryTests2, false)).thenReturn(true);
+        when(outputLiteral1.equals(outputLiteral2, false)).thenReturn(true);
+
+        outputClause1.setId(same);
+        outputClause1.setDefaultOutputEntry(outputLiteral1);
+        outputClause1.setOutputValues(outputClauseUnaryTests1);
+
+        outputClause2.setId(same);
+        outputClause2.setDefaultOutputEntry(outputLiteral2);
+        outputClause2.setOutputValues(outputClauseUnaryTests2);
+
+        final boolean result = outputClause1.equals(outputClause2, false);
+
+        assertTrue(result);
+
+        verify(outputClauseUnaryTests1, never()).equals(outputClauseUnaryTests2, true);
+        verify(outputLiteral1, never()).equals(outputLiteral2, true);
+    }
+
+    @Test
+    public void testEqualsIgnoringId_DifferentId() {
+        final Id id1 = new Id();
+        final Id id2 = new Id();
+        testEqualsIgnoringId(id1, id2);
+    }
+
+    @Test
+    public void testEqualsIgnoringId_SameId() {
+        final Id same = new Id();
+        testEqualsIgnoringId(same, same);
+    }
+
+    private void testEqualsIgnoringId(final Id id1, final Id id2) {
+        final OutputClause outputClause1 = new OutputClause();
+        final OutputClause outputClause2 = new OutputClause();
+        final OutputClauseUnaryTests outputClauseUnaryTests1 = mock(OutputClauseUnaryTests.class);
+        final OutputClauseUnaryTests outputClauseUnaryTests2 = mock(OutputClauseUnaryTests.class);
+        final OutputClauseLiteralExpression outputLiteral1 = mock(OutputClauseLiteralExpression.class);
+        final OutputClauseLiteralExpression outputLiteral2 = mock(OutputClauseLiteralExpression.class);
+
+        when(outputClauseUnaryTests1.equals(outputClauseUnaryTests2, true)).thenReturn(true);
+        when(outputLiteral1.equals(outputLiteral2, true)).thenReturn(true);
+
+        outputClause1.setId(id1);
+        outputClause1.setDefaultOutputEntry(outputLiteral1);
+        outputClause1.setOutputValues(outputClauseUnaryTests1);
+
+        outputClause2.setId(id2);
+        outputClause2.setDefaultOutputEntry(outputLiteral2);
+        outputClause2.setOutputValues(outputClauseUnaryTests2);
+
+        final boolean result = outputClause1.equals(outputClause2, true);
+
+        assertTrue(result);
+
+        verify(outputClauseUnaryTests1).equals(outputClauseUnaryTests2, true);
+        verify(outputLiteral1).equals(outputLiteral2, true);
+
+        verify(outputClauseUnaryTests1, never()).equals(outputClauseUnaryTests2, false);
+        verify(outputLiteral1, never()).equals(outputLiteral2, false);
     }
 
     private OutputClauseUnaryTests buildOutputClauseUnaryTests() {

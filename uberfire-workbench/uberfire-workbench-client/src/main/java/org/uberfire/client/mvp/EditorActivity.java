@@ -32,6 +32,14 @@ public interface EditorActivity extends Activity {
 
     Promise<List<Notification>> validate();
 
+    default Promise<Void> undo() {
+        return null;
+    }
+
+    default Promise<Void> redo() {
+        return null;
+    }
+
     default Element getWidgetElement() {
         IsWidget widget = getWidget();
         return (widget == null) ? null : widget.asWidget().getElement();

@@ -141,14 +141,19 @@ public class ImportedValues extends Import implements DMNPropertySet,
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(final Object other) {
+        return equals(other, false);
+    }
+
+    @Override
+    public boolean equals(final Object o, final boolean ignoreId) {
         if (this == o) {
             return true;
         }
         if (!(o instanceof ImportedValues)) {
             return false;
         }
-        if (!super.equals(o)) {
+        if (!superEquals(o, ignoreId)) {
             return false;
         }
 
@@ -167,6 +172,11 @@ public class ImportedValues extends Import implements DMNPropertySet,
             return false;
         }
         return expressionLanguage != null ? expressionLanguage.equals(that.expressionLanguage) : that.expressionLanguage == null;
+    }
+
+    boolean superEquals(final Object o,
+                        final boolean ignoreId) {
+        return super.equals(o, ignoreId);
     }
 
     @Override

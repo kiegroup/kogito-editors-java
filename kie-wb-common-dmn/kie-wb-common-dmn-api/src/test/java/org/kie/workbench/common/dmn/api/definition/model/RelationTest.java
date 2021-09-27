@@ -31,12 +31,15 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -103,5 +106,83 @@ public class RelationTest {
         assertEquals(BuiltInType.BOOLEAN.asQName(), target.getTypeRef());
         assertTrue(target.getColumn().isEmpty());
         assertTrue(target.getRow().isEmpty());
+    }
+
+    @Test
+    public void testEqualsNotIgnoringId_WithDifferentId() {
+        final Id id1 = new Id();
+        final Id id2 = new Id();
+        final Relation relation1 = new Relation();
+        final Relation relation2 = new Relation();
+
+        relation1.setId(id1);
+        relation2.setId(id2);
+
+        final boolean result = relation1.equals(relation2, false);
+        assertFalse(result);
+    }
+
+    @Test
+    public void testEqualsNotIgnoringId_WithSameId() {
+        final Id same = new Id();
+        final Relation relation1 = new Relation();
+        final Relation relation2 = new Relation();
+        final org.kie.workbench.common.dmn.api.definition.model.List row = mock(org.kie.workbench.common.dmn.api.definition.model.List.class);
+        final InformationItem column = mock(InformationItem.class);
+
+        relation1.setId(same);
+        relation1.getRow().add(row);
+        relation1.getColumn().add(column);
+
+        relation2.setId(same);
+        relation2.getRow().add(row);
+        relation2.getColumn().add(column);
+
+        final boolean result = relation1.equals(relation2, false);
+
+        assertTrue(result);
+
+        verify(row, never()).equals(row, true);
+        verify(column, never()).equals(column, true);
+    }
+
+    @Test
+    public void testEqualsIgnoringId_DifferentId() {
+        final Id id1 = new Id();
+        final Id id2 = new Id();
+        testEqualsIgnoringId(id1, id2);
+    }
+
+    @Test
+    public void testEqualsIgnoringId_SameId() {
+        final Id same = new Id();
+        testEqualsIgnoringId(same, same);
+    }
+
+    private void testEqualsIgnoringId(final Id id1, final Id id2) {
+        final Relation relation1 = new Relation();
+        final Relation relation2 = new Relation();
+        final org.kie.workbench.common.dmn.api.definition.model.List row = mock(org.kie.workbench.common.dmn.api.definition.model.List.class);
+        final InformationItem column = mock(InformationItem.class);
+
+        when(row.equals(row, true)).thenReturn(true);
+        when(column.equals(column, true)).thenReturn(true);
+
+        relation1.setId(id1);
+        relation1.getRow().add(row);
+        relation1.getColumn().add(column);
+
+        relation2.setId(id2);
+        relation2.getRow().add(row);
+        relation2.getColumn().add(column);
+
+        final boolean result = relation1.equals(relation2, true);
+
+        assertTrue(result);
+
+        verify(row).equals(row, true);
+        verify(column).equals(column, true);
+        verify(row, never()).equals(row, false);
+        verify(column, never()).equals(column, false);
     }
 }

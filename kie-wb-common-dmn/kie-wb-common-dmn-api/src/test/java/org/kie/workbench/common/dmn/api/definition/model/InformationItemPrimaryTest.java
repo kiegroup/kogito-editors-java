@@ -21,11 +21,14 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.kie.workbench.common.dmn.api.definition.HasTypeRef;
+import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.QName;
 import org.kie.workbench.common.dmn.api.property.dmn.QNameHolder;
 
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class InformationItemPrimaryTest {
 
@@ -72,5 +75,43 @@ public class InformationItemPrimaryTest {
         final List<HasTypeRef> expectedHasTypeRefs = singletonList(informationItemPrimary);
 
         assertEquals(expectedHasTypeRefs, actualHasTypeRefs);
+    }
+
+    @Test
+    public void testEqualsNotIgnoringId_DifferentId() {
+        final Id id1 = new Id();
+        final Id id2 = new Id();
+        final InformationItemPrimary informationItem1 = new InformationItemPrimary(id1, null, null);
+        final InformationItemPrimary informationItem2 = new InformationItemPrimary(id2, null, null);
+
+        assertFalse(informationItem1.equals(informationItem2, false));
+    }
+
+    @Test
+    public void testEqualsNotIgnoringId_SameId() {
+        final Id same = new Id();
+        final InformationItemPrimary informationItem1 = new InformationItemPrimary(same, null, null);
+        final InformationItemPrimary informationItem2 = new InformationItemPrimary(same, null, null);
+
+        assertTrue(informationItem1.equals(informationItem2, false));
+    }
+
+    @Test
+    public void testEqualsIgnoringId_DifferentId() {
+        final Id id1 = new Id();
+        final Id id2 = new Id();
+        final InformationItemPrimary informationItem1 = new InformationItemPrimary(id1, null, null);
+        final InformationItemPrimary informationItem2 = new InformationItemPrimary(id2, null, null);
+
+        assertTrue(informationItem1.equals(informationItem2, true));
+    }
+
+    @Test
+    public void testEqualsIgnoringId_SameId() {
+        final Id same = new Id();
+        final InformationItemPrimary informationItem1 = new InformationItemPrimary(same, null, null);
+        final InformationItemPrimary informationItem2 = new InformationItemPrimary(same, null, null);
+
+        assertTrue(informationItem1.equals(informationItem2, true));
     }
 }

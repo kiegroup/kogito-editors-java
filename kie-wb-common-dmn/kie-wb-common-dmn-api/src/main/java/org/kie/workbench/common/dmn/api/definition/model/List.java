@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.kie.workbench.common.dmn.api.definition.HasExpression;
 import org.kie.workbench.common.dmn.api.definition.HasTypeRef;
+import org.kie.workbench.common.dmn.api.definition.model.common.ListComparerHelper;
 import org.kie.workbench.common.dmn.api.property.dmn.Description;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.QName;
@@ -92,7 +93,12 @@ public class List extends Expression {
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(final Object other) {
+        return equals(other, false);
+    }
+
+    @Override
+    public boolean equals(final Object o, final boolean ignoreId) {
         if (this == o) {
             return true;
         }
@@ -102,8 +108,10 @@ public class List extends Expression {
 
         final List that = (List) o;
 
-        if (id != null ? !id.equals(that.id) : that.id != null) {
-            return false;
+        if (!ignoreId) {
+            if (id != null ? !id.equals(that.id) : that.id != null) {
+                return false;
+            }
         }
         if (description != null ? !description.equals(that.description) : that.description != null) {
             return false;
@@ -114,7 +122,7 @@ public class List extends Expression {
         if (componentWidths != null ? !componentWidths.equals(that.componentWidths) : that.componentWidths != null) {
             return false;
         }
-        return expression != null ? expression.equals(that.expression) : that.expression == null;
+        return expression != null ? ListComparerHelper.compare(expression, that.expression, ignoreId) : that.expression == null;
     }
 
     @Override

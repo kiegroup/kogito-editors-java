@@ -52,7 +52,8 @@ import static org.kie.workbench.common.forms.adf.engine.shared.formGeneration.pr
         startElement = "text")
 public class InputClauseUnaryTests extends DMNModelInstrumentedBase implements IsUnaryTests,
                                                                                HasText,
-                                                                               DMNPropertySet {
+                                                                               DMNPropertySet,
+                                                                               HasEqualsIgnoreId {
 
     protected Id id;
 
@@ -73,7 +74,7 @@ public class InputClauseUnaryTests extends DMNModelInstrumentedBase implements I
     public InputClauseUnaryTests() {
         this(new Id(),
              new Text(),
-             null);
+             ConstraintType.NONE);
     }
 
     public InputClauseUnaryTests(final Id id,
@@ -128,7 +129,12 @@ public class InputClauseUnaryTests extends DMNModelInstrumentedBase implements I
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(final Object other) {
+        return equals(other, false);
+    }
+
+    @Override
+    public boolean equals(final Object o, final boolean ignoreId) {
         if (this == o) {
             return true;
         }
@@ -138,8 +144,10 @@ public class InputClauseUnaryTests extends DMNModelInstrumentedBase implements I
 
         final InputClauseUnaryTests that = (InputClauseUnaryTests) o;
 
-        if (id != null ? !id.equals(that.id) : that.id != null) {
-            return false;
+        if (!ignoreId) {
+            if (id != null ? !id.equals(that.id) : that.id != null) {
+                return false;
+            }
         }
 
         if (!Objects.equals(constraintTypeProperty, that.constraintTypeProperty)) {

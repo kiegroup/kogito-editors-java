@@ -29,7 +29,12 @@ import org.kie.workbench.common.dmn.api.property.styling.StylingSet;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.powermock.api.mockito.PowerMockito.when;
 
 public class DecisionTest {
 
@@ -99,5 +104,115 @@ public class DecisionTest {
         modelTwo.getStylingSet().setFontSize(new FontSize(11.0));
 
         assertNotEquals(modelOne, modelTwo);
+    }
+
+    @Test
+    public void testEqualsNotIgnoringId_WithDifferentId() {
+        final Id id1 = new Id();
+        final Id id2 = new Id();
+        final Decision decision1 = new Decision();
+        final Decision decision2 = new Decision();
+
+        decision1.setId(id1);
+        decision2.setId(id2);
+
+        assertFalse(decision1.equals(decision2, false));
+    }
+
+    @Test
+    public void testEqualsNotIgnoringId_WithSameId() {
+        final Id same = new Id();
+        final Decision decision1 = new Decision();
+        final Decision decision2 = new Decision();
+        final InformationItemPrimary variable1 = mock(InformationItemPrimary.class);
+        final InformationItemPrimary variable2 = mock(InformationItemPrimary.class);
+        final Expression expression1 = mock(Expression.class);
+        final Expression expression2 = mock(Expression.class);
+
+        decision1.setId(same);
+        decision2.setId(same);
+
+        when(variable1.equals(variable2, false)).thenReturn(true);
+        when(expression1.equals(expression2, false)).thenReturn(true);
+
+        decision1.setVariable(variable1);
+        decision1.setExpression(expression1);
+        decision2.setVariable(variable2);
+        decision2.setExpression(expression2);
+
+        final boolean result = decision1.equals(decision2, false);
+
+        assertTrue(result);
+
+        verify(variable1).equals(variable2, false);
+        verify(expression1).equals(expression2, false);
+
+        verify(variable1, never()).equals(variable2, true);
+        verify(expression1, never()).equals(expression2, true);
+    }
+
+    @Test
+    public void testEqualsIgnoringId_DifferentId() {
+        final Id id1 = new Id();
+        final Id id2 = new Id();
+        final Decision decision1 = new Decision();
+        final Decision decision2 = new Decision();
+        final InformationItemPrimary variable1 = mock(InformationItemPrimary.class);
+        final InformationItemPrimary variable2 = mock(InformationItemPrimary.class);
+        final Expression expression1 = mock(Expression.class);
+        final Expression expression2 = mock(Expression.class);
+
+        decision1.setId(id1);
+        decision2.setId(id2);
+
+        when(variable1.equals(variable2, true)).thenReturn(true);
+        when(expression1.equals(expression2, true)).thenReturn(true);
+
+        decision1.setVariable(variable1);
+        decision1.setExpression(expression1);
+        decision2.setVariable(variable2);
+        decision2.setExpression(expression2);
+
+        final boolean result = decision1.equals(decision2, true);
+
+        assertTrue(result);
+
+        verify(variable1).equals(variable2, true);
+        verify(expression1).equals(expression2, true);
+
+        verify(variable1, never()).equals(variable2, false);
+        verify(expression1, never()).equals(expression2, false);
+    }
+
+    @Test
+    public void testEqualsIgnoringId_SameId() {
+        final Id same = new Id();
+        final Decision decision1 = new Decision();
+        final Decision decision2 = new Decision();
+        final InformationItemPrimary variable1 = mock(InformationItemPrimary.class);
+        final InformationItemPrimary variable2 = mock(InformationItemPrimary.class);
+        final Expression expression1 = mock(Expression.class);
+        final Expression expression2 = mock(Expression.class);
+
+        decision1.setId(same);
+        decision2.setId(same);
+
+        when(variable1.equals(variable2, true)).thenReturn(true);
+        when(expression1.equals(expression2, true)).thenReturn(true);
+
+        decision1.setVariable(variable1);
+        decision1.setExpression(expression1);
+        decision2.setVariable(variable2);
+        decision2.setExpression(expression2);
+
+        final boolean result = decision1.equals(decision2, true);
+
+        assertTrue(result);
+
+        verify(variable1).equals(variable2, true);
+        verify(expression1).equals(expression2, true);
+
+        verify(variable1, never()).equals(variable2, false);
+        verify(expression1, never()).equals(expression2, false);
     }
 }

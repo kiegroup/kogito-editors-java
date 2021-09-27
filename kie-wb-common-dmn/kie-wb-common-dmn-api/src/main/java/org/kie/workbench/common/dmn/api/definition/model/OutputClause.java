@@ -53,7 +53,8 @@ import static org.kie.workbench.common.forms.adf.engine.shared.formGeneration.pr
         i18n = @I18nSettings(keyPreffix = "org.kie.workbench.common.dmn.api.definition.model.OutputClause"),
         startElement = "id")
 public class OutputClause extends DMNElement implements HasTypeRef,
-                                                        DomainObject {
+                                                        DomainObject,
+                                                        HasEqualsIgnoreId {
 
     @Category
     private static final String stunnerCategory = Categories.DOMAIN_OBJECTS;
@@ -186,7 +187,12 @@ public class OutputClause extends DMNElement implements HasTypeRef,
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(final Object other) {
+        return equals(other, false);
+    }
+
+    @Override
+    public boolean equals(final Object o, final boolean ignoreId) {
         if (this == o) {
             return true;
         }
@@ -196,16 +202,18 @@ public class OutputClause extends DMNElement implements HasTypeRef,
 
         final OutputClause that = (OutputClause) o;
 
-        if (id != null ? !id.equals(that.id) : that.id != null) {
-            return false;
+        if (!ignoreId) {
+            if (id != null ? !id.equals(that.id) : that.id != null) {
+                return false;
+            }
         }
         if (description != null ? !description.equals(that.description) : that.description != null) {
             return false;
         }
-        if (outputValues != null ? !outputValues.equals(that.outputValues) : that.outputValues != null) {
+        if (outputValues != null ? !outputValues.equals(that.outputValues, ignoreId) : that.outputValues != null) {
             return false;
         }
-        if (defaultOutputEntry != null ? !defaultOutputEntry.equals(that.defaultOutputEntry) : that.defaultOutputEntry != null) {
+        if (defaultOutputEntry != null ? !defaultOutputEntry.equals(that.defaultOutputEntry, ignoreId) : that.defaultOutputEntry != null) {
             return false;
         }
         if (name != null ? !name.equals(that.name) : that.name != null) {

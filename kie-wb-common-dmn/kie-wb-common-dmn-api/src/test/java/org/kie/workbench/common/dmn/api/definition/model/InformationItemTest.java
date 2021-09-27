@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.definition.HasTypeRef;
 import org.kie.workbench.common.dmn.api.property.dmn.Description;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
@@ -27,12 +28,16 @@ import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.api.property.dmn.QName;
 import org.kie.workbench.common.dmn.api.property.dmn.QNameHolder;
 import org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
+@RunWith(MockitoJUnitRunner.class)
 public class InformationItemTest {
 
     private static final String ITEM_ID = "ITEM_ID";
@@ -89,5 +94,55 @@ public class InformationItemTest {
         assertEquals(DESCRIPTION, target.getDescription().getValue());
         assertEquals(INFORMATION_ITEM_NAME, target.getName().getValue());
         assertEquals(BuiltInType.BOOLEAN.asQName(), target.getTypeRef());
+    }
+
+    @Test
+    public void testEqualsNotIgnoringId_DifferentId() {
+        final Id id1 = new Id();
+        final Id id2 = new Id();
+        final InformationItem informationItem1 = new InformationItem();
+        final InformationItem informationItem2 = new InformationItem();
+
+        informationItem1.setId(id1);
+        informationItem2.setId(id2);
+
+        assertFalse(informationItem1.equals(informationItem2, false));
+    }
+
+    @Test
+    public void testEqualsNotIgnoringId_SameId() {
+        final Id same = new Id();
+        final InformationItem informationItem1 = new InformationItem();
+        final InformationItem informationItem2 = new InformationItem();
+
+        informationItem1.setId(same);
+        informationItem2.setId(same);
+
+        assertTrue(informationItem1.equals(informationItem2, false));
+    }
+
+    @Test
+    public void testEqualsIgnoringId_DifferentId() {
+        final Id id1 = new Id();
+        final Id id2 = new Id();
+        final InformationItem informationItem1 = new InformationItem();
+        final InformationItem informationItem2 = new InformationItem();
+
+        informationItem1.setId(id1);
+        informationItem2.setId(id2);
+
+        assertTrue(informationItem1.equals(informationItem2, true));
+    }
+
+    @Test
+    public void testEqualsIgnoringId_SameId() {
+        final Id same = new Id();
+        final InformationItem informationItem1 = new InformationItem();
+        final InformationItem informationItem2 = new InformationItem();
+
+        informationItem1.setId(same);
+        informationItem2.setId(same);
+
+        assertTrue(informationItem1.equals(informationItem2, true));
     }
 }

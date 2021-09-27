@@ -31,13 +31,16 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -102,5 +105,87 @@ public class InvocationTest {
         assertEquals(BuiltInType.BOOLEAN.asQName(), target.getTypeRef());
         assertNull(target.getExpression());
         assertTrue(target.getBinding().isEmpty());
+    }
+
+    @Test
+    public void testEqualsNotIgnoringId_DifferentId() {
+        final Id id1 = new Id();
+        final Id id2 = new Id();
+        final Invocation invocation1 = new Invocation();
+        final Invocation invocation2 = new Invocation();
+
+        invocation1.setId(id1);
+        invocation2.setId(id2);
+
+        assertFalse(invocation1.equals(invocation2, false));
+    }
+
+    @Test
+    public void testEqualsNotIgnoringId_SameId() {
+        final Id same = new Id();
+        final Invocation invocation1 = new Invocation();
+        final Invocation invocation2 = new Invocation();
+        final Binding binding = mock(Binding.class);
+        final Expression expression1 = mock(Expression.class);
+        final Expression expression2 = mock(Expression.class);
+
+        when(expression1.equals(expression2, false)).thenReturn(true);
+
+        invocation1.setId(same);
+        invocation1.setExpression(expression1);
+        invocation1.getBinding().add(binding);
+
+        invocation2.setId(same);
+        invocation2.setExpression(expression2);
+        invocation2.getBinding().add(binding);
+
+        final boolean result = invocation1.equals(invocation2, false);
+
+        assertTrue(result);
+
+        verify(binding, never()).equals(binding, true);
+        verify(expression1, never()).equals(expression2, true);
+    }
+
+    @Test
+    public void testEqualsIgnoringId_DifferentId() {
+        final Id id1 = new Id();
+        final Id id2 = new Id();
+        testEqualsIgnoringId(id1, id2);
+    }
+
+    @Test
+    public void testEqualsIgnoringId_SameId() {
+        final Id same = new Id();
+        testEqualsIgnoringId(same, same);
+    }
+
+    private void testEqualsIgnoringId(final Id id1, final Id id2) {
+        final Invocation invocation1 = new Invocation();
+        final Invocation invocation2 = new Invocation();
+        final Binding binding = mock(Binding.class);
+        final Expression expression1 = mock(Expression.class);
+        final Expression expression2 = mock(Expression.class);
+
+        when(binding.equals(binding, true)).thenReturn(true);
+        when(expression1.equals(expression2, true)).thenReturn(true);
+
+        invocation1.setId(id1);
+        invocation1.setExpression(expression1);
+        invocation1.getBinding().add(binding);
+
+        invocation2.setId(id2);
+        invocation2.setExpression(expression2);
+        invocation2.getBinding().add(binding);
+
+        final boolean result = invocation1.equals(invocation2, true);
+
+        assertTrue(result);
+
+        verify(binding).equals(binding, true);
+        verify(expression1).equals(expression2, true);
+
+        verify(binding, never()).equals(binding, false);
+        verify(expression1, never()).equals(expression2, false);
     }
 }

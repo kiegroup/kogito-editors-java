@@ -31,7 +31,8 @@ import static org.kie.workbench.common.dmn.api.definition.model.common.HasTypeRe
 @Portable
 public class Binding extends DMNModelInstrumentedBase implements HasExpression,
                                                                  HasTypeRefs,
-                                                                 HasVariable<InformationItem> {
+                                                                 HasVariable<InformationItem>,
+                                                                 HasEqualsIgnoreId {
 
     private InformationItem parameter;
     private Expression expression;
@@ -79,7 +80,12 @@ public class Binding extends DMNModelInstrumentedBase implements HasExpression,
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(final Object other) {
+        return equals(other, false);
+    }
+
+    @Override
+    public boolean equals(final Object o, final boolean ignoreId) {
         if (this == o) {
             return true;
         }
@@ -89,10 +95,10 @@ public class Binding extends DMNModelInstrumentedBase implements HasExpression,
 
         final Binding binding = (Binding) o;
 
-        if (parameter != null ? !parameter.equals(binding.parameter) : binding.parameter != null) {
+        if (parameter != null ? !parameter.equals(binding.parameter, ignoreId) : binding.parameter != null) {
             return false;
         }
-        return expression != null ? expression.equals(binding.expression) : binding.expression == null;
+        return expression != null ? expression.equals(binding.expression, ignoreId) : binding.expression == null;
     }
 
     @Override

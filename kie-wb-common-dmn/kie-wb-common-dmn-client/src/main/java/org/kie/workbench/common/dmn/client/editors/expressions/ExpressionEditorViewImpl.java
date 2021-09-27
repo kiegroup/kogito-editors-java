@@ -36,21 +36,21 @@ import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.kie.workbench.common.dmn.api.definition.HasExpression;
 import org.kie.workbench.common.dmn.api.definition.HasName;
 import org.kie.workbench.common.dmn.api.definition.HasVariable;
-import org.kie.workbench.common.dmn.api.definition.model.Context;
-import org.kie.workbench.common.dmn.api.definition.model.DecisionTable;
 import org.kie.workbench.common.dmn.api.definition.model.Expression;
-import org.kie.workbench.common.dmn.api.definition.model.FunctionDefinition;
 import org.kie.workbench.common.dmn.api.definition.model.InformationItemPrimary;
-import org.kie.workbench.common.dmn.api.definition.model.Invocation;
-import org.kie.workbench.common.dmn.api.definition.model.List;
-import org.kie.workbench.common.dmn.api.definition.model.LiteralExpression;
-import org.kie.workbench.common.dmn.api.definition.model.Relation;
-import org.kie.workbench.common.dmn.api.editors.types.BuiltInTypeUtils;
-import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.api.property.dmn.QName;
 import org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType;
 import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
 import org.kie.workbench.common.dmn.client.commands.factory.DefaultCanvasCommandFactory;
+import org.kie.workbench.common.dmn.client.editors.expressions.commands.ClearExpressionCommand;
+import org.kie.workbench.common.dmn.client.editors.expressions.commands.FillContextExpressionCommand;
+import org.kie.workbench.common.dmn.client.editors.expressions.commands.FillDecisionTableExpressionCommand;
+import org.kie.workbench.common.dmn.client.editors.expressions.commands.FillExpressionCommand;
+import org.kie.workbench.common.dmn.client.editors.expressions.commands.FillFunctionExpressionCommand;
+import org.kie.workbench.common.dmn.client.editors.expressions.commands.FillInvocationExpressionCommand;
+import org.kie.workbench.common.dmn.client.editors.expressions.commands.FillListExpressionCommand;
+import org.kie.workbench.common.dmn.client.editors.expressions.commands.FillLiteralExpressionCommand;
+import org.kie.workbench.common.dmn.client.editors.expressions.commands.FillRelationExpressionCommand;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.ContextProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.DecisionTableProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.EntryInfo;
@@ -63,7 +63,6 @@ import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.M
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.PMMLParam;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.RelationProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.util.BoxedExpressionService;
-import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.util.ExpressionModelFiller;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.util.ExpressionPropsFiller;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinitions;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.function.supplementary.pmml.PMMLDocumentMetadataProvider;
@@ -364,71 +363,109 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
     }
 
     public void resetExpressionDefinition(final ExpressionProps expressionProps) {
-        editorSelectedEvent.fire(new ExpressionEditorChanged(nodeUUID));
-        setExpressionNameAndDataType(expressionProps);
-        hasExpression.setExpression(null);
-        expressionContainerGrid.clearExpressionType();
+
+        final ClearExpressionCommand expressionCommand = new ClearExpressionCommand(hasExpression,
+                                                                                    expressionProps,
+                                                                                    editorSelectedEvent,
+                                                                                    nodeUUID,
+                                                                                    this);
+
+        executeIfItHaveChanges(expressionCommand);
     }
 
-    public void broadcastLiteralExpressionDefinition(final LiteralProps literalProps) {
-        editorSelectedEvent.fire(new ExpressionEditorChanged(nodeUUID));
-        setExpressionNameAndDataType(literalProps);
-        if (hasExpression.getExpression() == null) {
-            hasExpression.setExpression(new LiteralExpression());
-        }
-        ExpressionModelFiller.fillLiteralExpression((LiteralExpression) hasExpression.getExpression(), literalProps);
+    public void broadcastLiteralExpressionDefinition(final LiteralProps literalExpressionProps) {
+
+        final FillLiteralExpressionCommand expression = new FillLiteralExpressionCommand(hasExpression,
+                                                                                         literalExpressionProps,
+                                                                                         editorSelectedEvent,
+                                                                                         nodeUUID,
+                                                                                         this);
+
+        executeIfItHaveChanges(expression);
     }
 
     public void broadcastContextExpressionDefinition(final ContextProps contextProps) {
-        editorSelectedEvent.fire(new ExpressionEditorChanged(nodeUUID));
-        setExpressionNameAndDataType(contextProps);
-        if (hasExpression.getExpression() == null) {
-            hasExpression.setExpression(new Context());
-        }
-        ExpressionModelFiller.fillContextExpression((Context) hasExpression.getExpression(), contextProps);
+        final FillContextExpressionCommand expression = new FillContextExpressionCommand(hasExpression,
+                                                                                         contextProps,
+                                                                                         editorSelectedEvent,
+                                                                                         nodeUUID,
+                                                                                         this);
+
+        executeIfItHaveChanges(expression);
     }
 
     public void broadcastRelationExpressionDefinition(final RelationProps relationProps) {
-        editorSelectedEvent.fire(new ExpressionEditorChanged(nodeUUID));
-        if (hasExpression.getExpression() == null) {
-            hasExpression.setExpression(new Relation());
-        }
-        ExpressionModelFiller.fillRelationExpression((Relation) hasExpression.getExpression(), relationProps);
+        final FillRelationExpressionCommand expression = new FillRelationExpressionCommand(hasExpression,
+                                                                                           relationProps,
+                                                                                           editorSelectedEvent,
+                                                                                           nodeUUID,
+                                                                                           this);
+
+        executeIfItHaveChanges(expression);
     }
 
     public void broadcastListExpressionDefinition(final ListProps listProps) {
-        editorSelectedEvent.fire(new ExpressionEditorChanged(nodeUUID));
-        if (hasExpression.getExpression() == null) {
-            hasExpression.setExpression(new List());
-        }
-        ExpressionModelFiller.fillListExpression((List) hasExpression.getExpression(), listProps);
+        final FillListExpressionCommand expression = new FillListExpressionCommand(hasExpression,
+                                                                                   listProps,
+                                                                                   editorSelectedEvent,
+                                                                                   nodeUUID,
+                                                                                   this);
+
+        executeIfItHaveChanges(expression);
     }
 
     public void broadcastInvocationExpressionDefinition(final InvocationProps invocationProps) {
-        editorSelectedEvent.fire(new ExpressionEditorChanged(nodeUUID));
-        setExpressionNameAndDataType(invocationProps);
-        if (hasExpression.getExpression() == null) {
-            hasExpression.setExpression(new Invocation());
-        }
-        ExpressionModelFiller.fillInvocationExpression((Invocation) hasExpression.getExpression(), invocationProps);
+        final FillInvocationExpressionCommand expression = new FillInvocationExpressionCommand(hasExpression,
+                                                                                               invocationProps,
+                                                                                               editorSelectedEvent,
+                                                                                               nodeUUID,
+                                                                                               this);
+
+        executeIfItHaveChanges(expression);
     }
 
     public void broadcastFunctionExpressionDefinition(final FunctionProps functionProps) {
-        editorSelectedEvent.fire(new ExpressionEditorChanged(nodeUUID));
-        setExpressionNameAndDataType(functionProps);
-        if (hasExpression.getExpression() == null) {
-            hasExpression.setExpression(new FunctionDefinition());
-        }
-        ExpressionModelFiller.fillFunctionExpression((FunctionDefinition) hasExpression.getExpression(), functionProps);
+        final FillFunctionExpressionCommand expression = new FillFunctionExpressionCommand(hasExpression,
+                                                                                           functionProps,
+                                                                                           editorSelectedEvent,
+                                                                                           nodeUUID,
+                                                                                           this);
+
+        executeIfItHaveChanges(expression);
     }
 
     public void broadcastDecisionTableExpressionDefinition(final DecisionTableProps decisionTableProps) {
-        editorSelectedEvent.fire(new ExpressionEditorChanged(nodeUUID));
-        setExpressionNameAndDataType(decisionTableProps);
-        if (hasExpression.getExpression() == null) {
-            hasExpression.setExpression(new DecisionTable());
+        final FillDecisionTableExpressionCommand expression = new FillDecisionTableExpressionCommand(hasExpression,
+                                                                                                     decisionTableProps,
+                                                                                                     editorSelectedEvent,
+                                                                                                     nodeUUID,
+                                                                                                     this);
+
+        executeIfItHaveChanges(expression);
+    }
+
+    void executeIfItHaveChanges(final FillExpressionCommand expressionCommand) {
+        if (expressionCommand.hasChanges()) {
+
+            final AbstractCanvasHandler canvasHandler = (AbstractCanvasHandler) sessionManager.getCurrentSession().getCanvasHandler();
+            final CompositeCommand.Builder<AbstractCanvasHandler, CanvasViolation> commandBuilder = new CompositeCommand.Builder<>();
+            final Element element = canvasHandler.getGraphIndex().get(nodeUUID);
+            commandBuilder.addCommand(expressionCommand);
+            if (element.getContent() instanceof Definition) {
+                final Definition definition = (Definition) element.getContent();
+                final String nameId = definitionUtils.getNameIdentifier(definition.getDefinition());
+                commandBuilder.addCommand(canvasCommandFactory.updatePropertyValue(element,
+                                                                                   nameId,
+                                                                                   hasName.orElse(HasName.NOP).getValue()));
+
+            }
+
+            sessionCommandManager.execute((AbstractCanvasHandler) sessionManager.getCurrentSession().getCanvasHandler(),
+                                          commandBuilder.build());
+
+//            sessionCommandManager.execute((AbstractCanvasHandler) sessionManager.getCurrentSession().getCanvasHandler(),
+//                                          expressionCommand);
         }
-        ExpressionModelFiller.fillDecisionTableExpression((DecisionTable) hasExpression.getExpression(), decisionTableProps);
     }
 
     void renderNewBoxedExpression() {
@@ -463,46 +500,6 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
             qName = parent != null && parent.getVariable() != null ? parent.getVariable().getTypeRef() : BuiltInType.UNDEFINED.asQName();
         }
         return qName.getLocalPart();
-    }
-
-    private void setExpressionNameAndDataType(final ExpressionProps expressionProps) {
-        setExpressionName(expressionProps.name);
-        setTypeRef(expressionProps.dataType);
-        updateCanvasNodeName();
-    }
-
-    private void setExpressionName(final String name) {
-        final HasName fallbackHasName = hasExpression instanceof HasName ? (HasName) hasExpression : HasName.NOP;
-        hasName.orElse(fallbackHasName).setName(new Name(name));
-    }
-
-    @SuppressWarnings("unchecked")
-    private void setTypeRef(final String dataType) {
-        final QName typeRef = BuiltInTypeUtils
-                .findBuiltInTypeByName(dataType)
-                .orElse(BuiltInType.UNDEFINED)
-                .asQName();
-        if (hasExpression instanceof HasVariable) {
-            ((HasVariable<InformationItemPrimary>) hasExpression).getVariable().setTypeRef(typeRef);
-        } else if (hasExpression.getExpression() != null && hasExpression.getExpression().asDMNModelInstrumentedBase().getParent() instanceof HasVariable) {
-            ((HasVariable<InformationItemPrimary>) hasExpression.getExpression().asDMNModelInstrumentedBase().getParent()).getVariable().setTypeRef(typeRef);
-        }
-    }
-
-    @SuppressWarnings("rawtypes")
-    private void updateCanvasNodeName() {
-        final AbstractCanvasHandler canvasHandler = (AbstractCanvasHandler) sessionManager.getCurrentSession().getCanvasHandler();
-        final CompositeCommand.Builder<AbstractCanvasHandler, CanvasViolation> commandBuilder = new CompositeCommand.Builder<>();
-        final Element element = canvasHandler.getGraphIndex().get(nodeUUID);
-        if (element.getContent() instanceof Definition) {
-            final Definition definition = (Definition) element.getContent();
-            final String nameId = definitionUtils.getNameIdentifier(definition.getDefinition());
-            commandBuilder.addCommand(canvasCommandFactory.updatePropertyValue(element,
-                                                                               nameId,
-                                                                               hasName.orElse(HasName.NOP).getValue()));
-            sessionCommandManager.execute((AbstractCanvasHandler) sessionManager.getCurrentSession().getCanvasHandler(),
-                                          commandBuilder.build());
-        }
     }
 
     private void toggleEditorsVisibility() {

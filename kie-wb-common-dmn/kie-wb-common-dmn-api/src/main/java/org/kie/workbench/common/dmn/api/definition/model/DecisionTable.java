@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.kie.workbench.common.dmn.api.definition.HasTypeRef;
+import org.kie.workbench.common.dmn.api.definition.model.common.ListComparerHelper;
 import org.kie.workbench.common.dmn.api.property.dmn.Description;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.QName;
@@ -184,7 +185,12 @@ public class DecisionTable extends Expression {
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(final Object other) {
+        return equals(other, false);
+    }
+
+    @Override
+    public boolean equals(final Object o, final boolean ignoreId) {
         if (this == o) {
             return true;
         }
@@ -194,8 +200,10 @@ public class DecisionTable extends Expression {
 
         final DecisionTable that = (DecisionTable) o;
 
-        if (id != null ? !id.equals(that.id) : that.id != null) {
-            return false;
+        if (!ignoreId) {
+            if (id != null ? !id.equals(that.id) : that.id != null) {
+                return false;
+            }
         }
         if (description != null ? !description.equals(that.description) : that.description != null) {
             return false;
@@ -206,16 +214,16 @@ public class DecisionTable extends Expression {
         if (componentWidths != null ? !componentWidths.equals(that.componentWidths) : that.componentWidths != null) {
             return false;
         }
-        if (input != null ? !input.equals(that.input) : that.input != null) {
+        if (input != null ? !ListComparerHelper.compare(input, that.input, ignoreId) : that.input != null) {
             return false;
         }
-        if (output != null ? !output.equals(that.output) : that.output != null) {
+        if (output != null ? !ListComparerHelper.compare(output, that.output, ignoreId) : that.output != null) {
             return false;
         }
-        if (rule != null ? !rule.equals(that.rule) : that.rule != null) {
+        if (rule != null ? !ListComparerHelper.compare(rule, that.rule, ignoreId) : that.rule != null) {
             return false;
         }
-        if (annotations != null ? !annotations.equals(that.annotations) : that.annotations != null) {
+        if (annotations != null ? !ListComparerHelper.compare(annotations, that.annotations, ignoreId) : that.annotations != null) {
             return false;
         }
         if (hitPolicy != that.hitPolicy) {

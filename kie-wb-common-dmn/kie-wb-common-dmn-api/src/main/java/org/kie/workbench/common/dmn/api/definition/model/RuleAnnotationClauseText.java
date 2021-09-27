@@ -21,6 +21,7 @@ import java.util.Optional;
 
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.kie.workbench.common.dmn.api.definition.HasText;
+import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.Text;
 
 @Portable
@@ -30,6 +31,7 @@ public class RuleAnnotationClauseText extends DMNElement implements HasText {
 
     public RuleAnnotationClauseText() {
         this.text = new Text();
+        this.id = new Id();
     }
 
     public RuleAnnotationClauseText copy() {
@@ -60,7 +62,12 @@ public class RuleAnnotationClauseText extends DMNElement implements HasText {
         if (!Objects.equals(text, that.text)) {
             return false;
         }
-        return super.equals(that);
+
+        if (!Objects.equals(id, that.id)) {
+            return false;
+        }
+
+        return true;
     }
 
     @Override

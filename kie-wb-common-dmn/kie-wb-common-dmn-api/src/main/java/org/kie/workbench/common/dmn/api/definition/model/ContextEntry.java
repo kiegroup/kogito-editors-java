@@ -31,7 +31,8 @@ import static org.kie.workbench.common.dmn.api.definition.model.common.HasTypeRe
 @Portable
 public class ContextEntry extends DMNModelInstrumentedBase implements HasExpression,
                                                                       HasTypeRefs,
-                                                                      HasVariable<InformationItem> {
+                                                                      HasVariable<InformationItem>,
+                                                                      HasEqualsIgnoreId {
 
     public static final String DEFAULT_EXPRESSION_VALUE = "null // auto-filled by the editor to avoid missing empty expression.";
 
@@ -71,7 +72,12 @@ public class ContextEntry extends DMNModelInstrumentedBase implements HasExpress
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(final Object other) {
+        return equals(other, false);
+    }
+
+    @Override
+    public boolean equals(final Object o, final boolean ignoreId) {
         if (this == o) {
             return true;
         }
@@ -81,10 +87,10 @@ public class ContextEntry extends DMNModelInstrumentedBase implements HasExpress
 
         final ContextEntry that = (ContextEntry) o;
 
-        if (variable != null ? !variable.equals(that.variable) : that.variable != null) {
+        if (variable != null ? !variable.equals(that.variable, ignoreId) : that.variable != null) {
             return false;
         }
-        return expression != null ? expression.equals(that.expression) : that.expression == null;
+        return expression != null ? expression.equals(that.expression, ignoreId) : that.expression == null;
     }
 
     @Override
@@ -103,4 +109,6 @@ public class ContextEntry extends DMNModelInstrumentedBase implements HasExpress
 
         return hasTypeRefs;
     }
+
+
 }

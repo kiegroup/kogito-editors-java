@@ -681,6 +681,11 @@ public class ExpressionContainerGridTest {
     public void testSpyHasExpressionWithExpressionSet() {
         final HasExpression hasExpression = new HasExpression() {
 
+            @Override
+            public boolean equals(final Object other, final boolean ignoreId) {
+                return super.equals(other);
+            }
+
             private Expression expression = new LiteralExpression();
 
             @Override

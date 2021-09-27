@@ -167,7 +167,12 @@ public class LiteralExpression extends Expression implements IsLiteralExpression
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(final Object other) {
+        return equals(other, false);
+    }
+
+    @Override
+    public boolean equals(final Object o, final boolean ignoreId) {
         if (this == o) {
             return true;
         }
@@ -177,8 +182,10 @@ public class LiteralExpression extends Expression implements IsLiteralExpression
 
         final LiteralExpression that = (LiteralExpression) o;
 
-        if (id != null ? !id.equals(that.id) : that.id != null) {
-            return false;
+        if (!ignoreId) {
+            if (id != null ? !id.equals(that.id) : that.id != null) {
+                return false;
+            }
         }
         if (description != null ? !description.equals(that.description) : that.description != null) {
             return false;
@@ -192,7 +199,7 @@ public class LiteralExpression extends Expression implements IsLiteralExpression
         if (text != null ? !text.equals(that.text) : that.text != null) {
             return false;
         }
-        if (importedValues != null ? !importedValues.equals(that.importedValues) : that.importedValues != null) {
+        if (importedValues != null ? !importedValues.equals(that.importedValues, ignoreId) : that.importedValues != null) {
             return false;
         }
         return expressionLanguage != null ? expressionLanguage.equals(that.expressionLanguage) : that.expressionLanguage == null;

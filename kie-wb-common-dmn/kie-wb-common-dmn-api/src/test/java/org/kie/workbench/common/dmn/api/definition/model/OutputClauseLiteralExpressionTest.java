@@ -28,9 +28,15 @@ import org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType;
 
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.powermock.api.mockito.PowerMockito.when;
 
 public class OutputClauseLiteralExpressionTest {
 
@@ -70,5 +76,93 @@ public class OutputClauseLiteralExpressionTest {
         assertEquals(BuiltInType.BOOLEAN.asQName(), target.getTypeRef());
         assertEquals(TEXT, target.getText().getValue());
         assertNull(target.getImportedValues());
+    }
+
+    @Test
+    public void testEqualsNotIgnoringId_DifferentId() {
+        final Id id1 = new Id();
+        final Id id2 = new Id();
+        final OutputClauseLiteralExpression outputClause1 = new OutputClauseLiteralExpression(id1,
+                                                                                              null,
+                                                                                              null,
+                                                                                              null,
+                                                                                              null);
+        final OutputClauseLiteralExpression outputClause2 = new OutputClauseLiteralExpression(id2,
+                                                                                              null,
+                                                                                              null,
+                                                                                              null,
+                                                                                              null);
+
+        assertFalse(outputClause1.equals(outputClause2, false));
+    }
+
+    @Test
+    public void testEqualsNotIgnoringId_SameId() {
+        final Id same = new Id();
+        final OutputClauseLiteralExpression outputClause1 = new OutputClauseLiteralExpression(same,
+                                                                                              null,
+                                                                                              null,
+                                                                                              null,
+                                                                                              null);
+        final OutputClauseLiteralExpression outputClause2 = new OutputClauseLiteralExpression(same,
+                                                                                              null,
+                                                                                              null,
+                                                                                              null,
+                                                                                              null);
+        final ImportedValues importedValues1 = mock(ImportedValues.class);
+        final ImportedValues importedValues2 = mock(ImportedValues.class);
+
+        when(importedValues1.equals(importedValues2, false)).thenReturn(true);
+
+        outputClause1.setImportedValues(importedValues1);
+
+        outputClause2.setImportedValues(importedValues2);
+
+        final boolean result = outputClause1.equals(outputClause2, false);
+
+        assertTrue(result);
+
+        verify(importedValues1, never()).equals(importedValues2, true);
+    }
+
+    @Test
+    public void testEqualsIgnoringId_DifferentId() {
+        final Id id1 = new Id();
+        final Id id2 = new Id();
+        testEqualsIgnoringId(id1, id2);
+    }
+
+    @Test
+    public void testEqualsIgnoringId_SameId() {
+        final Id same = new Id();
+        testEqualsIgnoringId(same, same);
+    }
+
+    private void testEqualsIgnoringId(final Id id1, final Id id2) {
+        final OutputClauseLiteralExpression outputClause1 = new OutputClauseLiteralExpression(id1,
+                                                                                              null,
+                                                                                              null,
+                                                                                              null,
+                                                                                              null);
+        final OutputClauseLiteralExpression outputClause2 = new OutputClauseLiteralExpression(id2,
+                                                                                              null,
+                                                                                              null,
+                                                                                              null,
+                                                                                              null);
+        final ImportedValues importedValues1 = mock(ImportedValues.class);
+        final ImportedValues importedValues2 = mock(ImportedValues.class);
+
+        when(importedValues1.equals(importedValues2, true)).thenReturn(true);
+        outputClause1.setImportedValues(importedValues1);
+
+        outputClause2.setImportedValues(importedValues2);
+
+        final boolean result = outputClause1.equals(outputClause2, true);
+
+        assertTrue(result);
+
+        verify(importedValues1).equals(importedValues2, true);
+
+        verify(importedValues1, never()).equals(importedValues2, false);
     }
 }

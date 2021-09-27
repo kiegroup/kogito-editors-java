@@ -34,6 +34,11 @@ public class ExpressionTest {
     public void setup() {
         this.expression = new Expression() {
             @Override
+            public boolean equals(final Object other, final boolean ignoreId) {
+                return super.equals(other);
+            }
+
+            @Override
             public Expression copy() {
                 return expression;
             }

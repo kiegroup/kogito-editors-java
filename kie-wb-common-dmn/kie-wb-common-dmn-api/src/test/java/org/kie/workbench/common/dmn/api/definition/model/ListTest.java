@@ -32,12 +32,15 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -94,5 +97,83 @@ public class ListTest {
         assertEquals(DESCRIPTION, target.getDescription().getValue());
         assertEquals(BuiltInType.BOOLEAN.asQName(), target.getTypeRef());
         assertTrue(target.getExpression().isEmpty());
+    }
+
+    @Test
+    public void testEqualsNotIgnoringId_DifferentId() {
+        final Id id1 = new Id();
+        final Id id2 = new Id();
+        final org.kie.workbench.common.dmn.api.definition.model.List list1 = new org.kie.workbench.common.dmn.api.definition.model.List();
+        final org.kie.workbench.common.dmn.api.definition.model.List list2 = new org.kie.workbench.common.dmn.api.definition.model.List();
+
+        list1.setId(id1);
+        list2.setId(id2);
+
+        assertFalse(list1.equals(list2, false));
+    }
+
+    @Test
+    public void testEqualsNotIgnoringId_SameId() {
+        final Id same = new Id();
+        final org.kie.workbench.common.dmn.api.definition.model.List list1 = new org.kie.workbench.common.dmn.api.definition.model.List();
+        final org.kie.workbench.common.dmn.api.definition.model.List list2 = new org.kie.workbench.common.dmn.api.definition.model.List();
+        final HasExpression expression1 = mock(HasExpression.class);
+        final HasExpression expression2 = mock(HasExpression.class);
+
+        list1.setId(same);
+        list1.getExpression().add(expression1);
+        list1.getExpression().add(expression2);
+
+        list2.setId(same);
+        list2.getExpression().add(expression1);
+        list2.getExpression().add(expression2);
+
+        final boolean result = list1.equals(list2, false);
+
+        assertTrue(result);
+
+        verify(expression1, never()).equals(expression1, true);
+        verify(expression2, never()).equals(expression2, true);
+    }
+
+    @Test
+    public void testEqualsIgnoringId_DifferentId() {
+        final Id id1 = new Id();
+        final Id id2 = new Id();
+        testEqualsIgnoringId(id1, id2);
+    }
+
+    @Test
+    public void testEqualsIgnoringId_SameId() {
+        final Id same = new Id();
+        testEqualsIgnoringId(same, same);
+    }
+
+    private void testEqualsIgnoringId(final Id id1, final Id id2) {
+        final org.kie.workbench.common.dmn.api.definition.model.List list1 = new org.kie.workbench.common.dmn.api.definition.model.List();
+        final org.kie.workbench.common.dmn.api.definition.model.List list2 = new org.kie.workbench.common.dmn.api.definition.model.List();
+        final HasExpression expression1 = mock(HasExpression.class);
+        final HasExpression expression2 = mock(HasExpression.class);
+
+        when(expression1.equals(expression1, true)).thenReturn(true);
+        when(expression2.equals(expression2, true)).thenReturn(true);
+
+        list1.setId(id1);
+        list1.getExpression().add(expression1);
+        list1.getExpression().add(expression2);
+
+        list2.setId(id2);
+        list2.getExpression().add(expression1);
+        list2.getExpression().add(expression2);
+
+        final boolean result = list1.equals(list2, true);
+
+        assertTrue(result);
+
+        verify(expression1).equals(expression1, true);
+        verify(expression2).equals(expression2, true);
+
+        verify(expression1, never()).equals(expression1, false);
+        verify(expression2, never()).equals(expression2, false);
     }
 }

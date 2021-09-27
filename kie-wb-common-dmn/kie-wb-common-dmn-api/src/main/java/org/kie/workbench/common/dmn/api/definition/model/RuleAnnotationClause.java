@@ -21,15 +21,18 @@ import java.util.Optional;
 
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.kie.workbench.common.dmn.api.definition.HasName;
+import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
 
 @Portable
-public class RuleAnnotationClause extends DMNElement implements HasName {
+public class RuleAnnotationClause extends DMNElement implements HasName,
+                                                                HasEqualsIgnoreId {
 
     private Name name;
 
     public RuleAnnotationClause() {
         this.name = new Name();
+        this.id = new Id();
     }
 
     public RuleAnnotationClause copy() {
@@ -50,17 +53,30 @@ public class RuleAnnotationClause extends DMNElement implements HasName {
 
     @Override
     public boolean equals(final Object o) {
+        return this.equals(o, false);
+    }
+
+    @Override
+    public boolean equals(final Object o, final boolean ignoreId) {
         if (this == o) {
             return true;
         }
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        if (!super.equals(o)) {
+        final RuleAnnotationClause that = (RuleAnnotationClause) o;
+
+        if (!Objects.equals(name, that.name)) {
             return false;
         }
-        final RuleAnnotationClause that = (RuleAnnotationClause) o;
-        return Objects.equals(name, that.name);
+
+        if (!ignoreId) {
+            if (!Objects.equals(id, that.id)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     @Override

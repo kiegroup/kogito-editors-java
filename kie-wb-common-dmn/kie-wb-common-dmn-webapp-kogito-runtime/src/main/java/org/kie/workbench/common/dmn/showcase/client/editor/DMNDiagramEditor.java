@@ -23,6 +23,7 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import elemental2.promise.Promise;
 import com.ait.lienzo.client.core.types.JsCanvas;
 import com.ait.lienzo.client.widget.panel.LienzoBoundsPanel;
 import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
@@ -201,5 +202,17 @@ public class DMNDiagramEditor extends AbstractDMNDiagramEditor {
 
     private DMNDiagramEditor.View getView() {
         return (DMNDiagramEditor.View) getBaseEditorView();
+    }
+
+    public Promise<Void> undo() {
+        return promises.create((resolve, reject) -> {
+            commands.getUndoSessionCommand().execute();
+        });
+    }
+
+    public Promise<Void> redo() {
+        return promises.create((resolve, reject) -> {
+            commands.getRedoSessionCommand().execute();
+        });
     }
 }

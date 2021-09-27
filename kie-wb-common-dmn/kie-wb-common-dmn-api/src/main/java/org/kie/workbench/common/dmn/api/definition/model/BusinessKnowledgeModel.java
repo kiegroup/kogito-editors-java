@@ -164,6 +164,11 @@ public class BusinessKnowledgeModel extends DRGElement implements HasVariable<In
     public HasExpression asHasExpression() {
         return new HasExpression() {
             @Override
+            public boolean equals(final Object other, final boolean ignoreId) {
+                return super.equals(other);
+            }
+
+            @Override
             public Expression getExpression() {
                 return BusinessKnowledgeModel.this.getEncapsulatedLogic();
             }

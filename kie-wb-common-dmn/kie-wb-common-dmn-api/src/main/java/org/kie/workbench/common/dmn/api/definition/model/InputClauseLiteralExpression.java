@@ -67,7 +67,8 @@ public class InputClauseLiteralExpression extends DMNModelInstrumentedBase imple
                                                                                       HasText,
                                                                                       HasTypeRef,
                                                                                       DMNPropertySet,
-                                                                                      DomainObject {
+                                                                                      DomainObject,
+                                                                                      HasEqualsIgnoreId {
 
     @Category
     private static final String stunnerCategory = Categories.DOMAIN_OBJECTS;
@@ -115,10 +116,10 @@ public class InputClauseLiteralExpression extends DMNModelInstrumentedBase imple
 
     public InputClauseLiteralExpression copy() {
         final InputClauseLiteralExpression clonedInputClauseLiteralExpression = new InputClauseLiteralExpression();
-        clonedInputClauseLiteralExpression.description =  Optional.ofNullable(description).map(Description::copy).orElse(null);
-        clonedInputClauseLiteralExpression.typeRef =  Optional.ofNullable(typeRef).map(QName::copy).orElse(null);
-        clonedInputClauseLiteralExpression.typeRefHolder =  Optional.ofNullable(typeRefHolder).map(QNameHolder::copy).orElse(null);
-        clonedInputClauseLiteralExpression.text =  Optional.ofNullable(text).map(Text::copy).orElse(null);
+        clonedInputClauseLiteralExpression.description = Optional.ofNullable(description).map(Description::copy).orElse(null);
+        clonedInputClauseLiteralExpression.typeRef = Optional.ofNullable(typeRef).map(QName::copy).orElse(null);
+        clonedInputClauseLiteralExpression.typeRefHolder = Optional.ofNullable(typeRefHolder).map(QNameHolder::copy).orElse(null);
+        clonedInputClauseLiteralExpression.text = Optional.ofNullable(text).map(Text::copy).orElse(null);
         clonedInputClauseLiteralExpression.importedValues = Optional.ofNullable(importedValues).map(ImportedValues::copy).orElse(null);
         return clonedInputClauseLiteralExpression;
     }
@@ -218,7 +219,12 @@ public class InputClauseLiteralExpression extends DMNModelInstrumentedBase imple
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(final Object other) {
+        return equals(other, false);
+    }
+
+    @Override
+    public boolean equals(final Object o, final boolean ignoreId) {
         if (this == o) {
             return true;
         }
@@ -228,8 +234,10 @@ public class InputClauseLiteralExpression extends DMNModelInstrumentedBase imple
 
         final InputClauseLiteralExpression that = (InputClauseLiteralExpression) o;
 
-        if (id != null ? !id.equals(that.id) : that.id != null) {
-            return false;
+        if (!ignoreId) {
+            if (id != null ? !id.equals(that.id) : that.id != null) {
+                return false;
+            }
         }
         if (description != null ? !description.equals(that.description) : that.description != null) {
             return false;

@@ -21,8 +21,9 @@ import org.jboss.errai.common.client.api.annotations.MapsTo;
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.kie.workbench.common.dmn.api.definition.model.DMNModelInstrumentedBase;
 import org.kie.workbench.common.dmn.api.definition.model.Expression;
+import org.kie.workbench.common.dmn.api.definition.model.HasEqualsIgnoreId;
 
-public interface HasExpression {
+public interface HasExpression extends HasEqualsIgnoreId {
 
     Expression getExpression();
 
@@ -64,6 +65,11 @@ public interface HasExpression {
         public DMNModelInstrumentedBase asDMNModelInstrumentedBase() {
             return parent;
         }
+
+        @Override
+        public boolean equals(final Object other, final boolean ignoreId) {
+            return super.equals(other);
+        }
     }
 
     static HasExpression wrap(final DMNModelInstrumentedBase parent,
@@ -72,6 +78,11 @@ public interface HasExpression {
     }
 
     HasExpression NOP = new HasExpression() {
+        @Override
+        public boolean equals(final Object other, final boolean ignoreId) {
+            return super.equals(other);
+        }
+
         @Override
         public Expression getExpression() {
             return null;

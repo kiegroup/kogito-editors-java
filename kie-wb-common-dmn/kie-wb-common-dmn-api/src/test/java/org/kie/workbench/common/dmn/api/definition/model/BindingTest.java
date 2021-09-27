@@ -37,7 +37,9 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -120,4 +122,59 @@ public class BindingTest {
         assertEquals(INFORMATION_ITEM_NAME, target.getParameter().getName().getValue());
         assertEquals(BuiltInType.BOOLEAN.asQName(), target.getParameter().getTypeRef());
     }
+
+    @Test
+    public void testEqualsNotIgnoringId() {
+        final Expression expression1 = mock(Expression.class);
+        final Expression expression2 = mock(Expression.class);
+        final InformationItem informationItem1 = mock(InformationItem.class);
+        final InformationItem informationItem2 = mock(InformationItem.class);
+        final Binding binding1 = new Binding();
+        final Binding binding2 = new Binding();
+
+        when(informationItem1.equals(informationItem2, false)).thenReturn(true);
+        when(expression1.equals(expression2, false)).thenReturn(true);
+
+        binding1.setExpression(expression1);
+        binding2.setExpression(expression2);
+        binding1.setVariable(informationItem1);
+        binding2.setVariable(informationItem2);
+
+        final boolean result = binding1.equals(binding2, false);
+
+        verify(informationItem1).equals(informationItem2, false);
+        verify(expression1).equals(expression2, false);
+        verify(informationItem1, never()).equals(informationItem2, true);
+        verify(expression1, never()).equals(expression2, true);
+
+        assertTrue(result);
+    }
+
+    @Test
+    public void testEqualsIgnoringId() {
+        final Expression expression1 = mock(Expression.class);
+        final Expression expression2 = mock(Expression.class);
+        final InformationItem informationItem1 = mock(InformationItem.class);
+        final InformationItem informationItem2 = mock(InformationItem.class);
+        final Binding binding1 = new Binding();
+        final Binding binding2 = new Binding();
+
+        when(informationItem1.equals(informationItem2, true)).thenReturn(true);
+        when(expression1.equals(expression2, true)).thenReturn(true);
+
+        binding1.setExpression(expression1);
+        binding2.setExpression(expression2);
+        binding1.setVariable(informationItem1);
+        binding2.setVariable(informationItem2);
+
+        final boolean result = binding1.equals(binding2, true);
+
+        verify(informationItem1).equals(informationItem2, true);
+        verify(expression1).equals(expression2, true);
+        verify(informationItem1, never()).equals(informationItem2, false);
+        verify(expression1, never()).equals(expression2, false);
+
+        assertTrue(result);
+    }
 }
+

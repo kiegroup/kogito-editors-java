@@ -35,7 +35,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -88,4 +90,40 @@ public class ContextEntryTest {
         assertEquals(INFORMATION_ITEM_NAME, target.getVariable().getName().getValue());
         assertEquals(BuiltInType.BOOLEAN.asQName(), target.getVariable().getTypeRef());
     }
+
+    @Test
+    public void testEqualsNotIgnoringId() {
+        testEquals(false);
+    }
+
+    @Test
+    public void testEqualsIgnoringId() {
+        testEquals(true);
+    }
+
+    private void testEquals(final boolean ignoreId) {
+        final ContextEntry c1 = new ContextEntry();
+        final ContextEntry c2 = new ContextEntry();
+        final InformationItem variable1 = mock(InformationItem.class);
+        final InformationItem variable2 = mock(InformationItem.class);
+        final Expression expression1 = mock(Expression.class);
+        final Expression expression2 = mock(Expression.class);
+
+        when(variable1.equals(variable2, ignoreId)).thenReturn(true);
+        when(expression1.equals(expression2, ignoreId)).thenReturn(true);
+
+        c1.setVariable(variable1);
+        c1.setExpression(expression1);
+        c2.setVariable(variable2);
+        c2.setExpression(expression2);
+
+        c1.equals(c2, ignoreId);
+
+        verify(variable1).equals(variable2, ignoreId);
+        verify(expression1).equals(expression2, ignoreId);
+
+        verify(variable1, never()).equals(variable2, !ignoreId);
+        verify(expression1, never()).equals(expression2, !ignoreId);
+    }
 }
+

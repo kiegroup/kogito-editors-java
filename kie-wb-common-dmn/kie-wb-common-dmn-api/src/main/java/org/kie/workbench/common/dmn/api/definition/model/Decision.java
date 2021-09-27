@@ -216,7 +216,12 @@ public class Decision extends DRGElement implements DomainObject,
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(final Object other) {
+        return equals(other, false);
+    }
+
+    @Override
+    public boolean equals(final Object o, final boolean ignoreId) {
         if (this == o) {
             return true;
         }
@@ -226,8 +231,10 @@ public class Decision extends DRGElement implements DomainObject,
 
         Decision that = (Decision) o;
 
-        if (id != null ? !id.equals(that.id) : that.id != null) {
-            return false;
+        if (!ignoreId) {
+            if (id != null ? !id.equals(that.id) : that.id != null) {
+                return false;
+            }
         }
         if (description != null ? !description.equals(that.description) : that.description != null) {
             return false;
@@ -241,10 +248,10 @@ public class Decision extends DRGElement implements DomainObject,
         if (allowedAnswers != null ? !allowedAnswers.equals(that.allowedAnswers) : that.allowedAnswers != null) {
             return false;
         }
-        if (variable != null ? !variable.equals(that.variable) : that.variable != null) {
+        if (variable != null ? !variable.equals(that.variable, ignoreId) : that.variable != null) {
             return false;
         }
-        if (expression != null ? !expression.equals(that.expression) : that.expression != null) {
+        if (expression != null ? !expression.equals(that.expression, ignoreId) : that.expression != null) {
             return false;
         }
         if (stylingSet != null ? !stylingSet.equals(that.stylingSet) : that.stylingSet != null) {

@@ -28,8 +28,10 @@ import org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType;
 
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class InputClauseLiteralExpressionTest {
 
@@ -68,5 +70,74 @@ public class InputClauseLiteralExpressionTest {
         assertEquals(TEXT, target.getText().getValue());
         assertEquals(DESCRIPTION, target.getDescription().getValue());
         assertEquals(BuiltInType.BOOLEAN.asQName(), target.getTypeRef());
+    }
+
+    @Test
+    public void testEqualsNotIgnoringId_DifferentId() {
+        final Id id1 = new Id();
+        final Id id2 = new Id();
+        final InputClauseLiteralExpression clause1 = new InputClauseLiteralExpression(id1,
+                                                                                      null,
+                                                                                      null,
+                                                                                      null,
+                                                                                      null);
+        final InputClauseLiteralExpression clause2 = new InputClauseLiteralExpression(id2,
+                                                                                      null,
+                                                                                      null,
+                                                                                      null,
+                                                                                      null);
+        assertFalse(clause1.equals(clause2, false));
+    }
+
+    @Test
+    public void testEqualsNotIgnoringId_SameId() {
+        final Id same = new Id();
+        final InputClauseLiteralExpression clause1 = new InputClauseLiteralExpression(same,
+                                                                                      null,
+                                                                                      null,
+                                                                                      null,
+                                                                                      null);
+        final InputClauseLiteralExpression clause2 = new InputClauseLiteralExpression(same,
+                                                                                      null,
+                                                                                      null,
+                                                                                      null,
+                                                                                      null);
+
+        assertTrue(clause1.equals(clause2, false));
+    }
+
+    @Test
+    public void testEqualsIgnoringId_DifferentId() {
+        final Id id1 = new Id();
+        final Id id2 = new Id();
+        final InputClauseLiteralExpression clause1 = new InputClauseLiteralExpression(id1,
+                                                                                      null,
+                                                                                      null,
+                                                                                      null,
+                                                                                      null);
+        final InputClauseLiteralExpression clause2 = new InputClauseLiteralExpression(id2,
+                                                                                      null,
+                                                                                      null,
+                                                                                      null,
+                                                                                      null);
+
+        assertTrue(clause1.equals(clause2, true));
+    }
+
+    @Test
+    public void testEqualsIgnoringId_SameId() {
+        final Id same = new Id();
+        final InputClauseLiteralExpression clause1 = new InputClauseLiteralExpression(same,
+                                                                                      null,
+                                                                                      null,
+                                                                                      null,
+                                                                                      null);
+        final InputClauseLiteralExpression clause2 = new InputClauseLiteralExpression(same,
+                                                                                      null,
+                                                                                      null,
+                                                                                      null,
+                                                                                      null);
+
+        assertTrue(clause1.equals(clause2, true));
     }
 }

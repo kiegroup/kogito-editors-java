@@ -28,7 +28,8 @@ import org.kie.workbench.common.dmn.api.property.dmn.QName;
 import static java.util.Collections.singletonList;
 
 public abstract class Expression extends DMNElement implements HasTypeRef,
-                                                               HasComponentWidths {
+                                                               HasComponentWidths,
+                                                               HasEqualsIgnoreId {
 
     protected QName typeRef;
 

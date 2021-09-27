@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.kie.workbench.common.dmn.api.definition.HasTypeRef;
 import org.kie.workbench.common.dmn.api.definition.HasTypeRefs;
+import org.kie.workbench.common.dmn.api.definition.model.common.ListComparerHelper;
 import org.kie.workbench.common.dmn.api.property.dmn.Description;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.stunner.core.util.HashUtil;
@@ -30,7 +31,8 @@ import org.kie.workbench.common.stunner.core.util.HashUtil;
 import static org.kie.workbench.common.dmn.api.definition.model.common.HasTypeRefHelper.getFlatHasTypeRefs;
 
 @Portable
-public class DecisionRule extends DMNElement implements HasTypeRefs {
+public class DecisionRule extends DMNElement implements HasTypeRefs,
+                                                        HasEqualsIgnoreId {
 
     private List<UnaryTests> inputEntry;
     private List<LiteralExpression> outputEntry;
@@ -92,7 +94,12 @@ public class DecisionRule extends DMNElement implements HasTypeRefs {
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(final Object other) {
+        return equals(other, false);
+    }
+
+    @Override
+    public boolean equals(final Object o, final boolean ignoreId) {
         if (this == o) {
             return true;
         }
@@ -102,19 +109,21 @@ public class DecisionRule extends DMNElement implements HasTypeRefs {
 
         final DecisionRule that = (DecisionRule) o;
 
-        if (id != null ? !id.equals(that.id) : that.id != null) {
-            return false;
+        if (!ignoreId) {
+            if (id != null ? !id.equals(that.id) : that.id != null) {
+                return false;
+            }
         }
         if (description != null ? !description.equals(that.description) : that.description != null) {
             return false;
         }
-        if (inputEntry != null ? !inputEntry.equals(that.inputEntry) : that.inputEntry != null) {
+        if (inputEntry != null ? !ListComparerHelper.compare(inputEntry, that.inputEntry, ignoreId) : that.inputEntry != null) {
             return false;
         }
         if (annotationEntry != null ? !annotationEntry.equals(that.annotationEntry) : that.annotationEntry != null) {
             return false;
         }
-        return outputEntry != null ? outputEntry.equals(that.outputEntry) : that.outputEntry == null;
+        return outputEntry != null ? ListComparerHelper.compare(outputEntry, that.outputEntry, ignoreId) : that.outputEntry == null;
     }
 
     @Override

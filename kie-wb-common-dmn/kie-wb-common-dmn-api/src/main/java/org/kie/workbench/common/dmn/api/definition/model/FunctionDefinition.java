@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.kie.workbench.common.dmn.api.definition.HasExpression;
 import org.kie.workbench.common.dmn.api.definition.HasTypeRef;
+import org.kie.workbench.common.dmn.api.definition.model.common.ListComparerHelper;
 import org.kie.workbench.common.dmn.api.property.dmn.Description;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.QName;
@@ -34,7 +35,8 @@ import static org.kie.workbench.common.dmn.api.definition.model.common.HasTypeRe
 import static org.kie.workbench.common.dmn.api.definition.model.common.HasTypeRefHelper.getNotNullHasTypeRefs;
 
 @Portable
-public class FunctionDefinition extends Expression implements HasExpression {
+public class FunctionDefinition extends Expression implements HasExpression,
+                                                              HasEqualsIgnoreId {
 
     private static final int STATIC_COLUMNS = 2;
 
@@ -142,7 +144,12 @@ public class FunctionDefinition extends Expression implements HasExpression {
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(final Object other) {
+        return equals(other, false);
+    }
+
+    @Override
+    public boolean equals(final Object o, final boolean ignoreId) {
         if (this == o) {
             return true;
         }
@@ -152,8 +159,10 @@ public class FunctionDefinition extends Expression implements HasExpression {
 
         final FunctionDefinition that = (FunctionDefinition) o;
 
-        if (id != null ? !id.equals(that.id) : that.id != null) {
-            return false;
+        if (!ignoreId) {
+            if (id != null ? !id.equals(that.id) : that.id != null) {
+                return false;
+            }
         }
         if (description != null ? !description.equals(that.description) : that.description != null) {
             return false;
@@ -164,10 +173,10 @@ public class FunctionDefinition extends Expression implements HasExpression {
         if (componentWidths != null ? !componentWidths.equals(that.componentWidths) : that.componentWidths != null) {
             return false;
         }
-        if (expression != null ? !expression.equals(that.expression) : that.expression != null) {
+        if (expression != null ? !expression.equals(that.expression, ignoreId) : that.expression != null) {
             return false;
         }
-        return formalParameter != null ? formalParameter.equals(that.formalParameter) : that.formalParameter == null;
+        return formalParameter != null ? ListComparerHelper.compare(formalParameter, that.formalParameter, ignoreId) : that.formalParameter == null;
     }
 
     @Override

@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.kie.workbench.common.dmn.api.definition.HasExpression;
 import org.kie.workbench.common.dmn.api.definition.HasTypeRef;
+import org.kie.workbench.common.dmn.api.definition.model.common.ListComparerHelper;
 import org.kie.workbench.common.dmn.api.property.dmn.Description;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.QName;
@@ -109,7 +110,12 @@ public class Invocation extends Expression implements HasExpression {
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(final Object other) {
+        return equals(other, false);
+    }
+
+    @Override
+    public boolean equals(final Object o, final boolean ignoreId) {
         if (this == o) {
             return true;
         }
@@ -118,9 +124,10 @@ public class Invocation extends Expression implements HasExpression {
         }
 
         final Invocation that = (Invocation) o;
-
-        if (id != null ? !id.equals(that.id) : that.id != null) {
-            return false;
+        if (!ignoreId) {
+            if (id != null ? !id.equals(that.id) : that.id != null) {
+                return false;
+            }
         }
         if (description != null ? !description.equals(that.description) : that.description != null) {
             return false;
@@ -131,10 +138,10 @@ public class Invocation extends Expression implements HasExpression {
         if (componentWidths != null ? !componentWidths.equals(that.componentWidths) : that.componentWidths != null) {
             return false;
         }
-        if (expression != null ? !expression.equals(that.expression) : that.expression != null) {
+        if (expression != null ? !expression.equals(that.expression, ignoreId) : that.expression != null) {
             return false;
         }
-        return binding != null ? binding.equals(that.binding) : that.binding == null;
+        return binding != null ? ListComparerHelper.compare(binding, that.binding, ignoreId) : that.binding == null;
     }
 
     @Override

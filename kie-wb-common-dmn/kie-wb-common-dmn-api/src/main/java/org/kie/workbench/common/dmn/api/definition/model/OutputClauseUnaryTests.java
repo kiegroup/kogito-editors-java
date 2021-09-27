@@ -49,7 +49,8 @@ import static org.kie.workbench.common.forms.adf.engine.shared.formGeneration.pr
         startElement = "text")
 public class OutputClauseUnaryTests extends DMNModelInstrumentedBase implements IsUnaryTests,
                                                                                 HasText,
-                                                                                DMNPropertySet {
+                                                                                DMNPropertySet,
+                                                                                HasEqualsIgnoreId {
 
     protected Id id;
 
@@ -110,7 +111,12 @@ public class OutputClauseUnaryTests extends DMNModelInstrumentedBase implements 
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(final Object other) {
+        return equals(other, false);
+    }
+
+    @Override
+    public boolean equals(final Object o, final boolean ignoreId) {
         if (this == o) {
             return true;
         }
@@ -120,8 +126,10 @@ public class OutputClauseUnaryTests extends DMNModelInstrumentedBase implements 
 
         final OutputClauseUnaryTests that = (OutputClauseUnaryTests) o;
 
-        if (id != null ? !id.equals(that.id) : that.id != null) {
-            return false;
+        if (!ignoreId) {
+            if (id != null ? !id.equals(that.id) : that.id != null) {
+                return false;
+            }
         }
 
         return text != null ? text.equals(that.text) : that.text == null;

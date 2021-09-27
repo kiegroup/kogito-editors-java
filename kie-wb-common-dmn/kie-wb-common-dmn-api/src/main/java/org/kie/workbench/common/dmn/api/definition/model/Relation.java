@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.kie.workbench.common.dmn.api.definition.HasTypeRef;
+import org.kie.workbench.common.dmn.api.definition.model.common.ListComparerHelper;
 import org.kie.workbench.common.dmn.api.property.dmn.Description;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.QName;
@@ -98,7 +99,12 @@ public class Relation extends Expression {
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(final Object other) {
+        return equals(other, false);
+    }
+
+    @Override
+    public boolean equals(final Object o, final boolean ignoreId) {
         if (this == o) {
             return true;
         }
@@ -108,8 +114,10 @@ public class Relation extends Expression {
 
         final Relation that = (Relation) o;
 
-        if (id != null ? !id.equals(that.id) : that.id != null) {
-            return false;
+        if (!ignoreId) {
+            if (id != null ? !id.equals(that.id) : that.id != null) {
+                return false;
+            }
         }
         if (description != null ? !description.equals(that.description) : that.description != null) {
             return false;
@@ -120,10 +128,10 @@ public class Relation extends Expression {
         if (componentWidths != null ? !componentWidths.equals(that.componentWidths) : that.componentWidths != null) {
             return false;
         }
-        if (column != null ? !column.equals(that.column) : that.column != null) {
+        if (column != null ? !ListComparerHelper.compare(column, that.column, ignoreId) : that.column != null) {
             return false;
         }
-        return row != null ? row.equals(that.row) : that.row == null;
+        return row != null ? ListComparerHelper.compare(row, that.row, ignoreId) : that.row == null;
     }
 
     @Override

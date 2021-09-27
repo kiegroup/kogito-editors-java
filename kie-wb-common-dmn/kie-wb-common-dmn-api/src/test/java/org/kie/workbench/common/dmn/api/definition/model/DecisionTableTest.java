@@ -31,17 +31,19 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.kie.workbench.common.dmn.api.definition.model.BuiltinAggregator.SUM;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-
 public class DecisionTableTest {
 
     private static final String TABLE_ID = "TABLE-ID";
@@ -128,5 +130,104 @@ public class DecisionTableTest {
         assertEquals(SUM, target.getAggregation());
         assertEquals(DecisionTableOrientation.RULE_AS_ROW, target.getPreferredOrientation());
         assertEquals(OUTPUT_LABEL, target.getOutputLabel());
+    }
+
+    @Test
+    public void testEqualsNotIgnoringId_WithDifferentId() {
+        final Id id1 = new Id();
+        final Id id2 = new Id();
+        final DecisionTable decisionTable1 = new DecisionTable();
+        final DecisionTable decisionTable2 = new DecisionTable();
+
+        decisionTable1.setId(id1);
+        decisionTable2.setId(id2);
+
+        final boolean result = decisionTable1.equals(decisionTable2, false);
+        assertFalse(result);
+    }
+
+    @Test
+    public void testEqualsNotIgnoringId_WithSameId() {
+        final Id same = new Id();
+        final DecisionTable decisionTable1 = new DecisionTable();
+        final DecisionTable decisionTable2 = new DecisionTable();
+        final InputClause inputClause = mock(InputClause.class);
+        final OutputClause outputClause = mock(OutputClause.class);
+        final DecisionRule decisionRule = mock(DecisionRule.class);
+        final RuleAnnotationClause ruleAnnotationClause = mock(RuleAnnotationClause.class);
+
+        decisionTable1.setId(same);
+        decisionTable1.getInput().add(inputClause);
+        decisionTable1.getOutput().add(outputClause);
+        decisionTable1.getRule().add(decisionRule);
+        decisionTable1.getAnnotations().add(ruleAnnotationClause);
+
+        decisionTable2.setId(same);
+        decisionTable2.getInput().add(inputClause);
+        decisionTable2.getOutput().add(outputClause);
+        decisionTable2.getRule().add(decisionRule);
+        decisionTable2.getAnnotations().add(ruleAnnotationClause);
+
+        final boolean result = decisionTable1.equals(decisionTable2, false);
+
+        assertTrue(result);
+
+        verify(inputClause, never()).equals(inputClause, true);
+        verify(outputClause, never()).equals(outputClause, true);
+        verify(decisionRule, never()).equals(decisionRule, true);
+        verify(ruleAnnotationClause, never()).equals(ruleAnnotationClause, true);
+    }
+
+    @Test
+    public void testEqualsIgnoringId_DifferentId() {
+        final Id id1 = new Id();
+        final Id id2 = new Id();
+        testEqualsIgnoringId(id1, id2);
+    }
+
+    @Test
+    public void testEqualsIgnoringId_SameId() {
+        final Id same = new Id();
+        testEqualsIgnoringId(same, same);
+    }
+
+    private void testEqualsIgnoringId(final Id id1, final Id id2) {
+        final DecisionTable decisionTable1 = new DecisionTable();
+        final DecisionTable decisionTable2 = new DecisionTable();
+        final InputClause inputClause = mock(InputClause.class);
+        final OutputClause outputClause = mock(OutputClause.class);
+        final DecisionRule decisionRule = mock(DecisionRule.class);
+        final RuleAnnotationClause ruleAnnotationClause = mock(RuleAnnotationClause.class);
+
+        when(inputClause.equals(inputClause, true)).thenReturn(true);
+        when(outputClause.equals(outputClause, true)).thenReturn(true);
+        when(decisionRule.equals(decisionRule, true)).thenReturn(true);
+        when(ruleAnnotationClause.equals(ruleAnnotationClause, true)).thenReturn(true);
+
+        decisionTable1.setId(id1);
+        decisionTable1.getInput().add(inputClause);
+        decisionTable1.getOutput().add(outputClause);
+        decisionTable1.getRule().add(decisionRule);
+        decisionTable1.getAnnotations().add(ruleAnnotationClause);
+
+        decisionTable2.setId(id2);
+        decisionTable2.getInput().add(inputClause);
+        decisionTable2.getOutput().add(outputClause);
+        decisionTable2.getRule().add(decisionRule);
+        decisionTable2.getAnnotations().add(ruleAnnotationClause);
+
+        final boolean result = decisionTable1.equals(decisionTable2, true);
+
+        assertTrue(result);
+
+        verify(inputClause).equals(inputClause, true);
+        verify(outputClause).equals(outputClause, true);
+        verify(decisionRule).equals(decisionRule, true);
+        verify(ruleAnnotationClause).equals(ruleAnnotationClause, true);
+
+        verify(inputClause, never()).equals(inputClause, false);
+        verify(outputClause, never()).equals(outputClause, false);
+        verify(decisionRule, never()).equals(decisionRule, false);
+        verify(ruleAnnotationClause, never()).equals(ruleAnnotationClause, false);
     }
 }

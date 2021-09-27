@@ -22,6 +22,8 @@ import org.kie.workbench.common.dmn.api.property.dmn.LocationURI;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 
 public class ImportedValuesTest {
 
@@ -49,5 +51,20 @@ public class ImportedValuesTest {
         assertEquals(IMPORT_TYPE, target.getImportType());
         assertEquals(IMPORTED_ELEMENT, target.getImportedElement());
         assertEquals(EXPRESSION_LANGUAGE, target.getExpressionLanguage().getValue());
+    }
+
+    @Test
+    public void testEqualsIgnoreId() {
+
+        final ImportedValues imported = spy(new ImportedValues());
+        final ImportedValues otherImported = new ImportedValues();
+
+        imported.equals(otherImported, false);
+
+        verify(imported).superEquals(otherImported, false);
+
+        imported.equals(otherImported, true);
+
+        verify(imported).superEquals(otherImported, true);
     }
 }

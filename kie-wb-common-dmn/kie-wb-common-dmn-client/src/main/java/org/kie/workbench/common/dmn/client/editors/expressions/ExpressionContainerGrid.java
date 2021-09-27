@@ -226,6 +226,11 @@ public class ExpressionContainerGrid extends BaseGrid<Expression> {
     HasExpression spyHasExpression(final HasExpression hasExpression) {
         final HasExpression spy = new HasExpression() {
             @Override
+            public boolean equals(final Object other, final boolean ignoreId) {
+                return super.equals(other);
+            }
+
+            @Override
             public Expression getExpression() {
                 return hasExpression.getExpression();
             }

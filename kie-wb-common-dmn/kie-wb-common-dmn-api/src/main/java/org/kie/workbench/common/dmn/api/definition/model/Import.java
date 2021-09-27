@@ -22,7 +22,7 @@ import org.kie.workbench.common.stunner.core.util.HashUtil;
 import static org.uberfire.commons.UUID.uuid;
 
 @Portable
-public class Import extends NamedElement {
+public class Import extends NamedElement implements HasEqualsIgnoreId {
 
     protected String namespace;
 
@@ -84,7 +84,12 @@ public class Import extends NamedElement {
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(final Object other) {
+        return equals(other, false);
+    }
+
+    @Override
+    public boolean equals(final Object o, final boolean ignoreId) {
         if (this == o) {
             return true;
         }
@@ -94,8 +99,10 @@ public class Import extends NamedElement {
 
         final Import that = (Import) o;
 
-        if (id != null ? !id.equals(that.id) : that.id != null) {
-            return false;
+        if (!ignoreId) {
+            if (id != null ? !id.equals(that.id) : that.id != null) {
+                return false;
+            }
         }
         if (description != null ? !description.equals(that.description) : that.description != null) {
             return false;

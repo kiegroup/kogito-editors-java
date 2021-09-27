@@ -23,8 +23,10 @@ import org.kie.workbench.common.dmn.api.property.dmn.Text;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.kie.workbench.common.dmn.api.definition.model.ConstraintType.NONE;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -36,7 +38,7 @@ public class InputClauseUnaryTestsTest {
     @Test
     public void testDefaultConstraintTypeProperty() {
         final InputClauseUnaryTests inputClause = new InputClauseUnaryTests();
-        assertEquals("", inputClause.getConstraintTypeProperty().getValue());
+        assertEquals(NONE.value(), inputClause.getConstraintTypeProperty().getValue());
     }
 
     @Test
@@ -109,5 +111,58 @@ public class InputClauseUnaryTestsTest {
         assertNotEquals(UNARY_ID, target.getId().getValue());
         assertEquals(TEXT, target.getText().getValue());
         assertEquals(ConstraintType.ENUMERATION, target.getConstraintType());
+    }
+
+    @Test
+    public void testEqualsNotIgnoringId_DifferentId() {
+        final Id id1 = new Id();
+        final Id id2 = new Id();
+        final InputClauseUnaryTests clause1 = new InputClauseUnaryTests(id1,
+                                                                        null,
+                                                                        null);
+        final InputClauseUnaryTests clause2 = new InputClauseUnaryTests(id2,
+                                                                        null,
+                                                                        null);
+        assertFalse(clause1.equals(clause2, false));
+    }
+
+    @Test
+    public void testEqualsNotIgnoringId_SameId() {
+        final Id same = new Id();
+        final InputClauseUnaryTests clause1 = new InputClauseUnaryTests(same,
+                                                                        null,
+                                                                        null);
+        final InputClauseUnaryTests clause2 = new InputClauseUnaryTests(same,
+                                                                        null,
+                                                                        null);
+
+        assertTrue(clause1.equals(clause2, false));
+    }
+
+    @Test
+    public void testEqualsIgnoringId_DifferentId() {
+        final Id id1 = new Id();
+        final Id id2 = new Id();
+        final InputClauseUnaryTests clause1 = new InputClauseUnaryTests(id1,
+                                                                        null,
+                                                                        null);
+        final InputClauseUnaryTests clause2 = new InputClauseUnaryTests(id2,
+                                                                        null,
+                                                                        null);
+
+        assertTrue(clause1.equals(clause2, true));
+    }
+
+    @Test
+    public void testEqualsIgnoringId_SameId() {
+        final Id same = new Id();
+        final InputClauseUnaryTests clause1 = new InputClauseUnaryTests(same,
+                                                                        null,
+                                                                        null);
+        final InputClauseUnaryTests clause2 = new InputClauseUnaryTests(same,
+                                                                        null,
+                                                                        null);
+
+        assertTrue(clause1.equals(clause2, true));
     }
 }

@@ -52,7 +52,8 @@ import static org.kie.workbench.common.forms.adf.engine.shared.formGeneration.pr
         i18n = @I18nSettings(keyPreffix = "org.kie.workbench.common.dmn.api.definition.model.InputClause"),
         startElement = "id")
 public class InputClause extends DMNElement implements HasTypeRefs,
-                                                       DomainObject {
+                                                       DomainObject,
+                                                       HasEqualsIgnoreId {
 
     @Category
     private static final String stunnerCategory = Categories.DOMAIN_OBJECTS;
@@ -146,7 +147,12 @@ public class InputClause extends DMNElement implements HasTypeRefs,
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(final Object other) {
+        return equals(other, false);
+    }
+
+    @Override
+    public boolean equals(final Object o, final boolean ignoreId) {
         if (this == o) {
             return true;
         }
@@ -156,16 +162,19 @@ public class InputClause extends DMNElement implements HasTypeRefs,
 
         final InputClause that = (InputClause) o;
 
-        if (id != null ? !id.equals(that.id) : that.id != null) {
-            return false;
+        if (!ignoreId) {
+            if (id != null ? !id.equals(that.id) : that.id != null) {
+                return false;
+            }
         }
+
         if (description != null ? !description.equals(that.description) : that.description != null) {
             return false;
         }
-        if (inputExpression != null ? !inputExpression.equals(that.inputExpression) : that.inputExpression != null) {
+        if (inputExpression != null ? !inputExpression.equals(that.inputExpression, ignoreId) : that.inputExpression != null) {
             return false;
         }
-        return inputValues != null ? inputValues.equals(that.inputValues) : that.inputValues == null;
+        return inputValues != null ? inputValues.equals(that.inputValues, ignoreId) : that.inputValues == null;
     }
 
     @Override
