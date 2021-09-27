@@ -143,6 +143,10 @@ public class JsLienzo {
     }
 
     public String getBackgroundColor(String UUID) {
+
+        if (UUID == null || "".equals(UUID)) {
+            return null;
+        }
         JsWiresShape shape = getWiresShape(UUID);
         if (shape == null) {
             return null;
@@ -151,6 +155,11 @@ public class JsLienzo {
     }
 
     public void setBackgroundColor(String UUID, String backgroundColor) {
+
+        if (UUID == null || "".equals(UUID) || backgroundColor == null || "".equals(backgroundColor)) {
+            return;
+        }
+
         JsWiresShape shape = getWiresShape(UUID);
         if (shape == null) {
             return;
@@ -159,6 +168,11 @@ public class JsLienzo {
     }
 
     public String getBorderColor(String UUID) {
+
+        if (UUID == null || "".equals(UUID)) {
+            return null;
+        }
+
         JsWiresShape shape = getWiresShape(UUID);
         if (shape == null) {
             return null;
@@ -167,6 +181,11 @@ public class JsLienzo {
     }
 
     public void setBorderColor(String UUID, String borderColor) {
+
+        if (UUID == null || "".equals(UUID) || borderColor == null || "".equals(borderColor)) {
+            return;
+        }
+
         JsWiresShape shape = getWiresShape(UUID);
         if (shape == null) {
             return;
@@ -175,6 +194,11 @@ public class JsLienzo {
     }
 
     public NFastArrayList<Double> getLocation(String UUID) {
+
+        if (UUID == null || "".equals(UUID)) {
+            return null;
+        }
+
         JsWiresShape shape = getWiresShape(UUID);
         if (shape == null) {
             return null;
@@ -188,6 +212,11 @@ public class JsLienzo {
     }
 
     public NFastArrayList<Double> getAbsoluteLocation(String UUID) {
+
+        if (UUID == null || "".equals(UUID)) {
+            return null;
+        }
+
         JsWiresShape shape = getWiresShape(UUID);
         if (shape == null) {
             return null;
@@ -212,6 +241,11 @@ public class JsLienzo {
     }
 
     public NFastArrayList<Double> getDimensions(String UUID) {
+
+        if (UUID == null || "".equals(UUID)) {
+            return null;
+        }
+
         JsWiresShape shape = getWiresShape(UUID);
         if (shape == null) {
             return null;

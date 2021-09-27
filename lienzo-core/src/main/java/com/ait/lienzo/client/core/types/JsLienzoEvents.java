@@ -167,11 +167,7 @@ public class JsLienzoEvents {
         mouseEventInit.setButton(MouseEventUtil.BUTTON_LEFT);
         MouseEvent event = new MouseEvent(type, mouseEventInit);
         boolean cancelled = !lienzo.panel.getElement().dispatchEvent(event);
-        if (cancelled) {
-            // A handler called preventDefault.
-        } else {
-            // None of the handlers called preventDefault.
-        }
+
         return event;
     }
 
