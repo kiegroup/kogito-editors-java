@@ -53,7 +53,8 @@ public class BaseLienzoExamples {
                     new Transform3PointsExample("Transform 3Points"),
                     new SpriteExample("Sprite Example"),
                     new ImageStripExample("Image Strip Example"),
-                    new AsteroidsGameExample("Asteroids Game")
+                    new AsteroidsGameExample("Asteroids Game"),
+                    new InfiniteCanvasExample("Infinite Canvas")
         );
     }
 

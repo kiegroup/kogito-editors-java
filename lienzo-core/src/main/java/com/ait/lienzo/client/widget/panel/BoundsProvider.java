@@ -21,4 +21,12 @@ import com.ait.lienzo.client.core.shape.Layer;
 public interface BoundsProvider {
 
     Bounds get(Layer layer);
+
+    default double getPadding() {
+        return 0;
+    }
+
+    default BoundsProvider setPadding(final double value) {
+        return this;
+    }
 }

@@ -94,6 +94,10 @@ public class BoundsProviderFactory {
             return cast();
         }
 
+        public double getPadding() {
+            return padding;
+        }
+
         public T setPadding(final double value) {
             this.padding = value;
             return cast();
@@ -115,16 +119,11 @@ public class BoundsProviderFactory {
         public Bounds build(final NFastArrayList<BoundingBox> boxes) {
             if (null != boxes) {
                 final BoundingBox result = new BoundingBox();
-                result.add(0, 0);
                 for (BoundingBox box : boxes.asList()) {
                     result.addBoundingBox(box);
                 }
-                if (result.getMinX() < 0) {
-                    result.addX(result.getMinY() - padding);
-                }
-                if (result.getMinY() < 0) {
-                    result.addY(result.getMinY() - padding);
-                }
+                result.add(result.getMinX() - padding,
+                           result.getMinY() - padding);
                 result.add(result.getMaxX() + padding,
                            result.getMaxY() + padding);
                 return boundsBuilder.apply(result);

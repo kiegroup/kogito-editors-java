@@ -186,6 +186,16 @@ public final class LienzoPanelHandlerManager {
 
         nodeDragStartEvent = new NodeDragStartEvent(m_lienzoElm);
 
+        m_lienzoElm.addEventListener("pointerdown", e ->
+        {
+            setPointerCapture(m_lienzoElm, e);
+        });
+
+        m_lienzoElm.addEventListener("pointerup", e ->
+        {
+            releasePointerCapture(m_lienzoElm, e);
+        });
+
         addEventListener(EventType.CLICKED, (Event event) ->
         {
             MouseEvent mouseEvent = (MouseEvent) event;
@@ -547,6 +557,8 @@ public final class LienzoPanelHandlerManager {
 
             fireEvent(mouseEvent, touchEvent, x, y, m_dragContext, m_drag_node.asNode(), nodeDragEndEvent);
 
+            LienzoPanelEvents.firePrimitiveDragEndEvent(m_lienzo, m_drag_node);
+
             m_dragContext.dragDone();
 
             m_drag_node.setDragging(false);
@@ -600,6 +612,8 @@ public final class LienzoPanelHandlerManager {
 
         fireEvent(mouseEvent, touchEvent, x, y, m_dragContext, node, nodeDragStartEvent);
 
+        LienzoPanelEvents.firePrimitiveDragStartEvent(m_lienzo, m_drag_node);
+
         m_dragging = true;
 
         if (DragMode.DRAG_LAYER == m_drag_mode) {
@@ -626,6 +640,7 @@ public final class LienzoPanelHandlerManager {
             m_dragContext.drawNodeWithTransforms(m_viewport.getDragLayer().getContext());
         } else {
             m_drag_node.getLayer().batch();
+            LienzoPanelEvents.firePrimitiveDragUpdateEvent(m_lienzo, m_drag_node);
         }
     }
 
@@ -831,12 +846,12 @@ public final class LienzoPanelHandlerManager {
     }
 
     private final void onNodeMouseOutTouchCancel(final MouseEvent mouseEvent, final TouchEvent touchEvent, int x, int y, final AbstractNodeHumanInputEvent nodeEvent) {
-        m_dragging_mouse_pressed = false;// in case someone does a pop up ( Window.alert() ), this causes technically a MouseDown cancel
-
-        if (m_dragging) {
-            doDragCancel(x, y, mouseEvent, touchEvent);
-        }
-        doCancelEnterExitShape(mouseEvent, touchEvent, x, y);
+//        m_dragging_mouse_pressed = false;// in case someone does a pop up ( Window.alert() ), this causes technically a MouseDown cancel
+//
+//        if (m_dragging) {
+//            doDragCancel(x, y, mouseEvent, touchEvent);
+//        }
+//        doCancelEnterExitShape(mouseEvent, touchEvent, x, y);
 
         Node<?> node = findPrimitiveForEventType(x, y, nodeEvent.getAssociatedType());
         fireEvent(mouseEvent, touchEvent, x, y, null, node, nodeEvent); // @FIXME was the only ever meant to fire on scene->layers? and not nodes?
@@ -852,4 +867,12 @@ public final class LienzoPanelHandlerManager {
         m_mouse_button_middle = nativeButtonCode == MouseEventUtil.BUTTON_MIDDLE;
         m_mouse_button_right = nativeButtonCode == MouseEventUtil.BUTTON_RIGHT;
     }
+
+    private static native void setPointerCapture(HTMLElement element, Event event) /*-{
+        element.setPointerCapture(event.pointerId)
+    }-*/;
+
+    private static native void releasePointerCapture(HTMLElement element, Event event) /*-{
+        element.releasePointerCapture(event.pointerId)
+    }-*/;
 }

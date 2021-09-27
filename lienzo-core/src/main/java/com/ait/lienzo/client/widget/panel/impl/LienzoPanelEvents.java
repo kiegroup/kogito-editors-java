@@ -1,5 +1,6 @@
 package com.ait.lienzo.client.widget.panel.impl;
 
+import com.ait.lienzo.client.core.shape.IPrimitive;
 import com.ait.lienzo.client.widget.panel.LienzoPanel;
 import elemental2.dom.CustomEvent;
 import elemental2.dom.EventListener;
@@ -11,6 +12,9 @@ public class LienzoPanelEvents {
     static final String LIENZO_PANEL_RESIZE_EVENT = "lienzoPanelResizeEvent";
     static final String LIENZO_PANEL_SCALE_EVENT = "lienzoPanelScaleEvent";
     static final String LIENZO_PANEL_SCROLL_EVENT = "lienzoPanelScrollEvent";
+    static final String LIENZO_PANEL_PRIMITIVE_DRAG_START_EVENT = "lienzoPanelPrimtiveDragStartEvent";
+    static final String LIENZO_PANEL_PRIMITIVE_DRAG_UPDATE_EVENT = "lienzoPanelPrimitiveDragUpdateEvent";
+    static final String LIENZO_PANEL_PRIMITIVE_DRAG_END_EVENT = "lienzoPanelPrimitiveDragEndEvent";
 
     static void addBoundsChangedEventListener(LienzoPanel panel,
                                               EventListener eventListener) {
@@ -69,6 +73,54 @@ public class LienzoPanelEvents {
                                 double py) {
         LienzoPanelScrollEventDetail detail = new LienzoPanelScrollEventDetail(panel, px, py);
         fireCustomEvent(LIENZO_PANEL_SCROLL_EVENT, panel, detail);
+    }
+
+    static void addPrimitiveDragStartEventListener(LienzoPanel panel,
+                                                   EventListener eventListener) {
+        panel.getElement().addEventListener(LIENZO_PANEL_PRIMITIVE_DRAG_START_EVENT, eventListener);
+    }
+
+    static void removePrimitiveDragStartEventListener(LienzoPanel panel,
+                                                      EventListener eventListener) {
+        panel.getElement().removeEventListener(LIENZO_PANEL_PRIMITIVE_DRAG_START_EVENT, eventListener);
+    }
+
+    static void firePrimitiveDragStartEvent(LienzoPanel panel,
+                                            IPrimitive<?> primitive) {
+        LienzoPanelPrimitiveDragEventDetail detail = new LienzoPanelPrimitiveDragEventDetail(panel, primitive);
+        fireCustomEvent(LIENZO_PANEL_PRIMITIVE_DRAG_START_EVENT, panel, detail);
+    }
+
+    static void addPrimitiveDragUpdateEventListener(LienzoPanel panel,
+                                                    EventListener eventListener) {
+        panel.getElement().addEventListener(LIENZO_PANEL_PRIMITIVE_DRAG_UPDATE_EVENT, eventListener);
+    }
+
+    static void removePrimitiveDragUpdateEventListener(LienzoPanel panel,
+                                                       EventListener eventListener) {
+        panel.getElement().removeEventListener(LIENZO_PANEL_PRIMITIVE_DRAG_UPDATE_EVENT, eventListener);
+    }
+
+    static void firePrimitiveDragUpdateEvent(LienzoPanel panel,
+                                             IPrimitive<?> primitive) {
+        LienzoPanelPrimitiveDragEventDetail detail = new LienzoPanelPrimitiveDragEventDetail(panel, primitive);
+        fireCustomEvent(LIENZO_PANEL_PRIMITIVE_DRAG_UPDATE_EVENT, panel, detail);
+    }
+
+    static void addPrimitiveDragEndEventListener(LienzoPanel panel,
+                                                 EventListener eventListener) {
+        panel.getElement().addEventListener(LIENZO_PANEL_PRIMITIVE_DRAG_END_EVENT, eventListener);
+    }
+
+    static void removePrimitiveDragEndEventListener(LienzoPanel panel,
+                                                    EventListener eventListener) {
+        panel.getElement().removeEventListener(LIENZO_PANEL_PRIMITIVE_DRAG_END_EVENT, eventListener);
+    }
+
+    static void firePrimitiveDragEndEvent(LienzoPanel panel,
+                                          IPrimitive<?> primitive) {
+        LienzoPanelPrimitiveDragEventDetail detail = new LienzoPanelPrimitiveDragEventDetail(panel, primitive);
+        fireCustomEvent(LIENZO_PANEL_PRIMITIVE_DRAG_END_EVENT, panel, detail);
     }
 
     private static void fireCustomEvent(String eventType,
