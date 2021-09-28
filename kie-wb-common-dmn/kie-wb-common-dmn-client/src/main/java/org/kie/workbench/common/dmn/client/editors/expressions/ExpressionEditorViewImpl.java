@@ -364,6 +364,7 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
         editorSelectedEvent.fire(new ExpressionEditorChanged(nodeUUID));
         setExpressionNameAndDataType(expressionProps);
         hasExpression.setExpression(null);
+        expressionContainerGrid.clearExpressionType();
     }
 
     public void broadcastLiteralExpressionDefinition(final LiteralProps literalProps) {
