@@ -831,6 +831,20 @@
               </target>
             </configuration>
           </execution>
+          <execution>
+            <id>Remove unused appformer-js-monaco assets</id>
+            <phase>install</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <tasks>
+                <delete>
+                  <fileset dir="${project.build.directory}/kie-wb-common-dmn-webapp-kogito-runtime/org.kie.workbench.common.dmn.showcase.DMNKogitoRuntimeWebapp/appformer-js-monaco" includes="**/*" />
+                </delete>
+              </tasks>
+            </configuration>
+          </execution>
         </executions>
       </plugin>
     </plugins>

@@ -33,6 +33,7 @@ import * as React from "react";
 import { useEffect, useState } from "react";
 import * as ReactDOM from "react-dom";
 import { setupWire } from "./wire";
+import * as Monaco from "monaco-editor";
 
 setupWire();
 
@@ -104,4 +105,4 @@ const renderHelloWorld = (selector: string) => {
   ReactDOM.render(<HelloWorld />, document.querySelector(selector));
 };
 
-export { renderHelloWorld, renderBoxedExpressionEditor };
+export { renderHelloWorld, renderBoxedExpressionEditor, Monaco };
