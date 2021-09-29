@@ -64,7 +64,7 @@ export const ImportJavaClassesWizardSecondStep: React.FunctionComponent<ImportJa
 
   return (
     <>
-      {selectedJavaClasses.some((javaClass) => javaClass.fieldsLoaded === false) ? (
+      {selectedJavaClasses.some((javaClass: JavaClass) => !javaClass.fieldsLoaded) ? (
         <Spinner diameter="150px" />
       ) : (
         <ImportJavaClassesWizardFieldListTable
