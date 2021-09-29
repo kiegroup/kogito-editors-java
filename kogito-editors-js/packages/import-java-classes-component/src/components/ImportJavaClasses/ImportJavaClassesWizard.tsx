@@ -64,7 +64,7 @@ export const ImportJavaClassesWizard: React.FunctionComponent<ImportJavaClassesW
   const updateJavaFieldsReferences = (updatedJavaClasses: JavaClass[], previousJavaClasses: JavaClass[]) => {
     const updatedJavaClassesNames: string[] = updatedJavaClasses.map((javaClass) => javaClass.name);
     const previousJavaClassesNames: string[] = previousJavaClasses.map((javaClass) => javaClass.name);
-    const allFields: JavaField[] = javaClasses.map(javaClass => javaClass.fields).flat(1);
+    const allFields: JavaField[] = javaClasses.map((javaClass) => javaClass.fields).flat(1);
     allFields.forEach((field: JavaField) => {
       if (field.dmnTypeRef === DMNSimpleType.ANY && updatedJavaClassesNames.includes(field.type)) {
         field.dmnTypeRef = getJavaClassSimpleName(field.type);

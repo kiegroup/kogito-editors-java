@@ -32,7 +32,7 @@ export interface ImportJavaClassesWizardSecondStepProps {
   /** Function to be called to update a Java Class with its retrieved Fields */
   onSelectedJavaClassedFieldsLoaded: (fullClassName: string, fields: JavaField[]) => void;
   /** Fetch button label */
-  fetchButtonLabel: string
+  fetchButtonLabel: string;
 }
 
 export const ImportJavaClassesWizardSecondStep: React.FunctionComponent<ImportJavaClassesWizardSecondStepProps> = ({
@@ -69,7 +69,7 @@ export const ImportJavaClassesWizardSecondStep: React.FunctionComponent<ImportJa
   return (
     <>
       {selectedJavaClasses.some((javaClass: JavaClass) => !javaClass.fieldsLoaded) ? (
-        <Spinner isSVG={true} diameter="150px" className={"loader"}/>
+        <Spinner isSVG={true} diameter="150px" className={"loader"} />
       ) : (
         <ImportJavaClassesWizardFieldListTable
           selectedJavaClassFields={selectedJavaClasses}
