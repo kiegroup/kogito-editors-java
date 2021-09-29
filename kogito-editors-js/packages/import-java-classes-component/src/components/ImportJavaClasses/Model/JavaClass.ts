@@ -19,10 +19,17 @@ import { JavaClassField } from "./JavaClassField";
 export class JavaClass {
   public name: string;
   public fields: JavaClassField[];
+  public fieldsLoaded: boolean
 
-  constructor(name: string, fields: JavaClassField[]) {
+  constructor(name: string) {
     this.name = name;
+    this.fields = [];
+    this.fieldsLoaded = false;
+  }
+
+  setFields(fields: JavaClassField[]) {
     this.fields = fields;
+    this.fieldsLoaded = true;
   }
 
 }
