@@ -74,7 +74,7 @@ const Showcase: React.FunctionComponent = () => {
     }
   };
 
-  const delay = () => new Promise((res) => setTimeout(res, Math.random() * (3000 - 1000) + 1000));
+  const delay = () => new Promise((res) => setTimeout(res, Math.random() * (4000 - 750) + 1000));
 
   window.envelopeMock = {
     lspGetClassServiceMocked: (value: string) => lspGetClassServiceMocked(value),
