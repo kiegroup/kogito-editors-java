@@ -96,6 +96,7 @@ export const ImportJavaClassesWizard: React.FunctionComponent<ImportJavaClassesW
           selectedJavaClasses={javaClasses}
           onSelectedJavaClassesUpdated={updateSelectedClasses}
           onSelectedJavaClassedFieldsLoaded={updateSelectedClassesFields}
+          fetchButtonLabel={i18n.modalWizard.secondStep.fetchButtonLabel}
         />
       ),
       enableNext: false,

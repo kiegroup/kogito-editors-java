@@ -15,6 +15,7 @@
  */
 
 import * as React from "react";
+import "./ImportJavaClassesWizardSecondStep.css";
 import { Spinner } from "@patternfly/react-core";
 import { useEffect } from "react";
 import { ImportJavaClassesWizardFieldListTable } from "./ImportJavaClassesWizardFieldListTable";
@@ -30,12 +31,15 @@ export interface ImportJavaClassesWizardSecondStepProps {
   onSelectedJavaClassesUpdated: (fullClassName: string, add: boolean) => void;
   /** Function to be called to update a Java Class with its retrieved Fields */
   onSelectedJavaClassedFieldsLoaded: (fullClassName: string, fields: JavaField[]) => void;
+  /** Fetch button label */
+  fetchButtonLabel: string
 }
 
 export const ImportJavaClassesWizardSecondStep: React.FunctionComponent<ImportJavaClassesWizardSecondStepProps> = ({
   selectedJavaClasses,
   onSelectedJavaClassesUpdated,
   onSelectedJavaClassedFieldsLoaded,
+  fetchButtonLabel,
 }: ImportJavaClassesWizardSecondStepProps) => {
   useEffect(
     () =>
@@ -65,12 +69,13 @@ export const ImportJavaClassesWizardSecondStep: React.FunctionComponent<ImportJa
   return (
     <>
       {selectedJavaClasses.some((javaClass: JavaClass) => !javaClass.fieldsLoaded) ? (
-        <Spinner diameter="150px" />
+        <Spinner isSVG={true} diameter="150px" className={"loader"}/>
       ) : (
         <ImportJavaClassesWizardFieldListTable
           selectedJavaClassFields={selectedJavaClasses}
           readOnly={false}
           onFetchButtonClick={(fullClassName: string) => onSelectedJavaClassesUpdated(fullClassName, true)}
+          fetchButtonLabel={fetchButtonLabel}
         />
       )}
     </>
