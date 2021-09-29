@@ -16,28 +16,29 @@
 
 import * as React from "react";
 import { Spinner } from "@patternfly/react-core";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { ImportJavaClassesWizardFieldListTable } from "./ImportJavaClassesWizardFieldListTable";
 import { JavaClassField } from "./Model/JavaClassField";
 import { JavaClass } from "./Model/JavaClass";
 import { DMNSimpleType, JAVA_TO_DMN_MAP } from "./Model/DMNSimpleType";
 import { getJavaClassSimpleName } from "./Model/JavaClassUtils";
-import { inlinePositioning } from "@patternfly/react-core/dist/js/helpers/Popper/DeprecatedTippyTypes";
 
 export interface ImportJavaClassesWizardSecondStepProps {
   /** List of the selected classes by user */
-  selectedJavaClasses: string[];
-  /** Function to be called to updated selected a Java Classes for user */
+  selectedJavaClasses: JavaClass[];
+  /** Function to be called to update selected Java Class, after a Fetching request */
   onSelectedJavaClassesUpdated: (fullClassName: string, add: boolean) => void;
+  /** Function to be called to update a Java Class with its retrieved Fields */
+   onSelectedJavaClassedFieldsLoaded: (fullClassName: string, fields : JavaClassField[]) => void;
 }
 
 export const ImportJavaClassesWizardSecondStep: React.FunctionComponent<ImportJavaClassesWizardSecondStepProps> = ({
   selectedJavaClasses,
   onSelectedJavaClassesUpdated,
+  onSelectedJavaClassedFieldsLoaded,
 }: ImportJavaClassesWizardSecondStepProps) => {
-  const [retrievedJavaClassFields, setRetrievedJavaClassFields] = useState<JavaClass[]>([]);
   useEffect(
-    () => selectedJavaClasses.filter(item => !retrievedJavaClassFields.map(jc => jc.name).includes(item)).forEach((className: string) => loadJavaClassFields(className)),
+    () => selectedJavaClasses.filter(javaClass => !javaClass.fieldsLoaded).forEach((javaClass: JavaClass) => loadJavaClassFields(javaClass.name)),
     // eslint-disable-next-line
     [selectedJavaClasses]
   );
@@ -45,41 +46,29 @@ export const ImportJavaClassesWizardSecondStep: React.FunctionComponent<ImportJa
   const loadJavaClassFields = (className: string) => {
     window.envelopeMock.lspGetClassFieldsServiceMocked(className).then(
       value => {
-        setRetrievedJavaClassFields((prevState: JavaClass[]) => {
-          updateJavaClassFieldReference(prevState, selectedJavaClasses);
-          const javaFields = Array.from(value, ([name, type]) => generateJavaClassField(name, type, selectedJavaClasses));
-          const javaClass = new JavaClass(className, javaFields);
-          return [...prevState, javaClass].sort((a, b) => (a.name < b.name ? -1 : 1));
-        });
+        const fields = Array.from(value, ([name, type]) => generateJavaClassField(name, type, selectedJavaClasses));
+        fields.sort((a, b) => (a.name < b.name ? -1 : 1));
+        onSelectedJavaClassedFieldsLoaded(className, fields)
       }
     );
   };
-  const generateJavaClassField = (name: string, type: string, selectedJavaClasses: string[]) => {
+  const generateJavaClassField = (name: string, type: string, selectedJavaClasses: JavaClass[]) => {
     let dmnTypeRef: string = (JAVA_TO_DMN_MAP as any)[getJavaClassSimpleName(type)] || DMNSimpleType.ANY;
     if (dmnTypeRef === DMNSimpleType.ANY) {
-      if (selectedJavaClasses.includes(type)) {
+      if (selectedJavaClasses.some(javaClass => javaClass.name === type)) {
         dmnTypeRef = getJavaClassSimpleName(type);
       }
     }
     return new JavaClassField(name, type, dmnTypeRef);
   }
-  const updateJavaClassFieldReference = (classes: JavaClass[], selectedJavaClasses: string[]) => {
-    classes.forEach(clazz => {
-      clazz.fields.forEach(field => {
-        if (field.dmnTypeRef === DMNSimpleType.ANY && selectedJavaClasses.includes(field.type)) {
-          field.dmnTypeRef = getJavaClassSimpleName(field.type);
-        }
-      })
-    })
-  }
 
   return (
     <>
-      {retrievedJavaClassFields.length != selectedJavaClasses.length ? (
-        <Spinner isSVG diameter="150px" />
+      {selectedJavaClasses.some(javaClass => javaClass.fieldsLoaded === false) ? (
+        <Spinner diameter="150px" />
       ) : (
         <ImportJavaClassesWizardFieldListTable
-          selectedJavaClassFields={retrievedJavaClassFields}
+          selectedJavaClassFields={selectedJavaClasses}
           readOnly={false}
           onFetchButtonClick={(fullClassName: string) => onSelectedJavaClassesUpdated(fullClassName, true)}
         />
