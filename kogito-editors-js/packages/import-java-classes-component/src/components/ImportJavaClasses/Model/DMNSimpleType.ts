@@ -25,7 +25,7 @@ export enum DMNSimpleType {
   ANY = "Any",
   DATE = "date",
   CONTEXT = "context",
-  UNDEFINED = "<Undefined>"
+  UNDEFINED = "<Undefined>",
 }
 /* It refers to "JavaBackedType" class determineTypeFromClass() method */
 export const JAVA_TO_DMN_MAP = {
@@ -75,5 +75,5 @@ export const JAVA_TO_DMN_MAP = {
   Map: DMNSimpleType.CONTEXT,
   LinkedHashMap: DMNSimpleType.CONTEXT,
   HashMap: DMNSimpleType.CONTEXT,
-  TreeMap: DMNSimpleType.CONTEXT
+  TreeMap: DMNSimpleType.CONTEXT,
 };

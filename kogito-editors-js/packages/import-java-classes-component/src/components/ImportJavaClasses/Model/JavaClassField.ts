@@ -27,5 +27,4 @@ export class JavaClassField {
     this.type = type;
     this.dmnTypeRef = dmnTypeRef;
   }
-
 }
