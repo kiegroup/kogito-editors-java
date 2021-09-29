@@ -36,7 +36,7 @@ export interface ModalWizardProps {
   /** Steps of the Modal Wizard */
   wizardSteps: WizardStep[];
   /** Action to apply at Wizard closure */
-  onWizardClose: () => void;
+  onWizardClose?: () => void;
 }
 
 export const ModalWizard: React.FunctionComponent<ModalWizardProps> = ({
@@ -51,19 +51,19 @@ export const ModalWizard: React.FunctionComponent<ModalWizardProps> = ({
   onWizardClose,
 }: ModalWizardProps) => {
   const [isOpen, setOpen] = useState(false);
-  const onButtonClick = useCallback(() => setOpen(!isOpen), [isOpen]);
-  // eslint-disable-next-line
-  const onCloseClick = useCallback(() => onClose, []);
+  const changeWizardState = useCallback(() => setOpen(!isOpen), [isOpen]);
   const onClose = () => {
-    onWizardClose();
-    setOpen(!isOpen);
+    changeWizardState();
+    if (onWizardClose) {
+      onWizardClose();
+    }
   };
   const WizardButton: React.FunctionComponent = () => {
     return (
       <Button
         variant={buttonStyle}
         icon={buttonIcon}
-        onClick={onButtonClick}
+        onClick={changeWizardState}
         isDisabled={buttonDisabledStatus}
         data-testid={"modal-wizard-button"}
       >
@@ -77,7 +77,7 @@ export const ModalWizard: React.FunctionComponent<ModalWizardProps> = ({
         <Button
           variant={buttonStyle}
           icon={buttonIcon}
-          onClick={onButtonClick}
+          onClick={changeWizardState}
           isAriaDisabled={buttonDisabledStatus}
           data-testid={"modal-wizard-button"}
         >
@@ -94,7 +94,7 @@ export const ModalWizard: React.FunctionComponent<ModalWizardProps> = ({
         title={wizardTitle}
         description={wizardDescription}
         steps={wizardSteps}
-        onClose={onCloseClick}
+        onClose={onClose}
         isOpen={isOpen}
       />
     </>

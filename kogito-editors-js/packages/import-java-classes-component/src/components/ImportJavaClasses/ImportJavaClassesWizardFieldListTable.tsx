@@ -19,7 +19,7 @@ import "./ImportJavaClassesWizardFieldListTable.css";
 import { ExpandableRowContent, TableComposable, Tbody, Td, Tr } from "@patternfly/react-table";
 import { JavaClass } from "./Model/JavaClass";
 import { Button } from "@patternfly/react-core";
-import { JavaClassField } from "./Model/JavaClassField";
+import { JavaField } from "./Model/JavaField";
 import { DMNSimpleType } from "./Model/DMNSimpleType";
 import { getJavaClassSimpleName } from "./Model/JavaClassUtils";
 
@@ -48,12 +48,12 @@ export const ImportJavaClassesWizardFieldListTable: React.FunctionComponent<Impo
     const decorateWithRoundBrackets = (typeName: string) => {
       return "(" + typeName + ")";
     };
-    const isFetchable = (field: JavaClassField) => {
+    const isFetchable = (field: JavaField) => {
       if (field.dmnTypeRef === DMNSimpleType.ANY) {
         return true;
       }
     };
-    const fetchButton = (field: JavaClassField) => {
+    const fetchButton = (field: JavaField) => {
       return (
         <Button className={"fetch-button"} onClick={() => onFetchButtonClick(field.type)} variant="primary" isSmall>
           Fetch &quot;{getJavaClassSimpleName(field.type)}&quot; class

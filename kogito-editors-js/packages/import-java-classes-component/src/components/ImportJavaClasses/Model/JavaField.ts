@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export class JavaClassField {
+export class JavaField {
   /* Field Name */
   public name: string;
   /* The Java Type of the field (eg. java.lang.String OR com.mypackace.Test) */
