@@ -40,39 +40,43 @@ export const ImportJavaClassesWizard: React.FunctionComponent<ImportJavaClassesW
   const [javaClasses, setJavaClasses] = useState<JavaClass[]>([]);
   const updateSelectedClasses = (fullClassName: string, add: boolean) => {
     if (add) {
-      if (!javaClasses.some(javaClass => javaClass.name === fullClassName)) {
+      if (!javaClasses.some((javaClass) => javaClass.name === fullClassName)) {
         const updatedSelectedJavaClasses: JavaClass[] = [...javaClasses, new JavaClass(fullClassName)];
         updatedSelectedJavaClasses.sort((a, b) => (a.name < b.name ? -1 : 1));
-        updateJavaClassFieldReferences(updatedSelectedJavaClasses, javaClasses)
+        updateJavaClassFieldReferences(updatedSelectedJavaClasses, javaClasses);
         setJavaClasses(updatedSelectedJavaClasses);
       }
     } else {
-      const updatedSelectedJavaClasses: JavaClass[] = javaClasses.filter(javaClass => javaClass.name !== fullClassName);
+      const updatedSelectedJavaClasses: JavaClass[] = javaClasses.filter(
+        (javaClass) => javaClass.name !== fullClassName
+      );
       updateJavaClassFieldReferences(updatedSelectedJavaClasses, javaClasses);
       setJavaClasses(updatedSelectedJavaClasses);
     }
   };
-  const updateSelectedClassesFields = (fullClassName: string, fields : JavaClassField[]) => {
-    const javaClassIndex: number = javaClasses.findIndex(javaClass => javaClass.name === fullClassName)
+  const updateSelectedClassesFields = (fullClassName: string, fields: JavaClassField[]) => {
+    const javaClassIndex: number = javaClasses.findIndex((javaClass) => javaClass.name === fullClassName);
     if (javaClassIndex > -1) {
       javaClasses[javaClassIndex].setFields(fields);
     }
     setJavaClasses([...javaClasses]);
   };
   const updateJavaClassFieldReferences = (updatedJavaClasses: JavaClass[], previousJavaClasses: JavaClass[]) => {
-    const updatedJavaClassesNames: string[] = updatedJavaClasses.map(javaClass => javaClass.name)
-    const previousJavaClassesNames: string[] = previousJavaClasses.map(javaClass => javaClass.name)
-    javaClasses.forEach(javaClass => javaClass.fields.forEach(field => {
-      if (field.dmnTypeRef === DMNSimpleType.ANY && updatedJavaClassesNames.includes(field.type)) {
-        field.dmnTypeRef = getJavaClassSimpleName(field.type);
-      } else if (previousJavaClassesNames.includes(field.type) && !updatedJavaClassesNames.includes(field.type)) {
-        field.dmnTypeRef = DMNSimpleType.ANY;
-      }
-    }));
-  }
+    const updatedJavaClassesNames: string[] = updatedJavaClasses.map((javaClass) => javaClass.name);
+    const previousJavaClassesNames: string[] = previousJavaClasses.map((javaClass) => javaClass.name);
+    javaClasses.forEach((javaClass) =>
+      javaClass.fields.forEach((field) => {
+        if (field.dmnTypeRef === DMNSimpleType.ANY && updatedJavaClassesNames.includes(field.type)) {
+          field.dmnTypeRef = getJavaClassSimpleName(field.type);
+        } else if (previousJavaClassesNames.includes(field.type) && !updatedJavaClassesNames.includes(field.type)) {
+          field.dmnTypeRef = DMNSimpleType.ANY;
+        }
+      })
+    );
+  };
   const resetJavaClassState = () => {
     setJavaClasses([]);
-  }
+  };
   const steps = [
     {
       name: i18n.modalWizard.firstStep.stepName,

@@ -57,7 +57,7 @@ export const ModalWizard: React.FunctionComponent<ModalWizardProps> = ({
   const onClose = () => {
     onWizardClose();
     setOpen(!isOpen);
-  }
+  };
   const WizardButton: React.FunctionComponent = () => {
     return (
       <Button

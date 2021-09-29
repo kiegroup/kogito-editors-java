@@ -19,7 +19,7 @@ import { JavaClassField } from "./JavaClassField";
 export class JavaClass {
   public name: string;
   public fields: JavaClassField[];
-  public fieldsLoaded: boolean
+  public fieldsLoaded: boolean;
 
   constructor(name: string) {
     this.name = name;
@@ -31,5 +31,4 @@ export class JavaClass {
     this.fields = fields;
     this.fieldsLoaded = true;
   }
-
 }

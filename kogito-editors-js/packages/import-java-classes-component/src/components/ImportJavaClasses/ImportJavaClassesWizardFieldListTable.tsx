@@ -52,15 +52,14 @@ export const ImportJavaClassesWizardFieldListTable: React.FunctionComponent<Impo
       if (field.dmnTypeRef === DMNSimpleType.ANY) {
         return true;
       }
-    }
+    };
     const fetchButton = (field: JavaClassField) => {
-      return <Button className={"fetch-button"}
-                     onClick={() => onFetchButtonClick(field.type)}
-                     variant="primary"
-                     isSmall>
-        Fetch &quot;{getJavaClassSimpleName(field.type)}&quot; class
-      </Button>;
-    }
+      return (
+        <Button className={"fetch-button"} onClick={() => onFetchButtonClick(field.type)} variant="primary" isSmall>
+          Fetch &quot;{getJavaClassSimpleName(field.type)}&quot; class
+        </Button>
+      );
+    };
 
     let rowIndex = -1;
     return (
@@ -74,10 +73,10 @@ export const ImportJavaClassesWizardFieldListTable: React.FunctionComponent<Impo
                 expand={
                   javaClass.fields && javaClass.fields.length > 0
                     ? {
-                      rowIndex: index,
-                      isExpanded: expanded[index],
-                      onToggle: handleExpansionToggle,
-                    }
+                        rowIndex: index,
+                        isExpanded: expanded[index],
+                        onToggle: handleExpansionToggle,
+                      }
                     : undefined
                 }
               />
@@ -92,20 +91,20 @@ export const ImportJavaClassesWizardFieldListTable: React.FunctionComponent<Impo
           const childRow =
             javaClass.fields && javaClass.fields.length > 0
               ? javaClass.fields.map((field) => {
-                rowIndex += 1;
-                return (
-                  <Tr key={rowIndex} isExpanded={expanded[index] === true}>
-                    <Td key={`${rowIndex}_0`} />
-                    <Td key={`${rowIndex}_${field.name}`}>
-                      <ExpandableRowContent>
-                        <span>{field.name}</span>
-                        <span className={"dmn-type-name"}>{decorateWithRoundBrackets(field.dmnTypeRef)}</span>
-                        {!readOnly && isFetchable(field) ? fetchButton(field) : null}
-                      </ExpandableRowContent>
-                    </Td>
-                  </Tr>
-                );
-              })
+                  rowIndex += 1;
+                  return (
+                    <Tr key={rowIndex} isExpanded={expanded[index] === true}>
+                      <Td key={`${rowIndex}_0`} />
+                      <Td key={`${rowIndex}_${field.name}`}>
+                        <ExpandableRowContent>
+                          <span>{field.name}</span>
+                          <span className={"dmn-type-name"}>{decorateWithRoundBrackets(field.dmnTypeRef)}</span>
+                          {!readOnly && isFetchable(field) ? fetchButton(field) : null}
+                        </ExpandableRowContent>
+                      </Td>
+                    </Tr>
+                  );
+                })
               : undefined;
           return (
             <Tbody key={index} isExpanded={expanded[index] === true}>

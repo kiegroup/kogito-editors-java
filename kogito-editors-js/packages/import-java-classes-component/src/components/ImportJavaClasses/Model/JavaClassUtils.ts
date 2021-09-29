@@ -15,5 +15,5 @@
  */
 
 export const getJavaClassSimpleName = (javaClassName: string) => {
-  return javaClassName.split(".").pop()!
+  return javaClassName.split(".").pop()!;
 };
