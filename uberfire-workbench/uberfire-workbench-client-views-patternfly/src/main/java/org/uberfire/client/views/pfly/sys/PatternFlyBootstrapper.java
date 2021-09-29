@@ -34,6 +34,8 @@ public class PatternFlyBootstrapper {
 
     private static boolean isPatternFlyLoaded = false;
 
+    private static boolean isMonacoEditorLoaded = false;
+
     /**
      * Uses GWT's ScriptInjector to put jQuery in the page if it isn't already. All Errai IOC beans that rely on
      * GWTBootstrap 3 widgets should call this before creating their first such widget.
@@ -85,8 +87,18 @@ public class PatternFlyBootstrapper {
         }
     }
 
+    public static void ensureMonacoEditorLoaderIsAvailable() {
+        if (!isMonacoEditorLoaded) {
+            ScriptInjector.fromString(PatternFlyClientBundle.INSTANCE.monacoEditor().getText())
+                    .setWindow(ScriptInjector.TOP_WINDOW)
+                    .inject();
+            isMonacoEditorLoaded = true;
+        }
+    }
+
     /**
      * Checks to see if jQuery is already present.
+     *
      * @return true is jQuery is loaded, false otherwise.
      */
     private static native boolean isjQueryLoaded() /*-{
