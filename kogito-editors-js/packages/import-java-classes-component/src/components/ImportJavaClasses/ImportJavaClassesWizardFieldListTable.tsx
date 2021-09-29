@@ -31,7 +31,7 @@ export interface ImportJavaClassesWizardFieldListTableProps {
   /** Function to call when an Fetch button is clicked */
   onFetchButtonClick: (fullClassName: string) => void;
   /** Fetch button label */
-  fetchButtonLabel: string
+  fetchButtonLabel: string;
 }
 
 export const ImportJavaClassesWizardFieldListTable: React.FunctionComponent<ImportJavaClassesWizardFieldListTableProps> =
@@ -63,7 +63,7 @@ export const ImportJavaClassesWizardFieldListTable: React.FunctionComponent<Impo
     const fetchButton = (field: JavaField) => {
       return (
         <Button className={"fetch-button"} onClick={() => onFetchButtonClick(field.type)} variant="primary" isSmall>
-          {fetchButtonLabel + " \"" + getJavaClassSimpleName(field.type)  + "\" class"}
+          {fetchButtonLabel + ' "' + getJavaClassSimpleName(field.type) + '" class'}
         </Button>
       );
     };
