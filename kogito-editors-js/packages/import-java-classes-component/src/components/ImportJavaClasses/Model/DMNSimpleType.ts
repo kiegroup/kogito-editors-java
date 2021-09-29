@@ -27,9 +27,9 @@ export enum DMNSimpleType {
   CONTEXT = "context",
   UNDEFINED = "<Undefined>",
 }
-/* It refers to "JavaBackedType" class determineTypeFromClass() method */
+/** It refers to "JavaBackedType" class determineTypeFromClass() method */
 export const JAVA_TO_DMN_MAP = {
-  /* Number types */
+  /** Number types */
   AtomicInteger: DMNSimpleType.NUMBER,
   AtomicLong: DMNSimpleType.NUMBER,
   BigDecimal: DMNSimpleType.NUMBER,
@@ -52,26 +52,26 @@ export const JAVA_TO_DMN_MAP = {
   Short: DMNSimpleType.NUMBER,
   short: DMNSimpleType.NUMBER,
   Striped64: DMNSimpleType.NUMBER,
-  /* String types */
+  /** String types */
   Character: DMNSimpleType.STRING,
   char: DMNSimpleType.STRING,
   String: DMNSimpleType.STRING,
-  /* Date types */
+  /** Date types */
   LocalDate: DMNSimpleType.DATE,
-  /* Time types */
+  /** Time types */
   LocalTime: DMNSimpleType.TIME,
   OffsetTime: DMNSimpleType.TIME,
-  /* DateTime types */
+  /** DateTime types */
   ZonedDateTime: DMNSimpleType.DATE_TIME,
   OffsetDateTime: DMNSimpleType.DATE_TIME,
   LocalDateTime: DMNSimpleType.DATE_TIME,
   Date: DMNSimpleType.DATE_TIME,
-  /* Duration types */
+  /** Duration types */
   Duration: DMNSimpleType.DURATION_DAYS_TIME,
   ChronoPeriod: DMNSimpleType.DURATION_DAYS_TIME,
-  /* Boolean */
+  /** Boolean */
   Boolean: DMNSimpleType.BOOLEAN,
-  /* Context */
+  /** Context */
   Map: DMNSimpleType.CONTEXT,
   LinkedHashMap: DMNSimpleType.CONTEXT,
   HashMap: DMNSimpleType.CONTEXT,

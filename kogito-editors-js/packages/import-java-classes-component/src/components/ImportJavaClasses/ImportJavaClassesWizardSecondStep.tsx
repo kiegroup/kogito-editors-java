@@ -18,7 +18,7 @@ import * as React from "react";
 import { Spinner } from "@patternfly/react-core";
 import { useEffect } from "react";
 import { ImportJavaClassesWizardFieldListTable } from "./ImportJavaClassesWizardFieldListTable";
-import { JavaClassField } from "./Model/JavaClassField";
+import { JavaField } from "./Model/JavaField";
 import { JavaClass } from "./Model/JavaClass";
 import { DMNSimpleType, JAVA_TO_DMN_MAP } from "./Model/DMNSimpleType";
 import { getJavaClassSimpleName } from "./Model/JavaClassUtils";
@@ -29,7 +29,7 @@ export interface ImportJavaClassesWizardSecondStepProps {
   /** Function to be called to update selected Java Class, after a Fetching request */
   onSelectedJavaClassesUpdated: (fullClassName: string, add: boolean) => void;
   /** Function to be called to update a Java Class with its retrieved Fields */
-  onSelectedJavaClassedFieldsLoaded: (fullClassName: string, fields: JavaClassField[]) => void;
+  onSelectedJavaClassedFieldsLoaded: (fullClassName: string, fields: JavaField[]) => void;
 }
 
 export const ImportJavaClassesWizardSecondStep: React.FunctionComponent<ImportJavaClassesWizardSecondStepProps> = ({
@@ -40,13 +40,12 @@ export const ImportJavaClassesWizardSecondStep: React.FunctionComponent<ImportJa
   useEffect(
     () =>
       selectedJavaClasses
-        .filter((javaClass) => !javaClass.fieldsLoaded)
-        .forEach((javaClass: JavaClass) => loadJavaClassFields(javaClass.name)),
+        .filter((javaClass: JavaClass) => !javaClass.fieldsLoaded)
+        .forEach((javaClass: JavaClass) => loadJavaFields(javaClass.name)),
     // eslint-disable-next-line
     [selectedJavaClasses]
   );
-  /* This function temporary mocks a call to the LSP service method getClassFields */
-  const loadJavaClassFields = (className: string) => {
+  const loadJavaFields = (className: string) => {
     window.envelopeMock.lspGetClassFieldsServiceMocked(className).then((value) => {
       const fields = Array.from(value, ([name, type]) => generateJavaClassField(name, type, selectedJavaClasses));
       fields.sort((a, b) => (a.name < b.name ? -1 : 1));
@@ -60,7 +59,7 @@ export const ImportJavaClassesWizardSecondStep: React.FunctionComponent<ImportJa
         dmnTypeRef = getJavaClassSimpleName(type);
       }
     }
-    return new JavaClassField(name, type, dmnTypeRef);
+    return new JavaField(name, type, dmnTypeRef);
   };
 
   return (
