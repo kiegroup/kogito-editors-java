@@ -839,7 +839,7 @@
             </goals>
             <configuration>
               <tasks>
-                <delete>
+                <delete quiet="true">
                   <fileset dir="${project.build.directory}/kie-wb-common-dmn-webapp-kogito-runtime/org.kie.workbench.common.dmn.showcase.DMNKogitoRuntimeWebapp/appformer-js-monaco" includes="**/*" />
                 </delete>
               </tasks>
