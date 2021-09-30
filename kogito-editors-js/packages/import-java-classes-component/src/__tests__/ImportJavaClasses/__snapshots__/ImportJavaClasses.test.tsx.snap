@@ -532,7 +532,7 @@ exports[`ImportJavaClasses component tests Should search box with results works 
         >
           
           <div
-            class="pf-c-wizard"
+            class="pf-c-wizard import-java-classes"
           >
             <div
               class="pf-c-wizard__header"
@@ -891,7 +891,7 @@ exports[`ImportJavaClasses component tests Should show Modal after clicking on t
         >
           
           <div
-            class="pf-c-wizard"
+            class="pf-c-wizard import-java-classes"
           >
             <div
               class="pf-c-wizard__header"
