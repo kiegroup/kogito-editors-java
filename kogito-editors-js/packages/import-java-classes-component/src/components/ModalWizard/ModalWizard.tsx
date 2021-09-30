@@ -29,6 +29,8 @@ export interface ModalWizardProps {
   buttonDisabledStatus: boolean;
   /** Button tooltip message */
   buttonTooltipMessage?: string;
+  /** Additional className to assign to the Wizard */
+  className?: string;
   /** Title of the Modal Wizard */
   wizardTitle: string;
   /** Title of the Modal Wizard */
@@ -45,6 +47,7 @@ export const ModalWizard: React.FunctionComponent<ModalWizardProps> = ({
   buttonIcon,
   buttonDisabledStatus,
   buttonTooltipMessage,
+  className,
   wizardTitle,
   wizardDescription,
   wizardSteps,
@@ -91,11 +94,12 @@ export const ModalWizard: React.FunctionComponent<ModalWizardProps> = ({
     <>
       {buttonTooltipMessage ? <WizardButtonWithTooltip /> : <WizardButton />}
       <Wizard
-        title={wizardTitle}
+        className={className}
         description={wizardDescription}
-        steps={wizardSteps}
-        onClose={onClose}
         isOpen={isOpen}
+        onClose={onClose}
+        steps={wizardSteps}
+        title={wizardTitle}
       />
     </>
   );

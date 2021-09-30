@@ -116,6 +116,7 @@ export const ImportJavaClassesWizard: React.FunctionComponent<ImportJavaClassesW
       buttonText={i18n.modalButton.text}
       buttonDisabledStatus={buttonDisabledStatus}
       buttonTooltipMessage={buttonTooltipMessage}
+      className={"import-java-classes"}
       wizardTitle={i18n.modalWizard.title}
       wizardDescription={i18n.modalWizard.description}
       wizardSteps={steps}

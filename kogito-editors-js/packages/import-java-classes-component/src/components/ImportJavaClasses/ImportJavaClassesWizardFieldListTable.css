@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-.fetch-button {
+.import-java-classes .fetch-button {
   margin-left: 20px;
 }
 
-.dmn-type-name {
+.import-java-classes .dmn-type-name {
   margin-left: 10px;
 }
