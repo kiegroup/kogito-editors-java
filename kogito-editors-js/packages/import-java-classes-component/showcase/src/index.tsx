@@ -103,7 +103,7 @@ const Showcase: React.FunctionComponent = () => {
         <strong>Tooltip Message (Optional)</strong>
         <input value={buttonTooltipMessage} onChange={onInputChange} />
       </div>
-      <div className="import-java-classes">
+      <div className="main">
         <ImportJavaClasses buttonDisabledStatus={buttonDisableStatus} buttonTooltipMessage={buttonTooltipMessage} />
       </div>
     </div>
