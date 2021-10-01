@@ -83,3 +83,19 @@ It provides buttons for creating new processes, opening an existing process and 
 
         // Standalone BPMN Editor
         frames[0].canvas
+
+        // JS API
+        var jsl = window.frames.editorFrame.contentWindow.canvas
+        jsl.getNodeIds() // Get id of all nodes
+        jsl.getBackgroundColor('_A9481DBC-3E87-40EE-9925-733B24404BC0')         // gets background color
+        jsl.setBackgroundColor('_A9481DBC-3E87-40EE-9925-733B24404BC0', 'blue') // sets background color
+        jsl.getBorderColor('_A9481DBC-3E87-40EE-9925-733B24404BC0')             // gets border color
+        jsl.setBorderColor('_A9481DBC-3E87-40EE-9925-733B24404BC0', 'red')      // sets border color
+        jsl.getLocation('_A9481DBC-3E87-40EE-9925-733B24404BC0', 'red')         // gets location
+        jsl.getAbsoluteLocation('_A9481DBC-3E87-40EE-9925-733B24404BC0', 'red') // gets absolute location
+        jsl.getDimensions('_A9481DBC-3E87-40EE-9925-733B24404BC0', 'red')       // gets dimensions
+
+
+
+
+        
