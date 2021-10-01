@@ -71,17 +71,19 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = (relat
       rows: tableRows.current,
     };
 
-    executeIfExpressionDefinitionChanged(
-      storedExpressionDefinition.current,
-      expressionDefinition,
-      () => {
-        relationProps.isHeadless
-          ? relationProps.onUpdatingRecursiveExpression?.(expressionDefinition)
-          : window.beeApi?.broadcastRelationExpressionDefinition?.(expressionDefinition);
-        storedExpressionDefinition.current = expressionDefinition;
-      },
-      ["columns", "rows"]
-    );
+    if (relationProps.isHeadless) {
+      relationProps.onUpdatingRecursiveExpression?.(expressionDefinition);
+    } else {
+      executeIfExpressionDefinitionChanged(
+        storedExpressionDefinition.current,
+        expressionDefinition,
+        () => {
+          window.beeApi?.broadcastRelationExpressionDefinition?.(expressionDefinition);
+          storedExpressionDefinition.current = expressionDefinition;
+        },
+        ["columns", "rows"]
+      );
+    }
   }, [relationProps]);
 
   const convertColumnsForTheTable = useCallback(
@@ -143,6 +145,8 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = (relat
     [spreadRelationExpressionDefinition]
   );
 
+  const onRowAdding = useCallback(() => ({}), []);
+
   useEffect(() => {
     /** Function executed only the first time the component is loaded */
     spreadRelationExpressionDefinition();
@@ -156,6 +160,7 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = (relat
         rows={convertRowsForTheTable()}
         onColumnsUpdate={onSavingColumns}
         onRowsUpdate={onSavingRows}
+        onRowAdding={onRowAdding}
         handlerConfiguration={handlerConfiguration}
       />
     </div>
