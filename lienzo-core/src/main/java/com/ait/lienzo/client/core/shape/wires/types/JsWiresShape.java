@@ -216,8 +216,7 @@ public class JsWiresShape {
         setColorsMap();
 
         Shape shape;
-
-        if (getBackgroundColor() != null) {
+        if (colorsMap.containsKey(BACKGROUND_KEY)) {
             shape = colorsMap.get(BACKGROUND_KEY);
         } else {
             shape = getBorderColorShape();
@@ -234,9 +233,9 @@ public class JsWiresShape {
 
         if (colorsMap.containsKey(BACKGROUND_KEY)) {
             return colorsMap.get(BACKGROUND_KEY).getFillColor();
+        } else {
+            return getBorderColorShape().getFillColor();
         }
-
-        return null;
     }
 
     public Point2D getBounds() {
