@@ -20,13 +20,14 @@ import {
   ColumnInstance,
   ContextMenuEvent,
   DataRecord,
+  Row,
   useBlockLayout,
   useResizeColumns,
   useTable,
 } from "react-table";
 import { TableComposable } from "@patternfly/react-table";
 import * as React from "react";
-import { useCallback, useContext, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { EditableCell } from "./EditableCell";
 import { TableHeaderVisibility, TableOperation, TableProps } from "../../api";
 import * as _ from "lodash";
@@ -34,6 +35,7 @@ import { TableBody } from "./TableBody";
 import { TableHandler } from "./TableHandler";
 import { TableHeader } from "./TableHeader";
 import { BoxedExpressionGlobalContext } from "../../context";
+import { ContextEntryExpressionCell, ContextEntryInfoCell } from "../ContextExpression";
 
 export const NO_TABLE_CONTEXT_MENU_CLASS = "no-table-context-menu";
 const NUMBER_OF_ROWS_COLUMN = "#";
@@ -62,11 +64,11 @@ export const getColumnSearchPredicate: (column: ColumnInstance) => (columnToComp
 export const Table: React.FunctionComponent<TableProps> = ({
   tableId,
   children,
-  getColumnPrefix = () => "column-",
+  getColumnPrefix,
   editColumnLabel,
   onColumnsUpdate,
   onRowsUpdate,
-  onRowAdding = () => ({}),
+  onRowAdding,
   controllerCell = NUMBER_OF_ROWS_COLUMN,
   defaultCell,
   rows,
@@ -75,9 +77,10 @@ export const Table: React.FunctionComponent<TableProps> = ({
   headerVisibility,
   headerLevels = 0,
   skipLastHeaderGroup = false,
-  getRowKey = (row) => row.id as string,
-  getColumnKey = (column) => column.id as string,
+  getRowKey,
+  getColumnKey,
   resetRowCustomFunction,
+  readOnlyCells = false,
 }: TableProps) => {
   const tableRef = useRef<HTMLTableElement>(null);
 
@@ -91,7 +94,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
         _.assign(column, {
           columns: [
             {
-              label: headerVisibility === TableHeaderVisibility.Full ? NUMBER_OF_ROWS_SUBCOLUMN : currentControllerCell,
+              label: headerVisibility === TableHeaderVisibility.Full ? NUMBER_OF_ROWS_SUBCOLUMN : controllerCell,
               accessor: NUMBER_OF_ROWS_SUBCOLUMN,
               minWidth: 60,
               width: 60,
@@ -110,6 +113,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
     [currentControllerCell, headerVisibility]
   );
 
+  // adds row number
   const generateNumberOfRowsColumn = useCallback(
     (currentControllerCell: string | JSX.Element, columns: Column[]) => {
       const numberOfRowsColumn = {
@@ -186,18 +190,29 @@ export const Table: React.FunctionComponent<TableProps> = ({
     [onRowsUpdateCallback]
   );
 
-  const defaultColumn = {
-    Cell: useCallback((cellRef) => {
-      const column = cellRef.column as ColumnInstance;
-      if (column.isCountColumn) {
-        return cellRef.value;
-      } else {
-        return defaultCell ? defaultCell[column.id](cellRef) : <EditableCell {...cellRef} />;
-      }
-      // Table performance optimization: no need to re-render cells, since nested component themselves will re-render
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []),
-  };
+  const defaultColumn = useMemo(
+    () => ({
+      Cell: (cellRef: any) => {
+        const column = cellRef.column as ColumnInstance;
+        if (column.isCountColumn) {
+          return cellRef.value;
+        } else {
+          if (defaultCell) {
+            return defaultCell[column.id]({ ...cellRef, rowIndex: cellRef.row.index, columnId: cellRef.column.id });
+          }
+          return (
+            <EditableCell
+              {...cellRef}
+              rowIndex={cellRef.row.index}
+              columnId={cellRef.column.id}
+              readOnly={readOnlyCells}
+            />
+          );
+        }
+      },
+    }),
+    [defaultCell, readOnlyCells]
+  );
 
   const contextMenuIsAvailable = (target: HTMLElement) => {
     const targetIsContainedInCurrentTable = target.closest("table") === tableRef.current;
@@ -283,6 +298,24 @@ export const Table: React.FunctionComponent<TableProps> = ({
     useBlockLayout,
     useResizeColumns
   );
+  const onRowAddingCallback = useCallback(() => {
+    return onRowAdding ? onRowAdding() : {};
+  }, [onRowAdding]);
+  const onGetColumnPrefix = useCallback(() => (getColumnPrefix ? getColumnPrefix() : "column-"), [getColumnPrefix]);
+
+  const onGetColumnKey = useCallback(
+    (column: Column) => {
+      return getColumnKey ? getColumnKey(column) : column.id!;
+    },
+    [getColumnKey]
+  );
+
+  const onGetRowKey = useCallback(
+    (row: Row) => {
+      return getRowKey ? getRowKey(row) : row.id;
+    },
+    [getRowKey]
+  );
 
   return (
     <div className={`table-component ${tableId}`}>
@@ -300,13 +333,13 @@ export const Table: React.FunctionComponent<TableProps> = ({
           tableRows={tableRows}
           onRowsUpdate={onRowsUpdateCallback}
           tableColumns={tableColumns}
-          getColumnKey={getColumnKey}
+          getColumnKey={onGetColumnKey}
           onColumnsUpdate={onColumnsUpdateCallback}
         />
         <TableBody
           tableInstance={tableInstance}
-          getRowKey={getRowKey}
-          getColumnKey={getColumnKey}
+          getRowKey={onGetRowKey}
+          getColumnKey={onGetColumnKey}
           onColumnsUpdate={onColumnsUpdateCallback}
           headerVisibility={headerVisibility}
         >
@@ -316,13 +349,13 @@ export const Table: React.FunctionComponent<TableProps> = ({
       {showTableHandler && handlerConfiguration ? (
         <TableHandler
           tableColumns={tableColumns}
-          getColumnPrefix={getColumnPrefix}
+          getColumnPrefix={onGetColumnPrefix}
           handlerConfiguration={handlerConfiguration}
           lastSelectedColumn={lastSelectedColumn}
           lastSelectedRowIndex={lastSelectedRowIndex}
           tableRows={tableRows}
           onRowsUpdate={onRowsUpdateCallback}
-          onRowAdding={onRowAdding}
+          onRowAdding={onRowAddingCallback}
           showTableHandler={showTableHandler}
           setShowTableHandler={setShowTableHandler}
           tableHandlerAllowedOperations={tableHandlerAllowedOperations}
