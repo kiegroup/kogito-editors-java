@@ -82,4 +82,4 @@ It provides buttons for creating new processes, opening an existing process and 
         jsl.events().drag(jsl.getShape('redRectangle'), 400, 400, () => console.log('DONE DRAG'))
 
         // Standalone BPMN Editor
-        frames[0].jsLienzo
+        frames[0].canvas
