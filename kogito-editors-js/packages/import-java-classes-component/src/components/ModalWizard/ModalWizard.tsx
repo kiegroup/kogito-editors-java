@@ -93,7 +93,7 @@ export const ModalWizard: React.FunctionComponent<ModalWizardProps> = ({
   return (
     <>
       {buttonTooltipMessage ? <WizardButtonWithTooltip /> : <WizardButton />}
-      {isOpen ?
+      {isOpen ? (
         <Wizard
           className={className}
           description={wizardDescription}
@@ -101,8 +101,8 @@ export const ModalWizard: React.FunctionComponent<ModalWizardProps> = ({
           onClose={onClose}
           steps={wizardSteps}
           title={wizardTitle}
-        /> : null
-      }
+        />
+      ) : null}
     </>
   );
 };
