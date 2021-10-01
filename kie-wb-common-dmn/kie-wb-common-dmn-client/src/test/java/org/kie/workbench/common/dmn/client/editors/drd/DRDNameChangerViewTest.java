@@ -160,14 +160,32 @@ public class DRDNameChangerViewTest {
     }
 
     @Test
-    public void testSaveForTheCurrentDiagram() {
+    public void testSaveForTheCurrentDiagramChangedValue() {
+        String originalValue = "original";
+        String nameValue = "changed";
+
+        testSaveForTheCurrentDiagram(originalValue, nameValue);
+    }
+
+    @Test
+    public void testSaveForTheCurrentDiagramSameValue() {
+        String originalValue = "original";
+
+        testSaveForTheCurrentDiagram(originalValue, originalValue);
+    }
+
+    private void testSaveForTheCurrentDiagram(String originalValue, String nameValue) {
+        Name nameMock = mock(Name.class);
+        boolean changed = !originalValue.equals(nameValue);
+
         when(dmnDiagramsSession.getCurrentDMNDiagramElement()).thenReturn(Optional.of(dmnDiagramElement));
-        when(dmnDiagramElement.getName()).thenReturn(new Name());
+        when(dmnDiagramElement.getName()).thenReturn(nameMock);
+        when(drdNameInput.getValue()).thenReturn(nameValue);
+        when(nameMock.getValue()).thenReturn(originalValue);
 
         drdNameChangerView.saveForTheCurrentDiagram();
 
-        verify(drdNameInput, times(1)).getValue();
-        verify(selectedEvent, times(1)).fire(any(DMNDiagramSelected.class));
+        verify(nameMock, times(changed ? 1 : 0)).setValue(nameValue);
+        verify(selectedEvent, times(changed ? 1 : 0)).fire(any(DMNDiagramSelected.class));
     }
-
 }

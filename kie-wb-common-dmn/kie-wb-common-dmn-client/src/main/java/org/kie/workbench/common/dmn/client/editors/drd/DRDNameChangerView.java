@@ -137,7 +137,9 @@ public class DRDNameChangerView implements DRDNameChanger {
     }
 
     private void performSave(final DMNDiagramElement dmnDiagramElement) {
-        dmnDiagramElement.getName().setValue(drdNameInput.getValue());
-        selectedEvent.fire(new DMNDiagramSelected(dmnDiagramElement));
+        if (!dmnDiagramElement.getName().getValue().equals(drdNameInput.getValue())) {
+            dmnDiagramElement.getName().setValue(drdNameInput.getValue());
+            selectedEvent.fire(new DMNDiagramSelected(dmnDiagramElement));
+        }
     }
 }
