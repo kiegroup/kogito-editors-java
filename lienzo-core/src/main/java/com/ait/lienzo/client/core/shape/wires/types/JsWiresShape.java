@@ -16,6 +16,9 @@
 
 package com.ait.lienzo.client.core.shape.wires.types;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.ait.lienzo.client.core.shape.Group;
 import com.ait.lienzo.client.core.shape.IContainer;
 import com.ait.lienzo.client.core.shape.IPrimitive;
@@ -36,6 +39,8 @@ import jsinterop.annotations.JsType;
 public class JsWiresShape {
 
     protected WiresShape shape;
+
+    private BoundingBox boundingBox;
 
     public JsWiresShape(WiresShape shape) {
         this.shape = shape;
@@ -129,7 +134,20 @@ public class JsWiresShape {
         return parent instanceof WiresLayer;
     }
 
-    public void setBorderColor(String borderColor) {
+    private Map<String, Shape> colorsMap = new HashMap<>();
+
+    private final String BORDER_STROKE_KEY = "?shapeType=BORDER&renderType=STROKE";
+
+    private final String BORDER_FILL_KEY = "?shapeType=BORDER&renderType=FILL";
+
+    private final String BACKGROUND_KEY = "?shapeType=BACKGROUND";
+
+    private void setColorsMap() {
+
+        if (!colorsMap.isEmpty()) {
+            return;
+        }
+
         final JsArray<Shape> shapeJsArray = flatShapes();
 
         for (int i = 0; i < shapeJsArray.length; i++) {
@@ -141,62 +159,52 @@ public class JsWiresShape {
 
             String tag = (String) userData;
             switch (tag) {
-                case "?shapeType=BORDER&renderType=STROKE":
-                    shape.setStrokeColor(borderColor);
-                    draw();
-                    break;
-
-                case "?shapeType=BORDER&renderType=FILL":
-                    shape.setFillColor(borderColor);
-                    draw();
+                case BORDER_STROKE_KEY:
+                case BORDER_FILL_KEY:
+                case BACKGROUND_KEY:
+                    colorsMap.put(tag, shape);
                     break;
             }
+        }
+    }
+
+    public void setBorderColor(String borderColor) {
+        setColorsMap();
+
+        if (colorsMap.containsKey(BORDER_STROKE_KEY)) {
+            Shape shape = colorsMap.get(BORDER_STROKE_KEY);
+            shape.setStrokeColor(borderColor);
+            draw();
+        } else if (colorsMap.containsKey(BORDER_FILL_KEY)) {
+            Shape shape = colorsMap.get(BORDER_FILL_KEY);
+            shape.setFillColor(borderColor);
+            draw();
         }
     }
 
     public String getBorderColor() {
-        final JsArray<Shape> shapeJsArray = flatShapes();
+        setColorsMap();
 
-        for (int i = 0; i < shapeJsArray.length; i++) {
-            final Shape shape = shapeJsArray.getAt(i);
-            final Object userData = shape.getUserData();
-            if (userData == null) {
-                continue;
-            }
+        Shape shape = getBorderColorShape();
 
-            String tag = (String) userData;
-
-            switch (tag) {
-                case "?shapeType=BORDER&renderType=STROKE":
-                    return shape.getStrokeColor();
-
-                case "?shapeType=BORDER&renderType=FILL":
-                    return shape.getFillColor();
-            }
+        if (colorsMap.containsKey(BORDER_STROKE_KEY)) {
+            return shape.getStrokeColor();
+        } else if (colorsMap.containsKey(BORDER_FILL_KEY)) {
+            return shape.getFillColor();
         }
+
         return null;
     }
 
     public Shape getBorderColorShape() {
-        final JsArray<Shape> shapeJsArray = flatShapes();
+        setColorsMap();
 
-        for (int i = 0; i < shapeJsArray.length; i++) {
-            final Shape shape = shapeJsArray.getAt(i);
-            final Object userData = shape.getUserData();
-            if (userData == null) {
-                continue;
-            }
-
-            String tag = (String) userData;
-
-            switch (tag) {
-                case "?shapeType=BORDER&renderType=STROKE":
-                    return shape;
-
-                case "?shapeType=BORDER&renderType=FILL":
-                    return shape;
-            }
+        if (colorsMap.containsKey(BORDER_STROKE_KEY)) {
+            return colorsMap.get(BORDER_STROKE_KEY);
+        } else if (colorsMap.containsKey(BORDER_FILL_KEY)) {
+            return colorsMap.get(BORDER_FILL_KEY);
         }
+
         return null;
     }
 
@@ -205,73 +213,40 @@ public class JsWiresShape {
     }
 
     public void setBackgroundColor(String backgroundColor) {
-        final JsArray<Shape> shapeJsArray = flatShapes();
+        setColorsMap();
 
-        if (hasBackgroundColor()) {
-            for (int i = 0; i < shapeJsArray.length; i++) {
-                final Shape shape = shapeJsArray.getAt(i);
-                final Object userData = shape.getUserData();
-                if (userData == null) {
-                    continue;
-                }
+        Shape shape;
 
-                String tag = (String) userData;
-
-                if (tag.equals("?shapeType=BACKGROUND")) {
-                    shape.setFillColor(backgroundColor);
-                    draw();
-                }
-            }
+        if (getBackgroundColor() != null) {
+            shape = colorsMap.get(BACKGROUND_KEY);
         } else {
-            Shape shape = getBorderColorShape();
-            if (shape != null) {
-                shape.setFillColor(backgroundColor);
-                draw();
-            }
+            shape = getBorderColorShape();
+        }
+
+        if (shape != null) {
+            shape.setFillColor(backgroundColor);
+            draw();
         }
     }
 
     public String getBackgroundColor() {
-        final JsArray<Shape> shapeJsArray = flatShapes();
+        setColorsMap();
 
-        for (int i = 0; i < shapeJsArray.length; i++) {
-            final Shape shape = shapeJsArray.getAt(i);
-            final Object userData = shape.getUserData();
-            if (userData == null) {
-                continue;
-            }
-
-            String tag = (String) userData;
-            if (tag.equals("?shapeType=BACKGROUND")) {
-                return shape.getFillColor();
-            }
+        if (colorsMap.containsKey(BACKGROUND_KEY)) {
+            return colorsMap.get(BACKGROUND_KEY).getFillColor();
         }
 
         return null;
     }
 
-    public boolean hasBackgroundColor() {
-        final JsArray<Shape> shapeJsArray = flatShapes();
+    public Point2D getBounds() {
 
-        for (int i = 0; i < shapeJsArray.length; i++) {
-            final Shape shape = shapeJsArray.getAt(i);
-            final Object userData = shape.getUserData();
-            if (userData == null) {
-                continue;
-            }
-
-            String tag = (String) userData;
-            if (tag.equals("?shapeType=BACKGROUND")) {
-                return true;
-            }
+        if (boundingBox == null) {
+            boundingBox = this.getBoundingBox();
         }
 
-        return false;
-    }
-
-    public Point2D getBounds() {
-        double width = this.getBoundingBox().getWidth();
-        double height = this.getBoundingBox().getHeight();
+        double width = boundingBox.getWidth();
+        double height = boundingBox.getHeight();
         return new Point2D(width, height);
     }
 

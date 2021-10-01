@@ -75,10 +75,9 @@ public abstract class BaseExample implements Example {
         setupJsLienzoTypes(jsLienzo);
     }
 
-    // TODO: Move to J2CL impl
-    public static native void setupJsLienzoTypes(Object jsLienzo) /*-{
-        $wnd.jsLienzo = jsLienzo;
-    }-*/;
+    public static void setupJsLienzoTypes(JsLienzo jsLienzo) {
+        WindowJSLienzo.linkJSLienzo(jsLienzo);
+    }
 
     @Override
     public int getWidthOffset() {

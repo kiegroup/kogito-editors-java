@@ -129,8 +129,6 @@ public final class ScratchPad {
         return element.toDataURL(null); // @FIXME Make sure this accepts null (mdp)
     }
 
-    // TODO other arguments, e.g. for image/jpeg The second argument, if it is a number in the range 0.0 to 1.0 inclusive, must be treated as the desired quality level. If it is not a number or is outside that range, the user agent must use its default value, as if the argument had been omitted.
-
     private static final String toDataURL(HTMLCanvasElement element, String mimetype, double quality) {
         return element.toDataURL(mimetype, quality);
     }

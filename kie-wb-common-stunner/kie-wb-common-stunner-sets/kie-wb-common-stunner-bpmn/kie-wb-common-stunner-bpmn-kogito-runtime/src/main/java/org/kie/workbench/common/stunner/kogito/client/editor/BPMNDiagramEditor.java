@@ -41,6 +41,7 @@ import org.kie.workbench.common.stunner.core.client.canvas.util.CanvasFileExport
 import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
 import org.kie.workbench.common.stunner.core.client.service.ClientRuntimeError;
 import org.kie.workbench.common.stunner.core.client.service.ServiceCallback;
+import org.kie.workbench.common.stunner.core.client.util.WindowJSType;
 import org.kie.workbench.common.stunner.core.client.validation.canvas.CanvasDiagramValidator;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
@@ -238,7 +239,7 @@ public class BPMNDiagramEditor {
     }
 
     private static void setupJsLienzoTypeNative(JsLienzo jsLienzo) {
-        WindowJSType.linkLienzoJS(jsLienzo);
+        WindowJSType.linkCanvasJS(jsLienzo);
     }
 
     void docksInit() {

@@ -16,6 +16,7 @@
 
 package org.kie.lienzo.client;
 
+import com.ait.lienzo.client.core.types.JsLienzo;
 import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsPackage;
 import jsinterop.annotations.JsProperty;
@@ -25,7 +26,15 @@ import jsinterop.annotations.JsType;
 public class WindowJSLienzo {
 
     @JsProperty
+    private static Object jsLienzo;
+
+    @JsProperty
     private static Object jsLienzoExamples;
+
+    @JsOverlay
+    public static final void linkJSLienzo(JsLienzo jsLienzo) {
+        WindowJSLienzo.jsLienzo = jsLienzo;
+    }
 
     @JsOverlay
     public static final void linkJSLienzoExamples(JsLienzoExamples jsLienzoExamples) {

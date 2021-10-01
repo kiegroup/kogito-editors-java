@@ -54,6 +54,7 @@ import org.kie.workbench.common.stunner.core.client.command.SessionCommandManage
 import org.kie.workbench.common.stunner.core.client.components.layout.LayoutHelper;
 import org.kie.workbench.common.stunner.core.client.components.layout.OpenDiagramLayoutExecutor;
 import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
+import org.kie.workbench.common.stunner.core.client.util.WindowJSType;
 import org.kie.workbench.common.stunner.core.documentation.DocumentationView;
 import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
 import org.kie.workbench.common.stunner.kogito.client.docks.DiagramEditorPropertiesDock;
@@ -159,7 +160,7 @@ public class DMNDiagramEditor extends AbstractDMNDiagramEditor {
     }
 
     private static void setupJsLienzoTypeNative(JsLienzo jsLienzo) {
-        WindowJSType.linkLienzoJS(jsLienzo);
+        WindowJSType.linkCanvasJS(jsLienzo);
     }
 
     @Override
