@@ -58,6 +58,7 @@ export interface TableProps {
   /** Custom function called for manually resetting a row */
   resetRowCustomFunction?: (row: DataRecord) => DataRecord;
   readOnlyCells?: boolean;
+  editableHeader?: boolean;
 }
 
 /** Possible status for the visibility of the Table's Header */
