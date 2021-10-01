@@ -72,7 +72,7 @@ It provides buttons for creating new processes, opening an existing process and 
         window.frames.editorFrame.contentWindow.gwtEditorBeans.get("BPMNDiagramEditor").get().getContent()
 
         // Stunner Wires Shapes API
-        var jsl = window.frames.editorFrame.contentWindow.jsLienzo
+        var jsl = window.frames.editorFrame.contentWindow.canvas
         jsl.log().logWiresShapes()
         var s = jsl.getWiresShape('_A9481DBC-3E87-40EE-9925-733B24404BC0')
         s.getChild(1).fillColor = "red"  
