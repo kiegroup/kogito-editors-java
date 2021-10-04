@@ -52,14 +52,12 @@ export const ImportJavaClassesWizard: React.FunctionComponent<ImportJavaClassesW
       updateJavaFieldsReferences(updatedSelectedJavaClasses, javaClasses);
       setJavaClasses(updatedSelectedJavaClasses);
     }
-  }
+  };
   const removeJavaClass = (fullClassName: string) => {
-    const updatedSelectedJavaClasses: JavaClass[] = javaClasses.filter(
-      (javaClass) => javaClass.name !== fullClassName
-    );
+    const updatedSelectedJavaClasses: JavaClass[] = javaClasses.filter((javaClass) => javaClass.name !== fullClassName);
     updateJavaFieldsReferences(updatedSelectedJavaClasses, javaClasses);
     setJavaClasses(updatedSelectedJavaClasses);
-  }
+  };
   const updateSelectedClassesFields = (fullClassName: string, fields: JavaField[]) => {
     const javaClassIndex: number = javaClasses.findIndex((javaClass) => javaClass.name === fullClassName);
     if (javaClassIndex > -1) {
