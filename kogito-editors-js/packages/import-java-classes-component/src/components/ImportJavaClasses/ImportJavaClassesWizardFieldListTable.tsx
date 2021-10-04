@@ -22,6 +22,7 @@ import { Button } from "@patternfly/react-core";
 import { JavaField } from "./Model/JavaField";
 import { DMNSimpleType } from "./Model/DMNSimpleType";
 import { getJavaClassSimpleName } from "./Model/JavaClassUtils";
+import { useCallback } from "react";
 
 export interface ImportJavaClassesWizardFieldListTableProps {
   /** List of the selected classes by user */
@@ -58,13 +59,14 @@ export const ImportJavaClassesWizardFieldListTable: React.FunctionComponent<Impo
     const isFetchable = (field: JavaField) => {
       return field.dmnTypeRef === DMNSimpleType.ANY;
     };
-    const fetchButton = (field: JavaField) => {
+    const fetchButton = useCallback((field: JavaField) => {
       return (
         <Button className={"fetch-button"} onClick={() => onFetchButtonClick(field.type)} variant="primary" isSmall>
           {fetchButtonLabel + ' "' + getJavaClassSimpleName(field.type) + '" class'}
         </Button>
       );
-    };
+      // eslint-disable-next-line
+    }, [selectedJavaClassFields]);
 
     let rowIndex = -1;
     return (
