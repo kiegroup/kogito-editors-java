@@ -48,26 +48,34 @@ import { hashfy } from "../Resizer";
 
 export const DEFAULT_FIRST_PARAM_NAME = "p-1";
 
-export const FunctionExpression: React.FunctionComponent<FunctionProps> = (props: PropsWithChildren<FunctionProps>) => {
-  const parametersWidth =
-    props.parametersWidth === undefined ? DEFAULT_ENTRY_EXPRESSION_MIN_WIDTH : props.parametersWidth;
-  const formalParameters = props.formalParameters === undefined ? [] : props.formalParameters;
-  const functionKind = props.functionKind === undefined ? FunctionKind.Feel : props.functionKind;
-  const [width, setWidth] = useState(parametersWidth);
+export const FunctionExpression: React.FunctionComponent<FunctionProps> = (
+  functionExpression: PropsWithChildren<FunctionProps>
+) => {
+  const [selectedFunctionKind, setSelectedFunctionKind] = useState(
+    functionExpression.functionKind ?? FunctionKind.Feel
+  );
+  const [width, setWidth] = useState(functionExpression.parametersWidth ?? DEFAULT_ENTRY_EXPRESSION_MIN_WIDTH);
+  const [parameters, setParameters] = useState(functionExpression.formalParameters ?? []);
+
+  useEffect(() => {
+    setSelectedFunctionKind(functionExpression.functionKind ?? FunctionKind.Feel);
+  }, [functionExpression.functionKind]);
+
+  useEffect(() => {
+    setWidth(functionExpression.parametersWidth ?? DEFAULT_ENTRY_EXPRESSION_MIN_WIDTH);
+  }, [functionExpression.parametersWidth]);
+
+  useEffect(() => {
+    setParameters(functionExpression.formalParameters ?? []);
+  }, [functionExpression.formalParameters]);
 
   const { i18n } = useBoxedExpressionEditorI18n();
 
   const storedExpressionDefinition = useRef({} as FunctionProps);
-
   const { boxedExpressionEditorRef, setSupervisorHash, pmmlParams } = useContext(BoxedExpressionGlobalContext);
 
-  const [parameters, setParameters] = useState(formalParameters);
-
-  const name = useRef(props.name === undefined ? DEFAULT_FIRST_PARAM_NAME : props.name);
-  const dataType = useRef(props.dataType === undefined ? DataType.Undefined : props.dataType);
-
-  const document = useRef((props as PmmlFunctionProps).document);
-  const model = useRef((props as PmmlFunctionProps).model);
+  const document = useRef((functionExpression as PmmlFunctionProps).document);
+  const model = useRef((functionExpression as PmmlFunctionProps).model);
 
   const editParametersPopoverAppendTo = useCallback(() => {
     return () => boxedExpressionEditorRef.current!;
@@ -97,13 +105,13 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (props
     [editParametersPopoverAppendTo, i18n.editParameters, parameters]
   );
 
-  const evaluateColumns = useCallback(
+  const columns = useMemo(
     () =>
       [
         {
-          label: name.current,
-          accessor: name.current,
-          dataType: dataType.current,
+          label: functionExpression.name ?? DEFAULT_FIRST_PARAM_NAME,
+          accessor: functionExpression.name ?? DEFAULT_FIRST_PARAM_NAME,
+          dataType: functionExpression.dataType ?? DataType.Undefined,
           disableHandlerOnHeader: true,
           columns: [
             {
@@ -116,7 +124,7 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (props
           ],
         },
       ] as ColumnInstance[],
-    [headerCellElement, width]
+    [headerCellElement, width, functionExpression.name, functionExpression.dataType]
   );
 
   const extractContextEntriesFromJavaProps = useCallback(
@@ -182,7 +190,8 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (props
     (functionKind: FunctionKind) => {
       switch (functionKind) {
         case FunctionKind.Java: {
-          const javaProps: PropsWithChildren<JavaFunctionProps> = props as PropsWithChildren<JavaFunctionProps>;
+          const javaProps: PropsWithChildren<JavaFunctionProps> =
+            functionExpression as PropsWithChildren<JavaFunctionProps>;
           return [
             {
               entryExpression: {
@@ -210,18 +219,17 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (props
         }
         case FunctionKind.Feel:
         default: {
-          const feelProps: PropsWithChildren<FeelFunctionProps> = props as PropsWithChildren<FeelFunctionProps>;
+          const feelProps: PropsWithChildren<FeelFunctionProps> =
+            functionExpression as PropsWithChildren<FeelFunctionProps>;
           return [
             { entryExpression: feelProps.expression || { logicType: LogicType.LiteralExpression } } as DataRecord,
           ];
         }
       }
     },
-    [extractContextEntriesFromJavaProps, extractContextEntriesFromPmmlProps, props]
+    [extractContextEntriesFromJavaProps, extractContextEntriesFromPmmlProps, functionExpression]
   );
 
-  const columns = useRef(evaluateColumns());
-  const [selectedFunctionKind, setSelectedFunctionKind] = useState(functionKind);
   const [rows, setRows] = useState(evaluateRows(selectedFunctionKind));
 
   const retrieveModelValue = useCallback(
@@ -285,12 +293,12 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (props
   );
 
   const spreadFunctionExpressionDefinition = useCallback(() => {
-    const [expressionColumn] = columns.current;
+    const [expressionColumn] = columns;
 
     const updatedDefinition: FunctionProps = extendDefinitionBasedOnFunctionKind(
       {
-        uid: props.uid,
-        logicType: props.logicType,
+        uid: functionExpression.uid,
+        logicType: functionExpression.logicType,
         name: expressionColumn.accessor,
         dataType: expressionColumn.dataType,
         functionKind: selectedFunctionKind,
@@ -300,8 +308,8 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (props
       selectedFunctionKind
     );
 
-    if (props.isHeadless) {
-      props.onUpdatingRecursiveExpression?.(_.omit(updatedDefinition, ["name", "dataType"]));
+    if (functionExpression.isHeadless) {
+      functionExpression.onUpdatingRecursiveExpression?.(_.omit(updatedDefinition, ["name", "dataType"]));
     } else {
       executeIfExpressionDefinitionChanged(
         storedExpressionDefinition.current,
@@ -325,11 +333,20 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (props
         ]
       );
     }
-  }, [extendDefinitionBasedOnFunctionKind, setSupervisorHash, parameters, props, selectedFunctionKind, rows, width]);
+  }, [
+    columns,
+    extendDefinitionBasedOnFunctionKind,
+    setSupervisorHash,
+    parameters,
+    functionExpression,
+    selectedFunctionKind,
+    rows,
+    width,
+  ]);
 
-  const getHeaderVisibility = useCallback(() => {
-    return props.isHeadless ? TableHeaderVisibility.LastLevel : TableHeaderVisibility.Full;
-  }, [props.isHeadless]);
+  const getHeaderVisibility = useMemo(() => {
+    return functionExpression.isHeadless ? TableHeaderVisibility.LastLevel : TableHeaderVisibility.Full;
+  }, [functionExpression.isHeadless]);
 
   const onFunctionKindSelect = useCallback(
     (itemId: string) => {
@@ -347,16 +364,16 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (props
 
   const onColumnsUpdate = useCallback(
     ([expressionColumn]: [ColumnInstance]) => {
-      props.onUpdatingNameAndDataType?.(expressionColumn.label as string, expressionColumn.dataType);
+      functionExpression.onUpdatingNameAndDataType?.(expressionColumn.label as string, expressionColumn.dataType);
       setWidth(expressionColumn.width as number);
 
-      const [updatedExpressionColumn] = columns.current;
+      const [updatedExpressionColumn] = columns;
       updatedExpressionColumn.label = expressionColumn.label as string;
       updatedExpressionColumn.accessor = expressionColumn.accessor;
       updatedExpressionColumn.dataType = expressionColumn.dataType;
       spreadFunctionExpressionDefinition();
     },
-    [columns, props, spreadFunctionExpressionDefinition]
+    [columns, functionExpression, spreadFunctionExpressionDefinition]
   );
 
   useEffect(() => {
@@ -364,19 +381,13 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (props
     spreadFunctionExpressionDefinition();
   }, [rows, spreadFunctionExpressionDefinition]);
 
-  useEffect(() => {
-    columns.current = evaluateColumns();
-    // Watching for changes of the parameters, in order to update the columns passed to the table
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [parameters]);
-
   const resetRowCustomFunction = useCallback((row) => {
     setSelectedFunctionKind(FunctionKind.Feel);
     return resetEntry(row);
   }, []);
 
   return (
-    <div className={`function-expression ${props.uid}`}>
+    <div className={`function-expression ${functionExpression.uid}`}>
       <Table
         handlerConfiguration={[
           {
@@ -384,21 +395,18 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (props
             items: [{ name: i18n.rowOperations.clear, type: TableOperation.RowClear }],
           },
         ]}
-        columns={columns.current}
+        columns={columns}
         onColumnsUpdate={onColumnsUpdate}
         rows={rows}
         onRowsUpdate={setRows}
         headerLevels={1}
-        headerVisibility={getHeaderVisibility()}
-        controllerCell={useMemo(
-          () => (
-            <FunctionKindSelector
-              selectedFunctionKind={selectedFunctionKind}
-              onFunctionKindSelect={onFunctionKindSelect}
-            />
-          ),
-          [onFunctionKindSelect, selectedFunctionKind]
-        )}
+        headerVisibility={getHeaderVisibility}
+        controllerCell={
+          <FunctionKindSelector
+            selectedFunctionKind={selectedFunctionKind}
+            onFunctionKindSelect={onFunctionKindSelect}
+          />
+        }
         defaultCell={{ parameters: ContextEntryExpressionCell }}
         resetRowCustomFunction={resetRowCustomFunction}
       />

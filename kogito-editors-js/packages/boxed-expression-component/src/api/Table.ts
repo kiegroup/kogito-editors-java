@@ -118,7 +118,7 @@ export type Columns = Column[];
 
 export interface CellProps {
   /** Cell's row properties */
-  row: { index: number };
+  rowIndex: number;
   /** Cell's column properties */
-  column: { id: string };
+  columnId: string;
 }

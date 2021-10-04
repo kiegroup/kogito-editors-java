@@ -20,7 +20,7 @@ import "monaco-editor/dev/vs/editor/editor.main.css";
 import * as React from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { CellProps } from "../../api";
-import { blurActiveElement, firstIterableValue, focusNextTextArea, focusTextArea, paste } from "./common";
+import { blurActiveElement, focusNextTextArea, focusTextArea } from "./common/FocusUtils";
 import "./EditableCell.css";
 
 const CELL_LINE_HEIGHT = 20;
@@ -36,227 +36,187 @@ const MONACO_OPTIONS: Monaco.editor.IStandaloneEditorConstructionOptions = {
 export const READ_MODE = "editable-cell--read-mode";
 export const EDIT_MODE = "editable-cell--edit-mode";
 
+function usePrevious(value: any) {
+  const ref = useRef();
+
+  useEffect(() => {
+    ref.current = value;
+  }, [value]);
+
+  return ref.current;
+}
+
 export interface EditableCellProps extends CellProps {
   /** Cell's value */
   value: string;
   /** Function executed each time a cell gets updated */
-  onCellUpdate: (rowIndex: number, columnId: string, value: string) => void;
+  onCellUpdate: (index: number, id: string, value: string) => void;
+  /** Enable/Disable readonly */
+  readOnly?: boolean;
 }
 
-export const EditableCell: React.FunctionComponent<EditableCellProps> = React.memo(
-  ({ value: initialValue, row: { index }, column: { id }, onCellUpdate }: EditableCellProps) => {
-    const [value, setValue] = useState(initialValue || "");
-    const [isSelected, setIsSelected] = useState(false);
-    const [mode, setMode] = useState(READ_MODE);
-    const textarea = useRef<HTMLTextAreaElement>(null);
-    const [cellHeight, setCellHeight] = useState(CELL_LINE_HEIGHT * 3);
-    const [preview, setPreview] = useState(initialValue || "");
-    const [previousValue, setPreviousValue] = useState("");
+export function EditableCell({ value, rowIndex, columnId, onCellUpdate, readOnly }: EditableCellProps) {
+  const [isSelected, setIsSelected] = useState(false);
+  const [mode, setMode] = useState(READ_MODE);
+  const [cellHeight, setCellHeight] = useState(CELL_LINE_HEIGHT * 3);
+  const [preview, setPreview] = useState<string>("");
+  const textarea = useRef<HTMLTextAreaElement>(null);
 
-    // Common Handlers =========================================================
+  // Common Handlers =========================================================
 
-    useEffect(() => {
-      if (!initialValue) {
-        setPreview("");
-      }
-    }, [initialValue, value, setPreview]);
+  useEffect(() => {
+    if (!value) {
+      setPreview("");
+    }
+    if (textarea.current) {
+      textarea.current.value = value || "";
+    }
+  }, [value]);
 
-    useEffect(() => {
-      if (initialValue !== value) {
-        setValue(initialValue);
-      }
-      // Watching for initialValue prop change for updating value properly
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [initialValue]);
+  const isEditMode = useMemo(() => mode === EDIT_MODE, [mode]);
 
-    useEffect(() => {
-      if (textarea.current) {
-        textarea.current.value = value || "";
-      }
-    }, [value, textarea]);
-
-    const isEditMode = useCallback(() => mode === EDIT_MODE, [mode]);
-
-    const triggerReadMode = useCallback(
-      (newValue?: string) => {
-        if (!isEditMode()) {
-          return;
-        }
-
-        setMode(READ_MODE);
-
-        if (initialValue !== newValue) {
-          onCellUpdate(index, id, newValue || value);
-        }
-
-        focusTextArea(textarea.current);
-      },
-      [id, initialValue, isEditMode, setMode, onCellUpdate, index, value]
-    );
-
-    const triggerEditMode = useCallback(() => {
-      setPreviousValue(value);
-      blurActiveElement();
-      setMode(EDIT_MODE);
-    }, [setPreviousValue, value, setMode]);
-
-    const cssClass = useCallback(() => {
-      const selectedClass = isSelected ? "editable-cell--selected" : "";
-      return `editable-cell ${selectedClass} ${mode}`;
-    }, [isSelected, mode]);
-
-    const focus = useCallback(() => {
-      if (isEditMode()) {
+  const triggerReadMode = useCallback(
+    (newValue?: string) => {
+      if (!isEditMode) {
         return;
       }
 
-      setIsSelected(true);
+      setMode(READ_MODE);
+
+      if (value !== newValue) {
+        onCellUpdate(rowIndex, columnId, newValue || value);
+      }
 
       focusTextArea(textarea.current);
-    }, [isEditMode, setIsSelected, textarea]);
+    },
+    [columnId, isEditMode, onCellUpdate, rowIndex, value]
+  );
 
-    const onClick = useCallback(() => {
-      if (document.activeElement !== textarea.current) {
-        focus();
+  const triggerEditMode = useCallback(() => {
+    blurActiveElement();
+    setMode(EDIT_MODE);
+  }, []);
+
+  const cssClass = useCallback(() => {
+    const selectedClass = isSelected ? "editable-cell--selected" : "";
+    return `editable-cell ${selectedClass} ${mode}`;
+  }, [isSelected, mode]);
+
+  const onFocus = useCallback(() => {
+    if (isEditMode) {
+      return;
+    }
+    setIsSelected(true);
+    focusTextArea(textarea.current);
+  }, [isEditMode]);
+
+  const onClick = useCallback(() => {
+    if (document.activeElement !== textarea.current) {
+      onFocus();
+    }
+  }, [onFocus]);
+
+  // TextArea Handlers =======================================================
+
+  const onTextAreaBlur = useCallback(() => setIsSelected(false), []);
+
+  const onTextAreaChange = useCallback(
+    (event) => {
+      onCellUpdate(rowIndex, columnId, event.target.value.trim());
+      triggerEditMode();
+    },
+    [triggerEditMode, onCellUpdate, columnId, rowIndex]
+  );
+
+  // Feel Handlers ===========================================================
+
+  const onFeelBlur = useCallback(
+    (newValue: string) => {
+      triggerReadMode(newValue);
+    },
+    [triggerReadMode]
+  );
+
+  const previousValue = usePrevious(value);
+  const onFeelKeyDown = useCallback(
+    (event: Monaco.IKeyboardEvent, newValue: string) => {
+      const key = event?.code.toLowerCase() || "";
+      const isModKey = event.altKey || event.ctrlKey || event.shiftKey;
+      const isEnter = isModKey && key === "enter";
+      const isTab = key === "tab";
+      const isEsc = !!key.match("esc");
+
+      if (isEnter || isTab || isEsc) {
+        event.preventDefault();
       }
-    }, [focus]);
 
-    const onDoubleClick = useCallback(triggerEditMode, [triggerEditMode]);
-
-    const height = useCallback(
-      (value: string) => {
-        const numberOfValueLines = `${value}`.split("\n").length + 1;
-        const numberOfLines = numberOfValueLines < 3 ? 3 : numberOfValueLines;
-        setCellHeight(numberOfLines * CELL_LINE_HEIGHT);
-      },
-      [setCellHeight]
-    );
-
-    // TextArea Handlers =======================================================
-
-    const onTextAreaFocus = useCallback(focus, [focus]);
-
-    const onTextAreaBlur = useCallback(() => setIsSelected(false), [setIsSelected]);
-
-    const onTextAreaChange = useCallback(
-      (event) => {
-        const newValue: string = event.target.value || "";
-        const isPastedValue = newValue.includes("\t") || newValue.includes("\n");
-
-        if (textarea.current && isPastedValue) {
-          const pasteValue = newValue.slice(value.length);
-          const firstCellValue = firstIterableValue(pasteValue);
-
-          paste(pasteValue, textarea.current);
-          setValue(firstCellValue);
-          triggerReadMode();
-          return;
-        }
-
-        setValue(newValue);
-        triggerEditMode();
-      },
-      [setValue, value, triggerEditMode, triggerReadMode, textarea]
-    );
-
-    // Feel Handlers ===========================================================
-
-    const onFeelBlur = useCallback(
-      (newValue: string) => {
-        setValue(newValue);
+      if (isEnter || isTab) {
         triggerReadMode(newValue);
-      },
-      [triggerReadMode]
-    );
+      }
 
-    const onFeelKeyDown = useCallback(
-      (event: Monaco.IKeyboardEvent, newValue: string) => {
-        const key = event?.code.toLowerCase() || "";
-        const isModKey = event.altKey || event.ctrlKey || event.shiftKey;
-        const isEnter = isModKey && key === "enter";
-        const isTab = key === "tab";
-        const isEsc = !!key.match("esc");
+      if (isEsc) {
+        triggerReadMode(previousValue);
+      }
 
-        if (isEnter || isTab || isEsc) {
-          event.preventDefault();
-        }
+      if (isTab) {
+        focusNextTextArea(textarea.current);
+      }
+    },
+    [previousValue, triggerReadMode]
+  );
 
-        if (isEnter || isTab) {
-          setValue(newValue);
-          triggerReadMode(newValue);
-        }
+  const onFeelChange = useCallback((_e, newValue, newPreview) => {
+    const numberOfValueLines = `${newValue}`.split("\n").length + 1;
+    const numberOfLines = numberOfValueLines < 3 ? 3 : numberOfValueLines;
+    setCellHeight(numberOfLines * CELL_LINE_HEIGHT);
+    setPreview(newPreview);
+  }, []);
 
-        if (isEsc) {
-          setValue(previousValue);
-          triggerReadMode(previousValue);
-        }
+  const onFeelLoad = useCallback((newPreview) => {
+    // function being called before component is rendered
+    if (textarea.current) {
+      setPreview(newPreview);
+    }
+  }, []);
 
-        if (isTab) {
-          focusNextTextArea(textarea.current);
-        }
-      },
-      [triggerReadMode, setValue, previousValue]
-    );
+  const textValue = useMemo(() => {
+    if (!value) {
+      return "";
+    }
+    if (value !== null && typeof value === "object") {
+      return value[columnId];
+    }
+    return `${value}`;
+  }, [value, columnId]);
 
-    const onFeelChange = useCallback(
-      (_e, newValue, preview) => {
-        height(newValue);
-        setPreview(preview);
-      },
-      [setPreview, height]
-    );
-    const onFeelLoad = useCallback((preview) => setPreview(preview), [setPreview]);
-
-    // Sub Components ==========================================================
-
-    const readOnlyElement = useMemo(() => {
-      return <span className="editable-cell-value" dangerouslySetInnerHTML={{ __html: preview }}></span>;
-    }, [preview]);
-
-    const eventHandlerElement = useMemo(() => {
-      return (
+  return (
+    <>
+      <div
+        onDoubleClick={triggerEditMode}
+        onClick={onClick}
+        style={{ height: `${cellHeight}px` }}
+        className={cssClass()}
+      >
+        <span className="editable-cell-value" dangerouslySetInnerHTML={{ __html: preview }} />
         <textarea
           className="editable-cell-textarea"
           ref={textarea}
-          value={value}
+          value={textValue}
           onChange={onTextAreaChange}
-          onFocus={onTextAreaFocus}
+          onFocus={onFocus}
           onBlur={onTextAreaBlur}
+          readOnly={readOnly}
         />
-      );
-    }, [textarea, value, onTextAreaFocus, onTextAreaBlur, onTextAreaChange]);
-
-    const feelInputElement = useMemo(() => {
-      return (
         <FeelInput
-          enabled={isEditMode()}
-          value={value}
+          enabled={isEditMode}
+          value={textValue}
           onKeyDown={onFeelKeyDown}
           onChange={onFeelChange}
           onLoad={onFeelLoad}
           options={MONACO_OPTIONS}
           onBlur={onFeelBlur}
         />
-      );
-    }, [isEditMode, value, onFeelChange, onFeelLoad, onFeelKeyDown, onFeelBlur]);
-
-    return useMemo(
-      () => (
-        <>
-          <div
-            onDoubleClick={onDoubleClick}
-            onClick={onClick}
-            style={{ height: `${cellHeight}px` }}
-            className={cssClass()}
-          >
-            {readOnlyElement}
-            {eventHandlerElement}
-            {feelInputElement}
-          </div>
-        </>
-      ),
-      [onDoubleClick, onClick, cellHeight, cssClass, readOnlyElement, eventHandlerElement, feelInputElement]
-    );
-  },
-  ({ value: oldValue }, { value }) => oldValue === value
-);
+      </div>
+    </>
+  );
+}

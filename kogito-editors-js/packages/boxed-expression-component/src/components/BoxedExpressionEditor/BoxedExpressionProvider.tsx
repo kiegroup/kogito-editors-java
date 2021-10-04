@@ -21,6 +21,7 @@ import { hashfy, ResizerSupervisor } from "../Resizer";
 import { BoxedExpressionGlobalContext } from "../../context";
 import * as _ from "lodash";
 import { ExpressionProps, PMMLParams } from "../../api";
+import { CellSelectionBox } from "../SelectionBox";
 
 export interface BoxedExpressionProviderProps {
   /** All expression properties used to define it */
@@ -51,11 +52,12 @@ export function BoxedExpressionProvider(props: BoxedExpressionProviderProps) {
         setCurrentlyOpenedHandlerCallback,
       }}
     >
-      <ResizerSupervisor isRunnerTable={props.isRunnerTable}>
+      <ResizerSupervisor>
         <div className="boxed-expression-editor" ref={boxedExpressionEditorRef}>
           {props.children}
         </div>
       </ResizerSupervisor>
+      <CellSelectionBox />
     </BoxedExpressionGlobalContext.Provider>
   );
 }

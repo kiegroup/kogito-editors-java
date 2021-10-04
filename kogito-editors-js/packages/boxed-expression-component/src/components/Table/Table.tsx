@@ -23,6 +23,7 @@ import {
   ColumnInstance,
   ContextMenuEvent,
   DataRecord,
+  Row,
   useBlockLayout,
   useResizeColumns,
   useTable,
@@ -30,12 +31,13 @@ import {
 import { v4 as uuid } from "uuid";
 import { TableHeaderVisibility, TableOperation, TableProps } from "../../api";
 import { BoxedExpressionGlobalContext } from "../../context";
-import { pasteOnTable, PASTE_OPERATION } from "./common";
+import { PASTE_OPERATION, pasteOnTable } from "./common";
 import { EditableCell } from "./EditableCell";
 import "./Table.css";
 import { TableBody } from "./TableBody";
 import { TableHandler } from "./TableHandler";
 import { TableHeader } from "./TableHeader";
+
 export const NO_TABLE_CONTEXT_MENU_CLASS = "no-table-context-menu";
 const NUMBER_OF_ROWS_COLUMN = "#";
 const NUMBER_OF_ROWS_SUBCOLUMN = "0";
@@ -86,6 +88,11 @@ export const Table: React.FunctionComponent<TableProps> = ({
 }: TableProps) => {
   const tableRef = useRef<HTMLTableElement>(null);
   const tableEventUUID = useMemo(() => `table-event-${uuid()}`, []);
+
+  const onRowAddingCallback = useCallback(() => {
+    return onRowAdding ? onRowAdding() : {};
+  }, [onRowAdding]);
+  const onGetColumnPrefix = useCallback(() => (getColumnPrefix ? getColumnPrefix() : "column-"), [getColumnPrefix]);
 
   const globalContext = useContext(BoxedExpressionGlobalContext);
 
@@ -138,7 +145,10 @@ export const Table: React.FunctionComponent<TableProps> = ({
   const [lastSelectedColumn, setLastSelectedColumn] = useState({} as ColumnInstance);
   const [lastSelectedRowIndex, setLastSelectedRowIndex] = useState(-1);
 
-  const tableColumns = useMemo(() => generateNumberOfRowsColumn(controllerCell, columns), [columns, controllerCell]);
+  const tableColumns = useMemo(
+    () => generateNumberOfRowsColumn(controllerCell, columns),
+    [generateNumberOfRowsColumn, columns, controllerCell]
+  );
 
   useEffect(() => {
     tableRows.current = rows;
@@ -154,7 +164,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
 
       const { pasteValue, x, y } = event.detail;
       const rows = tableRows.current;
-      const rowFactory = onRowAdding;
+      const rowFactory = onRowAddingCallback;
 
       const isLockedTable = _.some(tableRows.current[0], (col: { noClearAction: boolean }) => {
         return col && col.noClearAction;
@@ -171,7 +181,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
     return () => {
       document.removeEventListener(tableEventUUID, listener);
     };
-  }, [tableEventUUID, tableRows, onRowsUpdate, onColumnsUpdate, onRowAdding]);
+  }, [tableEventUUID, tableRows, onRowsUpdate, onColumnsUpdate, onRowAddingCallback]);
 
   const onColumnsUpdateCallback = useCallback(
     (columns: Column[]) => {
@@ -337,10 +347,6 @@ export const Table: React.FunctionComponent<TableProps> = ({
     },
     [getRowKey]
   );
-  const onRowAddingCallback = useCallback(() => {
-    return onRowAdding ? onRowAdding() : {};
-  }, [onRowAdding]);
-  const onGetColumnPrefix = useCallback(() => (getColumnPrefix ? getColumnPrefix() : "column-"), [getColumnPrefix]);
 
   return (
     <div className={`table-component ${tableId} ${tableEventUUID}`}>
