@@ -450,7 +450,9 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
             final AbstractCanvasHandler canvasHandler = (AbstractCanvasHandler) sessionManager.getCurrentSession().getCanvasHandler();
             final CompositeCommand.Builder<AbstractCanvasHandler, CanvasViolation> commandBuilder = new CompositeCommand.Builder<>();
             final Element element = canvasHandler.getGraphIndex().get(nodeUUID);
+
             commandBuilder.addCommand(expressionCommand);
+
             if (element.getContent() instanceof Definition) {
                 final Definition definition = (Definition) element.getContent();
                 final String nameId = definitionUtils.getNameIdentifier(definition.getDefinition());
@@ -460,11 +462,9 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
 
             }
 
+
             sessionCommandManager.execute((AbstractCanvasHandler) sessionManager.getCurrentSession().getCanvasHandler(),
                                           commandBuilder.build());
-
-//            sessionCommandManager.execute((AbstractCanvasHandler) sessionManager.getCurrentSession().getCanvasHandler(),
-//                                          expressionCommand);
         }
     }
 

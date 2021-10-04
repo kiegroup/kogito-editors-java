@@ -224,7 +224,13 @@ public abstract class FillExpressionCommand<E extends ExpressionProps> extends A
 
     void setExpressionName(final E expressionProps) {
         final HasName hasName = (HasName) getHasExpression();
-        hasName.setName(new Name(expressionProps.name));
+        final Name name;
+        if (Objects.isNull(hasName.getName())) {
+            name = new Name();
+        } else {
+            name = hasName.getName();
+        }
+        name.setValue(expressionProps.name);
     }
 
     void saveCurrentState() {
