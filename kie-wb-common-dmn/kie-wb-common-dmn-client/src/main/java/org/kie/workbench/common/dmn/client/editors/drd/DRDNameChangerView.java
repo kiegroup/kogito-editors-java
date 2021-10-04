@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.dmn.client.editors.drd;
 
+import java.util.Objects;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
@@ -135,7 +137,7 @@ public class DRDNameChangerView implements DRDNameChanger {
     }
 
     private void performSave(final DMNDiagramElement dmnDiagramElement) {
-        if (!dmnDiagramElement.getName().getValue().equals(drdNameInput.getValue())) {
+        if (!Objects.equals(dmnDiagramElement.getName().getValue(), drdNameInput.getValue())) {
             dmnDiagramElement.getName().setValue(drdNameInput.getValue());
             selectedEvent.fire(new DMNDiagramSelected(dmnDiagramElement));
         } else {
