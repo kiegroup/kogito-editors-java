@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.kie.kogito</groupId>
     <artifactId>kogito-editors-java</artifactId>
-    <version>8.3.1-SNAPSHOT</version>
+    <version>8.4.2-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
@@ -13,6 +13,10 @@
   <artifactId>kogito-editors-js</artifactId>
   <name>Kogito editors JS</name>
   <description>React/TS/JS-based-components for the Kogito editors</description>
+
+  <properties>
+    <sonar.skip>true</sonar.skip>
+  </properties>
 
   <build>
     <plugins>
@@ -99,8 +103,12 @@
               </outputDirectory>
               <resources>
                 <resource>
-                  <directory>./dist</directory>
+                  <directory>dist</directory>
                   <filtering>false</filtering>
+                  <includes>
+                    <include>dmn-loader.*</include>
+                    <include>fonts/**</include>
+                  </includes>
                 </resource>
               </resources>
             </configuration>

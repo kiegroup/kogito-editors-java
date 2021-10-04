@@ -18,7 +18,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.kie.kogito</groupId>
   <artifactId>kie-wb-common-bom</artifactId>
-  <version>8.3.1-SNAPSHOT</version>
+  <version>8.4.2-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Kie-wb-common BOM</name>
@@ -69,6 +69,10 @@
       <url>https://oss.sonatype.org/content/repositories/public</url>
     </repository>
   </repositories>
+
+  <properties>
+    <sonar.skip>true</sonar.skip>
+  </properties>
 
   <dependencyManagement>
     <dependencies>

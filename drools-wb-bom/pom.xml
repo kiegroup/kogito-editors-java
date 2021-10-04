@@ -18,7 +18,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.kie.kogito</groupId>
   <artifactId>drools-wb-bom</artifactId>
-  <version>8.3.1-SNAPSHOT</version>
+  <version>8.4.2-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Drools-wb BOM</name>
@@ -72,6 +72,7 @@
 
   <properties>
     <version.com.google.elemental2>1.1.0</version.com.google.elemental2>
+    <sonar.skip>true</sonar.skip>
   </properties>
 
   <dependencyManagement>

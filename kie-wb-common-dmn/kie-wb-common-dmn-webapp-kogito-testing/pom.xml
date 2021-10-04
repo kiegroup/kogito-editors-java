@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.kie.kogito</groupId>
     <artifactId>kie-wb-common-dmn</artifactId>
-    <version>8.3.1-SNAPSHOT</version>
+    <version>8.4.2-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -34,6 +34,9 @@
     <gwt.compiler.localWorkers>4</gwt.compiler.localWorkers>
     <gwt.helper.includes>DMNClient,Marshaller</gwt.helper.includes>
     <gwt.helper.rootDirectories>${project.parent.basedir}/</gwt.helper.rootDirectories>
+
+    <!-- this module is just and "playground" of components, to minimize CI times, we skip sonar here -->
+    <sonar.skip>true</sonar.skip>
   </properties>
 
   <dependencies>
@@ -104,6 +107,7 @@
     <dependency>
       <groupId>org.kie.kogito</groupId>
       <artifactId>kogito-editors-js</artifactId>
+      <scope>provided</scope>
     </dependency>
 
     <!-- Stunner -->
@@ -725,7 +729,6 @@
                       <type>jar</type>
                       <overWrite>true</overWrite>
                       <outputDirectory>${project.build.directory}/kogito-editors-js</outputDirectory>
-                      <includes>**/*.js,**/*.css</includes>
                     </artifactItem>
                   </artifactItems>
                 </configuration>
@@ -761,11 +764,8 @@
                 </goals>
                 <configuration>
                   <target>
-                    <copy todir="${basedir}/src/main/webapp/kogito-editors-js" flatten="true">
-                      <fileset dir="${project.build.directory}/kogito-editors-js">
-                        <include name="**/*.js"/>
-                        <include name="**/*.css"/>
-                      </fileset>
+                    <copy todir="${basedir}/src/main/webapp/kogito-editors-js">
+                      <fileset dir="${project.build.directory}/kogito-editors-js/META-INF/resources/webjars/kogito-editors-js/kogito-editors-js" includes="**/*" />
                     </copy>
                   </target>
                 </configuration>

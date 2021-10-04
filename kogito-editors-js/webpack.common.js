@@ -47,6 +47,9 @@ const commonConfig = (name, devMode, options = {}) => {
       new webpack.DefinePlugin({
         __IS_WIRED__: JSON.stringify(!!wire),
       }),
+      new webpack.optimize.LimitChunkCountPlugin({
+        maxChunks: 1,
+      }),
     ],
 
     module: {
@@ -74,6 +77,18 @@ const commonConfig = (name, devMode, options = {}) => {
               options: {
                 name: "[name].[ext]",
                 outputPath: "fonts",
+              },
+            },
+          ],
+        },
+        {
+          test: /\.(png|svg|jpe?g|gif)$/i,
+          use: [
+            {
+              loader: "file-loader",
+              options: {
+                name: "[name].[ext]",
+                outputPath: "images",
               },
             },
           ],

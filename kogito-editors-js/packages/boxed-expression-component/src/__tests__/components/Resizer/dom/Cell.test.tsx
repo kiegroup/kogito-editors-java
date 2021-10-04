@@ -28,6 +28,12 @@ let cell: Cell;
 let element: HTMLElement;
 let container: Element;
 
+const EMPTY_LIST_OF_NODES = {
+  length: 0,
+  item: (_index: number) => document.createElement("span"),
+  forEach: (_element: any) => ({}),
+};
+
 describe("Cell", () => {
   beforeAll(() => {
     document.dispatchEvent = jest.fn();
@@ -58,7 +64,7 @@ describe("Cell", () => {
 
     it("set the width in the element considering the minimum value", () => {
       act(() => cell.setWidth(80));
-      expect(element.style.width).toEqual("150px");
+      expect(element.style.width).toEqual("100px");
       expect(document.dispatchEvent).toBeCalled();
     });
   });
@@ -120,6 +126,61 @@ describe("Cell", () => {
       expect(cell.isLastColumn()).toBeFalsy();
     });
   });
+
+  describe("refreshWidthAsLastGroupColumn", () => {
+    describe("when cell has children", () => {
+      beforeEach(() => {
+        Element.prototype.getBoundingClientRect = jest.fn(() => {
+          return {
+            x: 4,
+            y: 8,
+            width: 16,
+            height: 32,
+            top: 64,
+            left: 128,
+            bottom: 256,
+            right: 512,
+          } as DOMRect;
+        });
+        createContextWithInnerDecisionTable();
+      });
+
+      it("returns the inner width", () => {
+        const elements = container.querySelectorAll(CELL_CSS_SELECTOR);
+        const cellElement = elements.item(7) as HTMLElement;
+        const cell = new Cell(cellElement, [], 1);
+        const setWidthSpy = jest.spyOn(cell, "setWidth");
+
+        cell.refreshWidthAsLastGroupColumn();
+
+        expect(setWidthSpy).toBeCalledWith(506);
+      });
+    });
+
+    describe("when cell doesn't have children", () => {
+      beforeEach(() => {
+        Element.prototype.querySelectorAll = jest.fn((selector): NodeListOf<HTMLElement> => {
+          if (selector === ".input") {
+            return EMPTY_LIST_OF_NODES;
+          }
+          return document.querySelectorAll(selector);
+        });
+
+        createContextWithInnerDecisionTable();
+      });
+
+      it("returns the inner width", () => {
+        const elements = container.querySelectorAll(CELL_CSS_SELECTOR);
+        const cellElement = elements.item(7) as HTMLElement;
+        const cell = new Cell(cellElement, [], 1);
+        const setWidthSpy = jest.spyOn(cell, "setWidth");
+
+        cell.refreshWidthAsLastGroupColumn();
+
+        expect(setWidthSpy).not.toBeCalled();
+      });
+    });
+  });
 });
 
 function renderLiteralAtRegularColumn() {
@@ -129,11 +190,11 @@ function renderLiteralAtRegularColumn() {
         <table>
           <tbody>
             <tr>
-              <td></td>
+              <td />
               <td>
-                <Resizer width={250}></Resizer>
+                <Resizer width={250} />
               </td>
-              <td></td>
+              <td />
             </tr>
           </tbody>
         </table>
@@ -151,10 +212,10 @@ function renderLiteralAtLastColumn() {
         <table>
           <tbody>
             <tr>
-              <td></td>
-              <td></td>
+              <td />
+              <td />
               <td>
-                <Resizer width={250}></Resizer>
+                <Resizer width={250} />
               </td>
             </tr>
           </tbody>
@@ -167,7 +228,7 @@ function renderLiteralAtLastColumn() {
 }
 
 function createLiteral() {
-  container = render(<Resizer width={250}></Resizer>).container;
+  container = render(<Resizer width={250} />).container;
   element = container.querySelector(CELL_CSS_SELECTOR) as HTMLElement;
   cell = new Cell(element, [], 0);
 }
@@ -232,6 +293,101 @@ function createContext() {
           },
           entryInfoWidth: 150,
           entryExpressionWidth: 1468,
+        } as unknown as ContextProps)}
+      />
+    ).wrapper
+  ).container;
+}
+
+function createContextWithInnerDecisionTable() {
+  container = render(
+    usingTestingBoxedExpressionI18nContext(
+      <ContextExpression
+        {...({
+          uid: "id1",
+          logicType: "Context",
+          name: "Expression Name",
+          dataType: "<Undefined>",
+          contextEntries: [
+            {
+              entryInfo: {
+                name: "ContextEntry-1",
+                dataType: "<Undefined>",
+              },
+              entryExpression: {
+                uid: "id2",
+                logicType: "Context",
+                contextEntries: [
+                  {
+                    entryInfo: {
+                      name: "ContextEntry-1",
+                      dataType: "<Undefined>",
+                    },
+                    entryExpression: {
+                      uid: "id4",
+                      logicType: "Context",
+                      contextEntries: [
+                        {
+                          entryInfo: {
+                            name: "ContextEntry-1",
+                            dataType: "<Undefined>",
+                          },
+                          entryExpression: {
+                            uid: "id6",
+                            logicType: "Decision Table",
+                            name: "ContextEntry-1",
+                            dataType: "<Undefined>",
+                            hitPolicy: "UNIQUE",
+                            aggregation: "",
+                            input: [
+                              {
+                                name: "input-1",
+                                dataType: "<Undefined>",
+                              },
+                            ],
+                            output: [
+                              {
+                                name: "output-1",
+                                dataType: "<Undefined>",
+                              },
+                            ],
+                            annotations: [
+                              {
+                                name: "annotation-1",
+                              },
+                            ],
+                            rules: [
+                              {
+                                inputEntries: ["-"],
+                                outputEntries: [""],
+                                annotationEntries: [""],
+                              },
+                            ],
+                          },
+                          editInfoPopoverLabel: "Edit Context Entry",
+                          nameAndDataTypeSynchronized: true,
+                        },
+                      ],
+                      result: {
+                        uid: "id7",
+                      },
+                    },
+                    editInfoPopoverLabel: "Edit Context Entry",
+                    nameAndDataTypeSynchronized: true,
+                  },
+                ],
+                result: {
+                  uid: "id5",
+                },
+              },
+              editInfoPopoverLabel: "Edit Context Entry",
+              nameAndDataTypeSynchronized: true,
+            },
+          ],
+          result: {
+            uid: "id3",
+          },
+          isHeadless: false,
         } as unknown as ContextProps)}
       />
     ).wrapper

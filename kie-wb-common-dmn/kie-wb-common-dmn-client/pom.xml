@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.kie.kogito</groupId>
     <artifactId>kie-wb-common-dmn</artifactId>
-    <version>8.3.1-SNAPSHOT</version>
+    <version>8.4.2-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -160,6 +160,7 @@
     <dependency>
       <groupId>org.kie.kogito</groupId>
       <artifactId>kogito-editors-js</artifactId>
+      <scope>provided</scope>
     </dependency>
 
     <!-- DMN Editor -->

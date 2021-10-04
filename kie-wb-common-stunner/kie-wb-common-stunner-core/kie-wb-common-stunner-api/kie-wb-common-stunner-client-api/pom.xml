@@ -21,7 +21,7 @@
   <parent>
     <artifactId>kie-wb-common-stunner-api</artifactId>
     <groupId>org.kie.kogito</groupId>
-    <version>8.3.1-SNAPSHOT</version>
+    <version>8.4.2-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -102,11 +102,6 @@
     <dependency>
       <groupId>org.kie.kogito</groupId>
       <artifactId>appformer-client-api</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.kie.kogito</groupId>
-      <artifactId>lienzo-core</artifactId>
     </dependency>
 
     <!-- Test scope. -->
