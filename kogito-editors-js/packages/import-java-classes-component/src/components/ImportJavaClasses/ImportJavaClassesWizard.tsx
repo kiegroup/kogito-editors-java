@@ -40,20 +40,26 @@ export const ImportJavaClassesWizard: React.FunctionComponent<ImportJavaClassesW
   const [javaClasses, setJavaClasses] = useState<JavaClass[]>([]);
   const updateSelectedClasses = (fullClassName: string, add: boolean) => {
     if (add) {
-      if (!javaClasses.some((javaClass) => javaClass.name === fullClassName)) {
-        const updatedSelectedJavaClasses: JavaClass[] = [...javaClasses, new JavaClass(fullClassName)];
-        updatedSelectedJavaClasses.sort((a, b) => (a.name < b.name ? -1 : 1));
-        updateJavaFieldsReferences(updatedSelectedJavaClasses, javaClasses);
-        setJavaClasses(updatedSelectedJavaClasses);
-      }
+      addJavaClass(fullClassName);
     } else {
-      const updatedSelectedJavaClasses: JavaClass[] = javaClasses.filter(
-        (javaClass) => javaClass.name !== fullClassName
-      );
+      removeJavaClass(fullClassName);
+    }
+  };
+  const addJavaClass = (fullClassName: string) => {
+    if (!javaClasses.some((javaClass) => javaClass.name === fullClassName)) {
+      const updatedSelectedJavaClasses: JavaClass[] = [...javaClasses, new JavaClass(fullClassName)];
+      updatedSelectedJavaClasses.sort((a, b) => (a.name < b.name ? -1 : 1));
       updateJavaFieldsReferences(updatedSelectedJavaClasses, javaClasses);
       setJavaClasses(updatedSelectedJavaClasses);
     }
-  };
+  }
+  const removeJavaClass = (fullClassName: string) => {
+    const updatedSelectedJavaClasses: JavaClass[] = javaClasses.filter(
+      (javaClass) => javaClass.name !== fullClassName
+    );
+    updateJavaFieldsReferences(updatedSelectedJavaClasses, javaClasses);
+    setJavaClasses(updatedSelectedJavaClasses);
+  }
   const updateSelectedClassesFields = (fullClassName: string, fields: JavaField[]) => {
     const javaClassIndex: number = javaClasses.findIndex((javaClass) => javaClass.name === fullClassName);
     if (javaClassIndex > -1) {

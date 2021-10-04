@@ -56,9 +56,7 @@ export const ImportJavaClassesWizardFieldListTable: React.FunctionComponent<Impo
       return "(" + typeName + ")";
     };
     const isFetchable = (field: JavaField) => {
-      if (field.dmnTypeRef === DMNSimpleType.ANY) {
-        return true;
-      }
+      return field.dmnTypeRef === DMNSimpleType.ANY;
     };
     const fetchButton = (field: JavaField) => {
       return (
