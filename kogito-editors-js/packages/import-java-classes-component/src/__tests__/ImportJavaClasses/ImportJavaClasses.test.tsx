@@ -152,11 +152,11 @@ describe("ImportJavaClasses component tests", () => {
 
   const lspGetClassFieldsServiceMocked = async (className: string) => {
     const bookClassFieldsMap = new Map<string, string>();
-    bookClassFieldsMap.set("title", "string");
-    bookClassFieldsMap.set("year", "integer");
+    bookClassFieldsMap.set("title", "java.lang.String");
+    bookClassFieldsMap.set("year", "java.lang.Integer");
     const authorClassFieldsMap = new Map<string, string>();
-    authorClassFieldsMap.set("name", "string");
-    authorClassFieldsMap.set("isAlive", "boolean");
+    authorClassFieldsMap.set("name", "java.lang.String");
+    authorClassFieldsMap.set("isAlive", "java.lang.Boolean");
     if (className === "com.Book") {
       return bookClassFieldsMap;
     } else if (className === "com.Author") {
