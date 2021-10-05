@@ -66,8 +66,8 @@ export const ImportJavaClassesWizardFieldListTable: React.FunctionComponent<Impo
             {fetchButtonLabel + ' "' + getJavaClassSimpleName(field.type) + '" class'}
           </Button>
         );
-        // eslint-disable-next-line
       },
+      // eslint-disable-next-line
       [selectedJavaClassFields]
     );
 
