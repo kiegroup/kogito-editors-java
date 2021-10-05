@@ -102,6 +102,10 @@ public abstract class FillExpressionCommand<E extends ExpressionProps> extends A
         this.enableRedo = enableRedo;
     }
 
+    public ExpressionEditorView getView() {
+        return view;
+    }
+
     protected abstract void fill();
 
     protected abstract Expression getTemporaryExpression();

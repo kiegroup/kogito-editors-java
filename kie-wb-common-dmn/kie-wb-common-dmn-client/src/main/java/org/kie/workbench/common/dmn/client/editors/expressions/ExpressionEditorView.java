@@ -36,6 +36,8 @@ public interface ExpressionEditorView extends org.jboss.errai.ui.client.local.ap
                                               RequiresResize,
                                               ProvidesResize {
 
+    void clear();
+
     interface Presenter extends IsElement,
                                 CanvasControl.SessionAware<DMNSession> {
 

@@ -38,7 +38,7 @@ public class ClearExpressionCommand extends FillExpressionCommand<ExpressionProp
 
     @Override
     protected void fill() {
-        // There is nothing to fill
+        getView().clear();
     }
 
     @Override
