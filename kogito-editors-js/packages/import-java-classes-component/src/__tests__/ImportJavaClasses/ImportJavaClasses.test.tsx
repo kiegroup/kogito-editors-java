@@ -77,7 +77,9 @@ describe("ImportJavaClasses component tests", () => {
     testJavaClassSelection(baseElement, true);
     const nextButton = getByText("Next") as HTMLButtonElement;
     fireEvent.click(nextButton);
-    await waitFor(() => {expect(baseElement.querySelector('[aria-label="field-table"]')!).toBeInTheDocument()})
+    await waitFor(() => {
+      expect(baseElement.querySelector('[aria-label="field-table"]')!).toBeInTheDocument();
+    });
     const expandToggle = baseElement.querySelector('[id="expand-toggle0"]')! as HTMLButtonElement;
     expect(expandToggle).toHaveAttribute("aria-expanded", "true");
     fireEvent.click(expandToggle);
@@ -154,6 +156,7 @@ describe("ImportJavaClasses component tests", () => {
     const bookClassFieldsMap = new Map<string, string>();
     bookClassFieldsMap.set("title", "java.lang.String");
     bookClassFieldsMap.set("year", "java.lang.Integer");
+    bookClassFieldsMap.set("test", "com.Test")
     const authorClassFieldsMap = new Map<string, string>();
     authorClassFieldsMap.set("name", "java.lang.String");
     authorClassFieldsMap.set("isAlive", "java.lang.Boolean");

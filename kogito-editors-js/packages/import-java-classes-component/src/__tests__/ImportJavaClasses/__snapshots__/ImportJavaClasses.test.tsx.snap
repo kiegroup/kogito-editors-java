@@ -32,7 +32,7 @@ exports[`ImportJavaClasses component tests Should move to second step 1`] = `
     <button
       aria-disabled="false"
       class="pf-c-button pf-m-secondary"
-      data-ouia-component-id="OUIA-Generated-Button-secondary-18"
+      data-ouia-component-id="OUIA-Generated-Button-secondary-23"
       data-ouia-component-type="PF4/Button"
       data-ouia-safe="true"
       data-testid="modal-wizard-button"
@@ -49,19 +49,19 @@ exports[`ImportJavaClasses component tests Should move to second step 1`] = `
         class="pf-l-bullseye"
       >
         <div
-          aria-describedby="pf-wizard-description-5"
-          aria-labelledby="pf-wizard-title-5"
+          aria-describedby="pf-wizard-description-4"
+          aria-labelledby="pf-wizard-title-4"
           aria-modal="true"
           class="pf-c-modal-box pf-m-lg"
-          data-ouia-component-id="OUIA-Generated-Modal-large-6"
+          data-ouia-component-id="OUIA-Generated-Modal-large-5"
           data-ouia-component-type="PF4/ModalContent"
           data-ouia-safe="true"
-          id="pf-modal-part-5"
+          id="pf-modal-part-4"
           role="dialog"
         >
           
           <div
-            class="pf-c-wizard"
+            class="pf-c-wizard import-java-classes"
           >
             <div
               class="pf-c-wizard__header"
@@ -92,13 +92,13 @@ exports[`ImportJavaClasses component tests Should move to second step 1`] = `
               <h2
                 aria-label="Import Java classes"
                 class="pf-c-title pf-m-3xl pf-c-wizard__title"
-                id="pf-wizard-title-5"
+                id="pf-wizard-title-4"
               >
                 Import Java classes
               </h2>
               <p
                 class="pf-c-wizard__description"
-                id="pf-wizard-description-5"
+                id="pf-wizard-description-4"
               >
                 It converts your Java assets to DMN types. This is a one-time import action: if the Java class get updated, you will need to reimport it
               </p>
@@ -148,7 +148,7 @@ exports[`ImportJavaClasses component tests Should move to second step 1`] = `
                 class="pf-c-wizard__inner-wrap"
               >
                 <nav
-                  aria-labelledby="pf-wizard-title-5"
+                  aria-labelledby="pf-wizard-title-4"
                   class="pf-c-wizard__nav"
                 >
                   <ol
@@ -189,7 +189,7 @@ exports[`ImportJavaClasses component tests Should move to second step 1`] = `
                   </ol>
                 </nav>
                 <main
-                  aria-labelledby="pf-wizard-title-5"
+                  aria-labelledby="pf-wizard-title-4"
                   class="pf-c-wizard__main"
                 >
                   <div
@@ -255,8 +255,10 @@ exports[`ImportJavaClasses component tests Should move to second step 1`] = `
                                 Author
                               </strong>
                             </span>
-                            <span>
-                               (com.Author)
+                            <span
+                              class="dmn-type-name"
+                            >
+                              (Structure)
                             </span>
                           </td>
                         </tr>
@@ -276,10 +278,12 @@ exports[`ImportJavaClasses component tests Should move to second step 1`] = `
                               class="pf-c-table__expandable-row-content"
                             >
                               <span>
-                                name
+                                isAlive
                               </span>
-                              <span>
-                                 (string)
+                              <span
+                                class="dmn-type-name"
+                              >
+                                (boolean)
                               </span>
                             </div>
                           </td>
@@ -300,10 +304,12 @@ exports[`ImportJavaClasses component tests Should move to second step 1`] = `
                               class="pf-c-table__expandable-row-content"
                             >
                               <span>
-                                isAlive
+                                name
                               </span>
-                              <span>
-                                 (boolean)
+                              <span
+                                class="dmn-type-name"
+                              >
+                                (string)
                               </span>
                             </div>
                           </td>
@@ -361,8 +367,10 @@ exports[`ImportJavaClasses component tests Should move to second step 1`] = `
                                 Book
                               </strong>
                             </span>
-                            <span>
-                               (com.Book)
+                            <span
+                              class="dmn-type-name"
+                            >
+                              (Structure)
                             </span>
                           </td>
                         </tr>
@@ -384,8 +392,10 @@ exports[`ImportJavaClasses component tests Should move to second step 1`] = `
                               <span>
                                 title
                               </span>
-                              <span>
-                                 (string)
+                              <span
+                                class="dmn-type-name"
+                              >
+                                (string)
                               </span>
                             </div>
                           </td>
@@ -408,8 +418,10 @@ exports[`ImportJavaClasses component tests Should move to second step 1`] = `
                               <span>
                                 year
                               </span>
-                              <span>
-                                 (integer)
+                              <span
+                                class="dmn-type-name"
+                              >
+                                (number)
                               </span>
                             </div>
                           </td>
@@ -436,8 +448,10 @@ exports[`ImportJavaClasses component tests Should move to second step 1`] = `
                                 Test
                               </strong>
                             </span>
-                            <span>
-                               (com.Test)
+                            <span
+                              class="dmn-type-name"
+                            >
+                              (Structure)
                             </span>
                           </td>
                         </tr>
