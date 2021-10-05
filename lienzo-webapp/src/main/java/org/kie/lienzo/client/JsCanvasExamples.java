@@ -3,7 +3,7 @@ package org.kie.lienzo.client;
 import jsinterop.annotations.JsType;
 
 @JsType
-public class JsLienzoExamples {
+public class JsCanvasExamples {
 
     BaseLienzoExamples examples;
 

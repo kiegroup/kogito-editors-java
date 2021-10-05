@@ -20,8 +20,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.kie.lienzo.client.selenium.JsLienzoDriver;
-import org.kie.lienzo.client.selenium.JsLienzoShapeExecutor;
+import org.kie.lienzo.client.selenium.JsCanvasDriver;
+import org.kie.lienzo.client.selenium.JsCanvasShapeExecutor;
 
 import static org.junit.Assert.assertEquals;
 import static org.kie.lienzo.client.BasicShapesExample.RECTANGLE;
@@ -29,18 +29,18 @@ import static org.kie.lienzo.client.BasicShapesExample.RECTANGLE;
 @SuppressWarnings("NonJREEmulationClassesInClientCode")
 public class BasicShapesExampleTest {
 
-    private JsLienzoDriver lienzoDriver;
-    private JsLienzoShapeExecutor rectangle;
+    private JsCanvasDriver lienzoDriver;
+    private JsCanvasShapeExecutor rectangle;
 
     @BeforeClass
     public static void setupClass() {
-        JsLienzoDriver.init();
+        JsCanvasDriver.init();
     }
 
     @Before
     public void openWebapp() {
-        // TODO lienzoDriver = JsLienzoDriver.build();
-        lienzoDriver = JsLienzoDriver.devMode();
+        // TODO lienzoDriver = JsCanvasDriver.build();
+        lienzoDriver = JsCanvasDriver.devMode();
         rectangle = lienzoDriver.forShape(RECTANGLE);
         lienzoDriver.openTest(0);
     }

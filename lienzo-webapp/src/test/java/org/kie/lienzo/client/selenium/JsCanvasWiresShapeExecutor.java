@@ -16,14 +16,14 @@
 
 package org.kie.lienzo.client.selenium;
 
-import static org.kie.lienzo.client.selenium.JsLienzoExecutor.JS_LIENZO;
-import static org.kie.lienzo.client.selenium.JsLienzoExecutor.RETURN;
+import static org.kie.lienzo.client.selenium.JsCanvasExecutor.JS_CANVAS;
+import static org.kie.lienzo.client.selenium.JsCanvasExecutor.RETURN;
 
-public class JsLienzoWiresShapeExecutor extends JsLienzoShapeExecutor {
+public class JsCanvasWiresShapeExecutor extends JsCanvasShapeExecutor {
 
-    static final String GET_WIRES_SHAPE = JS_LIENZO + ".getWiresShape(arguments[0])";
+    static final String GET_WIRES_SHAPE = JS_CANVAS + ".getWiresShape(arguments[0])";
 
-    public JsLienzoWiresShapeExecutor(JsLienzoExecutor executor, String id) {
+    public JsCanvasWiresShapeExecutor(JsCanvasExecutor executor, String id) {
         super(executor, id);
     }
 
@@ -51,10 +51,10 @@ public class JsLienzoWiresShapeExecutor extends JsLienzoShapeExecutor {
         return getConnectionY(id, magnet, connection);
     }
 
-    public JsLienzoWiresShapeExecutor getParent() {
+    public JsCanvasWiresShapeExecutor getParent() {
         String parentId = (String) executor.executeScript(RETURN + GET_WIRES_SHAPE + ".getParentID()", id);
         if (null != parentId) {
-            return new JsLienzoWiresShapeExecutor(executor, parentId);
+            return new JsCanvasWiresShapeExecutor(executor, parentId);
         }
         return null;
     }

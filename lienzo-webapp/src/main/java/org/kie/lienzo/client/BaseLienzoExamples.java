@@ -59,9 +59,9 @@ public class BaseLienzoExamples {
                     new AsteroidsGameExample("Asteroids Game")
         );
 
-        JsLienzoExamples jsLienzoExamples = new JsLienzoExamples();
-        jsLienzoExamples.examples = this;
-        WindowJSCanvas.linkJSLienzoExamples(jsLienzoExamples);
+        JsCanvasExamples jsCanvasExamples = new JsCanvasExamples();
+        jsCanvasExamples.examples = this;
+        WindowJSCanvas.linkJSCanvasExamples(jsCanvasExamples);
     }
 
     private List<Example> exampleList = new ArrayList<>();

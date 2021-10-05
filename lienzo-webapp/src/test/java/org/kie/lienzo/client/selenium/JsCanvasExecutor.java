@@ -18,47 +18,47 @@ package org.kie.lienzo.client.selenium;
 
 import org.openqa.selenium.JavascriptExecutor;
 
-public class JsLienzoExecutor {
+public class JsCanvasExecutor {
 
     final JavascriptExecutor executor;
     static final String RETURN = "return ";
-    static final String JS_LIENZO = "window.jsLienzo";
-    static final String JS_LIENZO_EVENTS = JS_LIENZO + ".events()";
+    static final String JS_CANVAS = "window.jsCanvas";
+    static final String JS_CANVAS_EVENTS = JS_CANVAS + ".events()";
 
-    public JsLienzoExecutor(JavascriptExecutor executor) {
+    public JsCanvasExecutor(JavascriptExecutor executor) {
         this.executor = executor;
     }
 
-    public JsLienzoExecutor doubleClickAt(double x, double y) {
-        executor.executeScript(JS_LIENZO_EVENTS + ".doubleClickAt(arguments[0], arguments[1])",
+    public JsCanvasExecutor doubleClickAt(double x, double y) {
+        executor.executeScript(JS_CANVAS_EVENTS + ".doubleClickAt(arguments[0], arguments[1])",
                                x, y);
         return this;
     }
 
-    public JsLienzoExecutor clickAt(double x, double y) {
-        executor.executeScript(JS_LIENZO_EVENTS + ".clickAt(arguments[0], arguments[1])",
+    public JsCanvasExecutor clickAt(double x, double y) {
+        executor.executeScript(JS_CANVAS_EVENTS + ".clickAt(arguments[0], arguments[1])",
                                x, y);
         return this;
     }
 
-    public JsLienzoExecutor startDrag(double sx, double sy, double tx, double ty, int timeout) {
-        executor.executeAsyncScript(JS_LIENZO_EVENTS + ".startDrag(arguments[0], arguments[1], arguments[2], arguments[3], arguments[4], arguments[5])",
+    public JsCanvasExecutor startDrag(double sx, double sy, double tx, double ty, int timeout) {
+        executor.executeAsyncScript(JS_CANVAS_EVENTS + ".startDrag(arguments[0], arguments[1], arguments[2], arguments[3], arguments[4], arguments[5])",
                                     sx, sy,
                                     ty, ty);
         return this;
     }
 
-    public JsLienzoExecutor sleep() {
+    public JsCanvasExecutor sleep() {
         sleep(200);
         return this;
     }
 
-    public JsLienzoWiresShapeExecutor forWiresShape(String id) {
-        return new JsLienzoWiresShapeExecutor(this, id);
+    public JsCanvasWiresShapeExecutor forWiresShape(String id) {
+        return new JsCanvasWiresShapeExecutor(this, id);
     }
 
-    public JsLienzoShapeExecutor forShape(String id) {
-        return new JsLienzoShapeExecutor(this, id);
+    public JsCanvasShapeExecutor forShape(String id) {
+        return new JsCanvasShapeExecutor(this, id);
     }
 
     Object executeScript(String script, Object... args) {

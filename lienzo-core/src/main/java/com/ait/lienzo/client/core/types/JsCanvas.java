@@ -35,9 +35,9 @@ public class JsCanvas {
 
     LienzoPanel panel;
     Layer layer;
-    public static JsLienzoEvents events;
-    public static JsLienzoAnimations animations;
-    public static JsLienzoLogger logger;
+    public static JsCanvasEvents events;
+    public static JsCanvasAnimations animations;
+    public static JsCanvasLogger logger;
 
     public JsCanvas(LienzoPanel panel, Layer layer) {
         this.panel = panel;
@@ -64,23 +64,23 @@ public class JsCanvas {
         return nativeContext;
     }
 
-    public JsLienzoEvents events() {
+    public JsCanvasEvents events() {
         if (null == events) {
-            events = new JsLienzoEvents(this);
+            events = new JsCanvasEvents(this);
         }
         return events;
     }
 
-    public JsLienzoAnimations animations() {
+    public JsCanvasAnimations animations() {
         if (null == animations) {
-            animations = new JsLienzoAnimations();
+            animations = new JsCanvasAnimations();
         }
         return animations;
     }
 
-    public JsLienzoLogger log() {
+    public JsCanvasLogger log() {
         if (null == logger) {
-            logger = new JsLienzoLogger(this);
+            logger = new JsCanvasLogger(this);
         }
         return logger;
     }

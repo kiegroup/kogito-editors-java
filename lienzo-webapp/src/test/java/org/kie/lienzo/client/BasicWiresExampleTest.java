@@ -20,8 +20,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.kie.lienzo.client.selenium.JsLienzoDriver;
-import org.kie.lienzo.client.selenium.JsLienzoWiresShapeExecutor;
+import org.kie.lienzo.client.selenium.JsCanvasDriver;
+import org.kie.lienzo.client.selenium.JsCanvasWiresShapeExecutor;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -34,17 +34,17 @@ import static org.kie.lienzo.client.BasicWiresExample.RED_RECTANGLE;
 @SuppressWarnings("NonJREEmulationClassesInClientCode")
 public class BasicWiresExampleTest {
 
-    private JsLienzoDriver lienzoDriver;
+    private JsCanvasDriver lienzoDriver;
 
     @BeforeClass
     public static void setupClass() {
-        JsLienzoDriver.init();
+        JsCanvasDriver.init();
     }
 
     @Before
     public void openWebapp() {
-        // TODO lienzoDriver = JsLienzoDriver.build();
-        lienzoDriver = JsLienzoDriver.devMode();
+        // TODO lienzoDriver = JsCanvasDriver.build();
+        lienzoDriver = JsCanvasDriver.devMode();
         lienzoDriver.openTest(1);
     }
 
@@ -55,7 +55,7 @@ public class BasicWiresExampleTest {
 
     @Test
     public void testMoveRedShape() {
-        JsLienzoWiresShapeExecutor redShape = lienzoDriver.forWiresShape(RED_RECTANGLE);
+        JsCanvasWiresShapeExecutor redShape = lienzoDriver.forWiresShape(RED_RECTANGLE);
         assertNull(redShape.getParent());
         assertEquals(100d, redShape.getX(), 0d);
         assertEquals(50d, redShape.getY(), 0d);
@@ -67,7 +67,7 @@ public class BasicWiresExampleTest {
 
     @Test
     public void testBlueParentNotAllowed() {
-        JsLienzoWiresShapeExecutor blueShape = lienzoDriver.forWiresShape(BLUE_RECTANGLE);
+        JsCanvasWiresShapeExecutor blueShape = lienzoDriver.forWiresShape(BLUE_RECTANGLE);
         assertNull(blueShape.getParent());
         blueShape.drag(400, 400);
         assertNull(blueShape.getParent());
@@ -79,10 +79,10 @@ public class BasicWiresExampleTest {
 
     @Test
     public void testRedRectParentAllowed() {
-        JsLienzoWiresShapeExecutor redShape = lienzoDriver.forWiresShape(RED_RECTANGLE);
+        JsCanvasWiresShapeExecutor redShape = lienzoDriver.forWiresShape(RED_RECTANGLE);
         assertNull(redShape.getParent());
         redShape.drag(400, 400);
-        JsLienzoWiresShapeExecutor parent = redShape.getParent();
+        JsCanvasWiresShapeExecutor parent = redShape.getParent();
         assertNotNull(parent);
         assertEquals(PARENT, parent.getID());
         assertEquals(350d, redShape.getX(), 0d);
@@ -93,10 +93,10 @@ public class BasicWiresExampleTest {
 
     @Test
     public void testCircleParentAllowed() {
-        JsLienzoWiresShapeExecutor circleShape = lienzoDriver.forWiresShape(CIRCLE);
+        JsCanvasWiresShapeExecutor circleShape = lienzoDriver.forWiresShape(CIRCLE);
         assertNull(circleShape.getParent());
         circleShape.drag(100, 400);
-        JsLienzoWiresShapeExecutor parent = circleShape.getParent();
+        JsCanvasWiresShapeExecutor parent = circleShape.getParent();
         assertNotNull(parent);
         assertEquals(PARENT, parent.getID());
         assertEquals(50d, circleShape.getX(), 0d);
@@ -107,7 +107,7 @@ public class BasicWiresExampleTest {
 
     @Test
     public void testMoveParent() {
-        JsLienzoWiresShapeExecutor parent = lienzoDriver.forWiresShape(PARENT);
+        JsCanvasWiresShapeExecutor parent = lienzoDriver.forWiresShape(PARENT);
         parent.drag(50, 200);
         assertEquals(50d, parent.getX(), 0d);
         assertEquals(200d, parent.getY(), 0d);
@@ -119,7 +119,7 @@ public class BasicWiresExampleTest {
     public void testRedParentAllowedAndThenMoveParent() {
         testRedRectParentAllowed();
         testMoveParent();
-        JsLienzoWiresShapeExecutor redShape = lienzoDriver.forWiresShape(RED_RECTANGLE);
+        JsCanvasWiresShapeExecutor redShape = lienzoDriver.forWiresShape(RED_RECTANGLE);
         assertEquals(350d, redShape.getX(), 0d);
         assertEquals(100d, redShape.getY(), 0d);
         assertEquals(400d, redShape.getComputedX(), 0d);
@@ -130,7 +130,7 @@ public class BasicWiresExampleTest {
     public void testAddConnectedShapesIntoParentAndThenMoveParent() {
         testCircleParentAllowed();
         testRedParentAllowedAndThenMoveParent();
-        JsLienzoWiresShapeExecutor redShape = lienzoDriver.forWiresShape(CIRCLE);
+        JsCanvasWiresShapeExecutor redShape = lienzoDriver.forWiresShape(CIRCLE);
         assertEquals(50d, redShape.getX(), 0d);
         assertEquals(100d, redShape.getY(), 0d);
         assertEquals(100d, redShape.getComputedX(), 0d);
@@ -140,14 +140,14 @@ public class BasicWiresExampleTest {
     // TODO: @Test
     public void testMoveParentWithChildrenTwice() {
         testAddConnectedShapesIntoParentAndThenMoveParent();
-        JsLienzoWiresShapeExecutor parent = lienzoDriver.forWiresShape(PARENT);
+        JsCanvasWiresShapeExecutor parent = lienzoDriver.forWiresShape(PARENT);
         parent.drag(50, 400);
         // TODO: Here connections get lost -> ERROR
     }
 
     @Test
     public void testMagnetsLocation() {
-        JsLienzoWiresShapeExecutor rectangle = lienzoDriver.forWiresShape(RED_RECTANGLE);
+        JsCanvasWiresShapeExecutor rectangle = lienzoDriver.forWiresShape(RED_RECTANGLE);
         assertEquals(150, rectangle.getMagnetX(0), 0d);
         assertEquals(100, rectangle.getMagnetY(0), 0d);
         assertEquals(150, rectangle.getMagnetX(1), 0d);

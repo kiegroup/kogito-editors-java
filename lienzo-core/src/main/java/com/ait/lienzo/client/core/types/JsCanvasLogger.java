@@ -21,16 +21,16 @@ import elemental2.dom.DomGlobal;
 import jsinterop.annotations.JsType;
 
 @JsType
-public class JsLienzoLogger {
+public class JsCanvasLogger {
 
-    private JsCanvas lienzo;
+    private JsCanvas canvas;
 
-    public JsLienzoLogger(JsCanvas lienzo) {
-        this.lienzo = lienzo;
+    public JsCanvasLogger(JsCanvas canvas) {
+        this.canvas = canvas;
     }
 
     public void logWiresShapes() {
-        WiresShape[] shapes = lienzo.getWiresManager().getShapes();
+        WiresShape[] shapes = canvas.getWiresManager().getShapes();
         for (int i = 0; i < shapes.length; i++) {
             WiresShape shape = shapes[i];
             log("WiresShape[" + i + "] ==> " + shape.getID() + " / " + shape.uuid());

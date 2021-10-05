@@ -26,12 +26,12 @@ import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsType;
 
 @JsType
-public class JsLienzoEvents {
+public class JsCanvasEvents {
 
-    private JsCanvas lienzo;
+    private JsCanvas canvas;
 
-    public JsLienzoEvents(JsCanvas lienzo) {
-        this.lienzo = lienzo;
+    public JsCanvasEvents(JsCanvas canvas) {
+        this.canvas = canvas;
     }
 
     public void doubleClick(IPrimitive<?> shape) {
@@ -154,8 +154,8 @@ public class JsLienzoEvents {
                                     double clientY) {
         MouseEventInit mouseEventInit = MouseEventInit.create();
         mouseEventInit.setView(DomGlobal.window);
-        int panelOffsetLeft = lienzo.getPanelOffsetLeft();
-        int panelOffsetTop = lienzo.getPanelOffsetTop();
+        int panelOffsetLeft = canvas.getPanelOffsetLeft();
+        int panelOffsetTop = canvas.getPanelOffsetTop();
         long ix = Math.round(Math.ceil(clientX));
         long iy = Math.round(Math.ceil(clientY));
         long x = ix + panelOffsetLeft;
@@ -166,7 +166,7 @@ public class JsLienzoEvents {
         mouseEventInit.setScreenY(y);
         mouseEventInit.setButton(MouseEventUtil.BUTTON_LEFT);
         MouseEvent event = new MouseEvent(type, mouseEventInit);
-        boolean cancelled = !lienzo.panel.getElement().dispatchEvent(event);
+        boolean cancelled = !canvas.panel.getElement().dispatchEvent(event);
 
         return event;
     }

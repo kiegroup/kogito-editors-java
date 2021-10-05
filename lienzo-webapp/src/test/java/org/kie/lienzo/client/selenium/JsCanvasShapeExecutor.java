@@ -16,18 +16,18 @@
 
 package org.kie.lienzo.client.selenium;
 
-import static org.kie.lienzo.client.selenium.JsLienzoExecutor.JS_LIENZO;
-import static org.kie.lienzo.client.selenium.JsLienzoExecutor.JS_LIENZO_EVENTS;
-import static org.kie.lienzo.client.selenium.JsLienzoExecutor.RETURN;
+import static org.kie.lienzo.client.selenium.JsCanvasExecutor.JS_CANVAS;
+import static org.kie.lienzo.client.selenium.JsCanvasExecutor.JS_CANVAS_EVENTS;
+import static org.kie.lienzo.client.selenium.JsCanvasExecutor.RETURN;
 
-public class JsLienzoShapeExecutor {
+public class JsCanvasShapeExecutor {
 
-    static final String GET_SHAPE = JS_LIENZO + ".getShape(arguments[0])";
+    static final String GET_SHAPE = JS_CANVAS + ".getShape(arguments[0])";
 
-    protected final JsLienzoExecutor executor;
+    protected final JsCanvasExecutor executor;
     protected final String id;
 
-    public JsLienzoShapeExecutor(JsLienzoExecutor executor, String id) {
+    public JsCanvasShapeExecutor(JsCanvasExecutor executor, String id) {
         this.executor = executor;
         this.id = id;
     }
@@ -115,29 +115,29 @@ public class JsLienzoShapeExecutor {
     }
 
     private void click(String id) {
-        executor.executeScript(JS_LIENZO_EVENTS + ".click(" + GET_SHAPE + ")", id);
+        executor.executeScript(JS_CANVAS_EVENTS + ".click(" + GET_SHAPE + ")", id);
     }
 
     private void doubleClick(String id) {
-        executor.executeScript(JS_LIENZO_EVENTS + ".doubleClick(" + GET_SHAPE + ")", id);
+        executor.executeScript(JS_CANVAS_EVENTS + ".doubleClick(" + GET_SHAPE + ")", id);
     }
 
     private void over(String id) {
-        executor.executeScript(JS_LIENZO_EVENTS + ".over(" + GET_SHAPE + ")", id);
+        executor.executeScript(JS_CANVAS_EVENTS + ".over(" + GET_SHAPE + ")", id);
     }
 
     private void out(String id) {
-        executor.executeScript(JS_LIENZO_EVENTS + ".out(" + GET_SHAPE + ")", id);
+        executor.executeScript(JS_CANVAS_EVENTS + ".out(" + GET_SHAPE + ")", id);
     }
 
     private void drag(String id, double tx, double ty) {
-        executor.executeAsyncScript(JS_LIENZO_EVENTS + ".drag(" + GET_SHAPE + ", arguments[1], arguments[2], arguments[3])",
+        executor.executeAsyncScript(JS_CANVAS_EVENTS + ".drag(" + GET_SHAPE + ", arguments[1], arguments[2], arguments[3])",
                                     id,
                                     tx, ty);
     }
 
     private void move(String id, double tx, double ty) {
-        executor.executeScript(JS_LIENZO_EVENTS + ".move(" + GET_SHAPE + ", arguments[1], arguments[2])",
+        executor.executeScript(JS_CANVAS_EVENTS + ".move(" + GET_SHAPE + ", arguments[1], arguments[2])",
                                id,
                                tx, ty);
     }

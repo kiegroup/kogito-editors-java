@@ -26,7 +26,7 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class JsLienzoDriver extends JsLienzoExecutor {
+public class JsCanvasDriver extends JsCanvasExecutor {
 
     private static final String INDEX_HTML = "target/lienzo-webapp-7.53.0-SNAPSHOT/LienzoShowcase.html";
     private static final String INDEX_HTML_PATH = "file:///" + new File(INDEX_HTML).getAbsolutePath();
@@ -40,33 +40,33 @@ public class JsLienzoDriver extends JsLienzoExecutor {
         WebDriverManager.firefoxdriver().setup();
     }
 
-    public static JsLienzoDriver devMode() {
-        JsLienzoDriver instance = build("http://127.0.0.1:8888/LienzoShowcase.html");
+    public static JsCanvasDriver devMode() {
+        JsCanvasDriver instance = build("http://127.0.0.1:8888/LienzoShowcase.html");
         instance.loadTimeMillis = 3000;
         return instance;
     }
 
-    public static JsLienzoDriver build() {
+    public static JsCanvasDriver build() {
         return build(INDEX_HTML_PATH);
     }
 
-    public static JsLienzoDriver build(String url) {
+    public static JsCanvasDriver build(String url) {
         final FirefoxOptions firefoxOptions = new FirefoxOptions();
         firefoxOptions.setHeadless(HEADLESS);
         WebDriver driver = new FirefoxDriver(firefoxOptions);
         driver.manage().window().maximize();
         driver.get(url);
-        return new JsLienzoDriver(driver);
+        return new JsCanvasDriver(driver);
     }
 
-    public JsLienzoDriver(WebDriver driver) {
+    public JsCanvasDriver(WebDriver driver) {
         super((JavascriptExecutor) driver);
         this.driver = driver;
     }
 
     public void openTest(int index) {
         sleep(loadTimeMillis);
-        executor.executeScript("window.jsLienzoExamples.goToExample(arguments[0])", index);
+        executor.executeScript("window.jsCanvasExamples.goToExample(arguments[0])", index);
         sleep(500);
     }
 

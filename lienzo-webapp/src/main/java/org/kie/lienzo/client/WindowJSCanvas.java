@@ -29,7 +29,7 @@ public class WindowJSCanvas {
     private static Object jsCanvas;
 
     @JsProperty
-    private static Object jsLienzoExamples;
+    private static Object jsCanvasExamples;
 
     @JsOverlay
     public static final void linkJSCanvas(JsCanvas canvas) {
@@ -37,7 +37,7 @@ public class WindowJSCanvas {
     }
 
     @JsOverlay
-    public static final void linkJSLienzoExamples(JsLienzoExamples jsLienzoExamples) {
-        WindowJSCanvas.jsLienzoExamples = jsLienzoExamples;
+    public static final void linkJSCanvasExamples(JsCanvasExamples jsCanvasExamples) {
+        WindowJSCanvas.jsCanvasExamples = jsCanvasExamples;
     }
 }

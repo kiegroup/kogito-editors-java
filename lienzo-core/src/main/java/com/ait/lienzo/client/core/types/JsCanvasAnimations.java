@@ -23,9 +23,8 @@ import com.ait.lienzo.client.core.shape.IPrimitive;
 import com.ait.lienzo.client.core.shape.Shape;
 import jsinterop.annotations.JsType;
 
-// TODO: Stateless - Static methods?
 @JsType
-public class JsLienzoAnimations {
+public class JsCanvasAnimations {
 
     public void alpha(IPrimitive<?> shape, double value, long duration) {
         animate(shape, AnimationProperty.Properties.ALPHA(value), duration);

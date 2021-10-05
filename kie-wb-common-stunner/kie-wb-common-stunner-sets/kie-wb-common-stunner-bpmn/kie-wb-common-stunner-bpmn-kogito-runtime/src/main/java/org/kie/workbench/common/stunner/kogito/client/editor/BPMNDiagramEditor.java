@@ -234,11 +234,11 @@ public class BPMNDiagramEditor {
             LienzoPanel panel = (LienzoPanel) canvas.getView().getPanel();
             LienzoBoundsPanel lienzoPanel = panel.getView();
             JsCanvas jsCanvas = new JsCanvas(lienzoPanel, lienzoPanel.getLayer());
-            setupJsLienzoTypeNative(jsCanvas);
+            setupJsCanvasTypeNative(jsCanvas);
         }
     }
 
-    private static void setupJsLienzoTypeNative(JsCanvas jsCanvas) {
+    private static void setupJsCanvasTypeNative(JsCanvas jsCanvas) {
         WindowJSType.linkCanvasJS(jsCanvas);
     }
 

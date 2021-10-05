@@ -3,15 +3,15 @@
     http://localhost/lienzo-webapp-7.48.0-SNAPSHOT/LienzoShowcase.html
 
     // Examples webapp usage
-    window.jsLienzoExamples.goToExample(0);
+    window.jsCanvasExamples.goToExample(0);
 
-    // JsLienzo - Move shape
-    window.jsCanvas.move(window.jsLienzo.getShape('rectangle'), 300, 300);
+    // JsCanvas - Move shape
+    window.jsCanvas.move(window.jsCanvas.getShape('rectangle'), 300, 300);
 
-    // JsLienzo - Click & Move shape
+    // JsCanvas - Click & Move shape
     var r = window.jsCanvas.getShape('r');
-    window.jsLienzo.click(r);
-    window.jsLienzo.move(r, 100, 100);
+    window.jsCanvas.click(r);
+    window.jsCanvas.move(r, 100, 100);
 
     // Create badge
     var jsl = window.jsCanvas;
