@@ -141,7 +141,7 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = (relat
           case TableOperation.ColumnDelete:
             return [...tableRow.slice(0, columnIndex), ...tableRow.slice(columnIndex + 1)] as Row;
         }
-        return [];
+        return [...tableRow];
       });
       spreadRelationExpressionDefinition(newColumns, newRows);
     },
