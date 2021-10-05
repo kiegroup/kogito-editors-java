@@ -6,15 +6,15 @@
     window.jsLienzoExamples.goToExample(0);
 
     // JsLienzo - Move shape
-    window.jsLienzo.move(window.jsLienzo.getShape('rectangle'), 300, 300);
+    window.jsCanvas.move(window.jsLienzo.getShape('rectangle'), 300, 300);
 
     // JsLienzo - Click & Move shape
-    var r = window.jsLienzo.getShape('r');
+    var r = window.jsCanvas.getShape('r');
     window.jsLienzo.click(r);
     window.jsLienzo.move(r, 100, 100);
 
     // Create badge
-    var jsl = window.jsLienzo;
+    var jsl = window.jsCanvas;
     var badge = new com.ait.lienzo.client.core.shape.Group();
     badge.listening = false;
     badge.alpha = 0;

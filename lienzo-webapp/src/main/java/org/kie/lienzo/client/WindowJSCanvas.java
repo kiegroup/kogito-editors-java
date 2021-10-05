@@ -16,28 +16,28 @@
 
 package org.kie.lienzo.client;
 
-import com.ait.lienzo.client.core.types.JsLienzo;
+import com.ait.lienzo.client.core.types.JsCanvas;
 import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsPackage;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
 
 @JsType(isNative = true, namespace = JsPackage.GLOBAL, name = "window")
-public class WindowJSLienzo {
+public class WindowJSCanvas {
 
     @JsProperty
-    private static Object jsLienzo;
+    private static Object jsCanvas;
 
     @JsProperty
     private static Object jsLienzoExamples;
 
     @JsOverlay
-    public static final void linkJSLienzo(JsLienzo jsLienzo) {
-        WindowJSLienzo.jsLienzo = jsLienzo;
+    public static final void linkJSCanvas(JsCanvas canvas) {
+        WindowJSCanvas.jsCanvas = canvas;
     }
 
     @JsOverlay
     public static final void linkJSLienzoExamples(JsLienzoExamples jsLienzoExamples) {
-        WindowJSLienzo.jsLienzoExamples = jsLienzoExamples;
+        WindowJSCanvas.jsLienzoExamples = jsLienzoExamples;
     }
 }

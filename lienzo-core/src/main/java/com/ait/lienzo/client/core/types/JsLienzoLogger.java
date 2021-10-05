@@ -23,9 +23,9 @@ import jsinterop.annotations.JsType;
 @JsType
 public class JsLienzoLogger {
 
-    private JsLienzo lienzo;
+    private JsCanvas lienzo;
 
-    public JsLienzoLogger(JsLienzo lienzo) {
+    public JsLienzoLogger(JsCanvas lienzo) {
         this.lienzo = lienzo;
     }
 

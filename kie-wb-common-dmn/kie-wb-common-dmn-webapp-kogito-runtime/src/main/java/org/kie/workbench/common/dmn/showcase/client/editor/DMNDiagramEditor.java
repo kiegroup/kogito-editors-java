@@ -23,7 +23,7 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import com.ait.lienzo.client.core.types.JsLienzo;
+import com.ait.lienzo.client.core.types.JsCanvas;
 import com.ait.lienzo.client.widget.panel.LienzoBoundsPanel;
 import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
 import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorDock;
@@ -154,13 +154,13 @@ public class DMNDiagramEditor extends AbstractDMNDiagramEditor {
         if (canvas != null) {
             LienzoPanel panel = (LienzoPanel) canvas.getView().getPanel();
             LienzoBoundsPanel lienzoPanel = panel.getView();
-            JsLienzo jsLienzo = new JsLienzo(lienzoPanel, lienzoPanel.getLayer());
-            setupJsLienzoTypeNative(jsLienzo);
+            JsCanvas jsCanvas = new JsCanvas(lienzoPanel, lienzoPanel.getLayer());
+            setupJsCanvasTypeNative(jsCanvas);
         }
     }
 
-    private static void setupJsLienzoTypeNative(JsLienzo jsLienzo) {
-        WindowJSType.linkCanvasJS(jsLienzo);
+    private static void setupJsCanvasTypeNative(JsCanvas jsCanvas) {
+        WindowJSType.linkCanvasJS(jsCanvas);
     }
 
     @Override

@@ -32,190 +32,190 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(LienzoMockitoTestRunner.class)
-public class JsLienzoTest {
+public class JsCanvasTest {
 
     @Mock
-    private JsLienzo jsLienzo;
+    private JsCanvas jsCanvas;
 
     @Mock
     private JsWiresShape jsWiresShape;
 
     @Test
     public void testGetBackgroundColor() {
-        when(jsLienzo.getWiresShape(anyString())).thenReturn(jsWiresShape);
+        when(jsCanvas.getWiresShape(anyString())).thenReturn(jsWiresShape);
         when(jsWiresShape.getBackgroundColor()).thenReturn("blue");
-        doCallRealMethod().when(jsLienzo).getBackgroundColor(any());
+        doCallRealMethod().when(jsCanvas).getBackgroundColor(any());
 
-        final String backgroundColor = jsLienzo.getBackgroundColor("someID");
+        final String backgroundColor = jsCanvas.getBackgroundColor("someID");
         assertEquals("blue", backgroundColor);
     }
 
     @Test
     public void testGetBackgroundColorNullOrEmptyUUID() {
-        when(jsLienzo.getWiresShape(anyString())).thenReturn(jsWiresShape);
-        doCallRealMethod().when(jsLienzo).getBackgroundColor(any());
+        when(jsCanvas.getWiresShape(anyString())).thenReturn(jsWiresShape);
+        doCallRealMethod().when(jsCanvas).getBackgroundColor(any());
 
-        String backgroundColor = jsLienzo.getBackgroundColor(null);
+        String backgroundColor = jsCanvas.getBackgroundColor(null);
         assertEquals(null, backgroundColor);
 
-        backgroundColor = jsLienzo.getBackgroundColor("");
+        backgroundColor = jsCanvas.getBackgroundColor("");
         assertEquals(null, backgroundColor);
     }
 
     @Test
     public void testSetBackgroundColor() {
-        when(jsLienzo.getWiresShape(anyString())).thenReturn(jsWiresShape);
-        doCallRealMethod().when(jsLienzo).setBackgroundColor(any(), any());
+        when(jsCanvas.getWiresShape(anyString())).thenReturn(jsWiresShape);
+        doCallRealMethod().when(jsCanvas).setBackgroundColor(any(), any());
 
-        jsLienzo.setBackgroundColor("someID", "green");
+        jsCanvas.setBackgroundColor("someID", "green");
         verify(jsWiresShape).setBackgroundColor("green");
     }
 
     @Test
     public void testSetBackgroundColorNullOrEmptyUUID() {
-        when(jsLienzo.getWiresShape(anyString())).thenReturn(jsWiresShape);
-        doCallRealMethod().when(jsLienzo).setBackgroundColor(any(), any());
+        when(jsCanvas.getWiresShape(anyString())).thenReturn(jsWiresShape);
+        doCallRealMethod().when(jsCanvas).setBackgroundColor(any(), any());
 
-        jsLienzo.setBackgroundColor(null, "green");
+        jsCanvas.setBackgroundColor(null, "green");
         verify(jsWiresShape, never()).setBackgroundColor(any());
 
-        jsLienzo.setBackgroundColor("", "green");
+        jsCanvas.setBackgroundColor("", "green");
         verify(jsWiresShape, never()).setBackgroundColor(any());
     }
 
     @Test
     public void testSetBackgroundColorNullOrEmptyColor() {
-        when(jsLienzo.getWiresShape(anyString())).thenReturn(jsWiresShape);
-        doCallRealMethod().when(jsLienzo).setBackgroundColor(any(), any());
+        when(jsCanvas.getWiresShape(anyString())).thenReturn(jsWiresShape);
+        doCallRealMethod().when(jsCanvas).setBackgroundColor(any(), any());
 
-        jsLienzo.setBackgroundColor("someID", null);
+        jsCanvas.setBackgroundColor("someID", null);
         verify(jsWiresShape, never()).setBackgroundColor(any());
-        jsLienzo.setBackgroundColor("someID", "");
+        jsCanvas.setBackgroundColor("someID", "");
         verify(jsWiresShape, never()).setBackgroundColor(any());
     }
 
     @Test
     public void testGetBorderColor() {
-        when(jsLienzo.getWiresShape(anyString())).thenReturn(jsWiresShape);
+        when(jsCanvas.getWiresShape(anyString())).thenReturn(jsWiresShape);
         when(jsWiresShape.getBorderColor()).thenReturn("red");
-        doCallRealMethod().when(jsLienzo).getBorderColor(any());
+        doCallRealMethod().when(jsCanvas).getBorderColor(any());
 
-        final String borderColor = jsLienzo.getBorderColor("someID");
+        final String borderColor = jsCanvas.getBorderColor("someID");
         assertEquals("red", borderColor);
     }
 
     @Test
     public void testGetBorderColorNullOrEmptyUUID() {
-        when(jsLienzo.getWiresShape(anyString())).thenReturn(jsWiresShape);
-        doCallRealMethod().when(jsLienzo).getBorderColor(any());
+        when(jsCanvas.getWiresShape(anyString())).thenReturn(jsWiresShape);
+        doCallRealMethod().when(jsCanvas).getBorderColor(any());
 
-        String borderColor = jsLienzo.getBorderColor(null);
+        String borderColor = jsCanvas.getBorderColor(null);
         assertEquals(null, borderColor);
-        borderColor = jsLienzo.getBorderColor("");
+        borderColor = jsCanvas.getBorderColor("");
         assertEquals(null, borderColor);
     }
 
     @Test
     public void testSetBorderColor() {
-        when(jsLienzo.getWiresShape(anyString())).thenReturn(jsWiresShape);
-        doCallRealMethod().when(jsLienzo).setBorderColor(any(), any());
+        when(jsCanvas.getWiresShape(anyString())).thenReturn(jsWiresShape);
+        doCallRealMethod().when(jsCanvas).setBorderColor(any(), any());
 
-        jsLienzo.setBorderColor("someID", "black");
+        jsCanvas.setBorderColor("someID", "black");
         verify(jsWiresShape).setBorderColor("black");
     }
 
     @Test
     public void testSetBorderColorNullOrEmptyUUID() {
-        when(jsLienzo.getWiresShape(anyString())).thenReturn(jsWiresShape);
-        doCallRealMethod().when(jsLienzo).setBorderColor(any(), any());
+        when(jsCanvas.getWiresShape(anyString())).thenReturn(jsWiresShape);
+        doCallRealMethod().when(jsCanvas).setBorderColor(any(), any());
 
-        jsLienzo.setBorderColor(null, "black");
+        jsCanvas.setBorderColor(null, "black");
         verify(jsWiresShape, never()).setBorderColor(any());
-        jsLienzo.setBorderColor("", "black");
+        jsCanvas.setBorderColor("", "black");
         verify(jsWiresShape, never()).setBorderColor(any());
     }
 
     @Test
     public void testSetBorderColorNullOrEmptyColor() {
-        when(jsLienzo.getWiresShape(anyString())).thenReturn(jsWiresShape);
-        doCallRealMethod().when(jsLienzo).setBorderColor(any(), any());
+        when(jsCanvas.getWiresShape(anyString())).thenReturn(jsWiresShape);
+        doCallRealMethod().when(jsCanvas).setBorderColor(any(), any());
 
-        jsLienzo.setBorderColor("someId", null);
+        jsCanvas.setBorderColor("someId", null);
         verify(jsWiresShape, never()).setBorderColor(any());
-        jsLienzo.setBorderColor("someId", "");
+        jsCanvas.setBorderColor("someId", "");
         verify(jsWiresShape, never()).setBorderColor(any());
     }
 
     @Test
     public void testGetLocation() {
-        when(jsLienzo.getWiresShape(anyString())).thenReturn(jsWiresShape);
+        when(jsCanvas.getWiresShape(anyString())).thenReturn(jsWiresShape);
         Point2D location = new Point2D(100.0, 100.0);
         when(jsWiresShape.getLocationXY()).thenReturn(location);
-        doCallRealMethod().when(jsLienzo).getLocation(any());
+        doCallRealMethod().when(jsCanvas).getLocation(any());
 
-        NFastArrayList<Double> location2 = jsLienzo.getLocation("someID");
+        NFastArrayList<Double> location2 = jsCanvas.getLocation("someID");
         assertEquals(location.getX(), location2.get(0), 0);
         assertEquals(location.getY(), location2.get(1), 0);
     }
 
     @Test
     public void testGetLocationNullOrEmptyUUID() {
-        when(jsLienzo.getWiresShape(anyString())).thenReturn(jsWiresShape);
-        doCallRealMethod().when(jsLienzo).getLocation(any());
+        when(jsCanvas.getWiresShape(anyString())).thenReturn(jsWiresShape);
+        doCallRealMethod().when(jsCanvas).getLocation(any());
 
-        NFastArrayList<Double> location = jsLienzo.getLocation(null);
+        NFastArrayList<Double> location = jsCanvas.getLocation(null);
         assertEquals(null, location);
-        location = jsLienzo.getLocation("");
+        location = jsCanvas.getLocation("");
         assertEquals(null, location);
     }
 
     @Test
     public void testGetAbsoluteLocation() {
-        when(jsLienzo.getWiresShape(anyString())).thenReturn(jsWiresShape);
-        doNothing().when(jsLienzo).calculatePanelOffset(any());
+        when(jsCanvas.getWiresShape(anyString())).thenReturn(jsWiresShape);
+        doNothing().when(jsCanvas).calculatePanelOffset(any());
 
         Point2D location = new Point2D(100.0, 100.0);
         when(jsWiresShape.getAbsoluteLocation()).thenReturn(location);
-        doCallRealMethod().when(jsLienzo).getAbsoluteLocation(any());
+        doCallRealMethod().when(jsCanvas).getAbsoluteLocation(any());
 
-        NFastArrayList<Double> location2 = jsLienzo.getAbsoluteLocation("someID");
+        NFastArrayList<Double> location2 = jsCanvas.getAbsoluteLocation("someID");
         assertEquals(location.getX(), location2.get(0), 0);
         assertEquals(location.getY(), location2.get(1), 0);
     }
 
     @Test
     public void testGetAbsoluteLocationNullOrEmptyUUID() {
-        when(jsLienzo.getWiresShape(anyString())).thenReturn(jsWiresShape);
-        doNothing().when(jsLienzo).calculatePanelOffset(any());
+        when(jsCanvas.getWiresShape(anyString())).thenReturn(jsWiresShape);
+        doNothing().when(jsCanvas).calculatePanelOffset(any());
 
-        doCallRealMethod().when(jsLienzo).getAbsoluteLocation(any());
+        doCallRealMethod().when(jsCanvas).getAbsoluteLocation(any());
 
-        NFastArrayList<Double> location = jsLienzo.getAbsoluteLocation(null);
+        NFastArrayList<Double> location = jsCanvas.getAbsoluteLocation(null);
         assertEquals(null, location);
-        location = jsLienzo.getAbsoluteLocation("");
+        location = jsCanvas.getAbsoluteLocation("");
         assertEquals(null, location);
     }
 
     @Test
     public void testGetDimensions() {
-        when(jsLienzo.getWiresShape(anyString())).thenReturn(jsWiresShape);
+        when(jsCanvas.getWiresShape(anyString())).thenReturn(jsWiresShape);
         Point2D dimensions = new Point2D(100.0, 100.0);
         when(jsWiresShape.getBounds()).thenReturn(dimensions);
-        doCallRealMethod().when(jsLienzo).getDimensions(any());
+        doCallRealMethod().when(jsCanvas).getDimensions(any());
 
-        NFastArrayList<Double> dimensions2 = jsLienzo.getDimensions("someID");
+        NFastArrayList<Double> dimensions2 = jsCanvas.getDimensions("someID");
         assertEquals(dimensions.getX(), dimensions2.get(0), 0);
         assertEquals(dimensions.getY(), dimensions2.get(1), 0);
     }
 
     @Test
     public void testGetDimensionsNullOrEmptyUUID() {
-        when(jsLienzo.getWiresShape(anyString())).thenReturn(jsWiresShape);
-        doCallRealMethod().when(jsLienzo).getDimensions(any());
+        when(jsCanvas.getWiresShape(anyString())).thenReturn(jsWiresShape);
+        doCallRealMethod().when(jsCanvas).getDimensions(any());
 
-        NFastArrayList<Double> dimensions = jsLienzo.getDimensions(null);
+        NFastArrayList<Double> dimensions = jsCanvas.getDimensions(null);
         assertEquals(null, dimensions);
-        dimensions = jsLienzo.getDimensions("");
+        dimensions = jsCanvas.getDimensions("");
         assertEquals(null, dimensions);
     }
 }

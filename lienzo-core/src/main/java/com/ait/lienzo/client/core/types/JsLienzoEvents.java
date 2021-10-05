@@ -28,9 +28,9 @@ import jsinterop.annotations.JsType;
 @JsType
 public class JsLienzoEvents {
 
-    private JsLienzo lienzo;
+    private JsCanvas lienzo;
 
-    public JsLienzoEvents(JsLienzo lienzo) {
+    public JsLienzoEvents(JsCanvas lienzo) {
         this.lienzo = lienzo;
     }
 

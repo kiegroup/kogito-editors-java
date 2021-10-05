@@ -31,7 +31,7 @@ import elemental2.dom.HTMLCanvasElement;
 import jsinterop.annotations.JsType;
 
 @JsType
-public class JsLienzo {
+public class JsCanvas {
 
     LienzoPanel panel;
     Layer layer;
@@ -39,7 +39,7 @@ public class JsLienzo {
     public static JsLienzoAnimations animations;
     public static JsLienzoLogger logger;
 
-    public JsLienzo(LienzoPanel panel, Layer layer) {
+    public JsCanvas(LienzoPanel panel, Layer layer) {
         this.panel = panel;
         this.layer = layer;
         this.events = null;

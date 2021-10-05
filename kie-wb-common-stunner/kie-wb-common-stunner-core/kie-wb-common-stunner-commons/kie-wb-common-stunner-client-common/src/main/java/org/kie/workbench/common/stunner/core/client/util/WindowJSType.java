@@ -16,7 +16,6 @@
 
 package org.kie.workbench.common.stunner.core.client.util;
 
-import com.ait.lienzo.client.core.types.JsLienzo;
 import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsPackage;
 import jsinterop.annotations.JsProperty;
@@ -29,7 +28,7 @@ public class WindowJSType {
     private static Object canvas;
 
     @JsOverlay
-    public static final void linkCanvasJS(JsLienzo jsLienzo) {
-        WindowJSType.canvas = jsLienzo;
+    public static final void linkCanvasJS(Object canvas) {
+        WindowJSType.canvas = canvas;
     }
 }

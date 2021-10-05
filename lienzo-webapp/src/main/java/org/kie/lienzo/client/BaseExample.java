@@ -8,7 +8,7 @@ import com.ait.lienzo.client.core.mediator.MousePanMediator;
 import com.ait.lienzo.client.core.mediator.MouseWheelZoomMediator;
 import com.ait.lienzo.client.core.shape.Layer;
 import com.ait.lienzo.client.core.shape.Shape;
-import com.ait.lienzo.client.core.types.JsLienzo;
+import com.ait.lienzo.client.core.types.JsCanvas;
 import com.ait.lienzo.client.widget.panel.LienzoPanel;
 import elemental2.dom.CSSProperties;
 import elemental2.dom.DomGlobal;
@@ -29,7 +29,7 @@ public abstract class BaseExample implements Example {
     protected Layer layer;
 
     protected Console console;
-    protected JsLienzo jsLienzo;
+    protected JsCanvas jsCanvas;
 
     protected int width;
     protected int height;
@@ -71,12 +71,12 @@ public abstract class BaseExample implements Example {
         MousePanMediator pan = new MousePanMediator(EventFilter.META);
         this.panel.getViewport().pushMediator(pan);
 
-        jsLienzo = new JsLienzo(this.panel, this.layer);
-        setupJsLienzoTypes(jsLienzo);
+        jsCanvas = new JsCanvas(this.panel, this.layer);
+        setupJsCanvasTypes(jsCanvas);
     }
 
-    public static void setupJsLienzoTypes(JsLienzo jsLienzo) {
-        WindowJSLienzo.linkJSLienzo(jsLienzo);
+    public static void setupJsCanvasTypes(JsCanvas jsCanvas) {
+        WindowJSCanvas.linkJSCanvas(jsCanvas);
     }
 
     @Override

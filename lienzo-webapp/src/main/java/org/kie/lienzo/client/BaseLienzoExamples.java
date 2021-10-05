@@ -61,7 +61,7 @@ public class BaseLienzoExamples {
 
         JsLienzoExamples jsLienzoExamples = new JsLienzoExamples();
         jsLienzoExamples.examples = this;
-        WindowJSLienzo.linkJSLienzoExamples(jsLienzoExamples);
+        WindowJSCanvas.linkJSLienzoExamples(jsLienzoExamples);
     }
 
     private List<Example> exampleList = new ArrayList<>();
