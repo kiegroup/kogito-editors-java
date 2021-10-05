@@ -75,18 +75,51 @@ describe("ImportJavaClasses component tests", () => {
     const { baseElement, getByText } = render(<ImportJavaClasses buttonDisabledStatus={false} />);
     testSearchInput(baseElement, getByText);
     testJavaClassSelection(baseElement, true);
-    const nextButton = getByText("Next") as HTMLButtonElement;
-    fireEvent.click(nextButton);
-    await waitFor(() => {
-      expect(baseElement.querySelector('[aria-label="field-table"]')!).toBeInTheDocument();
-    });
-    const expandToggle = baseElement.querySelector('[id="expand-toggle0"]')! as HTMLButtonElement;
-    expect(expandToggle).toHaveAttribute("aria-expanded", "true");
-    fireEvent.click(expandToggle);
-    expect(expandToggle).toHaveAttribute("aria-expanded", "false");
-    fireEvent.click(expandToggle);
+    await testSecondStepFields(baseElement, getByText);
 
     expect(baseElement).toMatchSnapshot();
+  });
+
+  test("Should move to second step and fetch a Java Class", async () => {
+    lspGetClassServiceMock(jest.fn((value) => ["com.Book", "com.Author", "com.Test"]));
+    lspGetClassFieldServiceMock();
+    const { baseElement, getByText } = render(<ImportJavaClasses buttonDisabledStatus={false} />);
+    testSearchInput(baseElement, getByText);
+    testJavaClassSelection(baseElement, true);
+    await testSecondStepFields(baseElement, getByText);
+
+    const fetchButton = getByText("Fetch \"Test\" class")! as HTMLButtonElement;
+    fetchButton.click();
+
+    await waitFor(() => {
+      expect(getByText("(Test)")!).toBeInTheDocument();
+    });
+
+    expect(baseElement).toMatchSnapshot();
+  });
+
+  test("Should move to second step and fetch, remove a Java Class", async () => {
+    lspGetClassServiceMock(jest.fn((value) => ["com.Book", "com.Author", "com.Test"]));
+    lspGetClassFieldServiceMock();
+    const { baseElement, getByText } = render(<ImportJavaClasses buttonDisabledStatus={false} />);
+    testSearchInput(baseElement, getByText);
+    testJavaClassSelection(baseElement, true);
+    await testSecondStepFields(baseElement, getByText);
+    await testFetchClicked(getByText);
+
+    const backButton = getByText("Back") as HTMLButtonElement;
+    fireEvent.click(backButton);
+    let checkThirdElement = baseElement.querySelector('[aria-labelledby="com.Test"]')! as HTMLInputElement;
+    expect(checkThirdElement).toBeInTheDocument();
+    expect(checkThirdElement).toBeChecked();
+    fireEvent.click(checkThirdElement);
+    checkThirdElement = baseElement.querySelector('[aria-labelledby="com.Test"]')! as HTMLInputElement;
+    expect(checkThirdElement).not.toBeInTheDocument();
+
+    const nextButton = getByText("Next") as HTMLButtonElement;
+    fireEvent.click(nextButton);
+    const fetchButton = getByText("Fetch \"Test\" class")! as HTMLButtonElement;
+    expect(fetchButton).toBeInTheDocument();
   });
 
   function testSearchInput(baseElement: Element, getByText: (text: string) => HTMLElement) {
@@ -132,14 +165,30 @@ describe("ImportJavaClasses component tests", () => {
     expect(checkSecondElement).toBeChecked();
     if (hasThirdElement) {
       expect(checkThirdElement).not.toBeChecked();
-      fireEvent.click(checkThirdElement);
-      checkThirdElement = baseElement.querySelector('[aria-labelledby="com.Test"]')! as HTMLInputElement;
     }
-    expect(checkFirstElement).toBeChecked();
-    expect(checkSecondElement).toBeChecked();
-    if (hasThirdElement) {
-      expect(checkThirdElement).toBeChecked();
-    }
+  }
+
+  async function testSecondStepFields(baseElement: Element, getByText: (text: string) => HTMLElement) {
+    const nextButton = getByText("Next") as HTMLButtonElement;
+    fireEvent.click(nextButton);
+    await waitFor(() => {
+      expect(baseElement.querySelector('[aria-label="field-table"]')!).toBeInTheDocument();
+    });
+    const expandToggle = baseElement.querySelector('[id="expand-toggle0"]')! as HTMLButtonElement;
+    expect(expandToggle).toHaveAttribute("aria-expanded", "true");
+    fireEvent.click(expandToggle);
+    expect(expandToggle).toHaveAttribute("aria-expanded", "false");
+    fireEvent.click(expandToggle);
+  }
+
+
+  async function testFetchClicked(getByText: (text: string) => HTMLElement) {
+    const fetchButton = getByText("Fetch \"Test\" class")! as HTMLButtonElement;
+    fetchButton.click();
+
+    await waitFor(() => {
+      expect(getByText("(Test)")!).toBeInTheDocument();
+    });
   }
 
   function lspGetClassServiceMock(mockedBroadcastDefinition: jest.Mock) {
