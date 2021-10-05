@@ -15,7 +15,7 @@
  */
 
 import * as React from "react";
-import { fireEvent, render } from "@testing-library/react";
+import { fireEvent, render, waitFor } from "@testing-library/react";
 import { ImportJavaClasses } from "../../components";
 import * as _ from "lodash";
 
@@ -69,14 +69,15 @@ describe("ImportJavaClasses component tests", () => {
     expect(baseElement).toMatchSnapshot();
   });
 
-  test("Should move to second step", () => {
+  test("Should move to second step", async () => {
     lspGetClassServiceMock(jest.fn((value) => ["com.Book", "com.Author", "com.Test"]));
-    lspGetClassFieldServiceMock(jest.fn(lspGetClassFieldsServiceMocked));
+    lspGetClassFieldServiceMock();
     const { baseElement, getByText } = render(<ImportJavaClasses buttonDisabledStatus={false} />);
     testSearchInput(baseElement, getByText);
     testJavaClassSelection(baseElement, true);
     const nextButton = getByText("Next") as HTMLButtonElement;
     fireEvent.click(nextButton);
+    await waitFor(() => {expect(baseElement.querySelector('[aria-label="field-table"]')!).toBeInTheDocument()})
     const expandToggle = baseElement.querySelector('[id="expand-toggle0"]')! as HTMLButtonElement;
     expect(expandToggle).toHaveAttribute("aria-expanded", "true");
     fireEvent.click(expandToggle);
@@ -145,10 +146,8 @@ describe("ImportJavaClasses component tests", () => {
     });
   }
 
-  function lspGetClassFieldServiceMock(mockedBroadcastDefinition: jest.Mock) {
-    window.envelopeMock = _.extend(window.envelopeMock || {}, {
-      lspGetClassFieldsServiceMocked: (className: string) => Promise.resolve(mockedBroadcastDefinition(className)),
-    });
+  function lspGetClassFieldServiceMock() {
+    window.envelopeMock.lspGetClassFieldsServiceMocked = jest.fn(lspGetClassFieldsServiceMocked);
   }
 
   const lspGetClassFieldsServiceMocked = async (className: string) => {

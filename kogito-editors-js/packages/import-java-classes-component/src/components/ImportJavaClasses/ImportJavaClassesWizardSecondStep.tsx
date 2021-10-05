@@ -50,11 +50,13 @@ export const ImportJavaClassesWizardSecondStep: React.FunctionComponent<ImportJa
     [selectedJavaClasses]
   );
   const loadJavaFields = (className: string) => {
-    window.envelopeMock.lspGetClassFieldsServiceMocked(className).then((value) => {
-      const fields = Array.from(value, ([name, type]) => generateJavaClassField(name, type, selectedJavaClasses));
-      fields.sort((a, b) => (a.name < b.name ? -1 : 1));
-      onSelectedJavaClassedFieldsLoaded(className, fields);
-    });
+    window.envelopeMock.lspGetClassFieldsServiceMocked(className)
+      .then((value: Map<string, string>) => {
+        const fields = Array.from(value, ([name, type]) => generateJavaClassField(name, type, selectedJavaClasses));
+        fields.sort((a, b) => (a.name < b.name ? -1 : 1));
+        onSelectedJavaClassedFieldsLoaded(className, fields);
+      })
+      .catch(reason => {console.error(reason)});
   };
   const generateJavaClassField = (name: string, type: string, selectedJavaClasses: JavaClass[]) => {
     let dmnTypeRef: string = (JAVA_TO_DMN_MAP as any)[getJavaClassSimpleName(type)] || DMNSimpleType.ANY;
