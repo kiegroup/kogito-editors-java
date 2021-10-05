@@ -50,9 +50,6 @@ public class JsWiresMagnetTest {
     @Mock
     WiresConnection connection2;
 
-    @Mock
-    MagnetManager.Magnets magnets;
-
     @Test
     public void testGetHeadConnection() {
         when(magnet.getControl()).thenReturn(primitive);
