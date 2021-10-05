@@ -134,15 +134,15 @@ public class JsWiresShape {
         return parent instanceof WiresLayer;
     }
 
-    private Map<String, Shape> colorsMap = new HashMap<>();
+    protected Map<String, Shape> colorsMap = new HashMap<>();
 
-    private final String BORDER_STROKE_KEY = "?shapeType=BORDER&renderType=STROKE";
+    protected static final String BORDER_STROKE_KEY = "?shapeType=BORDER&renderType=STROKE";
 
-    private final String BORDER_FILL_KEY = "?shapeType=BORDER&renderType=FILL";
+    protected static final String BORDER_FILL_KEY = "?shapeType=BORDER&renderType=FILL";
 
-    private final String BACKGROUND_KEY = "?shapeType=BACKGROUND";
+    protected static final String BACKGROUND_KEY = "?shapeType=BACKGROUND";
 
-    private void setColorsMap() {
+    protected void setColorsMap() {
 
         if (!colorsMap.isEmpty()) {
             return;
@@ -196,7 +196,7 @@ public class JsWiresShape {
         return null;
     }
 
-    public Shape getBorderColorShape() {
+    private Shape getBorderColorShape() {
         setColorsMap();
 
         if (colorsMap.containsKey(BORDER_STROKE_KEY)) {
