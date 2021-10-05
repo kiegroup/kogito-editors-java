@@ -138,9 +138,19 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = (context
   const onColumnsUpdate = useCallback(
     ([expressionColumn]: [ColumnInstance]) => {
       contextExpression.onUpdatingNameAndDataType?.(expressionColumn.label as string, expressionColumn.dataType);
+      const updatedWidth = expressionColumn.columns?.reduce((acc, e) => {
+        if (e.id === "entryInfo") {
+          acc["entryInfoWidth"] = e.width;
+        }
+        if (e.id === "entryExpression") {
+          acc["entryExpressionWidth"] = e.width;
+        }
+        return acc;
+      }, {} as any);
       spreadContextExpressionDefinition({
         name: expressionColumn.label as string,
         dataType: expressionColumn.dataType,
+        ...updatedWidth,
       });
     },
     [contextExpression, spreadContextExpressionDefinition]

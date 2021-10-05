@@ -375,6 +375,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
           getColumnKey={onGetColumnKey}
           onColumnsUpdate={onColumnsUpdateCallback}
           headerVisibility={headerVisibility}
+          tdProps={tdProps}
         >
           {children}
         </TableBody>
