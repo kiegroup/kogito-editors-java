@@ -59,14 +59,17 @@ export const ImportJavaClassesWizardFieldListTable: React.FunctionComponent<Impo
     const isFetchable = (field: JavaField) => {
       return field.dmnTypeRef === DMNSimpleType.ANY;
     };
-    const fetchButton = useCallback((field: JavaField) => {
-      return (
-        <Button className={"fetch-button"} onClick={() => onFetchButtonClick(field.type)} variant="primary" isSmall>
-          {fetchButtonLabel + ' "' + getJavaClassSimpleName(field.type) + '" class'}
-        </Button>
-      );
-      // eslint-disable-next-line
-    }, [selectedJavaClassFields]);
+    const fetchButton = useCallback(
+      (field: JavaField) => {
+        return (
+          <Button className={"fetch-button"} onClick={() => onFetchButtonClick(field.type)} variant="primary" isSmall>
+            {fetchButtonLabel + ' "' + getJavaClassSimpleName(field.type) + '" class'}
+          </Button>
+        );
+        // eslint-disable-next-line
+      },
+      [selectedJavaClassFields]
+    );
 
     let rowIndex = -1;
     return (
