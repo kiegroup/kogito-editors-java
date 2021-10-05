@@ -88,7 +88,7 @@ describe("ImportJavaClasses component tests", () => {
     testJavaClassSelection(baseElement, true);
     await testSecondStepFields(baseElement, getByText);
 
-    const fetchButton = getByText("Fetch \"Test\" class")! as HTMLButtonElement;
+    const fetchButton = getByText('Fetch "Test" class')! as HTMLButtonElement;
     fetchButton.click();
 
     await waitFor(() => {
@@ -118,7 +118,7 @@ describe("ImportJavaClasses component tests", () => {
 
     const nextButton = getByText("Next") as HTMLButtonElement;
     fireEvent.click(nextButton);
-    const fetchButton = getByText("Fetch \"Test\" class")! as HTMLButtonElement;
+    const fetchButton = getByText('Fetch "Test" class')! as HTMLButtonElement;
     expect(fetchButton).toBeInTheDocument();
   });
 
@@ -181,9 +181,8 @@ describe("ImportJavaClasses component tests", () => {
     fireEvent.click(expandToggle);
   }
 
-
   async function testFetchClicked(getByText: (text: string) => HTMLElement) {
-    const fetchButton = getByText("Fetch \"Test\" class")! as HTMLButtonElement;
+    const fetchButton = getByText('Fetch "Test" class')! as HTMLButtonElement;
     fetchButton.click();
 
     await waitFor(() => {
@@ -205,7 +204,7 @@ describe("ImportJavaClasses component tests", () => {
     const bookClassFieldsMap = new Map<string, string>();
     bookClassFieldsMap.set("title", "java.lang.String");
     bookClassFieldsMap.set("year", "java.lang.Integer");
-    bookClassFieldsMap.set("test", "com.Test")
+    bookClassFieldsMap.set("test", "com.Test");
     const authorClassFieldsMap = new Map<string, string>();
     authorClassFieldsMap.set("name", "java.lang.String");
     authorClassFieldsMap.set("isAlive", "java.lang.Boolean");
