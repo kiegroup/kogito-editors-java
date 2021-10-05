@@ -71,7 +71,7 @@ export const LiteralExpression: React.FunctionComponent<LiteralExpressionProps> 
         dataType,
       });
     },
-    [literalExpression.onUpdatingNameAndDataType, spreadLiteralExpressionDefinition]
+    [literalExpression, spreadLiteralExpressionDefinition]
   );
 
   const onContentChange = useCallback(

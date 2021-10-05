@@ -71,7 +71,6 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (
 
   const { i18n } = useBoxedExpressionEditorI18n();
 
-  const storedExpressionDefinition = useRef({} as FunctionProps);
   const { boxedExpressionEditorRef, setSupervisorHash, pmmlParams } = useContext(BoxedExpressionGlobalContext);
 
   const document = useRef((functionExpression as PmmlFunctionProps).document);
@@ -312,12 +311,11 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (
       functionExpression.onUpdatingRecursiveExpression?.(_.omit(updatedDefinition, ["name", "dataType"]));
     } else {
       executeIfExpressionDefinitionChanged(
-        storedExpressionDefinition.current,
+        functionExpression,
         updatedDefinition,
         () => {
           setSupervisorHash(hashfy(rows));
           window.beeApi?.broadcastFunctionExpressionDefinition?.(updatedDefinition);
-          storedExpressionDefinition.current = updatedDefinition;
         },
         [
           "name",

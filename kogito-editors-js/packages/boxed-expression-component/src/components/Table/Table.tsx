@@ -184,8 +184,8 @@ export const Table: React.FunctionComponent<TableProps> = ({
   }, [tableEventUUID, tableRows, onRowsUpdate, onColumnsUpdate, onRowAddingCallback]);
 
   const onColumnsUpdateCallback = useCallback(
-    (columns: Column[]) => {
-      onColumnsUpdate?.(columns.slice(1)); //Removing "# of rows" column
+    (columns: Column[], operation?: TableOperation, columnIndex?: number) => {
+      onColumnsUpdate?.(columns.slice(1), operation, (columnIndex ?? 1) - 1); //Removing "# of rows" column
     },
     [onColumnsUpdate]
   );

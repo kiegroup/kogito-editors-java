@@ -38,7 +38,7 @@ export interface TableProps {
   /** Table's cells */
   rows: DataRecord[];
   /** Function to be executed when columns are modified */
-  onColumnsUpdate?: (columns: ReactTableColumn[]) => void;
+  onColumnsUpdate?: (columns: ReactTableColumn[], operation?: TableOperation, columnIndex?: number) => void;
   /** Function to be executed when one or more rows are modified */
   onRowsUpdate?: (rows: DataRecord[]) => void;
   /** Function to be executed when adding a new row to the table */

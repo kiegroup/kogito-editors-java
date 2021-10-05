@@ -16,7 +16,7 @@
 
 import "./ContextExpression.css";
 import * as React from "react";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import {
   ContextEntries,
   ContextEntryRecord,
@@ -48,7 +48,6 @@ const DEFAULT_CONTEXT_ENTRY_DATA_TYPE = DataType.Undefined;
 
 export const ContextExpression: React.FunctionComponent<ContextProps> = (contextExpression: ContextProps) => {
   const { i18n } = useBoxedExpressionEditorI18n();
-  const storedExpressionDefinition = useRef({} as ContextProps);
   const [infoWidth, setInfoWidth] = useState(contextExpression.entryInfoWidth ?? DEFAULT_ENTRY_INFO_MIN_WIDTH);
   const [expressionWidth, setExpressionWidth] = useState(
     contextExpression.entryExpressionWidth ?? DEFAULT_ENTRY_EXPRESSION_MIN_WIDTH
@@ -120,7 +119,7 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = (context
       };
 
       executeIfExpressionDefinitionChanged(
-        storedExpressionDefinition.current,
+        contextExpression,
         updatedDefinition,
         () => {
           if (contextExpression.isHeadless) {
@@ -128,7 +127,6 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = (context
           } else {
             setSupervisorHash(hashfy(updatedDefinition));
             window.beeApi?.broadcastContextExpressionDefinition?.(updatedDefinition);
-            storedExpressionDefinition.current = updatedDefinition;
           }
         },
         ["name", "dataType", "contextEntries", "result", "entryInfoWidth", "entryExpressionWidth"]

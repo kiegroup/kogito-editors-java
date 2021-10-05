@@ -230,11 +230,11 @@ export const TableHeader: React.FunctionComponent<TableHeaderProps> = ({
     },
     [
       computeColumnKey,
+      editableHeader,
       getColumnLabel,
       onColumnNameOrDataTypeUpdate,
       onHorizontalResizeStop,
       renderHeaderCellInfo,
-      tableInstance,
       thProps,
     ]
   );
@@ -289,7 +289,7 @@ export const TableHeader: React.FunctionComponent<TableHeaderProps> = ({
       default:
         return null;
     }
-  }, [headerVisibility, renderHeaderGroups, renderAtLevelInHeaderGroups, renderAtLevelInHeaderGroups]);
+  }, [headerVisibility, renderHeaderGroups, renderAtLevelInHeaderGroups]);
 
   return <>{header}</>;
 };

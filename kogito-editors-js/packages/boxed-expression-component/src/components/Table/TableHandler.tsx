@@ -20,6 +20,7 @@ import {
   DataType,
   GroupOperations,
   GroupOperationsByColumnType,
+  Row,
   TableHandlerConfiguration,
   TableOperation,
 } from "../../api";
@@ -59,7 +60,7 @@ export interface TableHandlerProps {
   /** Custom function called for manually resetting a row */
   resetRowCustomFunction?: (row: DataRecord) => DataRecord;
   /** Function to be executed when columns are modified */
-  onColumnsUpdate: (columns: Column[]) => void;
+  onColumnsUpdate: (columns: Column[], operation?: TableOperation, columnIndex?: number) => void;
 }
 
 export const TableHandler: React.FunctionComponent<TableHandlerProps> = ({
@@ -176,24 +177,26 @@ export const TableHandler: React.FunctionComponent<TableHandlerProps> = ({
   );
 
   const updateTargetColumns = useCallback(
-    (operation: <T extends unknown>(elements: T[], index: number, element: T) => T[]) => {
+    (
+      operationCallback: <T extends unknown>(elements: T[], index: number, element: T) => T[],
+      operation: TableOperation
+    ) => {
       if (selectedColumn.parent) {
         const parent = _.find(tableColumns, getColumnSearchPredicate(selectedColumn.parent)) as ColumnInstance;
-        parent.columns = operation(
+        parent.columns = operationCallback(
           parent.columns!,
           _.findIndex(parent.columns, getColumnSearchPredicate(selectedColumn)),
           generateNextAvailableColumn()
         );
       } else {
         if (selectedColumn.appendColumnsOnChildren && _.isArray(selectedColumn.columns)) {
-          appendOnColumnChildren(operation);
+          appendOnColumnChildren(operationCallback);
         } else {
+          const columnIndex = _.findIndex(tableColumns, getColumnSearchPredicate(selectedColumn));
           onColumnsUpdate?.(
-            operation(
-              tableColumns,
-              _.findIndex(tableColumns, getColumnSearchPredicate(selectedColumn)),
-              generateNextAvailableColumn()
-            )
+            operationCallback(tableColumns, columnIndex, generateNextAvailableColumn()),
+            operation,
+            columnIndex
           );
           return;
         }
@@ -206,7 +209,6 @@ export const TableHandler: React.FunctionComponent<TableHandlerProps> = ({
       appendOnColumnChildren,
       onColumnsUpdate,
       tableColumns,
-      tableRows,
       updateColumnsThenRows,
     ]
   );
@@ -215,13 +217,13 @@ export const TableHandler: React.FunctionComponent<TableHandlerProps> = ({
     (tableOperation: TableOperation) => {
       switch (tableOperation) {
         case TableOperation.ColumnInsertLeft:
-          updateTargetColumns(insertBefore);
+          updateTargetColumns(insertBefore, TableOperation.ColumnInsertLeft);
           break;
         case TableOperation.ColumnInsertRight:
-          updateTargetColumns(insertAfter);
+          updateTargetColumns(insertAfter, TableOperation.ColumnInsertRight);
           break;
         case TableOperation.ColumnDelete:
-          updateTargetColumns(deleteAt);
+          updateTargetColumns(deleteAt, TableOperation.ColumnDelete);
           break;
         case TableOperation.RowInsertAbove:
           onRowsUpdate(
