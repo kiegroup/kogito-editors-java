@@ -40,4 +40,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONARCLOUD_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -nsu generate-resources -Psonarcloud-analysis -Denforcer.skip=true
+        run: mvn -nsu generate-resources -Psonarcloud-analysis -Denforcer.skip=true # sonarcloud-analysis  is defined in kie-parent pom

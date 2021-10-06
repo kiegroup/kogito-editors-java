@@ -59,7 +59,7 @@ pipeline {
                         getMavenCommand('kogito-editors-java')
                                 .withOptions(['-e', '-nsu'])
                                 .withProperty('enforcer.skip', true)
-                                .withProfiles(['sonarcloud-analysis'])
+                                .withProfiles(['sonarcloud-analysis']) // sonarcloud-analysis  is defined in kie-parent pom
                                 .run('generate-resources')
                     }
                 }
