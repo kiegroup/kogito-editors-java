@@ -27,23 +27,22 @@ import javax.inject.Inject;
 
 import elemental2.promise.Promise;
 import org.kie.workbench.common.stunner.bpmn.client.forms.DataTypeNamesService;
+import org.kie.workbench.common.stunner.bpmn.client.forms.util.StringUtils;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.processes.DataTypeCache;
 import org.uberfire.backend.vfs.Path;
 
 @ApplicationScoped
 public class DataTypeNamesStandaloneService implements DataTypeNamesService {
 
+    private static Set<String> simpleDataTypes = new HashSet<>(Arrays.asList("Boolean",
+                                                                             "Float",
+                                                                             "Integer",
+                                                                             "Object",
+                                                                             "String"));
     Set<String> dataTypesSet = new HashSet<>();
-
     boolean cacheRead = false;
     @Inject
     DataTypeCache cache;
-
-    private static Set<String> simpleDataTypes = new HashSet<>(Arrays.asList("Boolean",
-                                                                      "Float",
-                                                                      "Integer",
-                                                                      "Object",
-                                                                      "String"));
 
     @Override
     public Promise<List<String>> call(final Path path) {
@@ -52,13 +51,11 @@ public class DataTypeNamesStandaloneService implements DataTypeNamesService {
             dataTypesSet.addAll(cache.getCachedDataTypes());
             cacheRead = true;
         }
-
         return Promise.resolve(new ArrayList<>(dataTypesSet));
     }
 
     @Override
     public void add(String value, String oldValue) {
-
         if (simpleDataTypes.contains(value)) {
             return;
         }
@@ -67,6 +64,8 @@ public class DataTypeNamesStandaloneService implements DataTypeNamesService {
             dataTypesSet.remove(oldValue);
         }
 
-        dataTypesSet.add(value);
+        if (StringUtils.isOkWithGenericsFormat(value)) {
+            dataTypesSet.add(value);
+        }
     }
 }

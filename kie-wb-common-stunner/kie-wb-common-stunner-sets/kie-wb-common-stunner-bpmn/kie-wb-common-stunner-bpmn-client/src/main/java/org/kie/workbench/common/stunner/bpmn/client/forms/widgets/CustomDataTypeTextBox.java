@@ -17,12 +17,14 @@
 package org.kie.workbench.common.stunner.bpmn.client.forms.widgets;
 
 import com.google.gwt.regexp.shared.RegExp;
+import org.kie.workbench.common.stunner.bpmn.client.forms.util.StringUtils;
 
 public class CustomDataTypeTextBox extends AbstractValidatingTextBox {
 
     private RegExp regExp;
     private String invalidCharacterTypedMessage;
     private String invalidCharactersInNameErrorMessage;
+    private String unbalancedGTLTMessage;
 
     public CustomDataTypeTextBox() {
         this.regExp = null;
@@ -30,10 +32,12 @@ public class CustomDataTypeTextBox extends AbstractValidatingTextBox {
 
     public void setRegExp(final String pattern,
                           final String invalidCharactersInNameErrorMessage,
-                          final String invalidCharacterTypedMessage) {
+                          final String invalidCharacterTypedMessage,
+                          final String unbalancedGTLTMessage) {
         regExp = RegExp.compile(pattern);
         this.invalidCharactersInNameErrorMessage = invalidCharactersInNameErrorMessage;
         this.invalidCharacterTypedMessage = invalidCharacterTypedMessage;
+        this.unbalancedGTLTMessage = unbalancedGTLTMessage;
     }
 
     @Override
@@ -46,6 +50,14 @@ public class CustomDataTypeTextBox extends AbstractValidatingTextBox {
                 return (isOnFocusLost ? invalidCharactersInNameErrorMessage : invalidCharacterTypedMessage)
                         + ": " + invalidChars;
             }
+        }
+        return null;
+    }
+
+    @Override
+    public String isBalancedGTLT(String string) {
+        if (!StringUtils.isOkWithGenericsFormat(string)) {
+            return unbalancedGTLTMessage;
         }
         return null;
     }

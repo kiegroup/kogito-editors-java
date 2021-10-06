@@ -36,11 +36,13 @@ class ProcessVariableReader {
 
     private static String toProcessVariableString(Property p) {
         String processVariableName = getProcessVariableName(p);
+
         String tags = CustomElement.customTags.of(p).get();
-        return Optional.ofNullable(p.getItemSubjectRef())
+        final String s = Optional.ofNullable(p.getItemSubjectRef())
                 .map(ItemDefinition::getStructureRef)
                 .map(type -> processVariableName + ":" + type + ":" + tags)
                 .orElse(processVariableName + "::" + tags);
+        return s;
     }
 
     public static String getProcessVariableName(Property p) {

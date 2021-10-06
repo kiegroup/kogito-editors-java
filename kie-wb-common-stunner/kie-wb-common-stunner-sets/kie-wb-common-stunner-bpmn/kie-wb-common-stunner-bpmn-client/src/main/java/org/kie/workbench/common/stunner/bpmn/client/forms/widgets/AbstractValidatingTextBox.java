@@ -85,15 +85,31 @@ public abstract class AbstractValidatingTextBox extends TextBox {
                 String validationError = isValidValue(value,
                                                       true);
                 if (validationError != null) {
-                    fireValidationError(validationError);
-                    String validValue = makeValidValue(value);
-                    me.setValue(validValue);
-                    ValueChangeEvent.fire(AbstractValidatingTextBox.this,
-                                          validValue);
+                    fireValidation(value, validationError, me);
+                } else {
+                   validationError = isBalancedGTLT(value);
+                    if (validationError != null) {
+                        fireValidation(value, validationError, me);
+                    }
                 }
             }
         });
     }
+
+    private void fireValidation(String value, String validationError, TextBox me) {
+        fireValidationError(validationError);
+        String validValue = makeValidValue(value);
+        me.setValue(validValue);
+        ValueChangeEvent.fire(AbstractValidatingTextBox.this,
+                              validValue);
+    }
+
+    /**
+     * Tests whether a string has balanced <> hence indicating if it looks like valid generics format
+     * @param string
+     * @return an error message to be reported
+     */
+    public abstract String isBalancedGTLT(String string);
 
     /**
      * Tests whether a value is valid

@@ -136,6 +136,7 @@ public class VariablesEditorFieldRenderer extends FieldRenderer<VariablesEditorF
                                                                                    dataTypeDisplayNames);
         this.mapDataTypeDisplayNamesToNames = createMapDataTypeDisplayNamesToNames(dataTypes,
                                                                                    dataTypeDisplayNames);
+
         dataTypeListBoxValues = new ListBoxValues(VariableListItemWidgetView.CUSTOM_PROMPT,
                                                   "Edit" + " ",
                                                   dataTypesTester());
@@ -169,13 +170,22 @@ public class VariablesEditorFieldRenderer extends FieldRenderer<VariablesEditorF
         doSave();
     }
 
+
+
+
     @Override
-    public List<VariableRow> deserializeVariables(final String s) {
+    public List<VariableRow> deserializeVariables(String s) {
+        if (isGlobalVariables()) {
+            s = StringUtils.preFilterVariablesTwoSemicolonForGenerics(s);
+        } else {
+            s = StringUtils.preFilterVariablesForGenerics(s);
+        }
         List<VariableRow> variableRows = new ArrayList<>();
         if (s != null && !s.isEmpty()) {
             String[] vs = s.split(",");
             for (String v : vs) {
                 if (!v.isEmpty()) {
+                    v = StringUtils.postFilterForGenerics(v);
                     Variable var = Variable.deserialize(v,
                                                         Variable.VariableType.PROCESS,
                                                         dataTypes);
@@ -276,9 +286,13 @@ public class VariablesEditorFieldRenderer extends FieldRenderer<VariablesEditorF
     }
 
     private void checkTagsNotEnabled() {
-        if (this.field != null && !this.field.getId().equals("processVariables")) {
+        if (isGlobalVariables()) {
             this.view.setTagsNotEnabled();
         }
+    }
+
+    private boolean isGlobalVariables() {
+        return this.field != null && !this.field.getId().equals("processVariables");
     }
 
     public void setLastOverlayOpened(final Button overlayCloseButton) {
