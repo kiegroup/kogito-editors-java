@@ -386,6 +386,8 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (
     ];
   }, [i18n.function, i18n.rowOperations.clear]);
 
+  const defaultCell = useMemo(() => ({ parameters: ContextEntryExpressionCell }), [])
+
   return (
     <div className={`function-expression ${functionExpression.uid}`}>
       <Table
@@ -402,7 +404,7 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (
             onFunctionKindSelect={onFunctionKindSelect}
           />
         }
-        defaultCell={{ parameters: ContextEntryExpressionCell }}
+        defaultCell={defaultCell}
         resetRowCustomFunction={resetRowCustomFunction}
       />
     </div>
