@@ -115,11 +115,7 @@ export const ImportJavaClassesWizard: React.FunctionComponent<ImportJavaClassesW
     },
     {
       canJumpTo: isThirdStepActivatable(),
-      component: (
-        <ImportJavaClassesWizardThirdStep
-          selectedJavaClasses={javaClasses}
-        />
-      ),
+      component: <ImportJavaClassesWizardThirdStep selectedJavaClasses={javaClasses} />,
       name: i18n.modalWizard.thirdStep.stepName,
       nextButtonText: i18n.modalWizard.thirdStep.nextButtonText,
     },
