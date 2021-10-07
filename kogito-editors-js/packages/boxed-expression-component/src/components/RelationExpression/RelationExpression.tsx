@@ -16,7 +16,7 @@
 
 import "./RelationExpression.css";
 import * as React from "react";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import "@patternfly/react-styles/css/utilities/Text/text.css";
 import {
   Column as RelationColumn,
@@ -126,6 +126,10 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = (relat
     },
     [spreadRelationExpressionDefinition, columns]
   );
+
+  useEffect(() => {
+    spreadRelationExpressionDefinition();
+  }, [rows]);
 
   const onColumnsUpdate = useCallback(
     (columns, operation, columnIndex) => {

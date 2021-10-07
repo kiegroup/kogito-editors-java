@@ -104,23 +104,27 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (
     [editParametersPopoverAppendTo, i18n.editParameters, parameters]
   );
 
-  const [columns, setColumns] = useState<ColumnInstance[]>([
-    {
-      label: functionExpression.name ?? DEFAULT_FIRST_PARAM_NAME,
-      accessor: functionExpression.name ?? DEFAULT_FIRST_PARAM_NAME,
-      dataType: functionExpression.dataType ?? DataType.Undefined,
-      disableHandlerOnHeader: true,
-      columns: [
-        {
-          headerCellElement,
-          accessor: "parameters",
-          disableHandlerOnHeader: true,
-          width: width,
-          minWidth: DEFAULT_ENTRY_EXPRESSION_MIN_WIDTH,
-        },
-      ],
-    },
-  ] as ColumnInstance[]);
+  const [columns, setColumns] = useState<ColumnInstance[]>([]);
+
+  useEffect(() => {
+    setColumns([
+      {
+        label: functionExpression.name ?? DEFAULT_FIRST_PARAM_NAME,
+        accessor: functionExpression.name ?? DEFAULT_FIRST_PARAM_NAME,
+        dataType: functionExpression.dataType ?? DataType.Undefined,
+        disableHandlerOnHeader: true,
+        columns: [
+          {
+            headerCellElement,
+            accessor: "parameters",
+            disableHandlerOnHeader: true,
+            width,
+            minWidth: DEFAULT_ENTRY_EXPRESSION_MIN_WIDTH,
+          },
+        ],
+      },
+    ] as ColumnInstance[]);
+  }, [functionExpression.name, functionExpression.dataType, headerCellElement, width]);
 
   const extractContextEntriesFromJavaProps = useCallback(
     (javaProps: JavaFunctionProps & { children?: React.ReactNode }) => {
@@ -286,9 +290,15 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (
     [retrieveModelValue, rows, setParametersBasedOnDocumentAndModel]
   );
 
+  useEffect(() => {
+    spreadFunctionExpressionDefinition();
+  }, [rows]);
+
   const spreadFunctionExpressionDefinition = useCallback(() => {
     const [expressionColumn] = columns;
-
+    if (!expressionColumn) {
+      return;
+    }
     const updatedDefinition: FunctionProps = extendDefinitionBasedOnFunctionKind(
       {
         uid: functionExpression.uid,
@@ -345,12 +355,8 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (
     (itemId: string) => {
       const kind = itemId as FunctionKind;
       setSelectedFunctionKind(kind);
-      // Resetting table content, every time function kind gets selected
-      setRows([{ entryExpression: { logicType: LogicType.Undefined } }]);
-      // Need to wait for the next rendering cycle before setting the correct table rows, based on function kind
-      setTimeout(() => {
-        setRows(evaluateRows(kind));
-      }, 0);
+      setParameters([]);
+      setRows(evaluateRows(kind));
     },
     [evaluateRows]
   );
@@ -386,7 +392,7 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (
     ];
   }, [i18n.function, i18n.rowOperations.clear]);
 
-  const defaultCell = useMemo(() => ({ parameters: ContextEntryExpressionCell }), [])
+  const defaultCell = useMemo(() => ({ parameters: ContextEntryExpressionCell }), []);
 
   return (
     <div className={`function-expression ${functionExpression.uid}`}>
