@@ -61,7 +61,9 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = (relat
     [relationProps]
   );
 
-  const rows: Row[] = useMemo(() => (relationProps.rows === undefined ? [[""]] : relationProps.rows), [relationProps]);
+  const rows: Row[] = useMemo(() => {
+    return (relationProps.rows === undefined ? [[""]] : relationProps.rows);
+  }, [relationProps]);
 
   const spreadRelationExpressionDefinition = useCallback(
     (newColumns?: RelationColumn[], newRows?: Row[]) => {

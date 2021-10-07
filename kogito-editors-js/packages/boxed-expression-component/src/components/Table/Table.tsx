@@ -152,8 +152,6 @@ export const Table: React.FunctionComponent<TableProps> = ({
 
   useEffect(() => {
     tableRows.current = rows;
-    // Watching for external changes of the rows
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rows]);
 
   useEffect(() => {

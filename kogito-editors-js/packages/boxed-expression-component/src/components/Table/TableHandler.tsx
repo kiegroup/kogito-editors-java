@@ -158,10 +158,16 @@ export const TableHandler: React.FunctionComponent<TableHandlerProps> = ({
   }, [generateNextAvailableColumnName, getLengthOfColumnsByGroupType, selectedColumn, tableColumns]);
 
   /** These column operations have impact also on the collection of cells */
-  const updateColumnsThenRows = useCallback(() => {
-    onColumnsUpdate([...tableColumns]);
-    onRowsUpdate([...tableRows.current]);
-  }, [onColumnsUpdate, onRowsUpdate, tableColumns, tableRows]);
+  const updateColumnsThenRows = useCallback(
+    (operation?: TableOperation, columnIndex?: number, updatedColumns?: any) => {
+      updatedColumns
+        ? onColumnsUpdate([...updatedColumns], operation, columnIndex)
+        : onColumnsUpdate([...tableColumns], operation, columnIndex);
+
+      onRowsUpdate([...tableRows.current]);
+    },
+    [onColumnsUpdate, onRowsUpdate, tableColumns, tableRows]
+  );
 
   const appendOnColumnChildren = useCallback(
     (operation: <T extends unknown>(elements: T[], index: number, element: T) => T[]) => {
@@ -193,24 +199,14 @@ export const TableHandler: React.FunctionComponent<TableHandlerProps> = ({
           appendOnColumnChildren(operationCallback);
         } else {
           const columnIndex = _.findIndex(tableColumns, getColumnSearchPredicate(selectedColumn));
-          onColumnsUpdate?.(
-            operationCallback(tableColumns, columnIndex, generateNextAvailableColumn()),
-            operation,
-            columnIndex
-          );
+          const updatedColumns = operationCallback(tableColumns, columnIndex, generateNextAvailableColumn());
+          updateColumnsThenRows(operation, columnIndex, updatedColumns);
           return;
         }
       }
       updateColumnsThenRows();
     },
-    [
-      selectedColumn,
-      generateNextAvailableColumn,
-      appendOnColumnChildren,
-      onColumnsUpdate,
-      tableColumns,
-      updateColumnsThenRows,
-    ]
+    [appendOnColumnChildren, generateNextAvailableColumn, selectedColumn, tableColumns, updateColumnsThenRows]
   );
 
   const handlingOperation = useCallback(

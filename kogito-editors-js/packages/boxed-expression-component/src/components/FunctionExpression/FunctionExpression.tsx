@@ -104,27 +104,23 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (
     [editParametersPopoverAppendTo, i18n.editParameters, parameters]
   );
 
-  const columns = useMemo(
-    () =>
-      [
+  const [columns, setColumns] = useState<ColumnInstance[]>([
+    {
+      label: functionExpression.name ?? DEFAULT_FIRST_PARAM_NAME,
+      accessor: functionExpression.name ?? DEFAULT_FIRST_PARAM_NAME,
+      dataType: functionExpression.dataType ?? DataType.Undefined,
+      disableHandlerOnHeader: true,
+      columns: [
         {
-          label: functionExpression.name ?? DEFAULT_FIRST_PARAM_NAME,
-          accessor: functionExpression.name ?? DEFAULT_FIRST_PARAM_NAME,
-          dataType: functionExpression.dataType ?? DataType.Undefined,
+          headerCellElement,
+          accessor: "parameters",
           disableHandlerOnHeader: true,
-          columns: [
-            {
-              headerCellElement,
-              accessor: "parameters",
-              disableHandlerOnHeader: true,
-              width: width,
-              minWidth: DEFAULT_ENTRY_EXPRESSION_MIN_WIDTH,
-            },
-          ],
+          width: width,
+          minWidth: DEFAULT_ENTRY_EXPRESSION_MIN_WIDTH,
         },
-      ] as ColumnInstance[],
-    [headerCellElement, width, functionExpression.name, functionExpression.dataType]
-  );
+      ],
+    },
+  ] as ColumnInstance[]);
 
   const extractContextEntriesFromJavaProps = useCallback(
     (javaProps: JavaFunctionProps & { children?: React.ReactNode }) => {
@@ -182,8 +178,7 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (
         model: model.current,
       })?.parametersFromModel || []
     );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [pmmlParams]);
 
   const evaluateRows = useCallback(
     (functionKind: FunctionKind) => {
@@ -361,38 +356,40 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (
   );
 
   const onColumnsUpdate = useCallback(
-    ([expressionColumn]: [ColumnInstance]) => {
+    ([expressionColumn]: ColumnInstance[]) => {
       functionExpression.onUpdatingNameAndDataType?.(expressionColumn.label as string, expressionColumn.dataType);
       setWidth(expressionColumn.width as number);
 
-      const [updatedExpressionColumn] = columns;
-      updatedExpressionColumn.label = expressionColumn.label as string;
-      updatedExpressionColumn.accessor = expressionColumn.accessor;
-      updatedExpressionColumn.dataType = expressionColumn.dataType;
+      setColumns((previousColumn) => {
+        const [newColumn] = [...previousColumn];
+        newColumn.label = expressionColumn.label as string;
+        newColumn.accessor = expressionColumn.accessor;
+        newColumn.dataType = expressionColumn.dataType;
+        return [newColumn];
+      });
       spreadFunctionExpressionDefinition();
     },
-    [columns, functionExpression, spreadFunctionExpressionDefinition]
+    [functionExpression, spreadFunctionExpressionDefinition]
   );
-
-  useEffect(() => {
-    /** Everytime the list of parameters or the function definition change, we need to spread expression's updated definition */
-    spreadFunctionExpressionDefinition();
-  }, [rows, spreadFunctionExpressionDefinition]);
 
   const resetRowCustomFunction = useCallback((row) => {
     setSelectedFunctionKind(FunctionKind.Feel);
     return resetEntry(row);
   }, []);
 
+  const handlerConfiguration = useMemo(() => {
+    return [
+      {
+        group: _.upperCase(i18n.function),
+        items: [{ name: i18n.rowOperations.clear, type: TableOperation.RowClear }],
+      },
+    ];
+  }, [i18n.function, i18n.rowOperations.clear]);
+
   return (
     <div className={`function-expression ${functionExpression.uid}`}>
       <Table
-        handlerConfiguration={[
-          {
-            group: _.upperCase(i18n.function),
-            items: [{ name: i18n.rowOperations.clear, type: TableOperation.RowClear }],
-          },
-        ]}
+        handlerConfiguration={handlerConfiguration}
         columns={columns}
         onColumnsUpdate={onColumnsUpdate}
         rows={rows}

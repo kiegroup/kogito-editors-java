@@ -55,13 +55,10 @@ export const TableBody: React.FunctionComponent<TableBodyProps> = ({
       const column = tableInstance.allColumns[cellIndex] as unknown as IColumn;
       const width = typeof column?.width === "number" ? column?.width : DEFAULT_MIN_WIDTH;
 
-      const setWidth = (width: number) => {
-        column?.setWidth?.(width);
-        tableInstance.allColumns[cellIndex].width = width;
-      };
       const onResize = (width: number) => {
         if (column.setWidth) {
-          setWidth(width);
+          column.setWidth(width);
+          tableInstance.allColumns[cellIndex].width = width;
           onColumnsUpdate?.(tableInstance.columns);
         }
       };
