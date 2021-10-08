@@ -112,9 +112,9 @@ export class Cell {
         );
 
     // if is header uses the headerType, if not (inputs/outputs cells) use the .data-cell class
-    const children: HTMLElement[] = [].slice.call(
-      (refSibling as HTMLElement).querySelectorAll(`.${this.getHeaderType()}`)
-    );
+    const children: HTMLElement[] = this.isColSpanHeader()
+      ? [].slice.call((refSibling as HTMLElement).querySelectorAll(`.${this.getHeaderType()}`))
+      : [].slice.call((refSibling as HTMLElement).querySelectorAll(`.data-cell`));
 
     const colSpan = (this.element?.parentNode as HTMLTableHeaderCellElement)?.colSpan;
     if (colSpan > 1) {
