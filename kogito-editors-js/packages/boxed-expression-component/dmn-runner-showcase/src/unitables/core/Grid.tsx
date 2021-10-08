@@ -1,7 +1,7 @@
 import { Bridge, joinName } from "uniforms";
 import * as React from "react";
 import { AutoField } from "./AutoField";
-import { DataType } from "boxed-expression-component/dist/api";
+import { DataType } from "boxed-expression-component/src/api";
 import { DmnRunnerClause } from "../boxed";
 import { DecisionResult, Result } from "../dmn";
 

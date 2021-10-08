@@ -16,15 +16,15 @@
 
 import * as React from "react";
 import { useCallback, useEffect, useMemo } from "react";
-import "boxed-expression-component/dist";
+import "boxed-expression-component/src";
 import { ColumnInstance, DataRecord } from "react-table";
 import {
   ExpressionProps,
   GroupOperations,
   TableHeaderVisibility,
   TableOperation,
-} from "boxed-expression-component/dist/api";
-import { getColumnsAtLastLevel, Table } from "boxed-expression-component/dist/components";
+} from "boxed-expression-component/src/api";
+import { getColumnsAtLastLevel, Table } from "boxed-expression-component/src/components";
 import "./DmnRunnerTable.css";
 import { DmnRunnerClause, DmnRunnerRule } from "./DmnRunnerTableTypes";
 import { useDmnAutoTableI18n } from "../";

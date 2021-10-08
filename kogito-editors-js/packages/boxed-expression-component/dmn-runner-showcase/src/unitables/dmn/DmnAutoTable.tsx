@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Clause, TableOperation } from "boxed-expression-component/dist/api";
+import { Clause, TableOperation } from "boxed-expression-component/src/api";
 import { DmnValidator } from "./DmnValidator";
 import { AutoRow } from "../core";
 import { createPortal } from "react-dom";
@@ -15,7 +15,7 @@ import { NotificationSeverity } from "@kogito-tooling/notifications/dist/api";
 import { dmnAutoTableDictionaries, DmnAutoTableI18nContext, dmnAutoTableI18nDefaults } from "../i18n";
 import { I18nDictionariesProvider } from "@kogito-tooling/i18n/dist/react-components";
 import nextId from "react-id-generator";
-import { BoxedExpressionProvider } from "boxed-expression-component/dist/components";
+import { BoxedExpressionProvider } from "boxed-expression-component/src/components";
 
 export enum EvaluationStatus {
   SUCCEEDED = "SUCCEEDED",
