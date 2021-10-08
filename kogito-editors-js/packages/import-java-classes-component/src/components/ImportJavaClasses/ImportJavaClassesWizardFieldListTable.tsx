@@ -29,6 +29,8 @@ export interface ImportJavaClassesWizardFieldListTableProps {
   selectedJavaClassFields: JavaClass[];
   /** In ready only mode, fetch classes mechanism is not enabled */
   readOnly: boolean;
+  /** Table css classname **/
+  tableClassName?: string;
   /** Function to call when an Fetch button is clicked */
   onFetchButtonClick?: (fullClassName: string) => void;
   /** Fetch button label */
@@ -39,6 +41,7 @@ export const ImportJavaClassesWizardFieldListTable: React.FunctionComponent<Impo
   ({
     selectedJavaClassFields,
     readOnly,
+    tableClassName,
     onFetchButtonClick,
     fetchButtonLabel,
   }: ImportJavaClassesWizardFieldListTableProps) => {
@@ -78,56 +81,58 @@ export const ImportJavaClassesWizardFieldListTable: React.FunctionComponent<Impo
 
     let rowIndex = -1;
     return (
-      <TableComposable aria-label="field-table">
-        {selectedJavaClassFields.map((javaClass, index) => {
-          rowIndex += 1;
-          const parentRow = (
-            <Tr key={rowIndex}>
-              <Td
-                key={`${rowIndex}_0`}
-                expand={
-                  javaClass.fields && javaClass.fields.length > 0
-                    ? {
-                        rowIndex: index,
-                        isExpanded: expanded[index],
-                        onToggle: handleExpansionToggle,
-                      }
-                    : undefined
-                }
-              />
-              <Td key={`${rowIndex}_${javaClass.name}`}>
-                <span>
-                  <strong>{getJavaClassSimpleName(javaClass.name)}</strong>
-                </span>
-                <span className={"dmn-type-name"}>(Structure)</span>
-              </Td>
-            </Tr>
-          );
-          const childRow =
-            javaClass.fields && javaClass.fields.length > 0
-              ? javaClass.fields.map((field) => {
-                  rowIndex += 1;
-                  return (
-                    <Tr key={rowIndex} isExpanded={expanded[index] === true}>
-                      <Td key={`${rowIndex}_0`} />
-                      <Td key={`${rowIndex}_${field.name}`}>
-                        <ExpandableRowContent>
-                          <span>{field.name}</span>
-                          <span className={"dmn-type-name"}>{decorateWithRoundBrackets(field.dmnTypeRef)}</span>
-                          {!readOnly && isFetchable(field) ? fetchButton(field) : null}
-                        </ExpandableRowContent>
-                      </Td>
-                    </Tr>
-                  );
-                })
-              : undefined;
-          return (
-            <Tbody key={index} isExpanded={expanded[index] === true}>
-              {parentRow}
-              {childRow}
-            </Tbody>
-          );
-        })}
-      </TableComposable>
+      <div className={tableClassName}>
+        <TableComposable aria-label="field-table">
+          {selectedJavaClassFields.map((javaClass, index) => {
+            rowIndex += 1;
+            const parentRow = (
+              <Tr key={rowIndex}>
+                <Td
+                  key={`${rowIndex}_0`}
+                  expand={
+                    javaClass.fields && javaClass.fields.length > 0
+                      ? {
+                          rowIndex: index,
+                          isExpanded: expanded[index],
+                          onToggle: handleExpansionToggle,
+                        }
+                      : undefined
+                  }
+                />
+                <Td key={`${rowIndex}_${javaClass.name}`}>
+                  <span>
+                    <strong>{getJavaClassSimpleName(javaClass.name)}</strong>
+                  </span>
+                  <span className={"dmn-type-name"}>(Structure)</span>
+                </Td>
+              </Tr>
+            );
+            const childRow =
+              javaClass.fields && javaClass.fields.length > 0
+                ? javaClass.fields.map((field) => {
+                    rowIndex += 1;
+                    return (
+                      <Tr key={rowIndex} isExpanded={expanded[index] === true}>
+                        <Td key={`${rowIndex}_0`} />
+                        <Td key={`${rowIndex}_${field.name}`}>
+                          <ExpandableRowContent>
+                            <span>{field.name}</span>
+                            <span className={"dmn-type-name"}>{decorateWithRoundBrackets(field.dmnTypeRef)}</span>
+                            {!readOnly && isFetchable(field) ? fetchButton(field) : null}
+                          </ExpandableRowContent>
+                        </Td>
+                      </Tr>
+                    );
+                  })
+                : undefined;
+            return (
+              <Tbody key={index} isExpanded={expanded[index] === true}>
+                {parentRow}
+                {childRow}
+              </Tbody>
+            );
+          })}
+        </TableComposable>
+      </div>
     );
   };

@@ -15,7 +15,7 @@
  */
 
 import * as React from "react";
-import "./ImportJavaClassesWizardSecondStep.css";
+import "./ImportJavaClassesWizardThirdStep.css";
 import { ImportJavaClassesWizardFieldListTable } from "./ImportJavaClassesWizardFieldListTable";
 import { JavaClass } from "./Model/JavaClass";
 export interface ImportJavaClassesWizardThirdStepProps {
@@ -28,7 +28,11 @@ export const ImportJavaClassesWizardThirdStep: React.FunctionComponent<ImportJav
 }: ImportJavaClassesWizardThirdStepProps) => {
   return (
     <>
-      <ImportJavaClassesWizardFieldListTable selectedJavaClassFields={selectedJavaClasses} readOnly={true} />
+      <ImportJavaClassesWizardFieldListTable
+        selectedJavaClassFields={selectedJavaClasses}
+        readOnly={true}
+        tableClassName={"fields-table"}
+      />
     </>
   );
 };
