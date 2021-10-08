@@ -86,15 +86,47 @@ export class Cell {
 
     const children = [].slice.call((refSibling as HTMLElement).querySelectorAll(`.${this.getHeaderType()}`));
     const childrenRects = children.map((c: HTMLElement) => c.getBoundingClientRect());
-
-    if (childrenRects.length === 0) {
-      return;
-    }
-
     const x = Math.min(...childrenRects.map((c: DOMRect) => c.x));
     const right = Math.max(...childrenRects.map((c: DOMRect) => c.right));
 
     this.setWidth(right - x - BORDER * 2);
+  }
+
+  refreshWidthAsLastGroupColumnRunner(index: number): void {
+    if (!this.isColSpanHeader() && !this.getParentRow()?.classList.contains("table-row")) {
+      return;
+    }
+
+    let refSibling = this.getParent()?.parentElement?.nextSibling;
+
+    if (!refSibling || (refSibling as any)?.classList?.contains("table-row")) {
+      refSibling = document.querySelector('[role="row"]')?.nextSibling;
+    }
+
+    // sum the colSpan to determine the header size;
+    const headerSize = this.isColSpanHeader()
+      ? 0
+      : Array.from(document.querySelectorAll(".colspan-header")).reduce(
+          (acc, th: HTMLTableHeaderCellElement) => acc + th.colSpan,
+          0
+        );
+
+    // if is header uses the headerType, if not (inputs/outputs cells) use the .data-cell class
+    const children: HTMLElement[] = [].slice.call(
+      (refSibling as HTMLElement).querySelectorAll(`.${this.getHeaderType()}`)
+    );
+
+    const colSpan = (this.element?.parentNode as HTMLTableHeaderCellElement)?.colSpan;
+    if (colSpan > 1) {
+      const firstReact = children[0].getBoundingClientRect();
+      const lastReact = children[colSpan - 1].getBoundingClientRect();
+      this.setWidth(lastReact.right - firstReact.x - BORDER * 2);
+    } else {
+      const childrenRects = children[(index - headerSize) % children.length]?.getBoundingClientRect();
+      if (childrenRects) {
+        this.setWidth(childrenRects.width - BORDER * 2);
+      }
+    }
   }
 
   isColSpanHeader(): boolean {
@@ -102,7 +134,7 @@ export class Cell {
   }
 
   private getHeaderType() {
-    const cssClasses = (this.getParent()?.classList || []) as DOMTokenList;
+    const cssClasses = (this.getParent()?.classList || []) as any as DOMTokenList;
 
     if (cssClasses.contains("input")) {
       return "input";
