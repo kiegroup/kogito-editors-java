@@ -46,10 +46,11 @@ describe("ContextEntryExpressionCell tests", () => {
             {
               entryInfo: { name: entryName, dataType: entryDataType },
               entryExpression: emptyExpression,
+              editInfoPopoverLabel: "Edit entry",
             },
           ]}
-          row={{ index: 0 }}
-          column={{ id: "col1" }}
+          rowIndex={0}
+          columnId={"col1"}
           onRowUpdate={_.identity}
         />
       ).wrapper
@@ -69,10 +70,11 @@ describe("ContextEntryExpressionCell tests", () => {
             {
               entryInfo: { name: value, dataType },
               entryExpression: emptyExpression,
+              editInfoPopoverLabel: "Edit entry",
             },
           ]}
-          row={{ index: rowIndex }}
-          column={{ id: columnId }}
+          rowIndex={rowIndex}
+          columnId={"columnId"}
           onRowUpdate={mockedOnRowUpdate}
         />
       ).wrapper
@@ -101,6 +103,7 @@ describe("ContextEntryExpressionCell tests", () => {
         onUpdatingNameAndDataType: undefined,
         onUpdatingRecursiveExpression: expect.any(Function),
       },
+      editInfoPopoverLabel: "Edit entry",
     });
   });
 });
