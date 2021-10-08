@@ -100,7 +100,7 @@
   border-style: solid;
   padding: 1.1em 0;
   text-align: center;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .expression-container .table-component table tbody td + td {

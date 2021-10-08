@@ -50,7 +50,7 @@ export interface EditableCellProps extends CellProps {
   /** Cell's value */
   value: string;
   /** Function executed each time a cell gets updated */
-  onCellUpdate: (index: number, id: string, value: string) => void;
+  onCellUpdate: (rowIndex: number, columnId: string, value: string) => void;
   /** Enable/Disable readonly */
   readOnly?: boolean;
 }
@@ -162,7 +162,7 @@ export function EditableCell({ value, rowIndex, columnId, onCellUpdate, readOnly
         focusNextTextArea(textarea.current);
       }
     },
-    [previousValue, triggerReadMode]
+    [triggerReadMode]
   );
 
   const onFeelChange = useCallback((_e, newValue, newPreview) => {

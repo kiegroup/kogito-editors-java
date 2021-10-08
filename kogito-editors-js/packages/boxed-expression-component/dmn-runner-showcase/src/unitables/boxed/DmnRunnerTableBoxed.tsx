@@ -85,7 +85,7 @@ export function DmnRunnerTableBoxed(props: DmnRunnerTableProps) {
     configuration[DecisionTableColumnType.InputClause] = generateHandlerConfigurationByColumn;
     configuration[DecisionTableColumnType.OutputClause] = generateHandlerConfigurationByColumn;
     return configuration;
-  }, [generateHandlerConfigurationByColumn, i18n.inputClause, i18n.outputClause, i18n.ruleAnnotation]);
+  }, [generateHandlerConfigurationByColumn]);
 
   const getEditColumnLabel = useMemo(() => {
     const editColumnLabel: { [columnGroupType: string]: string } = {};
@@ -273,7 +273,7 @@ export function DmnRunnerTableBoxed(props: DmnRunnerTableProps) {
     inputsCells.forEach((inputCell) => {
       searchRecursively(inputCell.childNodes[0]);
     });
-  }, [memoColumns]);
+  }, [memoColumns, searchRecursively]);
 
   return (
     <div className="expression-container">

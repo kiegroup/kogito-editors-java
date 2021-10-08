@@ -15816,7 +15816,7 @@ uniforms-bridge-json-schema@^3.5.1:
     tslib "^2.2.0"
     uniforms "^3.6.1"
 
-uniforms-patternfly@^4.7.0:
+uniforms-patternfly@^4.7.3:
   version "4.7.3"
   resolved "https://registry.yarnpkg.com/uniforms-patternfly/-/uniforms-patternfly-4.7.3.tgz#96e62e350b53dd08eb577a9499869b00f045f730"
   integrity sha512-2wSpUF/rnBLsADogaPtTVXkylWqZdpskEcLVsE7xZzuB66yqQ/fT593aGbRv+Il99mcv+KblTqi6CPoIoMjM1A==

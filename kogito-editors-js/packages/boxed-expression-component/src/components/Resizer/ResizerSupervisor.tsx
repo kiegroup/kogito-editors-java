@@ -33,7 +33,7 @@ export const ResizerSupervisor: React.FunctionComponent<ResizerSupervisorProps> 
       applyDOMSupervisor(isRunnerTable);
     }, 0);
     return () => clearTimeout(id);
-  }, [supervisorHash]);
+  }, [isRunnerTable, supervisorHash]);
 
   return <>{children}</>;
 };

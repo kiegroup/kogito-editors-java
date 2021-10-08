@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { TableComposable } from "@patternfly/react-table";
 import * as _ from "lodash";
 import * as React from "react";
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
@@ -28,6 +27,7 @@ import {
   useResizeColumns,
   useTable,
 } from "react-table";
+import { TableComposable } from "@patternfly/react-table";
 import { v4 as uuid } from "uuid";
 import { TableHeaderVisibility, TableOperation, TableProps } from "../../api";
 import { BoxedExpressionGlobalContext } from "../../context";
@@ -183,15 +183,16 @@ export const Table: React.FunctionComponent<TableProps> = ({
 
   const onColumnsUpdateCallback = useCallback(
     (columns: Column[], operation?: TableOperation, columnIndex?: number) => {
-      onColumnsUpdate?.(columns.slice(1), operation, (columnIndex ?? 1) - 1); //Removing "# of rows" column
+      //Removing "# of rows" column
+      onColumnsUpdate?.(columns.slice(1), operation, (columnIndex ?? 1) - 1);
     },
     [onColumnsUpdate]
   );
 
   const onRowsUpdateCallback = useCallback(
-    (rows: DataRecord[]) => {
+    (rows: DataRecord[], operation?: TableOperation, rowIndex?: number) => {
       tableRows.current = rows;
-      onRowsUpdate?.(rows);
+      onRowsUpdate?.([...rows], operation, rowIndex);
     },
     [onRowsUpdate]
   );

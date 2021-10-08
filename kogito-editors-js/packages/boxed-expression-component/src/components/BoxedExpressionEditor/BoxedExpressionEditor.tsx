@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-import { I18nDictionariesProvider } from "@kogito-tooling/i18n/dist/react-components";
-import "@patternfly/react-core/dist/styles/base-no-reset.css";
-import "@patternfly/react-styles/css/components/Drawer/drawer.css";
 import * as React from "react";
 import { useCallback, useEffect, useState } from "react";
+import "@patternfly/react-core/dist/styles/base-no-reset.css";
+import "@patternfly/react-styles/css/components/Drawer/drawer.css";
 import { executeIfExpressionDefinitionChanged, ExpressionProps, PMMLParams } from "../../api";
 import {
   boxedExpressionEditorDictionaries,
   BoxedExpressionEditorI18nContext,
   boxedExpressionEditorI18nDefaults,
 } from "../../i18n";
-import { ExpressionContainer } from "../ExpressionContainer";
+import { I18nDictionariesProvider } from "@kogito-tooling/i18n/dist/react-components";
 import { BoxedExpressionProvider } from "./BoxedExpressionProvider";
+import { ExpressionContainer } from "../ExpressionContainer";
 
 export interface BoxedExpressionEditorProps {
   /** All expression properties used to define it */

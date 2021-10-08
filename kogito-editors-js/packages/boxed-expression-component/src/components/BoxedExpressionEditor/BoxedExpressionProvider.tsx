@@ -52,7 +52,7 @@ export function BoxedExpressionProvider(props: BoxedExpressionProviderProps) {
         setCurrentlyOpenedHandlerCallback,
       }}
     >
-      <ResizerSupervisor isRunnerTable={false}>
+      <ResizerSupervisor isRunnerTable={props.isRunnerTable}>
         <div className="boxed-expression-editor" ref={boxedExpressionEditorRef}>
           {props.children}
         </div>
