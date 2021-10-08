@@ -325,8 +325,6 @@ export const Table: React.FunctionComponent<TableProps> = ({
       defaultColumn,
       onCellUpdate,
       onRowUpdate,
-      getThProps: thProps,
-      getTdProps: tdProps,
     },
     useBlockLayout,
     useResizeColumns
