@@ -30,6 +30,7 @@ import com.ait.lienzo.client.core.shape.wires.WiresLayer;
 import com.ait.lienzo.client.core.shape.wires.WiresMagnet;
 import com.ait.lienzo.client.core.shape.wires.WiresShape;
 import com.ait.lienzo.client.core.types.BoundingBox;
+import com.ait.lienzo.client.core.types.JsCanvasNodeLister;
 import com.ait.lienzo.client.core.types.Point2D;
 import com.ait.lienzo.tools.client.collection.NFastArrayList;
 import elemental2.core.JsArray;
@@ -42,12 +43,18 @@ public class JsWiresShape {
 
     private BoundingBox boundingBox;
 
+    private static JsCanvasNodeLister lister;
+
     public JsWiresShape(WiresShape shape) {
         this.shape = shape;
     }
 
     public String getID() {
         return shape.getID();
+    }
+
+    public void linkLister(JsCanvasNodeLister lister) {
+        this.lister = lister;
     }
 
     public JsWiresShape getParent() {
@@ -116,7 +123,11 @@ public class JsWiresShape {
         NFastArrayList<IPrimitive<?>> childNodes = container.getChildNodes();
         for (int i = 0; i < childNodes.size(); i++) {
             IPrimitive<?> child = childNodes.get(i);
-            if (child instanceof IContainer) {
+           if (child instanceof IContainer) {
+                if (lister != null && lister.getNodeIdSet().contains(child.getID())) {
+                    continue;
+                }
+
                 JsArray<Shape> children = toFlatShapes((IContainer) child);
                 shapes.push(children.asArray(new Shape[children.length]));
             } else {

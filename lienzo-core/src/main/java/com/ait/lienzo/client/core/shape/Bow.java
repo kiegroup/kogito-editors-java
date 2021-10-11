@@ -28,7 +28,7 @@ import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
 
 /**
- *
+ * Bow shaped shape
  */
 @JsType
 public class Bow extends Shape<Bow> {

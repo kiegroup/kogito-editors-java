@@ -15,6 +15,9 @@
  */
 package com.ait.lienzo.client.core.types;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import com.ait.lienzo.client.core.Context2D;
 import com.ait.lienzo.client.core.NativeContext2D;
 import com.ait.lienzo.client.core.shape.ContainerNode;
@@ -31,7 +34,7 @@ import elemental2.dom.HTMLCanvasElement;
 import jsinterop.annotations.JsType;
 
 @JsType
-public class JsCanvas {
+public class JsCanvas implements JsCanvasNodeLister {
 
     LienzoPanel panel;
     Layer layer;
@@ -136,6 +139,7 @@ public class JsCanvas {
         for (WiresShape shape : shapes) {
             if (id.equals(shape.getID())) {
                 final JsWiresShape jsWiresShape = new JsWiresShape(shape);
+                jsWiresShape.linkLister(this);
                 return jsWiresShape;
             }
         }
@@ -263,6 +267,16 @@ public class JsCanvas {
         for (int i = 0; i < shapes.length; i++) {
             WiresShape shape = shapes[i];
             ids.add(shape.getID());
+        }
+        return ids;
+    }
+
+    @Override
+    public Set<String> getNodeIdSet() {
+        WiresShape[] shapes = getWiresManager().getShapes();
+        Set<String> ids = new HashSet<>();
+        for (int i = 0; i < shapes.length; i++) {
+            ids.add(shapes[i].getID());
         }
         return ids;
     }
