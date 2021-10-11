@@ -15,7 +15,7 @@
  */
 
 import * as React from "react";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo } from "react";
 import "boxed-expression-component/src";
 import { ColumnInstance, DataRecord } from "react-table";
 import {
@@ -265,7 +265,7 @@ export function DmnRunnerTableBoxed(props: DmnRunnerTableProps) {
     child.childNodes.forEach(searchRecursively);
   }, []);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const tbody = document.getElementsByTagName("tbody")[0];
     const inputsCells = Array.from(tbody.getElementsByTagName("td"));
     // remove id column

@@ -292,7 +292,7 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (
 
   useEffect(() => {
     spreadFunctionExpressionDefinition();
-  }, [rows]);
+  }, [rows, parameters]);
 
   const spreadFunctionExpressionDefinition = useCallback(() => {
     const [expressionColumn] = columns;

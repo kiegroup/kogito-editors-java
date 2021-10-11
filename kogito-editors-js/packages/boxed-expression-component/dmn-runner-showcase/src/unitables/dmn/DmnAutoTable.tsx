@@ -16,6 +16,7 @@ import { dmnAutoTableDictionaries, DmnAutoTableI18nContext, dmnAutoTableI18nDefa
 import { I18nDictionariesProvider } from "@kogito-tooling/i18n/dist/react-components";
 import nextId from "react-id-generator";
 import { BoxedExpressionProvider } from "boxed-expression-component/src/components";
+import { DmnTableJsonSchemaBridge } from "./DmnTableJsonSchemaBridge";
 
 export enum EvaluationStatus {
   SUCCEEDED = "SUCCEEDED",
@@ -67,7 +68,8 @@ export function DmnAutoTable(props: Props) {
 
   const bridge = useMemo(() => new DmnValidator().getBridge(props.schema ?? {}), [props.schema]);
   const grid = useMemo(() => (bridge ? new DmnGrid(bridge) : undefined), [bridge]);
-  const shouldRender = useMemo(() => (grid?.generateBoxedInputs().length ?? 0) > 0, [grid]);
+  const input = useMemo(() => grid?.generateBoxedInputs(), [grid]);
+  const shouldRender = useMemo(() => (input?.length ?? 0) > 0, [input]);
 
   const handleOperation = useCallback(
     (tableOperation: TableOperation, rowIndex: number) => {
@@ -140,7 +142,7 @@ export function DmnAutoTable(props: Props) {
   );
 
   const getAutoRow = useCallback(
-    (data, rowIndex: number) =>
+    (data, rowIndex: number, bridge: DmnTableJsonSchemaBridge) =>
       ({ children }: any) =>
         (
           <AutoRow
@@ -165,14 +167,13 @@ export function DmnAutoTable(props: Props) {
             </UniformsContext.Consumer>
           </AutoRow>
         ),
-    [bridge, onSubmit, onValidate]
+    [onSubmit, onValidate]
   );
 
   let selectedExpression: DmnRunnerTableProps | undefined = undefined;
   selectedExpression = useMemo(() => {
     const filteredResults = props.results?.filter((result) => result !== undefined);
-    if (grid && filteredResults) {
-      const input = grid.generateBoxedInputs();
+    if (grid && filteredResults && input) {
       const [outputSet, outputEntries] = grid.generateBoxedOutputs(props.schema ?? {}, filteredResults);
       const output: Clause[] = Array.from(outputSet.values());
 
@@ -188,7 +189,7 @@ export function DmnAutoTable(props: Props) {
           outputEntries: (outputEntries?.[i] as string[]) ?? [],
         };
         if (formsDivRendered) {
-          rule.rowDelegate = getAutoRow(props.tableData[i], i);
+          rule.rowDelegate = getAutoRow(props.tableData[i], i, bridge);
         }
         rules.push(rule);
       }
@@ -203,14 +204,16 @@ export function DmnAutoTable(props: Props) {
       };
     }
   }, [
-    grid,
-    props.schema,
     props.results,
+    props.schema,
     props.tableData,
-    rowQuantity,
+    input,
+    grid,
     onRowNumberUpdated,
+    rowQuantity,
     formsDivRendered,
     getAutoRow,
+    bridge,
   ]);
 
   const formErrorMessage = useMemo(

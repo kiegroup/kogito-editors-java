@@ -322,7 +322,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
   const tableInstance = useTable(
     {
       columns: tableColumns,
-      data: tableRows.current,
+      data: rows,
       defaultColumn,
       onCellUpdate,
       onRowUpdate,
