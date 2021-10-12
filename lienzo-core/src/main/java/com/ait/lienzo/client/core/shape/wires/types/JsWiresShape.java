@@ -123,7 +123,7 @@ public class JsWiresShape {
         NFastArrayList<IPrimitive<?>> childNodes = container.getChildNodes();
         for (int i = 0; i < childNodes.size(); i++) {
             IPrimitive<?> child = childNodes.get(i);
-           if (child instanceof IContainer) {
+            if (child instanceof IContainer) {
                 if (lister != null && lister.getNodeIdSet().contains(child.getID())) {
                     continue;
                 }
@@ -198,12 +198,13 @@ public class JsWiresShape {
 
         Shape shape = getBorderColorShape();
 
-        if (colorsMap.containsKey(BORDER_STROKE_KEY)) {
-            return shape.getStrokeColor();
-        } else if (colorsMap.containsKey(BORDER_FILL_KEY)) {
-            return shape.getFillColor();
+        if (shape != null) {
+            if (colorsMap.containsKey(BORDER_STROKE_KEY)) {
+                return shape.getStrokeColor();
+            } else if (colorsMap.containsKey(BORDER_FILL_KEY)) {
+                return shape.getFillColor();
+            }
         }
-
         return null;
     }
 
@@ -245,7 +246,12 @@ public class JsWiresShape {
         if (colorsMap.containsKey(BACKGROUND_KEY)) {
             return colorsMap.get(BACKGROUND_KEY).getFillColor();
         } else {
-            return getBorderColorShape().getFillColor();
+            final Shape borderColorShape = getBorderColorShape();
+            if (borderColorShape != null) {
+                return borderColorShape.getFillColor();
+            } else {
+                return null;
+            }
         }
     }
 
