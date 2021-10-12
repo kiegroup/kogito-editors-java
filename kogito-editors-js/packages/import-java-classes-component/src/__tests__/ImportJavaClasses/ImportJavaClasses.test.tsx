@@ -130,6 +130,7 @@ describe("ImportJavaClasses component tests", () => {
     expect(baseElement.querySelector('[aria-label="Reset"]')! as HTMLButtonElement).not.toBeInTheDocument();
     fireEvent.change(inputElement, { target: { value: "test" } });
     expect(inputElement).toHaveValue("test");
+    expect(baseElement.querySelector('[aria-label="Reset"]')! as HTMLButtonElement).toBeInTheDocument();
   }
 
   function testJavaClassSelection(baseElement: Element, hasThirdElement: boolean) {
