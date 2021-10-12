@@ -75,7 +75,7 @@ describe("ImportJavaClasses component tests", () => {
     const { baseElement, getByText } = render(<ImportJavaClasses buttonDisabledStatus={false} />);
     testSearchInput(baseElement, getByText);
     testJavaClassSelection(baseElement, true);
-    await testSecondStepFields(baseElement, getByText);
+    await testNextStepFieldsTable(baseElement, getByText);
 
     expect(baseElement).toMatchSnapshot();
   });
@@ -86,7 +86,7 @@ describe("ImportJavaClasses component tests", () => {
     const { baseElement, getByText } = render(<ImportJavaClasses buttonDisabledStatus={false} />);
     testSearchInput(baseElement, getByText);
     testJavaClassSelection(baseElement, true);
-    await testSecondStepFields(baseElement, getByText);
+    await testNextStepFieldsTable(baseElement, getByText);
 
     const fetchButton = getByText('Fetch "Test" class')! as HTMLButtonElement;
     fetchButton.click();
@@ -104,7 +104,7 @@ describe("ImportJavaClasses component tests", () => {
     const { baseElement, getByText } = render(<ImportJavaClasses buttonDisabledStatus={false} />);
     testSearchInput(baseElement, getByText);
     testJavaClassSelection(baseElement, true);
-    await testSecondStepFields(baseElement, getByText);
+    await testNextStepFieldsTable(baseElement, getByText);
     await testFetchClicked(getByText);
 
     const backButton = getByText("Back") as HTMLButtonElement;
@@ -120,6 +120,20 @@ describe("ImportJavaClasses component tests", () => {
     fireEvent.click(nextButton);
     const fetchButton = getByText('Fetch "Test" class')! as HTMLButtonElement;
     expect(fetchButton).toBeInTheDocument();
+  });
+
+  test("Should move to third step", async () => {
+    lspGetClassServiceMock(jest.fn((value) => ["com.Book", "com.Author", "com.Test"]));
+    lspGetClassFieldServiceMock();
+    const { baseElement, getByText } = render(<ImportJavaClasses buttonDisabledStatus={false} />);
+    testSearchInput(baseElement, getByText);
+    testJavaClassSelection(baseElement, true);
+    /* Second Step */
+    await testNextStepFieldsTable(baseElement, getByText);
+    /* Third Step */
+    await testNextStepFieldsTable(baseElement, getByText);
+
+    expect(baseElement).toMatchSnapshot();
   });
 
   function testSearchInput(baseElement: Element, getByText: (text: string) => HTMLElement) {
@@ -169,7 +183,7 @@ describe("ImportJavaClasses component tests", () => {
     }
   }
 
-  async function testSecondStepFields(baseElement: Element, getByText: (text: string) => HTMLElement) {
+  async function testNextStepFieldsTable(baseElement: Element, getByText: (text: string) => HTMLElement) {
     const nextButton = getByText("Next") as HTMLButtonElement;
     fireEvent.click(nextButton);
     await waitFor(() => {
