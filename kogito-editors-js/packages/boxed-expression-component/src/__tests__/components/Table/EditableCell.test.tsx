@@ -19,7 +19,6 @@ import * as _ from "lodash";
 import * as React from "react";
 import { EditableCell, EDIT_MODE, READ_MODE } from "../../../components/Table";
 import { usingTestingBoxedExpressionI18nContext } from "../test-utils";
-import { ContextEntryExpressionCell } from "../../../components/ContextExpression";
 
 describe("EditableCell", () => {
   const CELL_SELECTOR = ".editable-cell";
@@ -117,7 +116,7 @@ describe("EditableCell", () => {
       ).container;
 
       fireEvent.change(container.querySelector("textarea") as HTMLTextAreaElement, {
-        target: { value: `${newValue}\t` },
+        target: { value: `${newValue}</>` },
       });
       // onblur is triggered by Monaco (mock), and the new value relies on Monaco implementation
     });

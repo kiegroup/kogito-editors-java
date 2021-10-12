@@ -16,7 +16,7 @@
 
 import { render } from "@testing-library/react";
 import { EDIT_EXPRESSION_NAME, updateElementViaPopover, usingTestingBoxedExpressionI18nContext } from "../test-utils";
-import { ContextEntryExpressionCell, ContextEntryInfoCell } from "../../../components/ContextExpression";
+import { ContextEntryInfoCell } from "../../../components/ContextExpression";
 import * as _ from "lodash";
 import * as React from "react";
 import { DataType } from "../../../api";
@@ -36,12 +36,11 @@ describe("ContextEntryInfoCell tests", () => {
     const { container } = render(
       usingTestingBoxedExpressionI18nContext(
         <ContextEntryInfoCell
-          data={[
-            { entryInfo: { name, dataType }, entryExpression: emptyExpression, editInfoPopoverLabel: "Edit entry" },
-          ]}
+          data={[{ entryInfo: { name, dataType }, entryExpression: emptyExpression }]}
           rowIndex={0}
           columnId={"col1"}
           onRowUpdate={_.identity}
+          editInfoPopoverLabel="Edit entry"
         />
       ).wrapper
     );
@@ -63,12 +62,11 @@ describe("ContextEntryInfoCell tests", () => {
     const { container, baseElement } = render(
       usingTestingBoxedExpressionI18nContext(
         <ContextEntryInfoCell
-          data={[
-            { entryInfo: { name, dataType }, entryExpression: emptyExpression, editInfoPopoverLabel: "Edit entry" },
-          ]}
+          data={[{ entryInfo: { name, dataType }, entryExpression: emptyExpression }]}
           rowIndex={0}
           columnId={"col1"}
           onRowUpdate={mockedOnRowUpdate}
+          editInfoPopoverLabel="Edit entry"
         />
       ).wrapper
     );
@@ -87,7 +85,6 @@ describe("ContextEntryInfoCell tests", () => {
         dataType,
       },
       entryExpression: emptyExpression,
-      editInfoPopoverLabel: "Edit entry",
     });
   });
 });

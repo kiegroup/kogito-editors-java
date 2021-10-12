@@ -18,6 +18,7 @@ import { ExpressionProps, LogicType } from "../../api";
 import * as React from "react";
 import { useCallback, useRef } from "react";
 import { LogicTypeSelector } from "../LogicTypeSelector";
+import * as _ from "lodash";
 
 export interface ContextEntryExpressionProps {
   /** The expression wrapped by the entry */
@@ -41,14 +42,14 @@ export const ContextEntryExpression: React.FunctionComponent<ContextEntryExpress
 
   const onLogicTypeUpdating = useCallback(
     (logicType) => {
-      onUpdatingRecursiveExpression({ ...expression, logicType });
+      onUpdatingRecursiveExpression(_.omit({ ...expression, logicType }, "isHeadless"));
     },
     [onUpdatingRecursiveExpression, expression]
   );
 
   const onLogicTypeResetting = useCallback(() => {
     onExpressionResetting?.();
-    onUpdatingRecursiveExpression({ ...expression, logicType: LogicType.Undefined });
+    onUpdatingRecursiveExpression(_.omit({ ...expression, logicType: LogicType.Undefined }, "isHeadless"));
   }, [onExpressionResetting, onUpdatingRecursiveExpression, expression]);
 
   return (
