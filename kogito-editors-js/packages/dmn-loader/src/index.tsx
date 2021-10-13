@@ -37,8 +37,9 @@ import { setupWire } from "./wire";
 setupWire();
 
 const BoxedExpressionWrapper: React.FunctionComponent<BoxedExpressionEditorProps> = ({
-  pmmlParams,
   expressionDefinition,
+  clearSupported,
+  pmmlParams,
 }: BoxedExpressionEditorProps) => {
   const [updatedDefinition, setExpressionDefinition] = useState<ExpressionProps>(expressionDefinition);
 
@@ -86,16 +87,27 @@ const BoxedExpressionWrapper: React.FunctionComponent<BoxedExpressionEditorProps
     },
   };
 
-  return <BoxedExpressionEditor expressionDefinition={updatedDefinition} pmmlParams={pmmlParams} />;
+  return (
+    <BoxedExpressionEditor
+      expressionDefinition={updatedDefinition}
+      clearSupported={clearSupported}
+      pmmlParams={pmmlParams}
+    />
+  );
 };
 
 const renderBoxedExpressionEditor = (
   selector: string,
   expressionDefinition: ExpressionProps,
+  clearSupported: boolean,
   pmmlParams: PMMLParams
 ) => {
   ReactDOM.render(
-    <BoxedExpressionWrapper expressionDefinition={expressionDefinition} pmmlParams={pmmlParams} />,
+    <BoxedExpressionWrapper
+      expressionDefinition={expressionDefinition}
+      clearSupported={clearSupported}
+      pmmlParams={pmmlParams}
+    />,
     document.querySelector(selector)
   );
 };

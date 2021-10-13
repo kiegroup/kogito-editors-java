@@ -25,11 +25,14 @@ export interface ExpressionContainerProps {
   selectedExpression: ExpressionProps;
   /** Callback triggered when expression gets changed */
   onExpressionChange?: (updatedExpression: ExpressionProps) => void;
+  /** Tells whether, in the root expression, the clear button should be present or not  */
+  clearSupported?: boolean;
 }
 
 export const ExpressionContainer: (props: ExpressionContainerProps) => JSX.Element = ({
-  onExpressionChange,
   selectedExpression,
+  onExpressionChange,
+  clearSupported,
 }: ExpressionContainerProps) => {
   const expressionContainerRef = useRef<HTMLDivElement>(null);
 
@@ -78,6 +81,7 @@ export const ExpressionContainer: (props: ExpressionContainerProps) => JSX.Eleme
         data-ouia-component-id="expression-container"
       >
         <LogicTypeSelector
+          clearSupported={clearSupported}
           selectedExpression={selectedExpression}
           onLogicTypeUpdating={onLogicTypeUpdating}
           onLogicTypeResetting={onLogicTypeResetting}

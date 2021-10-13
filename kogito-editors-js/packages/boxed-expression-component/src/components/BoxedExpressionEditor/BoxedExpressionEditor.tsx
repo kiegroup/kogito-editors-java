@@ -35,6 +35,8 @@ import "./BoxedExpressionEditor.css";
 export interface BoxedExpressionEditorProps {
   /** All expression properties used to define it */
   expressionDefinition: ExpressionProps;
+  /** False, for having the clear button not available */
+  clearSupported?: boolean;
   /** PMML parameters */
   pmmlParams?: PMMLParams;
 }
@@ -78,7 +80,11 @@ export const BoxedExpressionEditor: (props: BoxedExpressionEditorProps) => JSX.E
         >
           <ResizerSupervisor>
             <div className="boxed-expression-editor" ref={boxedExpressionEditorRef}>
-              <ExpressionContainer selectedExpression={expressionDefinition} onExpressionChange={onExpressionChange} />
+              <ExpressionContainer
+                selectedExpression={expressionDefinition}
+                onExpressionChange={onExpressionChange}
+                clearSupported={props.clearSupported}
+              />
             </div>
           </ResizerSupervisor>
           <CellSelectionBox />
