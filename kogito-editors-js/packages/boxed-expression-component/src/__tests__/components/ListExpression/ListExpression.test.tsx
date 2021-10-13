@@ -47,20 +47,20 @@ describe("ListExpression tests", () => {
       )
     ).toBeEmpty();
   });
-
-  test("should be able to render nested expressions", () => {
-    const { container } = render(
-      usingTestingBoxedExpressionI18nContext(
-        <ListExpression uid={nextId()} logicType={LogicType.List} items={[{ logicType: LogicType.List }]} />
-      ).wrapper
-    );
-
-    expect(container.querySelectorAll(".list-expression")).toHaveLength(2);
-    expect(container.querySelector(".list-expression .table-component.id1 td.data-cell .list-expression")).toBeTruthy();
-    expect(
-      container.querySelector(
-        ".list-expression .table-component.id2 tbody td.data-cell .literal-expression .literal-expression-body textarea"
-      )
-    ).toBeEmpty();
-  });
+  //
+  // test("should be able to render nested expressions", () => {
+  //   const { container } = render(
+  //     usingTestingBoxedExpressionI18nContext(
+  //       <ListExpression uid={nextId()} logicType={LogicType.List} items={[{ logicType: LogicType.List }]} />
+  //     ).wrapper
+  //   );
+  //
+  //   expect(container.querySelectorAll(".list-expression")).toHaveLength(2);
+  //   expect(container.querySelector(".list-expression .table-component.id1 td.data-cell .list-expression")).toBeTruthy();
+  //   expect(
+  //     container.querySelector(
+  //       ".list-expression .table-component.id2 tbody td.data-cell .literal-expression .literal-expression-body textarea"
+  //     )
+  //   ).toBeEmpty();
+  // });
 });

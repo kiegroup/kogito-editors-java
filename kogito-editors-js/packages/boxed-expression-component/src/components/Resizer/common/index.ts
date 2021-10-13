@@ -27,7 +27,20 @@ export const widthValue = (width: number | string | undefined | null): number =>
  * Generates a global supervisor hash for a given object.
  */
 export const hashfy = (obj = {}): string => {
-  return JSON.stringify(obj);
+  const getCircularReplacer = () => {
+    const seen = new WeakSet();
+    return (key: string, value: unknown) => {
+      if (typeof value === "object" && value !== null) {
+        if (seen.has(value)) {
+          return;
+        }
+        seen.add(value);
+      }
+      return value;
+    };
+  };
+
+  return JSON.stringify(obj, getCircularReplacer());
 };
 
 /*

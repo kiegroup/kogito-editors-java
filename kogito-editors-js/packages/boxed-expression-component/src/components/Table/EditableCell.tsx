@@ -20,7 +20,7 @@ import "monaco-editor/dev/vs/editor/editor.main.css";
 import * as React from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { CellProps } from "../../api";
-import { blurActiveElement, focusNextTextArea, focusTextArea } from "./common/FocusUtils";
+import { blurActiveElement, focusNextTextArea, focusTextArea, firstIterableValue, paste } from "./common";
 import "./EditableCell.css";
 
 const CELL_LINE_HEIGHT = 20;
@@ -56,6 +56,7 @@ export interface EditableCellProps extends CellProps {
 }
 
 export function EditableCell({ value, rowIndex, columnId, onCellUpdate, readOnly }: EditableCellProps) {
+  const [cellValue, setCellValue] = useState(value);
   const [isSelected, setIsSelected] = useState(false);
   const [mode, setMode] = useState(READ_MODE);
   const [cellHeight, setCellHeight] = useState(CELL_LINE_HEIGHT * 3);
@@ -73,11 +74,15 @@ export function EditableCell({ value, rowIndex, columnId, onCellUpdate, readOnly
     }
   }, [value]);
 
-  const isEditMode = useMemo(() => mode === EDIT_MODE, [mode]);
+  useEffect(() => {
+    if (cellValue !== value) {
+      setCellValue(value);
+    }
+  }, [cellValue, value]);
 
   const triggerReadMode = useCallback(
     (newValue?: string) => {
-      if (!isEditMode) {
+      if (mode !== EDIT_MODE) {
         return;
       }
 
@@ -89,7 +94,7 @@ export function EditableCell({ value, rowIndex, columnId, onCellUpdate, readOnly
 
       focusTextArea(textarea.current);
     },
-    [columnId, isEditMode, onCellUpdate, rowIndex, value]
+    [mode, columnId, onCellUpdate, rowIndex, value]
   );
 
   const triggerEditMode = useCallback(() => {
@@ -103,12 +108,12 @@ export function EditableCell({ value, rowIndex, columnId, onCellUpdate, readOnly
   }, [isSelected, mode]);
 
   const onFocus = useCallback(() => {
-    if (isEditMode) {
+    if (mode === EDIT_MODE) {
       return;
     }
     setIsSelected(true);
     focusTextArea(textarea.current);
-  }, [isEditMode]);
+  }, [mode]);
 
   const onClick = useCallback(() => {
     if (document.activeElement !== textarea.current) {
@@ -122,16 +127,30 @@ export function EditableCell({ value, rowIndex, columnId, onCellUpdate, readOnly
 
   const onTextAreaChange = useCallback(
     (event) => {
-      onCellUpdate(rowIndex, columnId, event.target.value.trim());
+      const newValue: string = event.target.value.trim("") || "";
+      const isPastedValue = newValue.includes("\t") || newValue.includes("\n");
+
+      if (textarea.current && isPastedValue) {
+        const pasteValue = newValue.slice(value.length);
+        const firstCellValue = firstIterableValue(pasteValue);
+
+        paste(pasteValue, textarea.current);
+        setCellValue(firstCellValue);
+        triggerReadMode();
+        return;
+      }
+
+      setCellValue(newValue);
       triggerEditMode();
     },
-    [triggerEditMode, onCellUpdate, columnId, rowIndex]
+    [triggerEditMode, value, triggerReadMode]
   );
 
   // Feel Handlers ===========================================================
 
   const onFeelBlur = useCallback(
     (newValue: string) => {
+      setCellValue(newValue);
       triggerReadMode(newValue);
     },
     [triggerReadMode]
@@ -151,10 +170,12 @@ export function EditableCell({ value, rowIndex, columnId, onCellUpdate, readOnly
       }
 
       if (isEnter || isTab) {
+        setCellValue(newValue);
         triggerReadMode(newValue);
       }
 
       if (isEsc) {
+        setCellValue(newValue);
         triggerReadMode(previousValue);
       }
 
@@ -180,14 +201,14 @@ export function EditableCell({ value, rowIndex, columnId, onCellUpdate, readOnly
   }, []);
 
   const textValue = useMemo(() => {
-    if (!value) {
+    if (!cellValue) {
       return "";
     }
-    if (value !== null && typeof value === "object") {
-      return value[columnId];
+    if (cellValue !== null && typeof cellValue === "object") {
+      return cellValue[columnId];
     }
-    return `${value}`;
-  }, [value, columnId]);
+    return `${cellValue}`;
+  }, [cellValue, columnId]);
 
   return (
     <>
@@ -208,7 +229,7 @@ export function EditableCell({ value, rowIndex, columnId, onCellUpdate, readOnly
           readOnly={readOnly}
         />
         <FeelInput
-          enabled={isEditMode}
+          enabled={mode === EDIT_MODE}
           value={textValue}
           onKeyDown={onFeelKeyDown}
           onChange={onFeelChange}
