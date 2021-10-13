@@ -16,7 +16,7 @@
 
 import "../../__mocks__/ReactWithSupervisor";
 import { DataType, LogicType } from "../../../api";
-import { fireEvent, render } from "@testing-library/react";
+import { fireEvent, render, waitFor } from "@testing-library/react";
 import { flushPromises, usingTestingBoxedExpressionI18nContext } from "../test-utils";
 import { act } from "react-dom/test-utils";
 import * as React from "react";
@@ -85,32 +85,6 @@ describe("Logic type selection", () => {
 
     expect(baseElement.querySelector(".logic-type-selector")).toBeTruthy();
     expect(baseElement.querySelector(".logic-type-selector")).toHaveClass("logic-type-selected");
-  });
-
-  test("should reset the selection, when logic type is selected and clear button gets clicked", async () => {
-    const expression = { name: "Test", logicType: LogicType.LiteralExpression, dataType: DataType.Undefined };
-
-    const { baseElement } = render(
-      usingTestingBoxedExpressionI18nContext(
-        <LogicTypeSelector
-          selectedExpression={expression}
-          getPlacementRef={() => document.body as HTMLDivElement}
-          onLogicTypeResetting={_.identity}
-          onLogicTypeUpdating={_.identity}
-        />
-      ).wrapper
-    );
-
-    await triggerContextMenu(baseElement as HTMLElement, ".logic-type-selector");
-
-    act(() => {
-      const clearButtonElement = baseElement.querySelector(".context-menu-container button")!;
-      const clearButton = clearButtonElement as HTMLButtonElement;
-      clearButton.click();
-    });
-
-    expect(baseElement.querySelector(".logic-type-selector")).toBeTruthy();
-    expect(baseElement.querySelector(".logic-type-selector")).toHaveClass("logic-type-not-present");
   });
 });
 

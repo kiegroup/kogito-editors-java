@@ -15,9 +15,10 @@
  */
 
 import * as React from "react";
-import { render } from "@testing-library/react";
+import { fireEvent, render } from "@testing-library/react";
 import { BoxedExpressionEditor } from "../../../components";
-import { DataType, ExpressionProps } from "../../../api";
+import { DataType, ExpressionProps, LogicType } from "../../../api";
+import { act } from "react-dom/test-utils";
 
 describe("BoxedExpressionEditor tests", () => {
   test("should render BoxedExpressionEditor component", () => {
@@ -26,5 +27,26 @@ describe("BoxedExpressionEditor tests", () => {
     const { container } = render(<BoxedExpressionEditor expressionDefinition={selectedExpression} />);
 
     expect(container).toMatchSnapshot();
+  });
+
+  test("should reset the selection, when logic type is selected and clear button gets clicked", async () => {
+    const expression = {
+      name: "Test",
+      logicType: LogicType.LiteralExpression,
+      dataType: DataType.Undefined,
+    };
+
+    const { baseElement } = render(<BoxedExpressionEditor expressionDefinition={expression} />);
+
+    fireEvent.contextMenu(baseElement.querySelector(".logic-type-selector") as HTMLElement);
+
+    act(() => {
+      const clearButtonElement = baseElement.querySelector(".context-menu-container button")!;
+      const clearButton = clearButtonElement as HTMLButtonElement;
+      clearButton.click();
+    });
+
+    expect(baseElement.querySelector(".logic-type-selector")).toBeTruthy();
+    expect(baseElement.querySelector(".logic-type-selector")).toHaveClass("logic-type-not-present");
   });
 });
