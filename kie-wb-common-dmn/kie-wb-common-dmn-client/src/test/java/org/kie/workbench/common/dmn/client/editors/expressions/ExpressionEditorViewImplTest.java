@@ -30,6 +30,7 @@ import com.google.gwt.user.client.Element;
 import elemental2.dom.DOMTokenList;
 import elemental2.dom.HTMLAnchorElement;
 import elemental2.dom.HTMLDivElement;
+import org.assertj.core.util.Arrays;
 import org.jboss.errai.common.client.dom.Anchor;
 import org.jboss.errai.common.client.dom.Span;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
@@ -42,10 +43,28 @@ import org.kie.workbench.common.dmn.api.definition.model.Expression;
 import org.kie.workbench.common.dmn.api.definition.model.LiteralExpression;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.client.commands.factory.DefaultCanvasCommandFactory;
+import org.kie.workbench.common.dmn.client.editors.expressions.commands.ClearExpressionCommand;
+import org.kie.workbench.common.dmn.client.editors.expressions.commands.FillContextExpressionCommand;
+import org.kie.workbench.common.dmn.client.editors.expressions.commands.FillDecisionTableExpressionCommand;
+import org.kie.workbench.common.dmn.client.editors.expressions.commands.FillExpressionCommand;
+import org.kie.workbench.common.dmn.client.editors.expressions.commands.FillFunctionExpressionCommand;
+import org.kie.workbench.common.dmn.client.editors.expressions.commands.FillInvocationExpressionCommand;
+import org.kie.workbench.common.dmn.client.editors.expressions.commands.FillListExpressionCommand;
+import org.kie.workbench.common.dmn.client.editors.expressions.commands.FillLiteralExpressionCommand;
+import org.kie.workbench.common.dmn.client.editors.expressions.commands.FillRelationExpressionCommand;
+import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.Annotation;
+import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.Clause;
+import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.Column;
+import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.ContextEntryProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.ContextProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.DecisionTableProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.DecisionTableRule;
+import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.ExpressionProps;
+import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.FunctionProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.InvocationProps;
+import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.ListProps;
+import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.LiteralProps;
+import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.RelationProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinition;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinitions;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.function.supplementary.pmml.PMMLDocumentMetadataProvider;
@@ -64,11 +83,16 @@ import org.kie.workbench.common.dmn.client.widgets.panel.DMNGridPanelContainer;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.DomainObjectSelectionEvent;
+import org.kie.workbench.common.stunner.core.client.command.CanvasCommand;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
+import org.kie.workbench.common.stunner.core.command.impl.CompositeCommand;
+import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
+import org.kie.workbench.common.stunner.core.graph.processing.index.Index;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
 import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
+import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.uberfire.ext.wires.core.grids.client.model.impl.BaseGridData;
@@ -97,6 +121,7 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyObject;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -108,9 +133,12 @@ import static org.mockito.Mockito.when;
 @RunWith(LienzoMockitoTestRunner.class)
 public class ExpressionEditorViewImplTest {
 
+    private static final String AGGREGATION = "aggregation";
     private static final String NODE_UUID = "uuid";
-
     private static final String UNDEFINED_EXPRESSION_DEFINITION_NAME = "Undefined";
+    private static final String NAME = "name";
+    private static final String DATA_TYPE = "dataType";
+    private static final String HIT_POLICY = "hitPolicy";
 
     @Mock
     private Anchor returnToLink;
@@ -220,6 +248,9 @@ public class ExpressionEditorViewImplTest {
     @Mock
     private HTMLDivElement dmnExpressionEditor;
 
+    @Mock
+    private AbstractCanvasHandler canvasHandler;
+
     @Captor
     private ArgumentCaptor<Transform> transformArgumentCaptor;
 
@@ -231,6 +262,9 @@ public class ExpressionEditorViewImplTest {
 
     @Captor
     private ArgumentCaptor<KeyboardOperation> keyboardOperationArgumentCaptor;
+
+    @Captor
+    private ArgumentCaptor<FillExpressionCommand> commandCaptor;
 
     private ExpressionGridCache expressionGridCache;
 
@@ -249,6 +283,7 @@ public class ExpressionEditorViewImplTest {
         when(session.getGridLayer()).thenReturn(gridLayer);
         when(session.getCellEditorControls()).thenReturn(cellEditorControls);
         when(session.getMousePanMediator()).thenReturn(mousePanMediator);
+        when(session.getCanvasHandler()).thenReturn(canvasHandler);
 
         doReturn(viewport).when(gridPanel).getViewport();
         doReturn(viewportMediators).when(viewport).getMediators();
@@ -284,6 +319,10 @@ public class ExpressionEditorViewImplTest {
                                                      dmnExpressionEditor));
         view.init(presenter);
         view.bind(session);
+
+        doReturn(hasExpression).when(view).getHasExpression();
+        doReturn(editorSelectedEvent).when(view).getEditorSelectedEvent();
+        doReturn(NODE_UUID).when(view).getNodeUUID();
 
         final ExpressionEditorDefinitions expressionEditorDefinitions = new ExpressionEditorDefinitions();
         expressionEditorDefinitions.add(undefinedExpressionEditorDefinition);
@@ -545,10 +584,10 @@ public class ExpressionEditorViewImplTest {
     @Test
     public void testIsValidExpression_WhenIsDecisionTable() {
 
-        final DecisionTableProps expressionProps = new DecisionTableProps("name",
+        final DecisionTableProps expressionProps = new DecisionTableProps(NAME,
                                                                           "data type",
                                                                           "hit policy",
-                                                                          "aggregation",
+                                                                          AGGREGATION,
                                                                           null,
                                                                           null,
                                                                           null,
@@ -561,6 +600,7 @@ public class ExpressionEditorViewImplTest {
         verify(view).isValidDecisionTableProps(expressionProps);
         verify(view, never()).isValidContextProps(any());
         verify(view, never()).isValidInvocationProps(any());
+        verify(view, never()).isValidRelationProps(any());
 
         assertTrue(isValid);
     }
@@ -568,7 +608,7 @@ public class ExpressionEditorViewImplTest {
     @Test
     public void testIsValidExpression_WhenIsContext() {
 
-        final ContextProps expressionProps = new ContextProps("name",
+        final ContextProps expressionProps = new ContextProps(NAME,
                                                               null,
                                                               null,
                                                               null,
@@ -582,6 +622,27 @@ public class ExpressionEditorViewImplTest {
         verify(view, never()).isValidDecisionTableProps(any());
         verify(view).isValidContextProps(expressionProps);
         verify(view, never()).isValidInvocationProps(any());
+        verify(view, never()).isValidRelationProps(any());
+
+        assertTrue(isValid);
+    }
+
+    @Test
+    public void testIsValidExpression_WhenIsRelation() {
+
+        final RelationProps expressionProps = new RelationProps(NAME,
+                                                                null,
+                                                                null,
+                                                                null);
+
+        doReturn(true).when(view).isValidRelationProps(any());
+
+        final boolean isValid = view.isValidExpression(expressionProps);
+
+        verify(view, never()).isValidDecisionTableProps(any());
+        verify(view, never()).isValidContextProps(any());
+        verify(view, never()).isValidInvocationProps(any());
+        verify(view).isValidRelationProps(expressionProps);
 
         assertTrue(isValid);
     }
@@ -589,7 +650,7 @@ public class ExpressionEditorViewImplTest {
     @Test
     public void testIsValidExpression_WhenIsInvocation() {
 
-        final InvocationProps expressionProps = new InvocationProps("name",
+        final InvocationProps expressionProps = new InvocationProps(NAME,
                                                                     null,
                                                                     null,
                                                                     null,
@@ -603,16 +664,17 @@ public class ExpressionEditorViewImplTest {
         verify(view, never()).isValidDecisionTableProps(any());
         verify(view, never()).isValidContextProps(any());
         verify(view).isValidInvocationProps(expressionProps);
+        verify(view, never()).isValidRelationProps(any());
 
         assertTrue(isValid);
     }
 
     @Test
     public void testIsValidDecisionTableProps_WhenIsValid() {
-        final DecisionTableProps expressionProps = new DecisionTableProps("name",
+        final DecisionTableProps expressionProps = new DecisionTableProps(NAME,
                                                                           "data type",
                                                                           "hit policy",
-                                                                          "aggregation",
+                                                                          AGGREGATION,
                                                                           null,
                                                                           null,
                                                                           null,
@@ -620,7 +682,7 @@ public class ExpressionEditorViewImplTest {
 
         doReturn(true).when(view).haveAllClauses(expressionProps);
         doReturn(true).when(view).haveAtLeastOneColumnSizeDefined(expressionProps);
-        doReturn(false).when(view).areRulesValid(expressionProps);
+        doReturn(true).when(view).areRulesValid(expressionProps);
 
         final boolean isValid = view.isValidDecisionTableProps(expressionProps);
 
@@ -632,11 +694,11 @@ public class ExpressionEditorViewImplTest {
     }
 
     @Test
-    public void testIsValidDecisionTableProps_WhenHaveNullClause() {
-        final DecisionTableProps expressionProps = new DecisionTableProps("name",
+    public void testIsValidDecisionTableProps_WhenRulesAreNotValid() {
+        final DecisionTableProps expressionProps = new DecisionTableProps(NAME,
                                                                           "data type",
                                                                           "hit policy",
-                                                                          "aggregation",
+                                                                          AGGREGATION,
                                                                           null,
                                                                           null,
                                                                           null,
@@ -644,7 +706,7 @@ public class ExpressionEditorViewImplTest {
 
         doReturn(true).when(view).haveAllClauses(expressionProps);
         doReturn(true).when(view).haveAtLeastOneColumnSizeDefined(expressionProps);
-        doReturn(true).when(view).areRulesValid(expressionProps);
+        doReturn(false).when(view).areRulesValid(expressionProps);
 
         final boolean isValid = view.isValidDecisionTableProps(expressionProps);
 
@@ -657,10 +719,10 @@ public class ExpressionEditorViewImplTest {
 
     @Test
     public void testIsValidDecisionTableProps_WhenDoesntHaveColumnSizeDefined() {
-        final DecisionTableProps expressionProps = new DecisionTableProps("name",
+        final DecisionTableProps expressionProps = new DecisionTableProps(NAME,
                                                                           "data type",
                                                                           "hit policy",
-                                                                          "aggregation",
+                                                                          AGGREGATION,
                                                                           null,
                                                                           null,
                                                                           null,
@@ -668,7 +730,7 @@ public class ExpressionEditorViewImplTest {
 
         doReturn(true).when(view).haveAllClauses(expressionProps);
         doReturn(false).when(view).haveAtLeastOneColumnSizeDefined(expressionProps);
-        doReturn(false).when(view).areRulesValid(expressionProps);
+        doReturn(true).when(view).areRulesValid(expressionProps);
 
         final boolean isValid = view.isValidDecisionTableProps(expressionProps);
 
@@ -680,11 +742,11 @@ public class ExpressionEditorViewImplTest {
     }
 
     @Test
-    public void testIsValidDecisionTableProps_WhenRulesAreNotValid() {
-        final DecisionTableProps expressionProps = new DecisionTableProps("name",
+    public void testIsValidDecisionTableProps_WhenDoesntHaveAllClauses() {
+        final DecisionTableProps expressionProps = new DecisionTableProps(NAME,
                                                                           "data type",
                                                                           "hit policy",
-                                                                          "aggregation",
+                                                                          AGGREGATION,
                                                                           null,
                                                                           null,
                                                                           null,
@@ -709,10 +771,10 @@ public class ExpressionEditorViewImplTest {
 
         final DecisionTableRule[] rules = new DecisionTableRule[]{rule1, rule2};
 
-        final DecisionTableProps expressionProps = new DecisionTableProps("name",
+        final DecisionTableProps expressionProps = new DecisionTableProps(NAME,
                                                                           "data type",
                                                                           "hit policy",
-                                                                          "aggregation",
+                                                                          AGGREGATION,
                                                                           null,
                                                                           null,
                                                                           null,
@@ -740,10 +802,10 @@ public class ExpressionEditorViewImplTest {
 
         final DecisionTableRule[] rules = new DecisionTableRule[]{rule1};
 
-        final DecisionTableProps expressionProps = new DecisionTableProps("name",
+        final DecisionTableProps expressionProps = new DecisionTableProps(NAME,
                                                                           "data type",
                                                                           "hit policy",
-                                                                          "aggregation",
+                                                                          AGGREGATION,
                                                                           null,
                                                                           null,
                                                                           null,
@@ -766,10 +828,10 @@ public class ExpressionEditorViewImplTest {
 
         final DecisionTableRule[] rules = new DecisionTableRule[]{rule1};
 
-        final DecisionTableProps expressionProps = new DecisionTableProps("name",
+        final DecisionTableProps expressionProps = new DecisionTableProps(NAME,
                                                                           "data type",
                                                                           "hit policy",
-                                                                          "aggregation",
+                                                                          AGGREGATION,
                                                                           null,
                                                                           null,
                                                                           null,
@@ -848,5 +910,819 @@ public class ExpressionEditorViewImplTest {
         final boolean haveHull = view.ruleHaveNullClauses(rule);
 
         assertTrue(haveHull);
+    }
+
+    @Test
+    public void testClear() {
+
+        final ExpressionContainerGrid expressionContainerGrid = mock(ExpressionContainerGrid.class);
+
+        doReturn(expressionContainerGrid).when(view).getExpressionContainerGrid();
+
+        view.clear();
+
+        verify(expressionContainerGrid).clearExpressionType();
+    }
+
+    @Test
+    public void testResetExpressionDefinition() {
+
+        final ExpressionProps props = new ExpressionProps(NAME,
+                                                          "datatype",
+                                                          "logicType");
+
+        view.resetExpressionDefinition(props);
+
+        verify(sessionCommandManager).execute(eq(canvasHandler),
+                                              commandCaptor.capture());
+
+        final FillExpressionCommand command = commandCaptor.getValue();
+
+        assertTrue(command instanceof ClearExpressionCommand);
+        assertCommandParameters(command, props);
+    }
+
+    private void assertCommandParameters(final FillExpressionCommand command,
+                                         final ExpressionProps props) {
+        assertEquals(hasExpression, command.getHasExpression());
+        assertEquals(props, command.getExpressionProps());
+        assertEquals(editorSelectedEvent, command.getEditorSelectedEvent());
+        assertEquals(NODE_UUID, command.getNodeUUID());
+    }
+
+    @Test
+    public void testBroadcastLiteralExpressionDefinition() {
+
+        final LiteralProps props = mock(LiteralProps.class);
+
+        doNothing().when(view).executeIfItHaveChanges(any());
+
+        view.broadcastLiteralExpressionDefinition(props);
+
+        verify(view).executeIfItHaveChanges(commandCaptor.capture());
+
+        final FillExpressionCommand command = commandCaptor.getValue();
+
+        assertTrue(command instanceof FillLiteralExpressionCommand);
+        assertCommandParameters(command, props);
+    }
+
+    @Test
+    public void testBroadcastContextExpressionDefinition_WhenIsValidContextProps() {
+
+        final ContextProps props = mock(ContextProps.class);
+
+        doReturn(true).when(view).isValidContextProps(props);
+
+        doNothing().when(view).executeIfItHaveChanges(any());
+
+        view.broadcastContextExpressionDefinition(props);
+
+        verify(view).executeIfItHaveChanges(commandCaptor.capture());
+
+        final FillExpressionCommand command = commandCaptor.getValue();
+
+        assertTrue(command instanceof FillContextExpressionCommand);
+        assertCommandParameters(command, props);
+    }
+
+    @Test
+    public void testBroadcastContextExpressionDefinition_WhenIsNotValidContextProps() {
+
+        final ContextProps props = mock(ContextProps.class);
+
+        doReturn(false).when(view).isValidContextProps(props);
+
+        doNothing().when(view).executeIfItHaveChanges(any());
+
+        view.broadcastContextExpressionDefinition(props);
+
+        verify(view, never()).executeIfItHaveChanges(any());
+    }
+
+    @Test
+    public void testIsValidContextProps() {
+
+        final ExpressionProps expression1 = mock(ExpressionProps.class);
+        final ExpressionProps expression2 = mock(ExpressionProps.class);
+
+        final ContextEntryProps entry1 = new ContextEntryProps(null, expression1);
+        final ContextEntryProps entry2 = new ContextEntryProps(null, expression2);
+
+        final ContextProps props = new ContextProps(null,
+                                                    null,
+                                                    new ContextEntryProps[]{entry1, entry2},
+                                                    null,
+                                                    null,
+                                                    null);
+
+        doReturn(true).when(view).isValidExpression(expression1);
+        doReturn(true).when(view).isValidExpression(expression2);
+
+        final boolean isValid = view.isValidContextProps(props);
+
+        assertTrue(isValid);
+
+        verify(view).isValidExpression(expression1);
+        verify(view).isValidExpression(expression2);
+    }
+
+    @Test
+    public void testIsValidContextProps_WhenDoesNotContainsValidEntryExpression() {
+
+        final ExpressionProps expression1 = mock(ExpressionProps.class);
+
+        final ContextEntryProps entry1 = new ContextEntryProps(null, expression1);
+
+        final ContextProps props = new ContextProps(null,
+                                                    null,
+                                                    new ContextEntryProps[]{entry1},
+                                                    null,
+                                                    null,
+                                                    null);
+
+        doReturn(false).when(view).isValidExpression(expression1);
+
+        final boolean isValid = view.isValidContextProps(props);
+
+        assertFalse(isValid);
+
+        verify(view).isValidExpression(expression1);
+    }
+
+    @Test
+    public void testIsValidContextProps_WhenDoesNotContainsEntries() {
+
+        final ContextProps props = new ContextProps(null,
+                                                    null,
+                                                    null,
+                                                    null,
+                                                    null,
+                                                    null);
+
+        final boolean isValid = view.isValidContextProps(props);
+
+        assertFalse(isValid);
+    }
+
+    @Test
+    public void testBroadcastContextExpressionDefinition_WhenIsValidProps() {
+
+        final RelationProps props = mock(RelationProps.class);
+
+        doReturn(true).when(view).isValidRelationProps(props);
+
+        doNothing().when(view).executeIfItHaveChanges(any());
+
+        view.broadcastRelationExpressionDefinition(props);
+
+        verify(view).executeIfItHaveChanges(commandCaptor.capture());
+
+        final FillExpressionCommand command = commandCaptor.getValue();
+
+        assertTrue(command instanceof FillRelationExpressionCommand);
+        assertCommandParameters(command, props);
+    }
+
+    @Test
+    public void testBroadcastContextExpressionDefinition_WhenIsNotValidProps() {
+
+        final RelationProps props = mock(RelationProps.class);
+
+        doReturn(false).when(view).isValidRelationProps(props);
+
+        doNothing().when(view).executeIfItHaveChanges(any());
+
+        view.broadcastRelationExpressionDefinition(props);
+
+        verify(view, never()).executeIfItHaveChanges(any());
+    }
+
+    @Test
+    public void testBroadcastListExpressionDefinition() {
+
+        final ListProps props = mock(ListProps.class);
+
+        doNothing().when(view).executeIfItHaveChanges(any());
+
+        view.broadcastListExpressionDefinition(props);
+
+        verify(view).executeIfItHaveChanges(commandCaptor.capture());
+
+        final FillExpressionCommand command = commandCaptor.getValue();
+
+        assertTrue(command instanceof FillListExpressionCommand);
+        assertCommandParameters(command, props);
+    }
+
+    @Test
+    public void testBroadcastInvocationExpressionDefinition_WhenIsValidProps() {
+
+        final InvocationProps props = mock(InvocationProps.class);
+
+        doReturn(true).when(view).isValidInvocationProps(props);
+
+        doNothing().when(view).executeIfItHaveChanges(any());
+
+        view.broadcastInvocationExpressionDefinition(props);
+
+        verify(view).executeIfItHaveChanges(commandCaptor.capture());
+
+        final FillExpressionCommand command = commandCaptor.getValue();
+
+        assertTrue(command instanceof FillInvocationExpressionCommand);
+        assertCommandParameters(command, props);
+    }
+
+    @Test
+    public void testBroadcastInvocationExpressionDefinition_WhenIsNotValidProps() {
+
+        final InvocationProps props = mock(InvocationProps.class);
+
+        doReturn(false).when(view).isValidInvocationProps(props);
+
+        doNothing().when(view).executeIfItHaveChanges(any());
+
+        view.broadcastInvocationExpressionDefinition(props);
+
+        verify(view, never()).executeIfItHaveChanges(any());
+    }
+
+    @Test
+    public void testBroadcastFunctionExpressionDefinition() {
+
+        final FunctionProps props = mock(FunctionProps.class);
+
+        doNothing().when(view).executeIfItHaveChanges(any());
+
+        view.broadcastFunctionExpressionDefinition(props);
+
+        verify(view).executeIfItHaveChanges(commandCaptor.capture());
+
+        final FillExpressionCommand command = commandCaptor.getValue();
+
+        assertTrue(command instanceof FillFunctionExpressionCommand);
+        assertCommandParameters(command, props);
+    }
+
+    @Test
+    public void testBroadcastDecisionTableExpressionDefinition_WhenIsValidProps() {
+
+        final DecisionTableProps props = mock(DecisionTableProps.class);
+
+        doReturn(true).when(view).isValidDecisionTableProps(props);
+
+        doNothing().when(view).executeIfItHaveChanges(any());
+
+        view.broadcastDecisionTableExpressionDefinition(props);
+
+        verify(view).executeIfItHaveChanges(commandCaptor.capture());
+
+        final FillExpressionCommand command = commandCaptor.getValue();
+
+        assertTrue(command instanceof FillDecisionTableExpressionCommand);
+        assertCommandParameters(command, props);
+    }
+
+    @Test
+    public void testBroadcastDecisionTableExpressionDefinition_WhenIsNotValidProps() {
+
+        final ContextProps props = mock(ContextProps.class);
+
+        doReturn(false).when(view).isValidContextProps(props);
+
+        doNothing().when(view).executeIfItHaveChanges(any());
+
+        view.broadcastContextExpressionDefinition(props);
+
+        verify(view, never()).executeIfItHaveChanges(any());
+    }
+
+    @Test
+    public void testColumnsMatchesRows() {
+
+        final Column[] columns = new Column[3];
+        final String[][] rows = new String[1][3];
+
+        final boolean matches = view.columnsMatchesRows(columns, rows);
+
+        assertTrue(matches);
+    }
+
+    @Test
+    public void testColumnsMatchesRows_WhenDoesnt() {
+
+        final Column[] columns = new Column[2];
+        final String[][] rows = new String[1][3];
+
+        final boolean matches = view.columnsMatchesRows(columns, rows);
+
+        assertFalse(matches);
+    }
+
+    @Test
+    public void testIsValidRelationProps() {
+
+        final Column column1 = new Column(null, null, 0.0d);
+        final Column column2 = new Column(null, null, 0.0d);
+        final Column[] columns = Arrays.array(column1, column2);
+        final String[][] rows = new String[0][];
+
+        final RelationProps relationProps = new RelationProps(NAME,
+                                                              DATA_TYPE,
+                                                              columns,
+                                                              new String[0][]);
+        doReturn(true).when(view).columnsMatchesRows(columns, rows);
+
+        final boolean isValid = view.isValidRelationProps(relationProps);
+
+        assertTrue(isValid);
+
+        verify(view).columnsMatchesRows(columns, rows);
+    }
+
+    @Test
+    public void testIsValidRelationProps_WhenColumnsDoesntMatchRows() {
+
+        final Column column1 = new Column(null, null, 0.0d);
+        final Column column2 = new Column(null, null, 0.0d);
+        final Column[] columns = Arrays.array(column1, column2);
+        final String[][] rows = new String[0][];
+
+        final RelationProps relationProps = new RelationProps(NAME,
+                                                              DATA_TYPE,
+                                                              columns,
+                                                              new String[0][]);
+        doReturn(false).when(view).columnsMatchesRows(columns, rows);
+
+        final boolean isValid = view.isValidRelationProps(relationProps);
+
+        assertFalse(isValid);
+
+        verify(view).columnsMatchesRows(columns, rows);
+    }
+
+    @Test
+    public void testIsValidRelationProps_WhenDoestHaveColumnWithNullWidth() {
+
+        final Column column1 = new Column(null, null, 0.0d);
+        final Column column2 = new Column(null, null, null);
+        final Column[] columns = Arrays.array(column1, column2);
+        final String[][] rows = new String[0][];
+
+        final RelationProps relationProps = new RelationProps(NAME,
+                                                              DATA_TYPE,
+                                                              columns,
+                                                              new String[0][]);
+        doReturn(true).when(view).columnsMatchesRows(columns, rows);
+
+        final boolean isValid = view.isValidRelationProps(relationProps);
+
+        assertFalse(isValid);
+
+        verify(view).columnsMatchesRows(columns, rows);
+    }
+
+    @Test
+    public void testHaveAllClauses() {
+
+        final Annotation[] annotations = new Annotation[0];
+        final Clause[] input = new Clause[0];
+        final Clause[] output = new Clause[0];
+
+        final DecisionTableProps decisionTableProps = new DecisionTableProps(NAME,
+                                                                             DATA_TYPE,
+                                                                             HIT_POLICY,
+                                                                             AGGREGATION,
+                                                                             annotations,
+                                                                             input,
+                                                                             output,
+                                                                             null);
+
+        final boolean haveAllClauses = view.haveAllClauses(decisionTableProps);
+
+        assertTrue(haveAllClauses);
+    }
+
+    @Test
+    public void testHaveAllClauses_WhenDoesntHaveInput() {
+
+        final Annotation[] annotations = new Annotation[0];
+        final Clause[] output = new Clause[0];
+
+        final DecisionTableProps decisionTableProps = new DecisionTableProps(NAME,
+                                                                             DATA_TYPE,
+                                                                             HIT_POLICY,
+                                                                             AGGREGATION,
+                                                                             annotations,
+                                                                             null,
+                                                                             output,
+                                                                             null);
+
+        final boolean haveAllClauses = view.haveAllClauses(decisionTableProps);
+
+        assertFalse(haveAllClauses);
+    }
+
+    @Test
+    public void testHaveAllClauses_WhenDoesntHaveAnnotations() {
+
+        final Clause[] input = new Clause[0];
+        final Clause[] output = new Clause[0];
+
+        final DecisionTableProps decisionTableProps = new DecisionTableProps(NAME,
+                                                                             DATA_TYPE,
+                                                                             HIT_POLICY,
+                                                                             AGGREGATION,
+                                                                             null,
+                                                                             input,
+                                                                             output,
+                                                                             null);
+
+        final boolean haveAllClauses = view.haveAllClauses(decisionTableProps);
+
+        assertFalse(haveAllClauses);
+    }
+
+    @Test
+    public void testHaveAllClauses_WhenDoesntHaveOutput() {
+
+        final Annotation[] annotations = new Annotation[0];
+        final Clause[] input = new Clause[0];
+
+        final DecisionTableProps decisionTableProps = new DecisionTableProps(NAME,
+                                                                             DATA_TYPE,
+                                                                             HIT_POLICY,
+                                                                             AGGREGATION,
+                                                                             annotations,
+                                                                             input,
+                                                                             null,
+                                                                             null);
+
+        final boolean haveAllClauses = view.haveAllClauses(decisionTableProps);
+
+        assertFalse(haveAllClauses);
+    }
+
+    @Test
+    public void testHaveAtLeastOneColumnSizeDefined_WhenDoesnt() {
+
+        final Annotation annotation1 = new Annotation(NAME, null);
+        final Annotation annotation2 = new Annotation(NAME, null);
+        final Clause input1 = new Clause(NAME, DATA_TYPE, null);
+        final Clause input2 = new Clause(NAME, DATA_TYPE, null);
+        final Clause output1 = new Clause(NAME, DATA_TYPE, null);
+        final Clause output2 = new Clause(NAME, DATA_TYPE, null);
+        final Annotation[] annotations = Arrays.array(annotation1, annotation2);
+        final Clause[] input = Arrays.array(input1, input2);
+        final Clause[] output = Arrays.array(output1, output2);
+
+        final DecisionTableProps decisionTableProps = new DecisionTableProps(NAME,
+                                                                             DATA_TYPE,
+                                                                             HIT_POLICY,
+                                                                             AGGREGATION,
+                                                                             annotations,
+                                                                             input,
+                                                                             output,
+                                                                             null);
+
+        final boolean isDefined = view.haveAtLeastOneColumnSizeDefined(decisionTableProps);
+
+        assertFalse(isDefined);
+    }
+
+    @Test
+    public void testHaveAtLeastOneColumnSizeDefined_WhenIsAnInput() {
+
+        final Annotation annotation1 = new Annotation(NAME, null);
+        final Annotation annotation2 = new Annotation(NAME, null);
+        final Clause input1 = new Clause(NAME, DATA_TYPE, null);
+        final Clause input2 = new Clause(NAME, DATA_TYPE, 1.0);
+        final Clause output1 = new Clause(NAME, DATA_TYPE, null);
+        final Clause output2 = new Clause(NAME, DATA_TYPE, null);
+        final Annotation[] annotations = Arrays.array(annotation1, annotation2);
+        final Clause[] input = Arrays.array(input1, input2);
+        final Clause[] output = Arrays.array(output1, output2);
+
+        final DecisionTableProps decisionTableProps = new DecisionTableProps(NAME,
+                                                                             DATA_TYPE,
+                                                                             HIT_POLICY,
+                                                                             AGGREGATION,
+                                                                             annotations,
+                                                                             input,
+                                                                             output,
+                                                                             null);
+
+        final boolean isDefined = view.haveAtLeastOneColumnSizeDefined(decisionTableProps);
+
+        assertTrue(isDefined);
+    }
+
+    @Test
+    public void testHaveAtLeastOneColumnSizeDefined_WhenIsAnOutput() {
+
+        final Annotation annotation1 = new Annotation(NAME, null);
+        final Annotation annotation2 = new Annotation(NAME, null);
+        final Clause input1 = new Clause(NAME, DATA_TYPE, null);
+        final Clause input2 = new Clause(NAME, DATA_TYPE, null);
+        final Clause output1 = new Clause(NAME, DATA_TYPE, null);
+        final Clause output2 = new Clause(NAME, DATA_TYPE, 1.0);
+        final Annotation[] annotations = Arrays.array(annotation1, annotation2);
+        final Clause[] input = Arrays.array(input1, input2);
+        final Clause[] output = Arrays.array(output1, output2);
+
+        final DecisionTableProps decisionTableProps = new DecisionTableProps(NAME,
+                                                                             DATA_TYPE,
+                                                                             HIT_POLICY,
+                                                                             AGGREGATION,
+                                                                             annotations,
+                                                                             input,
+                                                                             output,
+                                                                             null);
+
+        final boolean isDefined = view.haveAtLeastOneColumnSizeDefined(decisionTableProps);
+
+        assertTrue(isDefined);
+    }
+
+    @Test
+    public void testHaveAtLeastOneColumnSizeDefined_WhenIsAnAnnotation() {
+
+        final Annotation annotation1 = new Annotation(NAME, null);
+        final Annotation annotation2 = new Annotation(NAME, 1.0);
+        final Clause input1 = new Clause(NAME, DATA_TYPE, null);
+        final Clause input2 = new Clause(NAME, DATA_TYPE, null);
+        final Clause output1 = new Clause(NAME, DATA_TYPE, null);
+        final Clause output2 = new Clause(NAME, DATA_TYPE, null);
+        final Annotation[] annotations = Arrays.array(annotation1, annotation2);
+        final Clause[] input = Arrays.array(input1, input2);
+        final Clause[] output = Arrays.array(output1, output2);
+
+        final DecisionTableProps decisionTableProps = new DecisionTableProps(NAME,
+                                                                             DATA_TYPE,
+                                                                             HIT_POLICY,
+                                                                             AGGREGATION,
+                                                                             annotations,
+                                                                             input,
+                                                                             output,
+                                                                             null);
+
+        final boolean isDefined = view.haveAtLeastOneColumnSizeDefined(decisionTableProps);
+
+        assertTrue(isDefined);
+    }
+
+    @Test
+    public void testHaveAllEntries() {
+
+        final String[] inputEntries = new String[0];
+        final String[] annotationEntries = new String[0];
+        final String[] outputEntries = new String[0];
+        final DecisionTableRule rule = new DecisionTableRule(inputEntries, outputEntries, annotationEntries);
+
+        final Annotation[] annotations = new Annotation[0];
+        final Clause[] input = new Clause[0];
+        final Clause[] output = new Clause[0];
+        final DecisionTableProps decisionTableProps = new DecisionTableProps(NAME,
+                                                                             DATA_TYPE,
+                                                                             HIT_POLICY,
+                                                                             AGGREGATION,
+                                                                             annotations,
+                                                                             input,
+                                                                             output,
+                                                                             null);
+
+        final boolean haveAllEntries = view.haveAllEntries(decisionTableProps, rule);
+
+        assertTrue(haveAllEntries);
+    }
+
+    @Test
+    public void testHaveAllEntries_WhenDoesntHaveInputEntries() {
+
+        final String[] inputEntries = new String[1];
+        final String[] annotationEntries = new String[0];
+        final String[] outputEntries = new String[0];
+        final DecisionTableRule rule = new DecisionTableRule(inputEntries, outputEntries, annotationEntries);
+
+        final Annotation[] annotations = new Annotation[0];
+        final Clause[] input = new Clause[0];
+        final Clause[] output = new Clause[0];
+        final DecisionTableProps decisionTableProps = new DecisionTableProps(NAME,
+                                                                             DATA_TYPE,
+                                                                             HIT_POLICY,
+                                                                             AGGREGATION,
+                                                                             annotations,
+                                                                             input,
+                                                                             output,
+                                                                             null);
+
+        final boolean haveAllEntries = view.haveAllEntries(decisionTableProps, rule);
+
+        assertFalse(haveAllEntries);
+    }
+
+    @Test
+    public void testHaveAllEntries_WhenDoesntHaveOutputEntries() {
+
+        final String[] inputEntries = new String[0];
+        final String[] annotationEntries = new String[0];
+        final String[] outputEntries = new String[1];
+        final DecisionTableRule rule = new DecisionTableRule(inputEntries, outputEntries, annotationEntries);
+
+        final Annotation[] annotations = new Annotation[0];
+        final Clause[] input = new Clause[0];
+        final Clause[] output = new Clause[0];
+        final DecisionTableProps decisionTableProps = new DecisionTableProps(NAME,
+                                                                             DATA_TYPE,
+                                                                             HIT_POLICY,
+                                                                             AGGREGATION,
+                                                                             annotations,
+                                                                             input,
+                                                                             output,
+                                                                             null);
+
+        final boolean haveAllEntries = view.haveAllEntries(decisionTableProps, rule);
+
+        assertFalse(haveAllEntries);
+    }
+
+    @Test
+    public void testHaveAllEntries_WhenDoesntHaveAnnotationEntries() {
+
+        final String[] inputEntries = new String[0];
+        final String[] annotationEntries = new String[1];
+        final String[] outputEntries = new String[0];
+        final DecisionTableRule rule = new DecisionTableRule(inputEntries, outputEntries, annotationEntries);
+
+        final Annotation[] annotations = new Annotation[0];
+        final Clause[] input = new Clause[0];
+        final Clause[] output = new Clause[0];
+        final DecisionTableProps decisionTableProps = new DecisionTableProps(NAME,
+                                                                             DATA_TYPE,
+                                                                             HIT_POLICY,
+                                                                             AGGREGATION,
+                                                                             annotations,
+                                                                             input,
+                                                                             output,
+                                                                             null);
+
+        final boolean haveAllEntries = view.haveAllEntries(decisionTableProps, rule);
+
+        assertFalse(haveAllEntries);
+    }
+
+    @Test
+    public void testIsValidInvocationProps() {
+
+        final ExpressionProps entryExpression1 = mock(ExpressionProps.class);
+        final ExpressionProps entryExpression2 = mock(ExpressionProps.class);
+
+        final ContextEntryProps entry1 = new ContextEntryProps(null, entryExpression1);
+        final ContextEntryProps entry2 = new ContextEntryProps(null, entryExpression2);
+
+        final ContextEntryProps[] bindingEntries = Arrays.array(entry1, entry2);
+
+        doReturn(true).when(view).isValidExpression(entryExpression1);
+        doReturn(true).when(view).isValidExpression(entryExpression2);
+
+        final InvocationProps props = new InvocationProps(NAME,
+                                                          DATA_TYPE,
+                                                          null,
+                                                          bindingEntries,
+                                                          null,
+                                                          null);
+
+        final boolean isValid = view.isValidInvocationProps(props);
+
+        assertTrue(isValid);
+
+        verify(view).isValidExpression(entryExpression1);
+        verify(view).isValidExpression(entryExpression2);
+    }
+
+    @Test
+    public void testIsValidInvocationProps_WhenThereIsNoBindingEntries() {
+
+        final InvocationProps props = new InvocationProps(NAME,
+                                                          DATA_TYPE,
+                                                          null,
+                                                          null,
+                                                          null,
+                                                          null);
+
+        final boolean isValid = view.isValidInvocationProps(props);
+
+        assertTrue(isValid);
+    }
+
+    @Test
+    public void testIsValidInvocationProps_WhenThereIsAnInvalidExpression() {
+
+        final ExpressionProps entryExpression1 = mock(ExpressionProps.class);
+        final ExpressionProps entryExpression2 = mock(ExpressionProps.class);
+
+        final ContextEntryProps entry1 = new ContextEntryProps(null, entryExpression1);
+        final ContextEntryProps entry2 = new ContextEntryProps(null, entryExpression2);
+
+        final ContextEntryProps[] bindingEntries = Arrays.array(entry1, entry2);
+
+        doReturn(true).when(view).isValidExpression(entryExpression1);
+        doReturn(false).when(view).isValidExpression(entryExpression2);
+
+        final InvocationProps props = new InvocationProps(NAME,
+                                                          DATA_TYPE,
+                                                          null,
+                                                          bindingEntries,
+                                                          null,
+                                                          null);
+
+        final boolean isValid = view.isValidInvocationProps(props);
+
+        assertFalse(isValid);
+
+        verify(view).isValidExpression(entryExpression1);
+        verify(view).isValidExpression(entryExpression2);
+    }
+
+    @Test
+    public void executeIfItHaveChanges() {
+
+        final FillExpressionCommand command = mock(FillExpressionCommand.class);
+        final CompositeCommand.Builder commandBuilder = mock(CompositeCommand.Builder.class);
+
+        when(command.hasChanges()).thenReturn(true);
+
+        doNothing().when(view).addExpressionCommand(command, commandBuilder);
+        doNothing().when(view).addUpdatePropertyNameCommand(commandBuilder);
+        doNothing().when(view).execute(commandBuilder);
+        doReturn(commandBuilder).when(view).createCommandBuilder();
+
+        final InOrder inOrder = Mockito.inOrder(view);
+
+        view.executeIfItHaveChanges(command);
+
+        inOrder.verify(view).createCommandBuilder();
+        inOrder.verify(view).addExpressionCommand(command, commandBuilder);
+        inOrder.verify(view).addUpdatePropertyNameCommand(commandBuilder);
+        inOrder.verify(view).execute(commandBuilder);
+    }
+
+    @Test
+    public void executeIfItHaveChanges_WhenThereIsNot() {
+
+        final FillExpressionCommand command = mock(FillExpressionCommand.class);
+        final CompositeCommand.Builder commandBuilder = mock(CompositeCommand.Builder.class);
+
+        when(command.hasChanges()).thenReturn(false);
+
+        view.executeIfItHaveChanges(command);
+
+        verify(view, never()).createCommandBuilder();
+        verify(view, never()).addExpressionCommand(command, commandBuilder);
+        verify(view, never()).addUpdatePropertyNameCommand(commandBuilder);
+        verify(view, never()).execute(commandBuilder);
+    }
+
+    @Test
+    public void testExecute() {
+
+        final CompositeCommand.Builder commandBuilder = mock(CompositeCommand.Builder.class);
+        final CompositeCommand compositeCommand = mock(CompositeCommand.class);
+
+        when(commandBuilder.build()).thenReturn(compositeCommand);
+
+        view.execute(commandBuilder);
+
+        verify(sessionCommandManager).execute(canvasHandler, compositeCommand);
+    }
+
+    @Test
+    public void testAddUpdatePropertyNameCommand() {
+
+        final CompositeCommand.Builder commandBuilder = mock(CompositeCommand.Builder.class);
+        final Index graphIndex = mock(Index.class);
+        final org.kie.workbench.common.stunner.core.graph.Element element = mock(org.kie.workbench.common.stunner.core.graph.Element.class);
+        final Definition definition = mock(Definition.class);
+        final Object theDefinition = mock(Object.class);
+        final HasName hasName = mock(HasName.class);
+        final Optional<HasName> optionalHasName = Optional.of(hasName);
+        final Name name = mock(Name.class);
+        final String nameId = "nameId";
+        final CanvasCommand<AbstractCanvasHandler> updateCommand = mock(CanvasCommand.class);
+
+        doReturn(optionalHasName).when(view).getHasName();
+
+        when(hasName.getValue()).thenReturn(name);
+        when(definition.getDefinition()).thenReturn(theDefinition);
+        when(canvasCommandFactory.updatePropertyValue(element, nameId, name)).thenReturn(updateCommand);
+        when(definitionUtils.getNameIdentifier(theDefinition)).thenReturn(nameId);
+        when(element.getContent()).thenReturn(definition);
+        when(graphIndex.get(NODE_UUID)).thenReturn(element);
+        when(canvasHandler.getGraphIndex()).thenReturn(graphIndex);
+
+        view.addUpdatePropertyNameCommand(commandBuilder);
+
+        verify(commandBuilder).addCommand(updateCommand);
     }
 }

@@ -106,6 +106,14 @@ public abstract class FillExpressionCommand<E extends ExpressionProps> extends A
         return view;
     }
 
+    public Event<ExpressionEditorChanged> getEditorSelectedEvent() {
+        return editorSelectedEvent;
+    }
+
+    public String getNodeUUID() {
+        return nodeUUID;
+    }
+
     protected abstract void fill();
 
     protected abstract Expression getTemporaryExpression();
@@ -173,7 +181,7 @@ public abstract class FillExpressionCommand<E extends ExpressionProps> extends A
     }
 
     void fireEditorSelectedEvent() {
-        editorSelectedEvent.fire(new ExpressionEditorChanged(nodeUUID));
+        getEditorSelectedEvent().fire(new ExpressionEditorChanged(getNodeUUID()));
     }
 
     void restoreExpressionName() {
