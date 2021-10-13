@@ -25,7 +25,8 @@ import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.Text;
 
 @Portable
-public class RuleAnnotationClauseText extends DMNElement implements HasText {
+public class RuleAnnotationClauseText extends DMNElement implements HasText,
+                                                                    HasEqualsIgnoreId {
 
     private Text text;
 
@@ -51,7 +52,12 @@ public class RuleAnnotationClauseText extends DMNElement implements HasText {
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(final Object other) {
+        return this.equals(other, false);
+    }
+
+    @Override
+    public boolean equals(final Object o, boolean ignoreId) {
         if (this == o) {
             return true;
         }
@@ -63,8 +69,10 @@ public class RuleAnnotationClauseText extends DMNElement implements HasText {
             return false;
         }
 
-        if (!Objects.equals(id, that.id)) {
-            return false;
+        if (!ignoreId) {
+            if (!Objects.equals(id, that.id)) {
+                return false;
+            }
         }
 
         return true;

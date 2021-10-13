@@ -33,6 +33,7 @@ public interface HasExpression extends HasEqualsIgnoreId {
 
     /**
      * Can the Expression be cleared on the HasExpression instance.
+     *
      * @return true if the Expression can be cleared.
      */
     default boolean isClearSupported() {
@@ -68,7 +69,17 @@ public interface HasExpression extends HasEqualsIgnoreId {
 
         @Override
         public boolean equals(final Object other, final boolean ignoreId) {
-            return super.equals(other);
+            if (this == other) {
+                return true;
+            }
+            if (!(other instanceof WrappedHasExpression)) {
+                return false;
+            }
+            final WrappedHasExpression that = (WrappedHasExpression) other;
+            if (expression != null ? !expression.equals(that.expression, ignoreId) : that.expression != null) {
+                return false;
+            }
+            return true;
         }
     }
 

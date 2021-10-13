@@ -45,7 +45,7 @@ public abstract class FillExpressionCommand<E extends ExpressionProps> extends A
     private final String nodeUUID;
     private final Event<ExpressionEditorChanged> editorSelectedEvent;
     private final ExpressionEditorView view;
-    private Name savedExpressionName;
+    private String savedExpressionName;
     private QName savedTypeRef;
     private Optional<Expression> savedExpression;
     private boolean enableRedo;
@@ -70,11 +70,11 @@ public abstract class FillExpressionCommand<E extends ExpressionProps> extends A
         return expressionProps;
     }
 
-    public Name getSavedExpressionName() {
+    public String getSavedExpressionName() {
         return savedExpressionName;
     }
 
-    public void setSavedExpressionName(final Name savedExpressionName) {
+    public void setSavedExpressionName(final String savedExpressionName) {
         this.savedExpressionName = savedExpressionName;
     }
 
@@ -123,7 +123,7 @@ public abstract class FillExpressionCommand<E extends ExpressionProps> extends A
     public CommandResult<CanvasViolation> execute(final AbstractCanvasHandler context) {
         fireEditorSelectedEvent();
         saveCurrentState();
-        setExpressionName(getExpressionProps());
+        setExpressionName(getExpressionProps().name);
         setTypeRef(getExpressionProps().dataType);
         createExpression();
         fill();
@@ -177,10 +177,7 @@ public abstract class FillExpressionCommand<E extends ExpressionProps> extends A
     }
 
     void restoreExpressionName() {
-        if (hasExpression instanceof HasName) {
-            final HasName hasName = (HasName) hasExpression;
-            hasName.setName(getSavedExpressionName());
-        }
+        setExpressionName(getSavedExpressionName());
     }
 
     void restoreTypeRef() {
@@ -226,7 +223,7 @@ public abstract class FillExpressionCommand<E extends ExpressionProps> extends A
                 .asQName();
     }
 
-    void setExpressionName(final E expressionProps) {
+    void setExpressionName(final String expressionName) {
         final HasName hasName = (HasName) getHasExpression();
         final Name name;
         if (Objects.isNull(hasName.getName())) {
@@ -234,7 +231,7 @@ public abstract class FillExpressionCommand<E extends ExpressionProps> extends A
         } else {
             name = hasName.getName();
         }
-        name.setValue(expressionProps.name);
+        name.setValue(expressionName);
     }
 
     void saveCurrentState() {
@@ -245,7 +242,7 @@ public abstract class FillExpressionCommand<E extends ExpressionProps> extends A
 
     void saveCurrentExpressionName() {
         final HasName hasName = (HasName) getHasExpression();
-        setSavedExpressionName(hasName.getName());
+        setSavedExpressionName(hasName.getName().getValue());
     }
 
     void saveCurrentTypeRef() {

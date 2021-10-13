@@ -42,6 +42,10 @@ import org.kie.workbench.common.dmn.api.definition.model.Expression;
 import org.kie.workbench.common.dmn.api.definition.model.LiteralExpression;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.client.commands.factory.DefaultCanvasCommandFactory;
+import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.ContextProps;
+import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.DecisionTableProps;
+import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.DecisionTableRule;
+import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.InvocationProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinition;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinitions;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.function.supplementary.pmml.PMMLDocumentMetadataProvider;
@@ -536,5 +540,313 @@ public class ExpressionEditorViewImplTest {
     public void testToggleBoxedExpressionAndDisableIt() {
         view.toggleBoxedExpression(false);
         verify(betaBoxedExpressionToggle.classList).toggle(ENABLED_BETA_CSS_CLASS, false);
+    }
+
+    @Test
+    public void testIsValidExpression_WhenIsDecisionTable() {
+
+        final DecisionTableProps expressionProps = new DecisionTableProps("name",
+                                                                          "data type",
+                                                                          "hit policy",
+                                                                          "aggregation",
+                                                                          null,
+                                                                          null,
+                                                                          null,
+                                                                          null);
+
+        doReturn(true).when(view).isValidDecisionTableProps(any());
+
+        final boolean isValid = view.isValidExpression(expressionProps);
+
+        verify(view).isValidDecisionTableProps(expressionProps);
+        verify(view, never()).isValidContextProps(any());
+        verify(view, never()).isValidInvocationProps(any());
+
+        assertTrue(isValid);
+    }
+
+    @Test
+    public void testIsValidExpression_WhenIsContext() {
+
+        final ContextProps expressionProps = new ContextProps("name",
+                                                              null,
+                                                              null,
+                                                              null,
+                                                              null,
+                                                              null);
+
+        doReturn(true).when(view).isValidContextProps(any());
+
+        final boolean isValid = view.isValidExpression(expressionProps);
+
+        verify(view, never()).isValidDecisionTableProps(any());
+        verify(view).isValidContextProps(expressionProps);
+        verify(view, never()).isValidInvocationProps(any());
+
+        assertTrue(isValid);
+    }
+
+    @Test
+    public void testIsValidExpression_WhenIsInvocation() {
+
+        final InvocationProps expressionProps = new InvocationProps("name",
+                                                                    null,
+                                                                    null,
+                                                                    null,
+                                                                    null,
+                                                                    null);
+
+        doReturn(true).when(view).isValidInvocationProps(any());
+
+        final boolean isValid = view.isValidExpression(expressionProps);
+
+        verify(view, never()).isValidDecisionTableProps(any());
+        verify(view, never()).isValidContextProps(any());
+        verify(view).isValidInvocationProps(expressionProps);
+
+        assertTrue(isValid);
+    }
+
+    @Test
+    public void testIsValidDecisionTableProps_WhenIsValid() {
+        final DecisionTableProps expressionProps = new DecisionTableProps("name",
+                                                                          "data type",
+                                                                          "hit policy",
+                                                                          "aggregation",
+                                                                          null,
+                                                                          null,
+                                                                          null,
+                                                                          null);
+
+        doReturn(true).when(view).haveAllClauses(expressionProps);
+        doReturn(true).when(view).haveAtLeastOneColumnSizeDefined(expressionProps);
+        doReturn(false).when(view).areRulesValid(expressionProps);
+
+        final boolean isValid = view.isValidDecisionTableProps(expressionProps);
+
+        assertTrue(isValid);
+
+        verify(view).haveAllClauses(expressionProps);
+        verify(view).haveAtLeastOneColumnSizeDefined(expressionProps);
+        verify(view).areRulesValid(expressionProps);
+    }
+
+    @Test
+    public void testIsValidDecisionTableProps_WhenHaveNullClause() {
+        final DecisionTableProps expressionProps = new DecisionTableProps("name",
+                                                                          "data type",
+                                                                          "hit policy",
+                                                                          "aggregation",
+                                                                          null,
+                                                                          null,
+                                                                          null,
+                                                                          null);
+
+        doReturn(true).when(view).haveAllClauses(expressionProps);
+        doReturn(true).when(view).haveAtLeastOneColumnSizeDefined(expressionProps);
+        doReturn(true).when(view).areRulesValid(expressionProps);
+
+        final boolean isValid = view.isValidDecisionTableProps(expressionProps);
+
+        assertFalse(isValid);
+
+        verify(view).haveAllClauses(expressionProps);
+        verify(view).haveAtLeastOneColumnSizeDefined(expressionProps);
+        verify(view).areRulesValid(expressionProps);
+    }
+
+    @Test
+    public void testIsValidDecisionTableProps_WhenDoesntHaveColumnSizeDefined() {
+        final DecisionTableProps expressionProps = new DecisionTableProps("name",
+                                                                          "data type",
+                                                                          "hit policy",
+                                                                          "aggregation",
+                                                                          null,
+                                                                          null,
+                                                                          null,
+                                                                          null);
+
+        doReturn(true).when(view).haveAllClauses(expressionProps);
+        doReturn(false).when(view).haveAtLeastOneColumnSizeDefined(expressionProps);
+        doReturn(false).when(view).areRulesValid(expressionProps);
+
+        final boolean isValid = view.isValidDecisionTableProps(expressionProps);
+
+        assertFalse(isValid);
+
+        verify(view).haveAllClauses(expressionProps);
+        verify(view).haveAtLeastOneColumnSizeDefined(expressionProps);
+        verify(view, never()).areRulesValid(expressionProps);
+    }
+
+    @Test
+    public void testIsValidDecisionTableProps_WhenRulesAreNotValid() {
+        final DecisionTableProps expressionProps = new DecisionTableProps("name",
+                                                                          "data type",
+                                                                          "hit policy",
+                                                                          "aggregation",
+                                                                          null,
+                                                                          null,
+                                                                          null,
+                                                                          null);
+
+        doReturn(false).when(view).haveAllClauses(expressionProps);
+
+        final boolean isValid = view.isValidDecisionTableProps(expressionProps);
+
+        assertFalse(isValid);
+
+        verify(view).haveAllClauses(expressionProps);
+        verify(view, never()).haveAtLeastOneColumnSizeDefined(expressionProps);
+        verify(view, never()).areRulesValid(expressionProps);
+    }
+
+    @Test
+    public void testAreRulesValid() {
+
+        final DecisionTableRule rule1 = mock(DecisionTableRule.class);
+        final DecisionTableRule rule2 = mock(DecisionTableRule.class);
+
+        final DecisionTableRule[] rules = new DecisionTableRule[]{rule1, rule2};
+
+        final DecisionTableProps expressionProps = new DecisionTableProps("name",
+                                                                          "data type",
+                                                                          "hit policy",
+                                                                          "aggregation",
+                                                                          null,
+                                                                          null,
+                                                                          null,
+                                                                          rules);
+
+        doReturn(false).when(view).ruleHaveNullClauses(rule1);
+        doReturn(false).when(view).ruleHaveNullClauses(rule2);
+        doReturn(true).when(view).haveAllEntries(expressionProps, rule1);
+        doReturn(true).when(view).haveAllEntries(expressionProps, rule2);
+
+        final boolean areValid = view.areRulesValid(expressionProps);
+
+        assertTrue(areValid);
+
+        verify(view).haveAllEntries(expressionProps, rule1);
+        verify(view).haveAllEntries(expressionProps, rule2);
+        verify(view).ruleHaveNullClauses(rule1);
+        verify(view).ruleHaveNullClauses(rule2);
+    }
+
+    @Test
+    public void testAreRulesValid_WhenDoesntHaveAllEntries() {
+
+        final DecisionTableRule rule1 = mock(DecisionTableRule.class);
+
+        final DecisionTableRule[] rules = new DecisionTableRule[]{rule1};
+
+        final DecisionTableProps expressionProps = new DecisionTableProps("name",
+                                                                          "data type",
+                                                                          "hit policy",
+                                                                          "aggregation",
+                                                                          null,
+                                                                          null,
+                                                                          null,
+                                                                          rules);
+
+        doReturn(false).when(view).ruleHaveNullClauses(rule1);
+        doReturn(false).when(view).haveAllEntries(expressionProps, rule1);
+
+        final boolean areValid = view.areRulesValid(expressionProps);
+
+        assertFalse(areValid);
+
+        verify(view).haveAllEntries(expressionProps, rule1);
+    }
+
+    @Test
+    public void testAreRulesValid_WhenRuleHaveNullClauses() {
+
+        final DecisionTableRule rule1 = mock(DecisionTableRule.class);
+
+        final DecisionTableRule[] rules = new DecisionTableRule[]{rule1};
+
+        final DecisionTableProps expressionProps = new DecisionTableProps("name",
+                                                                          "data type",
+                                                                          "hit policy",
+                                                                          "aggregation",
+                                                                          null,
+                                                                          null,
+                                                                          null,
+                                                                          rules);
+
+        doReturn(true).when(view).ruleHaveNullClauses(rule1);
+        doReturn(true).when(view).haveAllEntries(expressionProps, rule1);
+
+        final boolean areValid = view.areRulesValid(expressionProps);
+
+        assertFalse(areValid);
+
+        verify(view).haveAllEntries(expressionProps, rule1);
+        verify(view).ruleHaveNullClauses(rule1);
+    }
+
+    @Test
+    public void testRuleHaveNullClauses() {
+
+        final String[] inputEntries = new String[]{"input"};
+        final String[] outputEntries = new String[]{"output"};
+        final String[] annotationEntries = new String[]{"annotation"};
+
+        final DecisionTableRule rule = new DecisionTableRule(inputEntries,
+                                                             outputEntries,
+                                                             annotationEntries);
+
+        final boolean haveHull = view.ruleHaveNullClauses(rule);
+
+        assertFalse(haveHull);
+    }
+
+    @Test
+    public void testRuleHaveNullClauses_WhenInputHasNull() {
+
+        final String[] inputEntries = new String[]{"input", null};
+        final String[] outputEntries = new String[]{"output"};
+        final String[] annotationEntries = new String[]{"annotation"};
+
+        final DecisionTableRule rule = new DecisionTableRule(inputEntries,
+                                                             outputEntries,
+                                                             annotationEntries);
+
+        final boolean haveHull = view.ruleHaveNullClauses(rule);
+
+        assertTrue(haveHull);
+    }
+
+    @Test
+    public void testRuleHaveNullClauses_WhenOutputHasNull() {
+
+        final String[] inputEntries = new String[]{"input"};
+        final String[] outputEntries = new String[]{"output", null};
+        final String[] annotationEntries = new String[]{"annotation"};
+
+        final DecisionTableRule rule = new DecisionTableRule(inputEntries,
+                                                             outputEntries,
+                                                             annotationEntries);
+
+        final boolean haveHull = view.ruleHaveNullClauses(rule);
+
+        assertTrue(haveHull);
+    }
+
+    @Test
+    public void testRuleHaveNullClauses_WhenAnnotationsHasNull() {
+
+        final String[] inputEntries = new String[]{"input"};
+        final String[] outputEntries = new String[]{"output"};
+        final String[] annotationEntries = new String[]{"annotation", null};
+
+        final DecisionTableRule rule = new DecisionTableRule(inputEntries,
+                                                             outputEntries,
+                                                             annotationEntries);
+
+        final boolean haveHull = view.ruleHaveNullClauses(rule);
+
+        assertTrue(haveHull);
     }
 }

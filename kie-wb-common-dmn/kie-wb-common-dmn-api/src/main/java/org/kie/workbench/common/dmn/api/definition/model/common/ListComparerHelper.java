@@ -22,6 +22,10 @@ import org.kie.workbench.common.dmn.api.definition.model.HasEqualsIgnoreId;
 
 public class ListComparerHelper {
 
+    private ListComparerHelper() {
+        // Private constructor as recommended by SonarCloud
+    }
+
     public static <E extends HasEqualsIgnoreId> boolean compare(final List<E> l1,
                                                                 final List<E> l2,
                                                                 boolean ignoreId) {

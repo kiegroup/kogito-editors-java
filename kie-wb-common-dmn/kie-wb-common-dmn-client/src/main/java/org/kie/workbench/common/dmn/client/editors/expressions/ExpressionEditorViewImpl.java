@@ -15,6 +15,8 @@
  */
 package org.kie.workbench.common.dmn.client.editors.expressions;
 
+import java.util.Arrays;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -51,8 +53,11 @@ import org.kie.workbench.common.dmn.client.editors.expressions.commands.FillInvo
 import org.kie.workbench.common.dmn.client.editors.expressions.commands.FillListExpressionCommand;
 import org.kie.workbench.common.dmn.client.editors.expressions.commands.FillLiteralExpressionCommand;
 import org.kie.workbench.common.dmn.client.editors.expressions.commands.FillRelationExpressionCommand;
+import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.Column;
+import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.ContextEntryProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.ContextProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.DecisionTableProps;
+import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.DecisionTableRule;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.EntryInfo;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.ExpressionProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.FunctionProps;
@@ -99,6 +104,9 @@ import org.uberfire.ext.wires.core.grids.client.widget.grid.impl.KeyboardOperati
 import org.uberfire.ext.wires.core.grids.client.widget.layer.pinning.TransformMediator;
 import org.uberfire.ext.wires.core.grids.client.widget.layer.pinning.impl.RestrictedMousePanMediator;
 
+import static org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionType.CONTEXT;
+import static org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionType.DECISION_TABLE;
+import static org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionType.INVOCATION;
 import static org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionType.UNDEFINED;
 
 @Templated
@@ -375,7 +383,8 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
                                                                                     nodeUUID,
                                                                                     this);
 
-        executeIfItHaveChanges(expressionCommand);
+        sessionCommandManager.execute((AbstractCanvasHandler) sessionManager.getCurrentSession().getCanvasHandler(),
+                                      expressionCommand);
     }
 
     public void broadcastLiteralExpressionDefinition(final LiteralProps literalExpressionProps) {
@@ -390,6 +399,10 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
     }
 
     public void broadcastContextExpressionDefinition(final ContextProps contextProps) {
+
+        if (!isValidContextProps(contextProps)) {
+            return;
+        }
         final FillContextExpressionCommand expression = new FillContextExpressionCommand(hasExpression,
                                                                                          contextProps,
                                                                                          editorSelectedEvent,
@@ -399,7 +412,129 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
         executeIfItHaveChanges(expression);
     }
 
+    boolean isValidContextProps(final ContextProps contextProps) {
+        if (Objects.isNull(contextProps.contextEntries)) {
+            return false;
+        }
+        for (final ContextEntryProps contextEntry : contextProps.contextEntries) {
+            if (!isValidExpression(contextEntry.entryExpression)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // The Boxed Expression Editor does partial broadcasts so we have to check
+    // if is one of those partial broadcasts with invalid expression or not
+    boolean isValidExpression(final ExpressionProps entryExpression) {
+        if (Objects.equals(entryExpression.logicType, DECISION_TABLE.getText())) {
+            return isValidDecisionTableProps((DecisionTableProps) entryExpression);
+        } else if (Objects.equals(entryExpression.logicType, CONTEXT.getText())) {
+            return isValidContextProps((ContextProps) entryExpression);
+        } else if (Objects.equals(entryExpression.logicType, INVOCATION.getText())) {
+            return isValidInvocationProps((InvocationProps) entryExpression);
+        }
+        return true;
+    }
+
+    boolean isValidDecisionTableProps(final DecisionTableProps decisionTableProps) {
+        return haveAllClauses(decisionTableProps)
+                && haveAtLeastOneColumnSizeDefined(decisionTableProps)
+                && !areRulesValid(decisionTableProps);
+    }
+
+    boolean areRulesValid(final DecisionTableProps decisionTableProps) {
+        return Arrays.stream(decisionTableProps.rules)
+                .noneMatch(rule -> !haveAllEntries(decisionTableProps, rule)
+                        || ruleHaveNullClauses(rule));
+    }
+
+    boolean ruleHaveNullClauses(final DecisionTableRule rule) {
+        for (int j = 0; j < rule.inputEntries.length; j++) {
+            if (Objects.isNull(rule.inputEntries[j])) {
+                return true;
+            }
+        }
+
+        for (int j = 0; j < rule.outputEntries.length; j++) {
+            if (Objects.isNull(rule.outputEntries[j])) {
+                return true;
+            }
+        }
+
+        for (int j = 0; j < rule.annotationEntries.length; j++) {
+            if (Objects.isNull(rule.annotationEntries[j])) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    boolean haveAllClauses(final DecisionTableProps decisionTableProps) {
+        return !Objects.isNull(decisionTableProps.input)
+                && !Objects.isNull(decisionTableProps.annotations)
+                && !Objects.isNull(decisionTableProps.output);
+    }
+
+    boolean haveAtLeastOneColumnSizeDefined(final DecisionTableProps decisionTableProps) {
+        for (int i = 0; i < decisionTableProps.input.length; i++) {
+            if (!Objects.isNull(decisionTableProps.input[i].width)) {
+                return true;
+            }
+        }
+
+        for (int i = 0; i < decisionTableProps.output.length; i++) {
+            if (!Objects.isNull(decisionTableProps.output[i].width)) {
+                return true;
+            }
+        }
+
+        for (int i = 0; i < decisionTableProps.annotations.length; i++) {
+            if (!Objects.isNull(decisionTableProps.annotations[i].width)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    boolean haveAllEntries(final DecisionTableProps decisionTableProps,
+                           final DecisionTableRule rule) {
+        if (rule.inputEntries.length != decisionTableProps.input.length) {
+            return false;
+        }
+
+        if (rule.outputEntries.length != decisionTableProps.output.length) {
+            return false;
+        }
+
+        if (rule.annotationEntries.length != decisionTableProps.annotations.length) {
+            return false;
+        }
+        return true;
+    }
+
+    boolean isValidInvocationProps(final InvocationProps invocationProps) {
+        if (!Objects.isNull(invocationProps.bindingEntries)) {
+            for (ContextEntryProps bindingEntry : invocationProps.bindingEntries) {
+                if (!isValidExpression(bindingEntry.entryExpression)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     public void broadcastRelationExpressionDefinition(final RelationProps relationProps) {
+
+        if (!columnsMatchesRows(relationProps.columns, relationProps.rows)) {
+            return;
+        }
+
+        for (final Column column : relationProps.columns) {
+            if (Objects.isNull(column.width)) {
+                return;
+            }
+        }
         final FillRelationExpressionCommand expression = new FillRelationExpressionCommand(hasExpression,
                                                                                            relationProps,
                                                                                            editorSelectedEvent,
@@ -420,6 +555,11 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
     }
 
     public void broadcastInvocationExpressionDefinition(final InvocationProps invocationProps) {
+
+        if (!isValidExpression(invocationProps)) {
+            return;
+        }
+
         final FillInvocationExpressionCommand expression = new FillInvocationExpressionCommand(hasExpression,
                                                                                                invocationProps,
                                                                                                editorSelectedEvent,
@@ -440,6 +580,11 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
     }
 
     public void broadcastDecisionTableExpressionDefinition(final DecisionTableProps decisionTableProps) {
+
+        if (!isValidExpression(decisionTableProps)) {
+            return;
+        }
+
         final FillDecisionTableExpressionCommand expression = new FillDecisionTableExpressionCommand(hasExpression,
                                                                                                      decisionTableProps,
                                                                                                      editorSelectedEvent,
@@ -450,8 +595,8 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
     }
 
     void executeIfItHaveChanges(final FillExpressionCommand expressionCommand) {
-        if (expressionCommand.hasChanges()) {
 
+        if (expressionCommand.hasChanges()) {
             final AbstractCanvasHandler canvasHandler = (AbstractCanvasHandler) sessionManager.getCurrentSession().getCanvasHandler();
             final CompositeCommand.Builder<AbstractCanvasHandler, CanvasViolation> commandBuilder = new CompositeCommand.Builder<>();
             final Element element = canvasHandler.getGraphIndex().get(nodeUUID);
@@ -464,13 +609,23 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
                 commandBuilder.addCommand(canvasCommandFactory.updatePropertyValue(element,
                                                                                    nameId,
                                                                                    hasName.orElse(HasName.NOP).getValue()));
-
             }
-
 
             sessionCommandManager.execute((AbstractCanvasHandler) sessionManager.getCurrentSession().getCanvasHandler(),
                                           commandBuilder.build());
         }
+    }
+
+    boolean columnsMatchesRows(final Column[] columns,
+                               final String[][] rows) {
+
+        for (int i = 0; i < rows.length; i++) {
+            if (rows[i].length != columns.length) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     void renderNewBoxedExpression() {

@@ -124,7 +124,7 @@ public class FillExpressionCommandTest {
         doReturn(false).when(command).isEnableRedo();
 
         doNothing().when(command).saveCurrentState();
-        doNothing().when(command).setExpressionName(expressionProps);
+        doNothing().when(command).setExpressionName(expressionProps.name);
         doNothing().when(command).setTypeRef(any());
 
         final CommandResult result = command.execute(mock(AbstractCanvasHandler.class));
@@ -133,7 +133,7 @@ public class FillExpressionCommandTest {
 
         inOrder.verify(command).fireEditorSelectedEvent();
         inOrder.verify(command).saveCurrentState();
-        inOrder.verify(command).setExpressionName(expressionProps);
+        inOrder.verify(command).setExpressionName(expressionProps.name);
         inOrder.verify(command).setTypeRef(dataType);
         inOrder.verify(command).createExpression();
         inOrder.verify(command).fill();
@@ -149,7 +149,7 @@ public class FillExpressionCommandTest {
         doReturn(true).when(command).isEnableRedo();
 
         doNothing().when(command).saveCurrentState();
-        doNothing().when(command).setExpressionName(expressionProps);
+        doNothing().when(command).setExpressionName(expressionProps.name);
         doNothing().when(command).setTypeRef(any());
 
         final CommandResult result = command.execute(mock(AbstractCanvasHandler.class));
@@ -158,7 +158,7 @@ public class FillExpressionCommandTest {
 
         inOrder.verify(command).fireEditorSelectedEvent();
         inOrder.verify(command).saveCurrentState();
-        inOrder.verify(command).setExpressionName(expressionProps);
+        inOrder.verify(command).setExpressionName(expressionProps.name);
         inOrder.verify(command).setTypeRef(dataType);
         inOrder.verify(command).createExpression();
         inOrder.verify(command).fill();
@@ -293,13 +293,16 @@ public class FillExpressionCommandTest {
     @Test
     public void testRestoreExpressionName() {
 
-        final Name savedExpressionName = mock(Name.class);
+        final String savedExpressionName = "saved";
+        final Name currentName = mock(Name.class);
+
+        when(((HasName) hasExpression).getName()).thenReturn(currentName);
 
         doReturn(savedExpressionName).when(command).getSavedExpressionName();
 
         command.restoreExpressionName();
 
-        verify((HasName) hasExpression).setName(savedExpressionName);
+        verify(currentName).setValue(savedExpressionName);
     }
 
     @Test
@@ -393,9 +396,12 @@ public class FillExpressionCommandTest {
     @Test
     public void testSetExpressionName() {
 
-        command.setExpressionName(expressionProps);
+        final Name currentName = mock(Name.class);
+        when(((HasName) hasExpression).getName()).thenReturn(currentName);
 
-        verify((HasName) hasExpression).setName(new Name(name));
+        command.setExpressionName(expressionProps.name);
+
+        verify(currentName).setValue(name);
     }
 
     @Test
@@ -416,12 +422,14 @@ public class FillExpressionCommandTest {
     public void testSaveCurrentExpressionName() {
 
         final Name currentExpressionName = mock(Name.class);
+        final String expressionName = "expression name";
 
         when(((HasName) hasExpression).getName()).thenReturn(currentExpressionName);
+        when(currentExpressionName.getValue()).thenReturn(expressionName);
 
         command.saveCurrentExpressionName();
 
-        verify(command).setSavedExpressionName(currentExpressionName);
+        verify(command).setSavedExpressionName(expressionName);
     }
 
     @Test

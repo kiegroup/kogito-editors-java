@@ -120,7 +120,7 @@ public class DecisionRule extends DMNElement implements HasTypeRefs,
         if (inputEntry != null ? !ListComparerHelper.compare(inputEntry, that.inputEntry, ignoreId) : that.inputEntry != null) {
             return false;
         }
-        if (annotationEntry != null ? !annotationEntry.equals(that.annotationEntry) : that.annotationEntry != null) {
+        if (annotationEntry != null ? !ListComparerHelper.compare(annotationEntry, that.annotationEntry, ignoreId) : that.annotationEntry != null) {
             return false;
         }
         return outputEntry != null ? ListComparerHelper.compare(outputEntry, that.outputEntry, ignoreId) : that.outputEntry == null;
