@@ -28,5 +28,5 @@ public class DMNLoader {
     public static native void renderHelloWorld(final String selector);
 
     @JsMethod(namespace = "__KIE__DMN_LOADER__")
-    public static native void renderBoxedExpressionEditor(final String selector, final ExpressionProps expressionProps, final PMMLParam[] pmmlParams);
+    public static native void renderBoxedExpressionEditor(final String selector, final ExpressionProps expressionProps, final Boolean clearSupported, final PMMLParam[] pmmlParams);
 }
