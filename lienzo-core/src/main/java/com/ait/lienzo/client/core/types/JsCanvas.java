@@ -227,21 +227,10 @@ public class JsCanvas implements JsCanvasNodeLister {
         }
         final Point2D location = shape.getAbsoluteLocation();
         NFastArrayList<Double> locationArray = new NFastArrayList<>();
-        calculatePanelOffset(location);
         locationArray.add(location.getX());
         locationArray.add(location.getY());
 
         return locationArray;
-    }
-
-    protected void calculatePanelOffset(Point2D location) {
-        final elemental2.dom.HTMLElement editorPanel = (elemental2.dom.HTMLElement) DomGlobal.document.getElementById("canvasPanel");
-        if (editorPanel != null) {
-            final double canvasX = location.getX() + editorPanel.offsetLeft;
-            final double canvasY = location.getY() + editorPanel.offsetTop;
-            location.setX(canvasX);
-            location.setY(canvasY);
-        }
     }
 
     public NFastArrayList<Double> getDimensions(String UUID) {

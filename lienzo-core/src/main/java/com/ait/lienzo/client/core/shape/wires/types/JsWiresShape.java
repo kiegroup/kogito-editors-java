@@ -273,7 +273,7 @@ public class JsWiresShape {
     }
 
     public Point2D getAbsoluteLocation() {
-        final Point2D absoluteLocation = asGroup().getAbsoluteLocation();
+        final Point2D absoluteLocation = asGroup().getComputedLocation();
         return absoluteLocation;
     }
 }
