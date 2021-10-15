@@ -15,7 +15,7 @@
  */
 
 import * as React from "react";
-import { useCallback, useEffect, useLayoutEffect, useMemo } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from "react";
 import "boxed-expression-component/src";
 import { ColumnInstance, DataRecord } from "react-table";
 import {
@@ -28,6 +28,7 @@ import { getColumnsAtLastLevel, Table } from "boxed-expression-component/src/com
 import "./DmnRunnerTable.css";
 import { DmnRunnerClause, DmnRunnerRule } from "./DmnRunnerTableTypes";
 import { useDmnAutoTableI18n } from "../";
+import { DEFAULT_MIN_WIDTH } from "../../../../src/components/Resizer";
 
 enum DecisionTableColumnType {
   InputClause = "input",
@@ -38,7 +39,7 @@ enum DecisionTableColumnType {
 const DASH_SYMBOL = "-";
 const EMPTY_SYMBOL = "";
 
-export interface DmnRunnerTableProps extends ExpressionProps {
+export interface DmnRunnerTabularProps extends ExpressionProps {
   /** Input columns definition */
   input?: DmnRunnerClause[];
   /** Output columns definition */
@@ -47,9 +48,10 @@ export interface DmnRunnerTableProps extends ExpressionProps {
   rules?: DmnRunnerRule[];
   /** Callback to be called when row number is updated */
   onRowNumberUpdated: (rowNumber: number, operation?: TableOperation, updatedRowIndex?: number) => void;
+  onColumnsUpdate: (columns: ColumnInstance[]) => void;
 }
 
-export function DmnRunnerTableBoxed(props: DmnRunnerTableProps) {
+export function DmnRunnerTabular(props: DmnRunnerTabularProps) {
   const { i18n } = useDmnAutoTableI18n();
 
   const getColumnPrefix = useCallback((groupType?: string) => {
@@ -94,7 +96,7 @@ export function DmnRunnerTableBoxed(props: DmnRunnerTableProps) {
     return editColumnLabel;
   }, [i18n.editClause.input, i18n.editClause.output]);
 
-  const memoColumns = useMemo(() => {
+  const columns = useMemo(() => {
     const inputSection = (props.input ?? []).map((inputClause) => {
       if (inputClause.insideProperties) {
         const insideProperties = inputClause.insideProperties.map((insideInputClauses) => {
@@ -154,9 +156,13 @@ export function DmnRunnerTableBoxed(props: DmnRunnerTableProps) {
       }
       if (outputEntry !== null && typeof outputEntry === "object") {
         const columns = Object.keys(outputEntry).map((entryKey) => {
+          const output = props.output?.[outputIndex]?.insideProperties?.find((i) =>
+            Object.keys(i).find((keys) => keys === entryKey)
+          );
           return {
             groupType: DecisionTableColumnType.OutputClause,
             label: entryKey,
+            width: output[entryKey].width,
             accessor: `output-${entryKey}`,
             cssClasses: "decision-table--output",
           } as ColumnInstance;
@@ -169,6 +175,7 @@ export function DmnRunnerTableBoxed(props: DmnRunnerTableProps) {
             accessor: `output-${props.output?.[outputIndex]?.name}`,
             cssClasses: "decision-table--output",
             columns: columns,
+            width: props.output?.[outputIndex]?.width,
             appendColumnsOnChildren: true,
             dataType: props.output?.[outputIndex]?.dataType,
           } as ColumnInstance,
@@ -180,6 +187,7 @@ export function DmnRunnerTableBoxed(props: DmnRunnerTableProps) {
           label: props.output?.[outputIndex]?.name,
           accessor: `output-${props.output?.[outputIndex]?.name}`,
           dataType: props.output?.[outputIndex]?.dataType,
+          width: props.output?.[outputIndex]?.width,
           cssClasses: "decision-table--output",
           appendColumnsOnChildren: true,
         },
@@ -197,7 +205,7 @@ export function DmnRunnerTableBoxed(props: DmnRunnerTableProps) {
     return updatedColumns;
   }, [props.input, props.output, props.rules]);
 
-  const memoRows = useMemo(() => {
+  const rows = useMemo(() => {
     return (props.rules ?? []).map((rule) => {
       const rowArray = [...rule.inputEntries, ...rule.outputEntries].reduce((acc, entry) => {
         if (Array.isArray(entry)) {
@@ -213,18 +221,18 @@ export function DmnRunnerTableBoxed(props: DmnRunnerTableProps) {
         }
         return [...acc, entry];
       }, []);
-      return getColumnsAtLastLevel(memoColumns).reduce((tableRow: any, column, columnIndex: number) => {
+      return getColumnsAtLastLevel(columns).reduce((tableRow: any, column, columnIndex: number) => {
         tableRow[column.accessor] = rowArray[columnIndex] || EMPTY_SYMBOL;
         tableRow.rowDelegate = rule.rowDelegate;
         return tableRow;
       }, {});
     });
-  }, [props.rules, memoColumns]);
+  }, [props.rules, columns]);
 
   const onRowsUpdate = useCallback(
     (updatedRows, operation?: TableOperation, updatedRowIndex?: number) => {
       const newRows = updatedRows.map((row: any) =>
-        getColumnsAtLastLevel(memoColumns).reduce((filledRow: DataRecord, column) => {
+        getColumnsAtLastLevel(columns).reduce((filledRow: DataRecord, column) => {
           if (row.rowDelegate) {
             filledRow[column.accessor] = row[column.accessor];
             filledRow.rowDelegate = row.rowDelegate;
@@ -239,15 +247,15 @@ export function DmnRunnerTableBoxed(props: DmnRunnerTableProps) {
       );
       props.onRowNumberUpdated?.(newRows.length, operation, updatedRowIndex);
     },
-    [props.onRowNumberUpdated, memoColumns]
+    [props.onRowNumberUpdated, columns]
   );
 
   const onRowAdding = useCallback(() => {
-    return getColumnsAtLastLevel(memoColumns).reduce((tableRow: DataRecord, column) => {
+    return getColumnsAtLastLevel(columns).reduce((tableRow: DataRecord, column) => {
       tableRow[column.accessor] = EMPTY_SYMBOL;
       return tableRow;
     }, {} as DataRecord);
-  }, [memoColumns]);
+  }, [columns]);
 
   const searchRecursively = useCallback((child: any) => {
     if (!child) {
@@ -273,14 +281,18 @@ export function DmnRunnerTableBoxed(props: DmnRunnerTableProps) {
     inputsCells.forEach((inputCell) => {
       searchRecursively(inputCell.childNodes[0]);
     });
-  }, [memoColumns, searchRecursively]);
+  }, [columns, searchRecursively]);
+
+  const onColumnsUpdate = useCallback(
+    (columns) => {
+      props.onColumnsUpdate(columns);
+    },
+    [props.onColumnsUpdate]
+  );
 
   return (
     <div className="expression-container">
-      <div className="expression-name-and-logic-type">
-        {/*<span className="expression-title">{props?.name ?? ""}</span>*/}
-      </div>
-
+      <div className="expression-name-and-logic-type" />
       <div className="expression-container-box" data-ouia-component-id="expression-container">
         <div className={`decision-table-expression ${props.uid}`}>
           <div className={`logic-type-selector logic-type-selected`}>
@@ -291,8 +303,9 @@ export function DmnRunnerTableBoxed(props: DmnRunnerTableProps) {
               getColumnPrefix={getColumnPrefix}
               editColumnLabel={getEditColumnLabel}
               handlerConfiguration={getHandlerConfiguration}
-              columns={memoColumns}
-              rows={memoRows}
+              columns={columns}
+              rows={rows}
+              onColumnsUpdate={onColumnsUpdate}
               onRowsUpdate={onRowsUpdate}
               onRowAdding={onRowAdding}
               readOnlyCells={true}

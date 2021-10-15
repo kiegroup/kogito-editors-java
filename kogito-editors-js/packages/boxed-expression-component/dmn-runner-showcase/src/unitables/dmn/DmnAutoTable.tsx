@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Clause, TableOperation } from "boxed-expression-component/src/api";
+import { TableOperation } from "boxed-expression-component/src/api";
 import { DmnValidator } from "./DmnValidator";
 import { AutoRow } from "../core";
 import { createPortal } from "react-dom";
@@ -10,13 +10,14 @@ import { EmptyState, EmptyStateBody, EmptyStateIcon } from "@patternfly/react-co
 import { ExclamationIcon } from "@patternfly/react-icons/dist/js/icons/exclamation-icon";
 import { Text, TextContent } from "@patternfly/react-core/dist/js/components/Text";
 import { DmnGrid } from "./DmnGrid";
-import { DmnRunnerRule, DmnRunnerTableBoxed, DmnRunnerTableProps } from "../boxed";
+import { DmnRunnerRule, DmnRunnerTabular, DmnRunnerTabularProps } from "../boxed";
 import { NotificationSeverity } from "@kogito-tooling/notifications/dist/api";
 import { dmnAutoTableDictionaries, DmnAutoTableI18nContext, dmnAutoTableI18nDefaults } from "../i18n";
 import { I18nDictionariesProvider } from "@kogito-tooling/i18n/dist/react-components";
 import nextId from "react-id-generator";
 import { BoxedExpressionProvider } from "boxed-expression-component/src/components";
 import { DmnTableJsonSchemaBridge } from "./DmnTableJsonSchemaBridge";
+import { ColumnInstance } from "react-table";
 
 export enum EvaluationStatus {
   SUCCEEDED = "SUCCEEDED",
@@ -60,16 +61,33 @@ interface Props {
 
 const FORMS_ID = "unitable-forms";
 
+let grid: DmnGrid | undefined;
+
 export function DmnAutoTable(props: Props) {
   const errorBoundaryRef = useRef<ErrorBoundary>(null);
 
   const [rowQuantity, setRowQuantity] = useState<number>(1);
   const [formsDivRendered, setFormsDivRendered] = useState<boolean>(false);
 
-  const bridge = useMemo(() => new DmnValidator().getBridge(props.schema ?? {}), [props.schema]);
-  const grid = useMemo(() => (bridge ? new DmnGrid(bridge) : undefined), [bridge]);
-  const input = useMemo(() => grid?.generateBoxedInputs(), [grid]);
-  const shouldRender = useMemo(() => (input?.length ?? 0) > 0, [input]);
+  const bridge = useMemo(() => {
+    return new DmnValidator().getBridge(props.schema ?? {});
+  }, [props.schema]);
+
+  // grid is a singleton
+  grid = useMemo(() => {
+    return bridge ? (grid ? grid : new DmnGrid(bridge)) : undefined;
+  }, [bridge]);
+  const shouldRender = useMemo(() => (grid?.getInput().length ?? 0) > 0, [grid]);
+
+  // grid should be updated everytime the bridge is updated
+  useEffect(() => {
+    grid?.updateBridge(bridge);
+  }, [bridge]);
+
+  // columns are saved in the grid instance, so some values can be used to improve re-renders (e.g. cell width)
+  const onColumnsUpdate = useCallback((columns: ColumnInstance[]) => {
+    grid?.setPreviousColumns(columns);
+  }, []);
 
   const handleOperation = useCallback(
     (tableOperation: TableOperation, rowIndex: number) => {
@@ -141,6 +159,8 @@ export function DmnAutoTable(props: Props) {
     [props.setTableData]
   );
 
+  // every input row is managed by an AutoRow. Each row is a form, and inside of it, cell are auto generated
+  // using the uniforms library
   const getAutoRow = useCallback(
     (data, rowIndex: number, bridge: DmnTableJsonSchemaBridge) =>
       ({ children }: any) =>
@@ -170,18 +190,19 @@ export function DmnAutoTable(props: Props) {
     [onSubmit, onValidate]
   );
 
-  let selectedExpression: DmnRunnerTableProps | undefined = undefined;
-  selectedExpression = useMemo(() => {
+  const [selectedExpression, setExpression] = useState<Partial<DmnRunnerTabularProps>>();
+  useEffect(() => {
     const filteredResults = props.results?.filter((result) => result !== undefined);
-    if (grid && filteredResults && input) {
+    if (grid && filteredResults) {
       const [outputSet, outputEntries] = grid.generateBoxedOutputs(props.schema ?? {}, filteredResults);
-      const output: Clause[] = Array.from(outputSet.values());
+      // generate output
+      const output: any[] = Array.from(outputSet.values());
 
-      const rules = [];
-      const inputEntriesLength = input.reduce(
-        (acc, i) => (i.insideProperties ? acc + i.insideProperties.length : acc + 1),
-        0
-      );
+      // generate rules
+      const rules: any[] = [];
+      const inputEntriesLength = grid
+        .getInput()
+        .reduce((acc, i) => (i.insideProperties ? acc + i.insideProperties.length : acc + 1), 0);
       const inputEntries = new Array(inputEntriesLength);
       for (let i = 0; i < rowQuantity; i++) {
         const rule: DmnRunnerRule = {
@@ -193,27 +214,43 @@ export function DmnAutoTable(props: Props) {
         }
         rules.push(rule);
       }
-
-      return {
-        name: "DMN Runner",
-        input,
+      // clone without references an array that maybe contains an object
+      output.forEach((o, i) => {
+        const filteredOutputEntries = rules[i]?.outputEntries.filter(
+          (outputEntry: any[]) => typeof outputEntry === "object"
+        );
+        if (filteredOutputEntries?.length > 0) {
+          o.insideProperties = filteredOutputEntries?.reduce((acc: any[], outputEntry: any[]) => {
+            if (Array.isArray(outputEntry)) {
+              acc.push([...outputEntry]);
+              return acc;
+            }
+            if (typeof outputEntry === "object") {
+              acc.push(Object.assign({}, outputEntry));
+              return acc;
+            }
+            return [...acc, outputEntry];
+          }, []);
+        }
+      });
+      grid?.updateWidth(output, rules);
+      setExpression({
+        input: grid.getInput(),
         output,
         rules,
         uid: selectedExpression?.uid ?? nextId(),
-        onRowNumberUpdated,
-      };
+      });
     }
   }, [
+    bridge,
+    formsDivRendered,
+    getAutoRow,
+    grid,
     props.results,
     props.schema,
     props.tableData,
-    input,
-    grid,
-    onRowNumberUpdated,
     rowQuantity,
-    formsDivRendered,
-    getAutoRow,
-    bridge,
+    selectedExpression?.uid,
   ]);
 
   const formErrorMessage = useMemo(
@@ -249,7 +286,12 @@ export function DmnAutoTable(props: Props) {
             ctx={DmnAutoTableI18nContext}
           >
             <BoxedExpressionProvider expressionDefinition={selectedExpression} isRunnerTable={true}>
-              <DmnRunnerTableBoxed {...selectedExpression} />
+              <DmnRunnerTabular
+                name={"DMN Runner"}
+                onRowNumberUpdated={onRowNumberUpdated}
+                onColumnsUpdate={onColumnsUpdate}
+                {...selectedExpression}
+              />
             </BoxedExpressionProvider>
           </I18nDictionariesProvider>
         </ErrorBoundary>

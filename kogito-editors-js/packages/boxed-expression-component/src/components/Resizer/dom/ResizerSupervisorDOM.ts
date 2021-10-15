@@ -25,6 +25,9 @@ import { DOMSession, Cell } from "../dom";
  * new width information across React components once users commit an action.
  * =============================================================================
  */
+
+export let DEFAULT_MIN_WIDTH = 100;
+
 export const applyDOMSupervisor = (isRunnerTable: boolean): void => {
   new SupervisorExecution(isRunnerTable).execute();
 };
@@ -41,7 +44,11 @@ class SupervisorExecution {
 
     cells.forEach(this.refreshWidthAsParent);
     if (this.isRunnerTable) {
-      cells.forEach(this.refreshWidthAsLastGroupColumnRunner);
+      DEFAULT_MIN_WIDTH = 150;
+      const properties = { originalIndex: 0, cellIndex: 0 };
+      for (properties.originalIndex; properties.originalIndex < cells.length; properties.originalIndex++) {
+        this.refreshWidthAsLastGroupColumnRunner(cells[properties.originalIndex], properties);
+      }
     } else {
       cells.forEach(this.refreshWidthAsLastGroupColumn);
     }
@@ -56,8 +63,9 @@ class SupervisorExecution {
     cell.refreshWidthAsLastColumn();
   }
 
-  private refreshWidthAsLastGroupColumnRunner(cell: Cell, index: number) {
-    cell.refreshWidthAsLastGroupColumnRunner(index);
+  private refreshWidthAsLastGroupColumnRunner(cell: Cell, properties: any) {
+    cell.refreshWidthAsLastGroupColumnRunner(properties);
+    properties.cellIndex++;
   }
 
   private refreshWidthAsLastGroupColumn(cell: Cell) {

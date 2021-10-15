@@ -16,14 +16,7 @@
 
 import * as React from "react";
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
-import {
-  DataType,
-  GroupOperations,
-  GroupOperationsByColumnType,
-  Row,
-  TableHandlerConfiguration,
-  TableOperation,
-} from "../../api";
+import { DataType, TableHandlerConfiguration, TableOperation } from "../../api";
 import * as _ from "lodash";
 import { Column, ColumnInstance, DataRecord } from "react-table";
 import { Popover } from "@patternfly/react-core";

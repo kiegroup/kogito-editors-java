@@ -92,7 +92,7 @@ export class Cell {
     this.setWidth(right - x - BORDER * 2);
   }
 
-  refreshWidthAsLastGroupColumnRunner(index: number): void {
+  refreshWidthAsLastGroupColumnRunner(properties: any): void {
     if (!this.isColSpanHeader() && !this.getParentRow()?.classList.contains("table-row")) {
       return;
     }
@@ -104,27 +104,41 @@ export class Cell {
     }
 
     // sum the colSpan to determine the header size;
-    const headerSize = this.isColSpanHeader()
-      ? 0
-      : Array.from(document.querySelectorAll(".colspan-header")).reduce(
-          (acc, th: HTMLTableHeaderCellElement) => acc + th.colSpan,
-          0
-        );
+    const headerElements = document.querySelectorAll(".colspan-header");
+    const headerSize = Array.from(headerElements).reduce(
+      (acc, th: HTMLTableHeaderCellElement) => acc + (th.colSpan || 1),
+      0
+    );
 
     // if is header uses the headerType, if not (inputs/outputs cells) use the .data-cell class
     const children: HTMLElement[] = this.isColSpanHeader()
-      ? [].slice.call((refSibling as HTMLElement).querySelectorAll(`.${this.getHeaderType()}`))
+      ? [
+          ...Array.from((refSibling as HTMLElement).querySelectorAll(`.input`)),
+          ...Array.from((refSibling as HTMLElement).querySelectorAll(`.output`)),
+        ]
       : [].slice.call((refSibling as HTMLElement).querySelectorAll(`.data-cell`));
 
     const colSpan = (this.element?.parentNode as HTMLTableHeaderCellElement)?.colSpan;
     if (colSpan > 1) {
-      const firstReact = children[0].getBoundingClientRect();
-      const lastReact = children[colSpan - 1].getBoundingClientRect();
+      const firstReact = children[properties.cellIndex].getBoundingClientRect();
+      const lastReact = children[properties.cellIndex + colSpan - 1].getBoundingClientRect();
       this.setWidth(lastReact.right - firstReact.x - BORDER * 2);
+      properties.cellIndex += colSpan - 1;
     } else {
-      const childrenRects = children[(index - headerSize) % children.length]?.getBoundingClientRect();
+      const childrenA = children[properties.cellIndex];
+      const childrenRects = childrenA?.getBoundingClientRect();
       if (childrenRects) {
         this.setWidth(childrenRects.width - BORDER * 2);
+      } else {
+        const entries = [
+          ...Array.from((refSibling as HTMLElement)?.querySelectorAll(".input")),
+          ...Array.from((refSibling as HTMLElement)?.querySelectorAll(".output")),
+        ];
+        const element =
+          entries[
+            (properties.originalIndex - headerSize - headerElements.length) % entries.length
+          ]?.getBoundingClientRect();
+        this.setWidth(element.width - BORDER * 2);
       }
     }
   }

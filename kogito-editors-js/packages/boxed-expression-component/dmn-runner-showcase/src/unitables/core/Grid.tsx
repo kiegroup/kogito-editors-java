@@ -4,12 +4,97 @@ import { AutoField } from "./AutoField";
 import { DataType } from "boxed-expression-component/src/api";
 import { DmnRunnerClause } from "../boxed";
 import { DecisionResult, Result } from "../dmn";
+import { ColumnInstance } from "react-table";
+import { DmnTableJsonSchemaBridge } from "../dmn/DmnTableJsonSchemaBridge";
 
 export class Grid {
-  constructor(private readonly bridge: Bridge) {}
+  private input: DmnRunnerClause[];
+  private columns: ColumnInstance[];
+
+  constructor(private bridge: Bridge) {
+    this.input = this.generateBoxedInputs();
+  }
+
+  public updateBridge(bridge: DmnTableJsonSchemaBridge) {
+    this.bridge = bridge;
+    this.input = this.generateBoxedInputs();
+    this.columns?.map((column) => {
+      if (column.groupType === "input") {
+        const inputToUpdate = this.input.find((e) => e.name === column.label);
+        if (inputToUpdate?.insideProperties && column?.columns) {
+          inputToUpdate.insideProperties.forEach((insideProperty) => {
+            const columnFound = column.columns?.find((nestedColumn) => nestedColumn.label === insideProperty.name);
+            if (columnFound) {
+              insideProperty.width = columnFound.width;
+            }
+          });
+        }
+        if (inputToUpdate) {
+          inputToUpdate.width = column.width;
+        }
+      }
+    });
+  }
 
   public getBridge() {
     return this.bridge;
+  }
+
+  public getInput() {
+    return this.input;
+  }
+
+  public setPreviousColumns(columns: ColumnInstance[]) {
+    this.columns = columns;
+  }
+
+  public resetColumns() {
+    this.columns = [];
+  }
+
+  public updateWidth(output: any[], rules: any) {
+    this.columns?.forEach((column) => {
+      if (column.groupType === "input") {
+        const inputToUpdate = this.input.find((i) => i.name === column.label);
+        if (inputToUpdate?.insideProperties && column?.columns) {
+          inputToUpdate.insideProperties.forEach((insideProperty) => {
+            const columnFound = column.columns?.find((nestedColumn) => nestedColumn.label === insideProperty.name);
+            if (columnFound) {
+              insideProperty.width = columnFound.width;
+            }
+          });
+        }
+        if (inputToUpdate) {
+          inputToUpdate.width = column.width;
+        }
+      }
+      if (column.groupType === "output") {
+        const outputToUpdate = output.find((e) => e.name === column.label);
+        if (outputToUpdate?.insideProperties && column?.columns) {
+          (outputToUpdate.insideProperties as any[]).forEach((insideProperty) => {
+            if (insideProperty !== null && typeof insideProperty === "object") {
+              Object.keys(insideProperty).map((insidePropertyKey) => {
+                const columnFound = column.columns?.find((nestedColumn) => nestedColumn.label === insidePropertyKey);
+                if (columnFound) {
+                  insideProperty[insidePropertyKey] = {
+                    value: insideProperty[insidePropertyKey],
+                    width: columnFound.width,
+                  };
+                }
+              });
+            } else if (insideProperty) {
+              const columnFound = column.columns?.find((nestedColumn) => nestedColumn.label === insideProperty.name);
+              if (columnFound) {
+                insideProperty.width = columnFound.width;
+              }
+            }
+          });
+        }
+        if (outputToUpdate) {
+          outputToUpdate.width = column.width;
+        }
+      }
+    });
   }
 
   public removeInputName(fullName: string) {
@@ -45,7 +130,7 @@ export class Grid {
       case "years and months duration":
         return { dataType: DataType.YearsMonthsDuration, width: 150 };
       default:
-        return { dataType: (extractedType as DataType) ?? DataType.Undefined, width: undefined };
+        return { dataType: (extractedType as DataType) ?? DataType.Undefined, width: 150 };
     }
   }
 
@@ -65,6 +150,7 @@ export class Grid {
         ...this.getDataTypeProps(field["x-dmn-type"]),
         insideProperties,
         name: joinedName,
+        width: insideProperties.reduce((acc, insideProperty) => acc + insideProperty.width, 0),
       };
     }
     return {

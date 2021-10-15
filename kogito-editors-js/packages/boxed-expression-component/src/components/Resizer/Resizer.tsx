@@ -20,8 +20,8 @@ import { useCallback, useContext, useLayoutEffect, useMemo, useState } from "rea
 import { ResizableBox } from "react-resizable";
 import { v4 as uuid } from "uuid";
 import { BoxedExpressionGlobalContext } from "../../context";
-import { DEFAULT_MIN_WIDTH, widthValue as commonWidthValue } from "./common";
-import { Cell, DOMSession } from "./dom";
+import { widthValue as commonWidthValue } from "./common";
+import { Cell, DEFAULT_MIN_WIDTH, DOMSession } from "./dom";
 import "./Resizer.css";
 
 export interface ResizerProps {
