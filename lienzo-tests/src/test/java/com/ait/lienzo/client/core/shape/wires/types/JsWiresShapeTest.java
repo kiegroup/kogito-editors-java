@@ -428,7 +428,7 @@ public class JsWiresShapeTest {
     public void testGetAbsoluteLocation() {
         Point2D location = new Point2D(150, 150);
         when(wiresShape.getGroup()).thenReturn(group);
-        when(group.getAbsoluteLocation()).thenReturn(location);
+        when(group.getComputedLocation()).thenReturn(location);
         jsWireShape = new JsWiresShape(wiresShape);
         final Group group2 = jsWireShape.asGroup();
         assertEquals("Group should be the same", group, group2);
