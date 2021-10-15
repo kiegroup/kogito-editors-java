@@ -172,8 +172,6 @@ public class JsCanvasTest {
     @Test
     public void testGetAbsoluteLocation() {
         when(jsCanvas.getWiresShape(anyString())).thenReturn(jsWiresShape);
-        doNothing().when(jsCanvas).calculatePanelOffset(any());
-
         Point2D location = new Point2D(100.0, 100.0);
         when(jsWiresShape.getAbsoluteLocation()).thenReturn(location);
         doCallRealMethod().when(jsCanvas).getAbsoluteLocation(any());
@@ -186,8 +184,6 @@ public class JsCanvasTest {
     @Test
     public void testGetAbsoluteLocationNullOrEmptyUUID() {
         when(jsCanvas.getWiresShape(anyString())).thenReturn(jsWiresShape);
-        doNothing().when(jsCanvas).calculatePanelOffset(any());
-
         doCallRealMethod().when(jsCanvas).getAbsoluteLocation(any());
 
         NFastArrayList<Double> location = jsCanvas.getAbsoluteLocation(null);
