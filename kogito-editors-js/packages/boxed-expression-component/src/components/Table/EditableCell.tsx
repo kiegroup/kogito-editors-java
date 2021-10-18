@@ -51,7 +51,7 @@ export interface EditableCellProps extends CellProps {
   value: string;
   /** Function executed each time a cell gets updated */
   onCellUpdate: (rowIndex: number, columnId: string, value: string) => void;
-  /** Enable/Disable readonly */
+  /** Enable/Disable readonly cells */
   readOnly?: boolean;
 }
 

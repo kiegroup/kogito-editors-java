@@ -39,7 +39,7 @@ import { ColumnInstance, DataRecord, Row } from "react-table";
 import { ContextEntryExpressionCell } from "./ContextEntryExpressionCell";
 import * as _ from "lodash";
 import { ContextEntryExpression } from "./ContextEntryExpression";
-import { ContextEntryInfoCell } from "./ContextEntryInfoCell";
+import { getContextEntryInfoCell } from "./ContextEntryInfoCell";
 import { hashfy, Resizer } from "../Resizer";
 import { BoxedExpressionGlobalContext } from "../../context";
 
@@ -94,7 +94,6 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = (context
             name: DEFAULT_CONTEXT_ENTRY_NAME,
             dataType: DEFAULT_CONTEXT_ENTRY_DATA_TYPE,
           },
-          editInfoPopoverLabel: i18n.editContextEntry,
           nameAndDataTypeSynchronized: true,
         } as DataRecord,
       ],
@@ -195,8 +194,8 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = (context
   }, [contextExpression.isHeadless]);
 
   const defaultCell = useMemo(
-    () => ({ entryInfo: ContextEntryInfoCell, entryExpression: ContextEntryExpressionCell }),
-    []
+    () => ({ entryInfo: getContextEntryInfoCell(i18n.editContextEntry), entryExpression: ContextEntryExpressionCell }),
+    [i18n.editContextEntry]
   );
 
   const handlerConfiguration = useMemo(

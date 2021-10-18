@@ -16,7 +16,7 @@
 
 import "./ContextEntryExpressionCell.css";
 import * as React from "react";
-import { useCallback, useEffect } from "react";
+import { useCallback } from "react";
 import { CellProps, ContextEntries, DataType, ExpressionProps } from "../../api";
 import { DataRecord } from "react-table";
 import { ContextEntryExpression } from "./ContextEntryExpression";

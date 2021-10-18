@@ -16,7 +16,7 @@
 
 import "../../__mocks__/ReactWithSupervisor";
 import { DataType, LogicType } from "../../../api";
-import { fireEvent, render, waitFor } from "@testing-library/react";
+import { fireEvent, render } from "@testing-library/react";
 import { flushPromises, usingTestingBoxedExpressionI18nContext } from "../test-utils";
 import { act } from "react-dom/test-utils";
 import * as React from "react";

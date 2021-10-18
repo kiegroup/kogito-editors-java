@@ -16,7 +16,7 @@
 
 import { CellProps, ContextEntries, ContextEntryRecord, EntryInfo, ExpressionProps } from "../../api";
 import * as React from "react";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useMemo } from "react";
 import { DataRecord } from "react-table";
 import { ContextEntryInfo } from "./ContextEntryInfo";
 import * as _ from "lodash";
