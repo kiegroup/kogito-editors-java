@@ -12,7 +12,6 @@
     "build:dev": "webpack --config webpack.development.js",
     "build:prod": "webpack --config webpack.production.js",
     "build:watch": "webpack --config webpack.development.js --watch",
-    "copy:css": "copyfiles -u 1 'src/**/*.{sass,scss,css}' dist/",
     "lint": "eslint --ext .ts,.tsx,.js ./src/",
     "test": "jest --collect-coverage",
     "type-check": "tsc --noEmit",
