@@ -349,7 +349,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
     <div className={`table-component ${tableId} ${tableEventUUID}`}>
       <TableComposable
         variant="compact"
-        {...tableInstance.getTableProps()}
+        {...(tableInstance.getTableProps() as any)}
         ref={tableRef}
         ouiaId="expression-grid-table"
       >
