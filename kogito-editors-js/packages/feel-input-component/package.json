@@ -5,10 +5,14 @@
   "license": "Apache-2.0",
   "main": "src/index.tsx",
   "source": "src/index.tsx",
+  "files": [
+    "src"
+  ],
   "scripts": {
     "build:dev": "webpack --config webpack.development.js",
     "build:prod": "webpack --config webpack.production.js",
     "build:watch": "webpack --config webpack.development.js --watch",
+    "publish": "npm publish --access public",
     "test": "jest --collect-coverage",
     "lint": "eslint --ext .ts,.tsx,.js ./src/",
     "type-check": "tsc --noEmit",

@@ -15,6 +15,7 @@
     "bootstrap": "yarn run init && lerna bootstrap",
     "build:dev": "rimraf dist && lerna run build:dev --stream",
     "build:prod": "rimraf dist && yarn format:check && lerna run build:prod --stream && yarn info",
+    "publish": "lerna run publish --stream",
     "gwt:wire": "lerna run build:dev && lerna run build:watch --parallel",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
