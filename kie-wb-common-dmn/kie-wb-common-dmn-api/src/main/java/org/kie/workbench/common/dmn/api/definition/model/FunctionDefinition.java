@@ -35,8 +35,7 @@ import static org.kie.workbench.common.dmn.api.definition.model.common.HasTypeRe
 import static org.kie.workbench.common.dmn.api.definition.model.common.HasTypeRefHelper.getNotNullHasTypeRefs;
 
 @Portable
-public class FunctionDefinition extends Expression implements HasExpression,
-                                                              HasEqualsIgnoreId {
+public class FunctionDefinition extends Expression implements HasExpression {
 
     private static final int STATIC_COLUMNS = 2;
 

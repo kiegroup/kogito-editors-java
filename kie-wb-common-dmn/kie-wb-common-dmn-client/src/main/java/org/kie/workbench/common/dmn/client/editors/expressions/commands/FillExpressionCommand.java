@@ -232,14 +232,16 @@ public abstract class FillExpressionCommand<E extends ExpressionProps> extends A
     }
 
     void setExpressionName(final String expressionName) {
-        final HasName hasName = (HasName) getHasExpression();
-        final Name name;
-        if (Objects.isNull(hasName.getName())) {
-            name = new Name();
-        } else {
-            name = hasName.getName();
+        if (getHasExpression() instanceof HasName) {
+            final HasName hasName = (HasName) getHasExpression();
+            final Name name;
+            if (Objects.isNull(hasName.getName())) {
+                name = new Name();
+            } else {
+                name = hasName.getName();
+            }
+            name.setValue(expressionName);
         }
-        name.setValue(expressionName);
     }
 
     void saveCurrentState() {
@@ -249,8 +251,10 @@ public abstract class FillExpressionCommand<E extends ExpressionProps> extends A
     }
 
     void saveCurrentExpressionName() {
-        final HasName hasName = (HasName) getHasExpression();
-        setSavedExpressionName(hasName.getName().getValue());
+        if (getHasExpression() instanceof HasName) {
+            final HasName hasName = (HasName) getHasExpression();
+            setSavedExpressionName(hasName.getName().getValue());
+        }
     }
 
     void saveCurrentTypeRef() {

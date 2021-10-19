@@ -23,9 +23,9 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import elemental2.promise.Promise;
 import com.ait.lienzo.client.core.types.JsCanvas;
 import com.ait.lienzo.client.widget.panel.LienzoBoundsPanel;
+import elemental2.promise.Promise;
 import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
 import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorDock;
 import org.kie.workbench.common.dmn.client.docks.navigator.common.LazyCanvasFocusUtils;

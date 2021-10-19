@@ -69,13 +69,7 @@ public class RuleAnnotationClauseText extends DMNElement implements HasText,
             return false;
         }
 
-        if (!ignoreId) {
-            if (!Objects.equals(id, that.id)) {
-                return false;
-            }
-        }
-
-        return true;
+        return ignoreId || Objects.equals(id, that.id);
     }
 
     @Override

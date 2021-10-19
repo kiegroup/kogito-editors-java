@@ -31,8 +31,7 @@ import static org.kie.workbench.common.dmn.api.definition.model.common.HasTypeRe
 @Portable
 public class ContextEntry extends DMNModelInstrumentedBase implements HasExpression,
                                                                       HasTypeRefs,
-                                                                      HasVariable<InformationItem>,
-                                                                      HasEqualsIgnoreId {
+                                                                      HasVariable<InformationItem> {
 
     public static final String DEFAULT_EXPRESSION_VALUE = "null // auto-filled by the editor to avoid missing empty expression.";
 
@@ -109,6 +108,4 @@ public class ContextEntry extends DMNModelInstrumentedBase implements HasExpress
 
         return hasTypeRefs;
     }
-
-
 }

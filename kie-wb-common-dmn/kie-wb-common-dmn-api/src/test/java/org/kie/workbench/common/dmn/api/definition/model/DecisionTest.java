@@ -28,8 +28,8 @@ import org.kie.workbench.common.dmn.api.property.styling.FontSize;
 import org.kie.workbench.common.dmn.api.property.styling.StylingSet;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;

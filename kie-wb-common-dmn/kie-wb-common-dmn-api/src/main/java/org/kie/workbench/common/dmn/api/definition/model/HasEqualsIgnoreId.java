@@ -16,6 +16,11 @@
 
 package org.kie.workbench.common.dmn.api.definition.model;
 
+/**
+ * An object that has equality comparison ignoring its ID.
+ * This is used to handle incomplete broadcasts from Boxed Expression Editor that
+ * always changes the ID at each broadcast.
+ */
 public interface HasEqualsIgnoreId {
 
     boolean equals(final Object other, final boolean ignoreId);

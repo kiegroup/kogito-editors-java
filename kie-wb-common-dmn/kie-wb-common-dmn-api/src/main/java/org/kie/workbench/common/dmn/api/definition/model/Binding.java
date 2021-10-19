@@ -31,8 +31,7 @@ import static org.kie.workbench.common.dmn.api.definition.model.common.HasTypeRe
 @Portable
 public class Binding extends DMNModelInstrumentedBase implements HasExpression,
                                                                  HasTypeRefs,
-                                                                 HasVariable<InformationItem>,
-                                                                 HasEqualsIgnoreId {
+                                                                 HasVariable<InformationItem> {
 
     private InformationItem parameter;
     private Expression expression;

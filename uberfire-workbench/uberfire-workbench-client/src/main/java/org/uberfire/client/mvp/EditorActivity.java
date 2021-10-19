@@ -33,11 +33,11 @@ public interface EditorActivity extends Activity {
     Promise<List<Notification>> validate();
 
     default Promise<Void> undo() {
-        return null;
+        throw new UnsupportedOperationException("The editor does not support undo.");
     }
 
     default Promise<Void> redo() {
-        return null;
+        throw new UnsupportedOperationException("The editor does not support redo.");
     }
 
     default Element getWidgetElement() {
