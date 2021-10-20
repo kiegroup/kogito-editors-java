@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.forms.client.fields.colorPicker;
+package org.kie.workbench.common.stunner.forms.client.fields.colorpicker;
 
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.junit.Before;
