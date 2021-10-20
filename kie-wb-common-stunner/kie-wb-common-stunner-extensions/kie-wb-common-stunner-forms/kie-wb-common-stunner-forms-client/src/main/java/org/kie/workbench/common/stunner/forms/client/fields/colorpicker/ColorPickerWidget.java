@@ -20,20 +20,16 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasValue;
-import com.google.gwt.user.client.ui.UIObject;
-import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.TextBox;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.kie.workbench.common.stunner.forms.model.ColorPickerFieldDefinition;
-import org.uberfire.ext.widgets.common.client.colorpicker.ColorPickerDialog;
 
 @Dependent
 @Templated
@@ -41,19 +37,10 @@ public class ColorPickerWidget extends Composite implements HasValue<String> {
 
     @Inject
     @DataField
-    private Button colorButton;
-
-    @Inject
-    @DataField
     private TextBox colorTextBox;
 
     private String color;
     private boolean readOnly;
-
-    @EventHandler("colorButton")
-    public void onClickColorButton(final ClickEvent clickEvent) {
-        showColorDialog(getColorButton());
-    }
 
     @EventHandler("colorTextBox")
     public void onColorTextBoxChange(final ChangeEvent changeEvent) {
@@ -63,26 +50,6 @@ public class ColorPickerWidget extends Composite implements HasValue<String> {
         } else {
             setValue(color, false);
         }
-    }
-
-    protected void showColorDialog(final UIObject owner) {
-        if (readOnly) {
-            return;
-        }
-        final ColorPickerDialog dlg = new ColorPickerDialog();
-        dlg.getElement().getStyle().setZIndex(9999);
-        dlg.addDialogClosedHandler(event -> {
-            if (!event.isCanceled()) {
-                setValue("#" + dlg.getColor(),
-                         true);
-            }
-        });
-        String color = getValue();
-        if (color.startsWith("#")) {
-            color = color.substring(1);
-        }
-        dlg.setColor(color);
-        dlg.showRelativeTo(owner);
     }
 
     @Override
@@ -122,7 +89,6 @@ public class ColorPickerWidget extends Composite implements HasValue<String> {
     public void setReadOnly(boolean readOnly) {
         this.readOnly = readOnly;
         getColorTextBox().setReadOnly(readOnly);
-        getColorButton().setEnabled(!readOnly);
     }
 
     /**
@@ -130,9 +96,5 @@ public class ColorPickerWidget extends Composite implements HasValue<String> {
      */
     TextBox getColorTextBox() {
         return colorTextBox;
-    }
-
-    Button getColorButton() {
-        return colorButton;
     }
 }

@@ -18,7 +18,6 @@ package org.kie.workbench.common.stunner.forms.client.fields.colorpicker;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwtmockito.GwtMockitoTestRunner;
-import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.TextBox;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,9 +38,6 @@ public class ColorPickerWidgetTest {
     @Mock
     private TextBox colorTextBoxMock;
 
-    @Mock
-    private Button colorButtonMock;
-
     private ColorPickerWidget colorPicker;
 
     @Before
@@ -49,7 +45,6 @@ public class ColorPickerWidgetTest {
         colorPicker = spy(new ColorPickerWidget());
 
         doReturn(colorTextBoxMock).when(colorPicker).getColorTextBox();
-        doReturn(colorButtonMock).when(colorPicker).getColorButton();
     }
 
     @Test
@@ -57,14 +52,12 @@ public class ColorPickerWidgetTest {
         colorPicker.setReadOnly(true);
 
         verify(colorTextBoxMock).setReadOnly(true);
-        verify(colorButtonMock).setEnabled(false);
 
-        reset(colorButtonMock, colorTextBoxMock);
+        reset(colorTextBoxMock);
 
         colorPicker.setReadOnly(false);
 
         verify(colorTextBoxMock).setReadOnly(false);
-        verify(colorButtonMock).setEnabled(true);
     }
 
     @Test
