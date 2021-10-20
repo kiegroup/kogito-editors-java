@@ -56,6 +56,6 @@ public class ColorPickerFieldRenderer extends FieldRenderer<ColorPickerFieldDefi
 
     @Override
     protected void setReadOnly(boolean readOnly) {
-
+        colorPicker.setReadOnly(readOnly);
     }
 }

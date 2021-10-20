@@ -19,6 +19,7 @@ package org.kie.workbench.common.stunner.forms.client.fields.colorPicker;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -31,6 +32,7 @@ import org.gwtbootstrap3.client.ui.TextBox;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
+import org.kie.workbench.common.stunner.forms.model.ColorPickerFieldDefinition;
 import org.uberfire.ext.widgets.common.client.colorpicker.ColorPickerDialog;
 
 @Dependent
@@ -50,12 +52,17 @@ public class ColorPickerWidget extends Composite implements HasValue<String> {
 
     @EventHandler("colorButton")
     public void onClickColorButton(final ClickEvent clickEvent) {
-        showColorDialog(colorButton);
+        showColorDialog(getColorButton());
     }
 
     @EventHandler("colorTextBox")
-    public void onClickColorTextBox(final ClickEvent clickEvent) {
-        showColorDialog(colorTextBox);
+    public void onColorTextBoxChange(final ChangeEvent changeEvent) {
+        final String newColorValue = getColorTextBox().getValue();
+        if (newColorValue != null && newColorValue.matches(ColorPickerFieldDefinition.COLOR_REGEXP)) {
+            setValue(newColorValue, true);
+        } else {
+            setValue(color, false);
+        }
     }
 
     protected void showColorDialog(final UIObject owner) {
@@ -72,8 +79,7 @@ public class ColorPickerWidget extends Composite implements HasValue<String> {
         });
         String color = getValue();
         if (color.startsWith("#")) {
-            color = color.substring(1,
-                                    color.length());
+            color = color.substring(1);
         }
         dlg.setColor(color);
         dlg.showRelativeTo(owner);
@@ -104,7 +110,7 @@ public class ColorPickerWidget extends Composite implements HasValue<String> {
     }
 
     protected void initTextBox() {
-        colorTextBox.getElement().getStyle().setBackgroundColor(color);
+        getColorTextBox().setText(color);
     }
 
     @Override
@@ -115,6 +121,18 @@ public class ColorPickerWidget extends Composite implements HasValue<String> {
 
     public void setReadOnly(boolean readOnly) {
         this.readOnly = readOnly;
-        colorButton.setEnabled(!readOnly);
+        getColorTextBox().setReadOnly(readOnly);
+        getColorButton().setEnabled(!readOnly);
+    }
+
+    /**
+     * For testing purposes
+     */
+    TextBox getColorTextBox() {
+        return colorTextBox;
+    }
+
+    Button getColorButton() {
+        return colorButton;
     }
 }
