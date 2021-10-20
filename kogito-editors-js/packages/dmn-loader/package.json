@@ -17,7 +17,8 @@
     "style-loader": "^2.0.0",
     "css-loader": "^5.2.6",
     "hello-world-component": "^0.0.0",
-    "boxed-expression-component": "^0.0.0"
+    "boxed-expression-component": "^0.0.0",
+    "import-java-classes-component": "^0.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.14.5",

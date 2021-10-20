@@ -49,7 +49,6 @@ import org.kie.workbench.common.stunner.core.client.command.CanvasCommandResultB
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
 import org.kie.workbench.common.stunner.core.client.session.ClientSession;
 import org.kie.workbench.common.stunner.core.command.CommandResult;
-import org.kie.workbench.common.widgets.client.kogito.IsKogito;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InOrder;
@@ -109,9 +108,6 @@ public class DataTypeListTest {
     private DataTypeListHighlightHelper highlightHelper;
 
     @Mock
-    private IsKogito isKogito;
-
-    @Mock
     private SessionCommandManager<AbstractCanvasHandler> commandManager;
 
     @Mock
@@ -150,7 +146,6 @@ public class DataTypeListTest {
                                             dataTypeStackHash,
                                             dndDataTypesHandler,
                                             highlightHelper,
-                                            isKogito,
                                             commandManager,
                                             sessionManager));
 
@@ -170,7 +165,7 @@ public class DataTypeListTest {
 
         verify(view).init(dataTypeList);
         verify(highlightHelper).init(dataTypeList);
-        verify(view).showImportDataObjectButton();
+       // verify(view).showImportDataObjectButton();
         verify(dndDataTypesHandler).init(dataTypeList);
         verify(dndListComponent).setOnDropItem(consumer);
     }
@@ -181,12 +176,11 @@ public class DataTypeListTest {
         final BiConsumer<Element, Element> consumer = (a, b) -> {/* Nothing. */};
 
         doReturn(consumer).when(dataTypeList).getOnDropDataType();
-        when(isKogito.get()).thenReturn(true);
 
         dataTypeList.setup();
 
         verify(view).init(dataTypeList);
-        verify(view).hideImportDataObjectButton();
+        //verify(view).hideImportDataObjectButton();
         verify(dndDataTypesHandler).init(dataTypeList);
         verify(dndListComponent).setOnDropItem(consumer);
     }

@@ -54,7 +54,6 @@ import org.kie.workbench.common.stunner.core.client.command.CanvasCommandResultB
 import org.kie.workbench.common.stunner.core.client.command.CanvasViolation;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
 import org.kie.workbench.common.stunner.core.command.CommandResult;
-import org.kie.workbench.common.widgets.client.kogito.IsKogito;
 import org.uberfire.client.mvp.UberElemental;
 
 import static java.util.Collections.singletonList;
@@ -80,13 +79,11 @@ public class DataTypeList {
 
     private final DataTypeListHighlightHelper highlightHelper;
 
-    private final IsKogito isKogito;
-
     private final SessionCommandManager<AbstractCanvasHandler> commandManager;
 
     private final SessionManager sessionManager;
 
-    private Consumer<DataTypeListItem> onDataTypeListItemUpdate = (e) -> { /* Nothing. */ };
+    private Consumer<DataTypeListItem> onDataTypeListItemUpdate = e -> { /* Nothing. */ };
 
     private List<DataTypeListItem> items = new ArrayList<>();
 
@@ -105,7 +102,6 @@ public class DataTypeList {
                         final DataTypeStackHash dataTypeStackHash,
                         final DNDDataTypesHandler dndDataTypesHandler,
                         final DataTypeListHighlightHelper highlightHelper,
-                        final IsKogito isKogito,
                         final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
                         final SessionManager sessionManager) {
         this.view = view;
@@ -116,7 +112,6 @@ public class DataTypeList {
         this.dataTypeStackHash = dataTypeStackHash;
         this.dndDataTypesHandler = dndDataTypesHandler;
         this.highlightHelper = highlightHelper;
-        this.isKogito = isKogito;
         this.importedNamesOccurrencesCount = new HashMap<>();
         this.renamedImportedDataTypes = new HashMap<>();
         this.commandManager = sessionCommandManager;
@@ -130,11 +125,11 @@ public class DataTypeList {
         dndDataTypesHandler.init(this);
         dndListComponent.setOnDropItem(getOnDropDataType());
 
-        if (!isKogito.get()) {
+        /*if (!isKogito.get()) {
             view.showImportDataObjectButton();
         } else {
             view.hideImportDataObjectButton();
-        }
+        }*/
     }
 
     BiConsumer<Element, Element> getOnDropDataType() {
@@ -179,7 +174,7 @@ public class DataTypeList {
             listItems.addAll(makeTreeListItems(subDataType, level + 1));
         }
 
-        final List<HTMLElement> children = listItems.stream().map(e -> e.getDragAndDropElement()).collect(Collectors.toList());
+        final List<HTMLElement> children = listItems.stream().map(DataTypeListItem::getDragAndDropElement).collect(Collectors.toList());
         dndListComponent.setInitialPositionY(listItem.getDragAndDropElement(), children);
 
         cleanAndUnIndex(dataType);
@@ -624,9 +619,9 @@ public class DataTypeList {
 
         void showReadOnlyMessage(final boolean show);
 
-        void showImportDataObjectButton();
+        //void showImportDataObjectButton();
 
-        void hideImportDataObjectButton();
+        //void hideImportDataObjectButton();
 
         HTMLElement getListItems();
     }

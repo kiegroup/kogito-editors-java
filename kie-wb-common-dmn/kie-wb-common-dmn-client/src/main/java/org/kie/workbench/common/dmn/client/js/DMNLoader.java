@@ -29,4 +29,7 @@ public class DMNLoader {
 
     @JsMethod(namespace = "__KIE__DMN_LOADER__")
     public static native void renderBoxedExpressionEditor(final String selector, final ExpressionProps expressionProps, final PMMLParam[] pmmlParams);
+
+    @JsMethod(namespace = "__KIE__DMN_LOADER__")
+    public static native void renderImportJavaClasses(final String selector, final boolean buttonDisabledStatus, final String buttonTooltipMessage);
 }
