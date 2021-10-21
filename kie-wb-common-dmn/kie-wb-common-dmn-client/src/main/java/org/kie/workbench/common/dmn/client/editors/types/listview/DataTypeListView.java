@@ -42,6 +42,7 @@ import org.kie.workbench.common.dmn.client.editors.common.messages.FlashMessage;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataType;
 import org.kie.workbench.common.dmn.client.editors.types.common.ScrollHelper;
 import org.kie.workbench.common.dmn.client.editors.types.listview.draganddrop.DNDListComponent;
+import org.kie.workbench.common.dmn.client.editors.types.jsinterop.ImportJavaClassesService;
 import org.kie.workbench.common.dmn.client.js.DMNLoader;
 import org.kie.workbench.common.stunner.core.client.ReadOnlyProvider;
 import org.uberfire.client.views.pfly.selectpicker.ElementHelper;
@@ -150,6 +151,8 @@ public class DataTypeListView implements DataTypeList.View {
         setupListElement();
 
         setupAddButtonReadOnlyStatus();
+
+        ImportJavaClassesService.registerBroadcastForImportJavaClasses(this);
     }
 
     private void activateReactComponents() {
@@ -162,10 +165,9 @@ public class DataTypeListView implements DataTypeList.View {
         addButton.disabled = readOnlyProvider.isReadOnlyDiagram();
     }
 
-    void importDataObjects(final List<DataObject> imported) {
-        presenter.importDataObjects(imported);
-
-        if (!imported.isEmpty()) {
+    public void importDataObjects(final List<DataObject> imported) {
+        if (imported != null && !imported.isEmpty()) {
+            presenter.importDataObjects(imported);
             fireSuccessfullyImportedData();
         }
     }

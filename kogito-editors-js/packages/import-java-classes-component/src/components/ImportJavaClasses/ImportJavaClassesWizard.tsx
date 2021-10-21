@@ -87,6 +87,9 @@ export const ImportJavaClassesWizard: React.FunctionComponent<ImportJavaClassesW
   const resetJavaClassState = () => {
     setJavaClasses([]);
   };
+  const onWizardFinishing = () => {
+    window.importJavaClassesAPI?.importJavaClasses?.();
+  };
   const steps = [
     {
       canJumpTo: true,
@@ -129,6 +132,7 @@ export const ImportJavaClassesWizard: React.FunctionComponent<ImportJavaClassesW
       buttonTooltipMessage={buttonTooltipMessage}
       className={"import-java-classes"}
       onWizardClose={resetJavaClassState}
+      onWizardSave={onWizardFinishing}
       wizardDescription={i18n.modalWizard.description}
       wizardSteps={steps}
       wizardTitle={i18n.modalWizard.title}

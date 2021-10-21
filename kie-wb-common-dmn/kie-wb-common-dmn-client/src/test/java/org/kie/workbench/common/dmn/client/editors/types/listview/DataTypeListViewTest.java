@@ -38,7 +38,6 @@ import org.kie.workbench.common.dmn.api.editors.types.DataObject;
 import org.kie.workbench.common.dmn.client.editors.common.messages.FlashMessage;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataType;
 import org.kie.workbench.common.dmn.client.editors.types.common.ScrollHelper;
-import org.kie.workbench.common.dmn.client.editors.types.imported.ImportDataObjectModal;
 import org.kie.workbench.common.dmn.client.editors.types.listview.draganddrop.DNDListComponent;
 import org.kie.workbench.common.dmn.client.editors.types.search.DataTypeSearchBar;
 import org.kie.workbench.common.stunner.core.client.ReadOnlyProvider;
@@ -122,9 +121,6 @@ public class DataTypeListViewTest {
     private SpanElement importDataObjectButton;
 
     @Mock
-    private ImportDataObjectModal importDataObjectModal;
-
-    @Mock
     private EventSourceMock<FlashMessage> flashMessageEvent;
 
     @Mock
@@ -158,7 +154,7 @@ public class DataTypeListViewTest {
         dataTypeButton.classList = mock(DOMTokenList.class);
         listItems.childNodes = new NodeList<>();
 
-        view = spy(new DataTypeListView(listItems, addButton, addButtonPlaceholder, dataTypeButton, placeholder, searchBarContainer, expandAll, collapseAll, noDataTypesFound, readOnlyMessage, readOnlyMessageCloseButton, scrollHelper, importDataObjectButton, importDataObjectModal, flashMessageEvent, translationService, readOnlyProvider));
+        view = spy(new DataTypeListView(listItems, addButton, addButtonPlaceholder, dataTypeButton, placeholder, searchBarContainer, expandAll, collapseAll, noDataTypesFound, readOnlyMessage, readOnlyMessageCloseButton, scrollHelper, importDataObjectButton, flashMessageEvent, translationService, readOnlyProvider));
         view.init(presenter);
 
         doReturn(element).when(view).getElement();
@@ -688,7 +684,7 @@ public class DataTypeListViewTest {
 
         //view.onImportDataObjectClick(event);
 
-        verify(importDataObjectModal).show(list);
+        //verify(importDataObjectModal).show(list);
     }
 
     private HTMLElement makeHTMLElement() {

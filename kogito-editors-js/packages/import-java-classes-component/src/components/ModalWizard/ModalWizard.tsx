@@ -39,6 +39,8 @@ export interface ModalWizardProps {
   wizardSteps: WizardStep[];
   /** Action to apply at Wizard closure */
   onWizardClose?: () => void;
+  /** Action to apply at Wizard final step action button pressed*/
+  onWizardSave?: () => void;
 }
 
 export const ModalWizard: React.FunctionComponent<ModalWizardProps> = ({
@@ -52,6 +54,7 @@ export const ModalWizard: React.FunctionComponent<ModalWizardProps> = ({
   wizardDescription,
   wizardSteps,
   onWizardClose,
+  onWizardSave,
 }: ModalWizardProps) => {
   const [isOpen, setOpen] = useState(false);
   const changeWizardState = useCallback(() => setOpen(!isOpen), [isOpen]);
@@ -60,6 +63,12 @@ export const ModalWizard: React.FunctionComponent<ModalWizardProps> = ({
     if (onWizardClose) {
       onWizardClose();
     }
+  };
+  const onSave = () => {
+    if (onWizardSave) {
+      onWizardSave();
+    }
+    onClose();
   };
   const WizardButton: React.FunctionComponent = () => {
     return (
@@ -99,6 +108,7 @@ export const ModalWizard: React.FunctionComponent<ModalWizardProps> = ({
           description={wizardDescription}
           isOpen={isOpen}
           onClose={onClose}
+          onSave={onSave}
           steps={wizardSteps}
           title={wizardTitle}
         />

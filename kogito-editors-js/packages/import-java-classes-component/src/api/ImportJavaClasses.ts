@@ -22,7 +22,13 @@ declare global {
     lspGetClassFieldsServiceMocked: (className: string) => Promise<Map<string, string>>;
   }
 
+  interface ImportJavaClassesAPI {
+    importJavaClasses: () => void;
+  }
+
   interface Window {
     envelopeMock: EnvelopeMock;
+    importJavaClassesAPI: ImportJavaClassesAPI;
+    importJavaClassesAPIWrapper: ImportJavaClassesAPI;
   }
 }

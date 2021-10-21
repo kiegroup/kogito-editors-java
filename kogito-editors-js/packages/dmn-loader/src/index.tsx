@@ -109,6 +109,11 @@ const ImportJavaClassesWrapper: React.FunctionComponent<ImportJavaClassesProps> 
   buttonDisabledStatus,
   buttonTooltipMessage,
 }: ImportJavaClassesProps) => {
+  window.importJavaClassesAPI = {
+    importJavaClasses: () => {
+      window.importJavaClassesAPIWrapper?.importJavaClasses?.();
+    },
+  };
   window.envelopeMock = {
     lspGetClassServiceMocked: (value: string) => lspGetClassServiceMocked(value),
     lspGetClassFieldsServiceMocked: (className: string) => lspGetClassFieldsServiceMocked(className),
