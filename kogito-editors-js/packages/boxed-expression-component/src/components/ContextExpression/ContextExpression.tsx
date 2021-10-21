@@ -97,7 +97,7 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = (context
           nameAndDataTypeSynchronized: true,
         } as DataRecord,
       ],
-    [contextExpression.contextEntries, i18n.editContextEntry]
+    [contextExpression.contextEntries]
   );
 
   const spreadContextExpressionDefinition = useCallback(

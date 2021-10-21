@@ -292,6 +292,7 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (
 
   useEffect(() => {
     spreadFunctionExpressionDefinition();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rows, parameters]);
 
   const spreadFunctionExpressionDefinition = useCallback(() => {

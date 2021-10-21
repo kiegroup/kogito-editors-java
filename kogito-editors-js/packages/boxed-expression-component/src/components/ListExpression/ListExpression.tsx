@@ -130,6 +130,7 @@ export const ListExpression: React.FunctionComponent<ListProps> = (listExpressio
 
   useEffect(() => {
     spreadRelationExpressionDefinition();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [itemsMemo]);
 
   const resetRowCustomFunction = useCallback((row: DataRecord) => {

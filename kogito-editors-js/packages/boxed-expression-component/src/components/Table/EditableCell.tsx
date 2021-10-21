@@ -183,6 +183,7 @@ export function EditableCell({ value, rowIndex, columnId, onCellUpdate, readOnly
         focusNextTextArea(textarea.current);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [triggerReadMode]
   );
 
