@@ -30,6 +30,7 @@ import org.kie.workbench.common.stunner.core.client.service.ServiceCallback;
 import org.uberfire.ext.editor.commons.client.file.popups.elemental2.Elemental2Modal;
 
 @Dependent
+@Deprecated
 public class ImportDataObjectModal extends Elemental2Modal<ImportDataObjectModal.View> {
 
     private final DMNClientServicesProxy client;

@@ -124,12 +124,6 @@ public class DataTypeList {
         highlightHelper.init(this);
         dndDataTypesHandler.init(this);
         dndListComponent.setOnDropItem(getOnDropDataType());
-
-        /*if (!isKogito.get()) {
-            view.showImportDataObjectButton();
-        } else {
-            view.hideImportDataObjectButton();
-        }*/
     }
 
     BiConsumer<Element, Element> getOnDropDataType() {
@@ -618,10 +612,6 @@ public class DataTypeList {
         void showNoDataTypesFound();
 
         void showReadOnlyMessage(final boolean show);
-
-        //void showImportDataObjectButton();
-
-        //void hideImportDataObjectButton();
 
         HTMLElement getListItems();
     }

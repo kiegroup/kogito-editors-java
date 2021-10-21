@@ -41,7 +41,6 @@ import org.kie.workbench.common.dmn.api.editors.types.DataObject;
 import org.kie.workbench.common.dmn.client.editors.common.messages.FlashMessage;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataType;
 import org.kie.workbench.common.dmn.client.editors.types.common.ScrollHelper;
-import org.kie.workbench.common.dmn.client.editors.types.imported.ImportDataObjectModal;
 import org.kie.workbench.common.dmn.client.editors.types.listview.draganddrop.DNDListComponent;
 import org.kie.workbench.common.dmn.client.js.DMNLoader;
 import org.kie.workbench.common.stunner.core.client.ReadOnlyProvider;
@@ -100,8 +99,6 @@ public class DataTypeListView implements DataTypeList.View {
 
     private final ScrollHelper scrollHelper;
 
-    private final ImportDataObjectModal importDataObjectModal;
-
     private final Event<FlashMessage> flashMessageEvent;
 
     private final TranslationService translationService;
@@ -124,7 +121,6 @@ public class DataTypeListView implements DataTypeList.View {
                             final HTMLButtonElement readOnlyMessageCloseButton,
                             final ScrollHelper scrollHelper,
                             final SpanElement importJavaClassesContainer,
-                            final ImportDataObjectModal importDataObjectModal,
                             final Event<FlashMessage> flashMessageEvent,
                             final TranslationService translationService,
                             final ReadOnlyProvider readOnlyProvider) {
@@ -141,7 +137,6 @@ public class DataTypeListView implements DataTypeList.View {
         this.readOnlyMessageCloseButton = readOnlyMessageCloseButton;
         this.scrollHelper = scrollHelper;
         this.importJavaClassesContainer = importJavaClassesContainer;
-        this.importDataObjectModal = importDataObjectModal;
         this.flashMessageEvent = flashMessageEvent;
         this.translationService = translationService;
         this.readOnlyProvider = readOnlyProvider;
@@ -152,7 +147,6 @@ public class DataTypeListView implements DataTypeList.View {
         this.presenter = presenter;
 
         setupSearchBar();
-        importDataObjectModal.setup(this::importDataObjects);
         setupListElement();
 
         setupAddButtonReadOnlyStatus();
@@ -419,15 +413,4 @@ public class DataTypeListView implements DataTypeList.View {
         return listItems;
     }
 
-    /*
-    @Override
-    public void showImportDataObjectButton() {
-        show(importDataObjectButton);
-    }
-
-    @Override
-    public void hideImportDataObjectButton() {
-        hide(importDataObjectButton);
-    }
-     */
 }
