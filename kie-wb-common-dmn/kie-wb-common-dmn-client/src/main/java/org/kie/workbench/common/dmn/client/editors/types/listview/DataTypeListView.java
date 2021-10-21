@@ -25,6 +25,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
+import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.event.dom.client.ClickEvent;
 import elemental2.dom.Element;
 import elemental2.dom.HTMLAnchorElement;
@@ -95,7 +96,7 @@ public class DataTypeListView implements DataTypeList.View {
     private final HTMLButtonElement readOnlyMessageCloseButton;
 
     @DataField("import-java-classes-container")
-    private final HTMLDivElement importJavaClassesContainer;
+    private final SpanElement importJavaClassesContainer;
 
     private final ScrollHelper scrollHelper;
 
@@ -122,7 +123,7 @@ public class DataTypeListView implements DataTypeList.View {
                             final HTMLDivElement readOnlyMessage,
                             final HTMLButtonElement readOnlyMessageCloseButton,
                             final ScrollHelper scrollHelper,
-                            final HTMLDivElement importJavaClassesContainer,
+                            final SpanElement importJavaClassesContainer,
                             final ImportDataObjectModal importDataObjectModal,
                             final Event<FlashMessage> flashMessageEvent,
                             final TranslationService translationService,
@@ -155,10 +156,12 @@ public class DataTypeListView implements DataTypeList.View {
         setupListElement();
 
         setupAddButtonReadOnlyStatus();
+    }
 
-        DMNLoader.renderImportJavaClasses("kie-import-java-classes",
-                                          true,
-                                          "Currently not available");
+    private void activateReactComponents() {
+        DMNLoader.renderImportJavaClasses(".kie-import-java-classes",
+                                          false,
+                                          null);
     }
 
     void setupAddButtonReadOnlyStatus() {
@@ -239,6 +242,7 @@ public class DataTypeListView implements DataTypeList.View {
     public void onAddButtonClick(final ClickEvent e) {
         scrollHelper.animatedScrollToBottom(listItems);
         presenter.addDataType();
+        activateReactComponents();
     }
 
     /*
