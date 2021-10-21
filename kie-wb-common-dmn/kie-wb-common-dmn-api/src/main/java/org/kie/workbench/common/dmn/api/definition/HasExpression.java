@@ -76,10 +76,9 @@ public interface HasExpression extends HasEqualsIgnoreId {
                 return false;
             }
             final WrappedHasExpression that = (WrappedHasExpression) other;
-            if (expression != null ? !expression.equals(that.expression, ignoreId) : that.expression != null) {
-                return false;
-            }
-            return true;
+            return expression != null
+                    ? expression.equals(that.expression, ignoreId)
+                    : that.expression == null;
         }
     }
 

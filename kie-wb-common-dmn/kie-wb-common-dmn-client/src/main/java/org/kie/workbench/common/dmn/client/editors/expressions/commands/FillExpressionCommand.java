@@ -177,7 +177,7 @@ public abstract class FillExpressionCommand<E extends ExpressionProps> extends A
             final HasName hasName = (HasName) hasExpression;
             return !hasName.getName().getValue().equals(expressionProps.name);
         }
-        return true;
+        return false;
     }
 
     void fireEditorSelectedEvent() {
