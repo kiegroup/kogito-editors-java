@@ -35,8 +35,8 @@ import "./BoxedExpressionEditor.css";
 export interface BoxedExpressionEditorProps {
   /** All expression properties used to define it */
   expressionDefinition: ExpressionProps;
-  /** False, for having the clear button not available */
-  clearSupported?: boolean;
+  /** False, for having the clear button not available on the root expression */
+  clearSupportedOnRootExpression?: boolean;
   /** PMML parameters */
   pmmlParams?: PMMLParams;
 }
@@ -46,11 +46,17 @@ export const BoxedExpressionEditor: (props: BoxedExpressionEditorProps) => JSX.E
 ) => {
   const [currentlyOpenedHandlerCallback, setCurrentlyOpenedHandlerCallback] = useState(() => _.identity);
   const boxedExpressionEditorRef = useRef<HTMLDivElement>(null);
-  const [expressionDefinition, setExpressionDefinition] = useState(props.expressionDefinition);
+  const [expressionDefinition, setExpressionDefinition] = useState<ExpressionProps>({
+    ...props.expressionDefinition,
+    noClearAction: props.clearSupportedOnRootExpression === false,
+  });
   const [supervisorHash, setSupervisorHash] = useState(hashfy(props.expressionDefinition));
 
   useEffect(() => {
-    setExpressionDefinition(props.expressionDefinition);
+    setExpressionDefinition({
+      ...props.expressionDefinition,
+      noClearAction: props.clearSupportedOnRootExpression === false,
+    });
     setSupervisorHash(hashfy(props.expressionDefinition));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.expressionDefinition]);
@@ -80,11 +86,7 @@ export const BoxedExpressionEditor: (props: BoxedExpressionEditorProps) => JSX.E
         >
           <ResizerSupervisor>
             <div className="boxed-expression-editor" ref={boxedExpressionEditorRef}>
-              <ExpressionContainer
-                selectedExpression={expressionDefinition}
-                onExpressionChange={onExpressionChange}
-                clearSupported={props.clearSupported}
-              />
+              <ExpressionContainer selectedExpression={expressionDefinition} onExpressionChange={onExpressionChange} />
             </div>
           </ResizerSupervisor>
           <CellSelectionBox />

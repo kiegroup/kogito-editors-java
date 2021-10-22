@@ -47,8 +47,6 @@ import { InvocationExpression } from "../InvocationExpression";
 import { FunctionExpression } from "../FunctionExpression";
 
 export interface LogicTypeSelectorProps {
-  /** External policy for not enabling the clear menu (e.g. BKM nodes - encapsulated function) */
-  clearSupported?: boolean;
   /** Expression properties */
   selectedExpression: ExpressionProps;
   /** Function to be invoked when logic type changes */
@@ -66,7 +64,6 @@ export interface LogicTypeSelectorProps {
 }
 
 export const LogicTypeSelector: React.FunctionComponent<LogicTypeSelectorProps> = ({
-  clearSupported = true,
   selectedExpression,
   onLogicTypeUpdating,
   onLogicTypeResetting,
@@ -209,14 +206,12 @@ export const LogicTypeSelector: React.FunctionComponent<LogicTypeSelectorProps> 
   );
 
   const shouldClearContextMenuBeOpened = useMemo(() => {
-    // Internal policy for not enabling clear menu (e.g. Entry Expression related to Java/PMML Functions)
-    const expressionIsSupportingClearAction = !selectedExpression.noClearAction;
     const notClickedOnTable = _.isNil((targetElement as HTMLElement)?.closest("table"));
     const clickedOnTableRemainderContent = !_.isNil((targetElement as HTMLElement)?.closest(".row-remainder-content"));
     const clickedOnAllowedTableSection = notClickedOnTable || clickedOnTableRemainderContent;
 
-    return clearSupported && expressionIsSupportingClearAction && contextMenuVisibility && clickedOnAllowedTableSection;
-  }, [clearSupported, contextMenuVisibility, selectedExpression.noClearAction, targetElement]);
+    return !selectedExpression.noClearAction && contextMenuVisibility && clickedOnAllowedTableSection;
+  }, [contextMenuVisibility, selectedExpression.noClearAction, targetElement]);
 
   return (
     <div

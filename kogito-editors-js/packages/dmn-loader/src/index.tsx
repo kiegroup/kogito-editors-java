@@ -38,7 +38,7 @@ setupWire();
 
 const BoxedExpressionWrapper: React.FunctionComponent<BoxedExpressionEditorProps> = ({
   expressionDefinition,
-  clearSupported,
+  clearSupportedOnRootExpression,
   pmmlParams,
 }: BoxedExpressionEditorProps) => {
   const [updatedDefinition, setExpressionDefinition] = useState<ExpressionProps>(expressionDefinition);
@@ -90,7 +90,7 @@ const BoxedExpressionWrapper: React.FunctionComponent<BoxedExpressionEditorProps
   return (
     <BoxedExpressionEditor
       expressionDefinition={updatedDefinition}
-      clearSupported={clearSupported}
+      clearSupportedOnRootExpression={clearSupportedOnRootExpression}
       pmmlParams={pmmlParams}
     />
   );
@@ -105,7 +105,7 @@ const renderBoxedExpressionEditor = (
   ReactDOM.render(
     <BoxedExpressionWrapper
       expressionDefinition={expressionDefinition}
-      clearSupported={clearSupported}
+      clearSupportedOnRootExpression={clearSupported}
       pmmlParams={pmmlParams}
     />,
     document.querySelector(selector)

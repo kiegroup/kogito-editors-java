@@ -66,46 +66,6 @@ describe("LogicTypeSelector tests", () => {
     expect(baseElement.querySelector(".context-menu-container button")).toBeTruthy();
     expect(baseElement.querySelector(".context-menu-container button")).toHaveTextContent("Clear");
   });
-
-  test("should have the clear action available, when externally it is declared as supported", async () => {
-    const expression = { name: "Test", logicType: LogicType.LiteralExpression, dataType: DataType.Undefined };
-
-    const { baseElement } = render(
-      usingTestingBoxedExpressionI18nContext(
-        <LogicTypeSelector
-          clearSupported={true}
-          selectedExpression={expression}
-          getPlacementRef={() => document.body as HTMLDivElement}
-          onLogicTypeResetting={_.identity}
-          onLogicTypeUpdating={_.identity}
-        />
-      ).wrapper
-    );
-
-    await triggerContextMenu(baseElement as HTMLElement, ".logic-type-selector");
-
-    expect(baseElement.querySelector(".context-menu-container button")).toBeInTheDocument();
-  });
-
-  test("should have the clear action not available, when externally it is declared as not supported", async () => {
-    const expression = { name: "Test", logicType: LogicType.LiteralExpression, dataType: DataType.Undefined };
-
-    const { baseElement } = render(
-      usingTestingBoxedExpressionI18nContext(
-        <LogicTypeSelector
-          clearSupported={false}
-          selectedExpression={expression}
-          getPlacementRef={() => document.body as HTMLDivElement}
-          onLogicTypeResetting={_.identity}
-          onLogicTypeUpdating={_.identity}
-        />
-      ).wrapper
-    );
-
-    await triggerContextMenu(baseElement as HTMLElement, ".logic-type-selector");
-
-    expect(baseElement.querySelector(".context-menu-container button")).not.toBeInTheDocument();
-  });
 });
 
 describe("Logic type selection", () => {
