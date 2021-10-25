@@ -582,189 +582,193 @@ public class ExpressionEditorViewImplTest {
     }
 
     @Test
-    public void testIsValidExpression_WhenIsDecisionTable() {
+    public void testIsUserAction_WhenIsDecisionTable() {
 
-        final DecisionTableProps expressionProps = new DecisionTableProps(NAME,
-                                                                          "data type",
-                                                                          "hit policy",
-                                                                          AGGREGATION,
-                                                                          null,
-                                                                          null,
-                                                                          null,
-                                                                          null);
+        final DecisionTableProps decisionTableProps = new DecisionTableProps(NAME,
+                                                                             "data type",
+                                                                             "hit policy",
+                                                                             AGGREGATION,
+                                                                             null,
+                                                                             null,
+                                                                             null,
+                                                                             null);
 
-        doReturn(true).when(view).isValidDecisionTableProps(any());
+        doReturn(true).when(view).isUserAction(any(DecisionTableProps.class));
 
-        final boolean isValid = view.isValidExpression(expressionProps);
+        final boolean isUserAction = view.isUserAction((ExpressionProps) decisionTableProps);
 
-        verify(view).isValidDecisionTableProps(expressionProps);
-        verify(view, never()).isValidContextProps(any());
-        verify(view, never()).isValidInvocationProps(any());
-        verify(view, never()).isValidRelationProps(any());
+        verify(view).isUserAction(decisionTableProps);
+        verify(view, never()).isUserAction(any(ContextProps.class));
+        verify(view, never()).isUserAction(any(InvocationProps.class));
+        verify(view, never()).isUserAction(any(RelationProps.class));
 
-        assertTrue(isValid);
+        assertTrue(isUserAction);
     }
 
     @Test
-    public void testIsValidExpression_WhenIsContext() {
+    public void testUserAction_WhenIsContext() {
 
-        final ContextProps expressionProps = new ContextProps(NAME,
-                                                              null,
-                                                              null,
+        final ContextProps contextProps = new ContextProps(NAME,
+                                                           null,
+                                                           null,
+                                                           null,
+                                                           null,
+                                                           null);
+
+        doReturn(true).when(view).isUserAction(any(ContextProps.class));
+
+        final boolean isUserAction = view.isUserAction((ExpressionProps) contextProps);
+
+        verify(view, never()).isUserAction(any(DecisionTableProps.class));
+        verify(view).isUserAction(contextProps);
+        verify(view, never()).isUserAction(any(InvocationProps.class));
+        verify(view, never()).isUserAction(any(RelationProps.class));
+
+        assertTrue(isUserAction);
+    }
+
+    @Test
+    public void testIsUserAction_WhenIsRelation() {
+
+        final RelationProps relationProps = new RelationProps(NAME,
                                                               null,
                                                               null,
                                                               null);
 
-        doReturn(true).when(view).isValidContextProps(any());
+        doReturn(true).when(view).isUserAction(any(RelationProps.class));
 
-        final boolean isValid = view.isValidExpression(expressionProps);
+        final boolean isUserAction = view.isUserAction((ExpressionProps) relationProps);
 
-        verify(view, never()).isValidDecisionTableProps(any());
-        verify(view).isValidContextProps(expressionProps);
-        verify(view, never()).isValidInvocationProps(any());
-        verify(view, never()).isValidRelationProps(any());
+        verify(view, never()).isUserAction(any(DecisionTableProps.class));
+        verify(view, never()).isUserAction(any(ContextProps.class));
+        verify(view, never()).isUserAction(any(InvocationProps.class));
+        verify(view).isUserAction(relationProps);
 
-        assertTrue(isValid);
+        assertTrue(isUserAction);
     }
 
     @Test
-    public void testIsValidExpression_WhenIsRelation() {
+    public void testIsUserAction_WhenIsInvocation() {
 
-        final RelationProps expressionProps = new RelationProps(NAME,
-                                                                null,
-                                                                null,
-                                                                null);
-
-        doReturn(true).when(view).isValidRelationProps(any());
-
-        final boolean isValid = view.isValidExpression(expressionProps);
-
-        verify(view, never()).isValidDecisionTableProps(any());
-        verify(view, never()).isValidContextProps(any());
-        verify(view, never()).isValidInvocationProps(any());
-        verify(view).isValidRelationProps(expressionProps);
-
-        assertTrue(isValid);
-    }
-
-    @Test
-    public void testIsValidExpression_WhenIsInvocation() {
-
-        final InvocationProps expressionProps = new InvocationProps(NAME,
+        final InvocationProps invocationProps = new InvocationProps(NAME,
                                                                     null,
                                                                     null,
                                                                     null,
                                                                     null,
                                                                     null);
 
-        doReturn(true).when(view).isValidInvocationProps(any());
+        doReturn(true).when(view).isUserAction(any(InvocationProps.class));
 
-        final boolean isValid = view.isValidExpression(expressionProps);
+        final boolean isUserAction = view.isUserAction((ExpressionProps) invocationProps);
 
-        verify(view, never()).isValidDecisionTableProps(any());
-        verify(view, never()).isValidContextProps(any());
-        verify(view).isValidInvocationProps(expressionProps);
-        verify(view, never()).isValidRelationProps(any());
+        verify(view, never()).isUserAction(any(DecisionTableProps.class));
+        verify(view, never()).isUserAction(any(ContextProps.class));
+        verify(view).isUserAction(invocationProps);
+        verify(view, never()).isUserAction(any(RelationProps.class));
 
-        assertTrue(isValid);
+        assertTrue(isUserAction);
     }
 
     @Test
-    public void testIsValidDecisionTableProps_WhenIsValid() {
-        final DecisionTableProps expressionProps = new DecisionTableProps(NAME,
-                                                                          "data type",
-                                                                          "hit policy",
-                                                                          AGGREGATION,
-                                                                          null,
-                                                                          null,
-                                                                          null,
-                                                                          null);
+    public void testIsUserAction_DecisionTablePropsOverload_WhenItIs() {
 
-        doReturn(true).when(view).haveAllClauses(expressionProps);
-        doReturn(true).when(view).haveAtLeastOneColumnSizeDefined(expressionProps);
-        doReturn(true).when(view).areRulesValid(expressionProps);
+        final DecisionTableProps decisionTableProps = new DecisionTableProps(NAME,
+                                                                             "data type",
+                                                                             "hit policy",
+                                                                             AGGREGATION,
+                                                                             null,
+                                                                             null,
+                                                                             null,
+                                                                             null);
 
-        final boolean isValid = view.isValidDecisionTableProps(expressionProps);
+        doReturn(true).when(view).haveAllClauses(decisionTableProps);
+        doReturn(true).when(view).haveAtLeastOneColumnSizeDefined(decisionTableProps);
+        doReturn(true).when(view).areRulesLoaded(decisionTableProps);
 
-        assertTrue(isValid);
+        final boolean isUserAction = view.isUserAction(decisionTableProps);
 
-        verify(view).haveAllClauses(expressionProps);
-        verify(view).haveAtLeastOneColumnSizeDefined(expressionProps);
-        verify(view).areRulesValid(expressionProps);
+        assertTrue(isUserAction);
+
+        verify(view).haveAllClauses(decisionTableProps);
+        verify(view).haveAtLeastOneColumnSizeDefined(decisionTableProps);
+        verify(view).areRulesLoaded(decisionTableProps);
     }
 
     @Test
-    public void testIsValidDecisionTableProps_WhenRulesAreNotValid() {
-        final DecisionTableProps expressionProps = new DecisionTableProps(NAME,
-                                                                          "data type",
-                                                                          "hit policy",
-                                                                          AGGREGATION,
-                                                                          null,
-                                                                          null,
-                                                                          null,
-                                                                          null);
+    public void testIsUserAction_DecisionTablePropsOverload_WhenRulesAreNotLoaded() {
 
-        doReturn(true).when(view).haveAllClauses(expressionProps);
-        doReturn(true).when(view).haveAtLeastOneColumnSizeDefined(expressionProps);
-        doReturn(false).when(view).areRulesValid(expressionProps);
+        final DecisionTableProps decisionTableProps = new DecisionTableProps(NAME,
+                                                                             "data type",
+                                                                             "hit policy",
+                                                                             AGGREGATION,
+                                                                             null,
+                                                                             null,
+                                                                             null,
+                                                                             null);
 
-        final boolean isValid = view.isValidDecisionTableProps(expressionProps);
+        doReturn(true).when(view).haveAllClauses(decisionTableProps);
+        doReturn(true).when(view).haveAtLeastOneColumnSizeDefined(decisionTableProps);
+        doReturn(false).when(view).areRulesLoaded(decisionTableProps);
 
-        assertFalse(isValid);
+        final boolean isUserAction = view.isUserAction(decisionTableProps);
 
-        verify(view).haveAllClauses(expressionProps);
-        verify(view).haveAtLeastOneColumnSizeDefined(expressionProps);
-        verify(view).areRulesValid(expressionProps);
+        assertFalse(isUserAction);
+
+        verify(view).haveAllClauses(decisionTableProps);
+        verify(view).haveAtLeastOneColumnSizeDefined(decisionTableProps);
+        verify(view).areRulesLoaded(decisionTableProps);
     }
 
     @Test
-    public void testIsValidDecisionTableProps_WhenDoesntHaveColumnSizeDefined() {
-        final DecisionTableProps expressionProps = new DecisionTableProps(NAME,
-                                                                          "data type",
-                                                                          "hit policy",
-                                                                          AGGREGATION,
-                                                                          null,
-                                                                          null,
-                                                                          null,
-                                                                          null);
+    public void testIsUserAction_DecisionTablePropsOverload_WhenDoesntHaveColumnSizeDefined() {
 
-        doReturn(true).when(view).haveAllClauses(expressionProps);
-        doReturn(false).when(view).haveAtLeastOneColumnSizeDefined(expressionProps);
-        doReturn(true).when(view).areRulesValid(expressionProps);
+        final DecisionTableProps decisionTableProps = new DecisionTableProps(NAME,
+                                                                             "data type",
+                                                                             "hit policy",
+                                                                             AGGREGATION,
+                                                                             null,
+                                                                             null,
+                                                                             null,
+                                                                             null);
 
-        final boolean isValid = view.isValidDecisionTableProps(expressionProps);
+        doReturn(true).when(view).haveAllClauses(decisionTableProps);
+        doReturn(false).when(view).haveAtLeastOneColumnSizeDefined(decisionTableProps);
+        doReturn(true).when(view).areRulesLoaded(decisionTableProps);
 
-        assertFalse(isValid);
+        final boolean isUserAction = view.isUserAction(decisionTableProps);
 
-        verify(view).haveAllClauses(expressionProps);
-        verify(view).haveAtLeastOneColumnSizeDefined(expressionProps);
-        verify(view, never()).areRulesValid(expressionProps);
+        assertFalse(isUserAction);
+
+        verify(view).haveAllClauses(decisionTableProps);
+        verify(view).haveAtLeastOneColumnSizeDefined(decisionTableProps);
+        verify(view, never()).areRulesLoaded(decisionTableProps);
     }
 
     @Test
-    public void testIsValidDecisionTableProps_WhenDoesntHaveAllClauses() {
-        final DecisionTableProps expressionProps = new DecisionTableProps(NAME,
-                                                                          "data type",
-                                                                          "hit policy",
-                                                                          AGGREGATION,
-                                                                          null,
-                                                                          null,
-                                                                          null,
-                                                                          null);
+    public void tesIsUserAction_DecisionTablePropsOverload_WhenDoesntHaveAllClauses() {
 
-        doReturn(false).when(view).haveAllClauses(expressionProps);
+        final DecisionTableProps decisionTableProps = new DecisionTableProps(NAME,
+                                                                             "data type",
+                                                                             "hit policy",
+                                                                             AGGREGATION,
+                                                                             null,
+                                                                             null,
+                                                                             null,
+                                                                             null);
 
-        final boolean isValid = view.isValidDecisionTableProps(expressionProps);
+        doReturn(false).when(view).haveAllClauses(decisionTableProps);
 
-        assertFalse(isValid);
+        final boolean isUserAction = view.isUserAction(decisionTableProps);
 
-        verify(view).haveAllClauses(expressionProps);
-        verify(view, never()).haveAtLeastOneColumnSizeDefined(expressionProps);
-        verify(view, never()).areRulesValid(expressionProps);
+        assertFalse(isUserAction);
+
+        verify(view).haveAllClauses(decisionTableProps);
+        verify(view, never()).haveAtLeastOneColumnSizeDefined(decisionTableProps);
+        verify(view, never()).areRulesLoaded(decisionTableProps);
     }
 
     @Test
-    public void testAreRulesValid() {
+    public void testAreRulesLoaded() {
 
         final DecisionTableRule rule1 = mock(DecisionTableRule.class);
         final DecisionTableRule rule2 = mock(DecisionTableRule.class);
@@ -785,9 +789,9 @@ public class ExpressionEditorViewImplTest {
         doReturn(true).when(view).haveAllEntries(expressionProps, rule1);
         doReturn(true).when(view).haveAllEntries(expressionProps, rule2);
 
-        final boolean areValid = view.areRulesValid(expressionProps);
+        final boolean areRulesLoaded = view.areRulesLoaded(expressionProps);
 
-        assertTrue(areValid);
+        assertTrue(areRulesLoaded);
 
         verify(view).haveAllEntries(expressionProps, rule1);
         verify(view).haveAllEntries(expressionProps, rule2);
@@ -796,33 +800,33 @@ public class ExpressionEditorViewImplTest {
     }
 
     @Test
-    public void testAreRulesValid_WhenDoesntHaveAllEntries() {
+    public void testAreRulesLoaded_WhenDoesntHaveAllEntries() {
 
         final DecisionTableRule rule1 = mock(DecisionTableRule.class);
 
         final DecisionTableRule[] rules = new DecisionTableRule[]{rule1};
 
-        final DecisionTableProps expressionProps = new DecisionTableProps(NAME,
-                                                                          "data type",
-                                                                          "hit policy",
-                                                                          AGGREGATION,
-                                                                          null,
-                                                                          null,
-                                                                          null,
-                                                                          rules);
+        final DecisionTableProps decisionTableProps = new DecisionTableProps(NAME,
+                                                                             "data type",
+                                                                             "hit policy",
+                                                                             AGGREGATION,
+                                                                             null,
+                                                                             null,
+                                                                             null,
+                                                                             rules);
 
         doReturn(false).when(view).ruleHaveNullClauses(rule1);
-        doReturn(false).when(view).haveAllEntries(expressionProps, rule1);
+        doReturn(false).when(view).haveAllEntries(decisionTableProps, rule1);
 
-        final boolean areValid = view.areRulesValid(expressionProps);
+        final boolean areRulesLoaded = view.areRulesLoaded(decisionTableProps);
 
-        assertFalse(areValid);
+        assertFalse(areRulesLoaded);
 
-        verify(view).haveAllEntries(expressionProps, rule1);
+        verify(view).haveAllEntries(decisionTableProps, rule1);
     }
 
     @Test
-    public void testAreRulesValid_WhenRuleHaveNullClauses() {
+    public void testAreRulesLoaded_WhenRuleHaveNullClauses() {
 
         final DecisionTableRule rule1 = mock(DecisionTableRule.class);
 
@@ -840,7 +844,7 @@ public class ExpressionEditorViewImplTest {
         doReturn(true).when(view).ruleHaveNullClauses(rule1);
         doReturn(true).when(view).haveAllEntries(expressionProps, rule1);
 
-        final boolean areValid = view.areRulesValid(expressionProps);
+        final boolean areValid = view.areRulesLoaded(expressionProps);
 
         assertFalse(areValid);
 
@@ -968,11 +972,11 @@ public class ExpressionEditorViewImplTest {
     }
 
     @Test
-    public void testBroadcastContextExpressionDefinition_WhenIsValidContextProps() {
+    public void testBroadcastContextExpressionDefinition_WhenIsUserAction() {
 
         final ContextProps props = mock(ContextProps.class);
 
-        doReturn(true).when(view).isValidContextProps(props);
+        doReturn(true).when(view).isUserAction(props);
 
         doNothing().when(view).executeIfItHaveChanges(any());
 
@@ -987,11 +991,11 @@ public class ExpressionEditorViewImplTest {
     }
 
     @Test
-    public void testBroadcastContextExpressionDefinition_WhenIsNotValidContextProps() {
+    public void testBroadcastContextExpressionDefinition_WhenIsNotUserAction() {
 
         final ContextProps props = mock(ContextProps.class);
 
-        doReturn(false).when(view).isValidContextProps(props);
+        doReturn(false).when(view).isUserAction(props);
 
         doNothing().when(view).executeIfItHaveChanges(any());
 
@@ -1001,7 +1005,7 @@ public class ExpressionEditorViewImplTest {
     }
 
     @Test
-    public void testIsValidContextProps() {
+    public void testIsUserAction_ContextPropsOverload() {
 
         final ExpressionProps expression1 = mock(ExpressionProps.class);
         final ExpressionProps expression2 = mock(ExpressionProps.class);
@@ -1016,19 +1020,19 @@ public class ExpressionEditorViewImplTest {
                                                     null,
                                                     null);
 
-        doReturn(true).when(view).isValidExpression(expression1);
-        doReturn(true).when(view).isValidExpression(expression2);
+        doReturn(true).when(view).isUserAction(expression1);
+        doReturn(true).when(view).isUserAction(expression2);
 
-        final boolean isValid = view.isValidContextProps(props);
+        final boolean isValid = view.isUserAction(props);
 
         assertTrue(isValid);
 
-        verify(view).isValidExpression(expression1);
-        verify(view).isValidExpression(expression2);
+        verify(view).isUserAction(expression1);
+        verify(view).isUserAction(expression2);
     }
 
     @Test
-    public void testIsValidContextProps_WhenDoesNotContainsValidEntryExpression() {
+    public void testIsUserAction_ContextPropsOverload_WhenItIsNot() {
 
         final ExpressionProps expression1 = mock(ExpressionProps.class);
 
@@ -1041,17 +1045,17 @@ public class ExpressionEditorViewImplTest {
                                                     null,
                                                     null);
 
-        doReturn(false).when(view).isValidExpression(expression1);
+        doReturn(false).when(view).isUserAction(expression1);
 
-        final boolean isValid = view.isValidContextProps(props);
+        final boolean isUserAction = view.isUserAction(props);
 
-        assertFalse(isValid);
+        assertFalse(isUserAction);
 
-        verify(view).isValidExpression(expression1);
+        verify(view).isUserAction(expression1);
     }
 
     @Test
-    public void testIsValidContextProps_WhenDoesNotContainsEntries() {
+    public void testIsUserAction_ContextPropsOverload_WhenDoesNotContainsEntries() {
 
         final ContextProps props = new ContextProps(null,
                                                     null,
@@ -1060,9 +1064,9 @@ public class ExpressionEditorViewImplTest {
                                                     null,
                                                     null);
 
-        final boolean isValid = view.isValidContextProps(props);
+        final boolean isUserAction = view.isUserAction(props);
 
-        assertFalse(isValid);
+        assertFalse(isUserAction);
     }
 
     @Test
@@ -1070,7 +1074,7 @@ public class ExpressionEditorViewImplTest {
 
         final RelationProps props = mock(RelationProps.class);
 
-        doReturn(true).when(view).isValidRelationProps(props);
+        doReturn(true).when(view).isUserAction(props);
 
         doNothing().when(view).executeIfItHaveChanges(any());
 
@@ -1085,11 +1089,11 @@ public class ExpressionEditorViewImplTest {
     }
 
     @Test
-    public void testBroadcastContextExpressionDefinition_WhenIsNotValidProps() {
+    public void testBroadcastContextExpressionDefinition_WhenItIsNotUserAction() {
 
         final RelationProps props = mock(RelationProps.class);
 
-        doReturn(false).when(view).isValidRelationProps(props);
+        doReturn(false).when(view).isUserAction(props);
 
         doNothing().when(view).executeIfItHaveChanges(any());
 
@@ -1116,11 +1120,11 @@ public class ExpressionEditorViewImplTest {
     }
 
     @Test
-    public void testBroadcastInvocationExpressionDefinition_WhenIsValidProps() {
+    public void testBroadcastInvocationExpressionDefinition_WhenItIsUserAction() {
 
         final InvocationProps props = mock(InvocationProps.class);
 
-        doReturn(true).when(view).isValidInvocationProps(props);
+        doReturn(true).when(view).isUserAction(props);
 
         doNothing().when(view).executeIfItHaveChanges(any());
 
@@ -1135,11 +1139,11 @@ public class ExpressionEditorViewImplTest {
     }
 
     @Test
-    public void testBroadcastInvocationExpressionDefinition_WhenIsNotValidProps() {
+    public void testBroadcastInvocationExpressionDefinition_WhenItIsNotUserAction() {
 
         final InvocationProps props = mock(InvocationProps.class);
 
-        doReturn(false).when(view).isValidInvocationProps(props);
+        doReturn(false).when(view).isUserAction(props);
 
         doNothing().when(view).executeIfItHaveChanges(any());
 
@@ -1166,11 +1170,11 @@ public class ExpressionEditorViewImplTest {
     }
 
     @Test
-    public void testBroadcastDecisionTableExpressionDefinition_WhenIsValidProps() {
+    public void testBroadcastDecisionTableExpressionDefinition_WhenIsUserAction() {
 
         final DecisionTableProps props = mock(DecisionTableProps.class);
 
-        doReturn(true).when(view).isValidDecisionTableProps(props);
+        doReturn(true).when(view).isUserAction(props);
 
         doNothing().when(view).executeIfItHaveChanges(any());
 
@@ -1185,11 +1189,11 @@ public class ExpressionEditorViewImplTest {
     }
 
     @Test
-    public void testBroadcastDecisionTableExpressionDefinition_WhenIsNotValidProps() {
+    public void testBroadcastDecisionTableExpressionDefinition_WhenIsNotUserAction() {
 
         final ContextProps props = mock(ContextProps.class);
 
-        doReturn(false).when(view).isValidContextProps(props);
+        doReturn(false).when(view).isUserAction(props);
 
         doNothing().when(view).executeIfItHaveChanges(any());
 
@@ -1221,7 +1225,7 @@ public class ExpressionEditorViewImplTest {
     }
 
     @Test
-    public void testIsValidRelationProps() {
+    public void testUserAction_RelationPropsOverload() {
 
         final Column column1 = new Column(null, null, 0.0d);
         final Column column2 = new Column(null, null, 0.0d);
@@ -1234,15 +1238,15 @@ public class ExpressionEditorViewImplTest {
                                                               new String[0][]);
         doReturn(true).when(view).columnsMatchesRows(columns, rows);
 
-        final boolean isValid = view.isValidRelationProps(relationProps);
+        final boolean isUserAction = view.isUserAction(relationProps);
 
-        assertTrue(isValid);
+        assertTrue(isUserAction);
 
         verify(view).columnsMatchesRows(columns, rows);
     }
 
     @Test
-    public void testIsValidRelationProps_WhenColumnsDoesntMatchRows() {
+    public void testUserAction_RelationPropsOverload_WhenColumnsDoesntMatchRows() {
 
         final Column column1 = new Column(null, null, 0.0d);
         final Column column2 = new Column(null, null, 0.0d);
@@ -1255,7 +1259,7 @@ public class ExpressionEditorViewImplTest {
                                                               new String[0][]);
         doReturn(false).when(view).columnsMatchesRows(columns, rows);
 
-        final boolean isValid = view.isValidRelationProps(relationProps);
+        final boolean isValid = view.isUserAction(relationProps);
 
         assertFalse(isValid);
 
@@ -1263,7 +1267,7 @@ public class ExpressionEditorViewImplTest {
     }
 
     @Test
-    public void testIsValidRelationProps_WhenDoestHaveColumnWithNullWidth() {
+    public void testUserAction_RelationPropsOverload_WhenDoestHaveColumnWithNullWidth() {
 
         final Column column1 = new Column(null, null, 0.0d);
         final Column column2 = new Column(null, null, null);
@@ -1276,7 +1280,7 @@ public class ExpressionEditorViewImplTest {
                                                               new String[0][]);
         doReturn(true).when(view).columnsMatchesRows(columns, rows);
 
-        final boolean isValid = view.isValidRelationProps(relationProps);
+        final boolean isValid = view.isUserAction(relationProps);
 
         assertFalse(isValid);
 
@@ -1573,7 +1577,7 @@ public class ExpressionEditorViewImplTest {
     }
 
     @Test
-    public void testIsValidInvocationProps() {
+    public void testUserAction_InvocationPropsOverload() {
 
         final ExpressionProps entryExpression1 = mock(ExpressionProps.class);
         final ExpressionProps entryExpression2 = mock(ExpressionProps.class);
@@ -1583,8 +1587,8 @@ public class ExpressionEditorViewImplTest {
 
         final ContextEntryProps[] bindingEntries = Arrays.array(entry1, entry2);
 
-        doReturn(true).when(view).isValidExpression(entryExpression1);
-        doReturn(true).when(view).isValidExpression(entryExpression2);
+        doReturn(true).when(view).isUserAction(entryExpression1);
+        doReturn(true).when(view).isUserAction(entryExpression2);
 
         final InvocationProps props = new InvocationProps(NAME,
                                                           DATA_TYPE,
@@ -1593,16 +1597,16 @@ public class ExpressionEditorViewImplTest {
                                                           null,
                                                           null);
 
-        final boolean isValid = view.isValidInvocationProps(props);
+        final boolean isUserAction = view.isUserAction(props);
 
-        assertTrue(isValid);
+        assertTrue(isUserAction);
 
-        verify(view).isValidExpression(entryExpression1);
-        verify(view).isValidExpression(entryExpression2);
+        verify(view).isUserAction(entryExpression1);
+        verify(view).isUserAction(entryExpression2);
     }
 
     @Test
-    public void testIsValidInvocationProps_WhenThereIsNoBindingEntries() {
+    public void testUserAction_InvocationPropsOverload_WhenThereIsNoBindingEntries() {
 
         final InvocationProps props = new InvocationProps(NAME,
                                                           DATA_TYPE,
@@ -1611,13 +1615,13 @@ public class ExpressionEditorViewImplTest {
                                                           null,
                                                           null);
 
-        final boolean isValid = view.isValidInvocationProps(props);
+        final boolean isUserAction = view.isUserAction(props);
 
-        assertTrue(isValid);
+        assertTrue(isUserAction);
     }
 
     @Test
-    public void testIsValidInvocationProps_WhenThereIsAnInvalidExpression() {
+    public void testUserAction_InvocationPropsOverload_WhenThereIsAnNonUserExpression() {
 
         final ExpressionProps entryExpression1 = mock(ExpressionProps.class);
         final ExpressionProps entryExpression2 = mock(ExpressionProps.class);
@@ -1627,8 +1631,8 @@ public class ExpressionEditorViewImplTest {
 
         final ContextEntryProps[] bindingEntries = Arrays.array(entry1, entry2);
 
-        doReturn(true).when(view).isValidExpression(entryExpression1);
-        doReturn(false).when(view).isValidExpression(entryExpression2);
+        doReturn(true).when(view).isUserAction(entryExpression1);
+        doReturn(false).when(view).isUserAction(entryExpression2);
 
         final InvocationProps props = new InvocationProps(NAME,
                                                           DATA_TYPE,
@@ -1637,16 +1641,16 @@ public class ExpressionEditorViewImplTest {
                                                           null,
                                                           null);
 
-        final boolean isValid = view.isValidInvocationProps(props);
+        final boolean isUserAction = view.isUserAction(props);
 
-        assertFalse(isValid);
+        assertFalse(isUserAction);
 
-        verify(view).isValidExpression(entryExpression1);
-        verify(view).isValidExpression(entryExpression2);
+        verify(view).isUserAction(entryExpression1);
+        verify(view).isUserAction(entryExpression2);
     }
 
     @Test
-    public void executeIfItHaveChanges() {
+    public void testExecuteIfItHaveChanges() {
 
         final FillExpressionCommand command = mock(FillExpressionCommand.class);
         final CompositeCommand.Builder commandBuilder = mock(CompositeCommand.Builder.class);
@@ -1669,7 +1673,7 @@ public class ExpressionEditorViewImplTest {
     }
 
     @Test
-    public void executeIfItHaveChanges_WhenThereIsNot() {
+    public void testExecuteIfItHaveChanges_WhenThereIsNot() {
 
         final FillExpressionCommand command = mock(FillExpressionCommand.class);
         final CompositeCommand.Builder commandBuilder = mock(CompositeCommand.Builder.class);
@@ -1724,5 +1728,16 @@ public class ExpressionEditorViewImplTest {
         view.addUpdatePropertyNameCommand(commandBuilder);
 
         verify(commandBuilder).addCommand(updateCommand);
+    }
+
+    @Test
+    public void testAddExpressionCommand() {
+
+        final FillExpressionCommand expressionCommand = mock(FillExpressionCommand.class);
+        final CompositeCommand.Builder builder = mock(CompositeCommand.Builder.class);
+
+        view.addExpressionCommand(expressionCommand, builder);
+
+        verify(builder).addCommand(expressionCommand);
     }
 }

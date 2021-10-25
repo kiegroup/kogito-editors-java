@@ -417,7 +417,7 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
 
     public void broadcastContextExpressionDefinition(final ContextProps contextProps) {
 
-        if (!isValidContextProps(contextProps)) {
+        if (!isUserAction(contextProps)) {
             return;
         }
         final FillContextExpressionCommand expression = new FillContextExpressionCommand(getHasExpression(),
@@ -429,34 +429,34 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
         executeIfItHaveChanges(expression);
     }
 
-    boolean isValidContextProps(final ContextProps contextProps) {
+    boolean isUserAction(final ContextProps contextProps) {
         if (Objects.isNull(contextProps.contextEntries)) {
             return false;
         }
         for (final ContextEntryProps contextEntry : contextProps.contextEntries) {
-            if (!isValidExpression(contextEntry.entryExpression)) {
+            if (!isUserAction(contextEntry.entryExpression)) {
                 return false;
             }
         }
         return true;
     }
 
-    // The Boxed Expression Editor does partial broadcasts so we have to check
-    // if is one of those partial broadcasts with invalid expression or not
-    boolean isValidExpression(final ExpressionProps entryExpression) {
+    // The Boxed Expression Editor does broadcast at each change, but we want
+    // to create commands only for user action commands.
+    boolean isUserAction(final ExpressionProps entryExpression) {
         if (Objects.equals(entryExpression.logicType, DECISION_TABLE.getText())) {
-            return isValidDecisionTableProps((DecisionTableProps) entryExpression);
+            return isUserAction((DecisionTableProps) entryExpression);
         } else if (Objects.equals(entryExpression.logicType, CONTEXT.getText())) {
-            return isValidContextProps((ContextProps) entryExpression);
+            return isUserAction((ContextProps) entryExpression);
         } else if (Objects.equals(entryExpression.logicType, INVOCATION.getText())) {
-            return isValidInvocationProps((InvocationProps) entryExpression);
+            return isUserAction((InvocationProps) entryExpression);
         } else if (Objects.equals(entryExpression.logicType, RELATION.getText())) {
-            return isValidRelationProps((RelationProps) entryExpression);
+            return isUserAction((RelationProps) entryExpression);
         }
         return true;
     }
 
-    boolean isValidRelationProps(final RelationProps relationProps) {
+    boolean isUserAction(final RelationProps relationProps) {
 
         if (!columnsMatchesRows(relationProps.columns, relationProps.rows)) {
             return false;
@@ -470,13 +470,13 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
         return true;
     }
 
-    boolean isValidDecisionTableProps(final DecisionTableProps decisionTableProps) {
+    boolean isUserAction(final DecisionTableProps decisionTableProps) {
         return haveAllClauses(decisionTableProps)
                 && haveAtLeastOneColumnSizeDefined(decisionTableProps)
-                && areRulesValid(decisionTableProps);
+                && areRulesLoaded(decisionTableProps);
     }
 
-    boolean areRulesValid(final DecisionTableProps decisionTableProps) {
+    boolean areRulesLoaded(final DecisionTableProps decisionTableProps) {
         return Arrays.stream(decisionTableProps.rules)
                 .noneMatch(rule -> !haveAllEntries(decisionTableProps, rule)
                         || ruleHaveNullClauses(rule));
@@ -537,11 +537,11 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
                 && rule.annotationEntries.length == decisionTableProps.annotations.length;
     }
 
-    boolean isValidInvocationProps(final InvocationProps invocationProps) {
+    boolean isUserAction(final InvocationProps invocationProps) {
 
         if (!Objects.isNull(invocationProps.bindingEntries)) {
             for (final ContextEntryProps bindingEntry : invocationProps.bindingEntries) {
-                if (!isValidExpression(bindingEntry.entryExpression)) {
+                if (!isUserAction(bindingEntry.entryExpression)) {
                     return false;
                 }
             }
@@ -552,7 +552,7 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
 
     public void broadcastRelationExpressionDefinition(final RelationProps relationProps) {
 
-        if (!isValidRelationProps(relationProps)) {
+        if (!isUserAction(relationProps)) {
             return;
         }
 
@@ -578,7 +578,7 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
 
     public void broadcastInvocationExpressionDefinition(final InvocationProps invocationProps) {
 
-        if (!isValidInvocationProps(invocationProps)) {
+        if (!isUserAction(invocationProps)) {
             return;
         }
 
@@ -603,7 +603,7 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
 
     public void broadcastDecisionTableExpressionDefinition(final DecisionTableProps decisionTableProps) {
 
-        if (!isValidDecisionTableProps(decisionTableProps)) {
+        if (!isUserAction(decisionTableProps)) {
             return;
         }
 
