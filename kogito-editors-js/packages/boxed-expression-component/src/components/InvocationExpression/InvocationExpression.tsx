@@ -162,7 +162,7 @@ export const InvocationExpression: React.FunctionComponent<InvocationProps> = (i
   useEffect(() => {
     spreadInvocationExpressionDefinition();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rows]);
+  }, [rows, functionName]);
 
   const onColumnsUpdate = useCallback(
     ([expressionColumn]: [ColumnInstance]) => {
