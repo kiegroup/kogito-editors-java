@@ -30,7 +30,6 @@ import com.google.gwt.user.client.Element;
 import elemental2.dom.DOMTokenList;
 import elemental2.dom.HTMLAnchorElement;
 import elemental2.dom.HTMLDivElement;
-import org.assertj.core.util.Arrays;
 import org.jboss.errai.common.client.dom.Anchor;
 import org.jboss.errai.common.client.dom.Span;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
@@ -52,13 +51,8 @@ import org.kie.workbench.common.dmn.client.editors.expressions.commands.FillInvo
 import org.kie.workbench.common.dmn.client.editors.expressions.commands.FillListExpressionCommand;
 import org.kie.workbench.common.dmn.client.editors.expressions.commands.FillLiteralExpressionCommand;
 import org.kie.workbench.common.dmn.client.editors.expressions.commands.FillRelationExpressionCommand;
-import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.Annotation;
-import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.Clause;
-import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.Column;
-import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.ContextEntryProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.ContextProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.DecisionTableProps;
-import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.DecisionTableRule;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.ExpressionProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.FunctionProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.InvocationProps;
@@ -68,6 +62,7 @@ import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.R
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinition;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinitions;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.function.supplementary.pmml.PMMLDocumentMetadataProvider;
+import org.kie.workbench.common.dmn.client.editors.expressions.util.UserActionChecker;
 import org.kie.workbench.common.dmn.client.session.DMNEditorSession;
 import org.kie.workbench.common.dmn.client.widgets.grid.BaseExpressionGrid;
 import org.kie.workbench.common.dmn.client.widgets.grid.ExpressionGridCache;
@@ -133,12 +128,9 @@ import static org.mockito.Mockito.when;
 @RunWith(LienzoMockitoTestRunner.class)
 public class ExpressionEditorViewImplTest {
 
-    private static final String AGGREGATION = "aggregation";
     private static final String NODE_UUID = "uuid";
     private static final String UNDEFINED_EXPRESSION_DEFINITION_NAME = "Undefined";
     private static final String NAME = "name";
-    private static final String DATA_TYPE = "dataType";
-    private static final String HIT_POLICY = "hitPolicy";
 
     @Mock
     private Anchor returnToLink;
@@ -251,6 +243,9 @@ public class ExpressionEditorViewImplTest {
     @Mock
     private AbstractCanvasHandler canvasHandler;
 
+    @Mock
+    private UserActionChecker userActionChecker;
+
     @Captor
     private ArgumentCaptor<Transform> transformArgumentCaptor;
 
@@ -316,7 +311,8 @@ public class ExpressionEditorViewImplTest {
                                                      betaBoxedExpressionToggle,
                                                      newBoxedExpression,
                                                      dmnExpressionType,
-                                                     dmnExpressionEditor));
+                                                     dmnExpressionEditor,
+                                                     userActionChecker));
         view.init(presenter);
         view.bind(session);
 
@@ -582,341 +578,6 @@ public class ExpressionEditorViewImplTest {
     }
 
     @Test
-    public void testIsUserAction_WhenIsDecisionTable() {
-
-        final DecisionTableProps decisionTableProps = new DecisionTableProps(NAME,
-                                                                             "data type",
-                                                                             "hit policy",
-                                                                             AGGREGATION,
-                                                                             null,
-                                                                             null,
-                                                                             null,
-                                                                             null);
-
-        doReturn(true).when(view).isUserAction(any(DecisionTableProps.class));
-
-        final boolean isUserAction = view.isUserAction((ExpressionProps) decisionTableProps);
-
-        verify(view).isUserAction(decisionTableProps);
-        verify(view, never()).isUserAction(any(ContextProps.class));
-        verify(view, never()).isUserAction(any(InvocationProps.class));
-        verify(view, never()).isUserAction(any(RelationProps.class));
-
-        assertTrue(isUserAction);
-    }
-
-    @Test
-    public void testUserAction_WhenIsContext() {
-
-        final ContextProps contextProps = new ContextProps(NAME,
-                                                           null,
-                                                           null,
-                                                           null,
-                                                           null,
-                                                           null);
-
-        doReturn(true).when(view).isUserAction(any(ContextProps.class));
-
-        final boolean isUserAction = view.isUserAction((ExpressionProps) contextProps);
-
-        verify(view, never()).isUserAction(any(DecisionTableProps.class));
-        verify(view).isUserAction(contextProps);
-        verify(view, never()).isUserAction(any(InvocationProps.class));
-        verify(view, never()).isUserAction(any(RelationProps.class));
-
-        assertTrue(isUserAction);
-    }
-
-    @Test
-    public void testIsUserAction_WhenIsRelation() {
-
-        final RelationProps relationProps = new RelationProps(NAME,
-                                                              null,
-                                                              null,
-                                                              null);
-
-        doReturn(true).when(view).isUserAction(any(RelationProps.class));
-
-        final boolean isUserAction = view.isUserAction((ExpressionProps) relationProps);
-
-        verify(view, never()).isUserAction(any(DecisionTableProps.class));
-        verify(view, never()).isUserAction(any(ContextProps.class));
-        verify(view, never()).isUserAction(any(InvocationProps.class));
-        verify(view).isUserAction(relationProps);
-
-        assertTrue(isUserAction);
-    }
-
-    @Test
-    public void testIsUserAction_WhenIsInvocation() {
-
-        final InvocationProps invocationProps = new InvocationProps(NAME,
-                                                                    null,
-                                                                    null,
-                                                                    null,
-                                                                    null,
-                                                                    null);
-
-        doReturn(true).when(view).isUserAction(any(InvocationProps.class));
-
-        final boolean isUserAction = view.isUserAction((ExpressionProps) invocationProps);
-
-        verify(view, never()).isUserAction(any(DecisionTableProps.class));
-        verify(view, never()).isUserAction(any(ContextProps.class));
-        verify(view).isUserAction(invocationProps);
-        verify(view, never()).isUserAction(any(RelationProps.class));
-
-        assertTrue(isUserAction);
-    }
-
-    @Test
-    public void testIsUserAction_DecisionTablePropsOverload_WhenItIs() {
-
-        final DecisionTableProps decisionTableProps = new DecisionTableProps(NAME,
-                                                                             "data type",
-                                                                             "hit policy",
-                                                                             AGGREGATION,
-                                                                             null,
-                                                                             null,
-                                                                             null,
-                                                                             null);
-
-        doReturn(true).when(view).haveAllClauses(decisionTableProps);
-        doReturn(true).when(view).haveAtLeastOneColumnSizeDefined(decisionTableProps);
-        doReturn(true).when(view).areRulesLoaded(decisionTableProps);
-
-        final boolean isUserAction = view.isUserAction(decisionTableProps);
-
-        assertTrue(isUserAction);
-
-        verify(view).haveAllClauses(decisionTableProps);
-        verify(view).haveAtLeastOneColumnSizeDefined(decisionTableProps);
-        verify(view).areRulesLoaded(decisionTableProps);
-    }
-
-    @Test
-    public void testIsUserAction_DecisionTablePropsOverload_WhenRulesAreNotLoaded() {
-
-        final DecisionTableProps decisionTableProps = new DecisionTableProps(NAME,
-                                                                             "data type",
-                                                                             "hit policy",
-                                                                             AGGREGATION,
-                                                                             null,
-                                                                             null,
-                                                                             null,
-                                                                             null);
-
-        doReturn(true).when(view).haveAllClauses(decisionTableProps);
-        doReturn(true).when(view).haveAtLeastOneColumnSizeDefined(decisionTableProps);
-        doReturn(false).when(view).areRulesLoaded(decisionTableProps);
-
-        final boolean isUserAction = view.isUserAction(decisionTableProps);
-
-        assertFalse(isUserAction);
-
-        verify(view).haveAllClauses(decisionTableProps);
-        verify(view).haveAtLeastOneColumnSizeDefined(decisionTableProps);
-        verify(view).areRulesLoaded(decisionTableProps);
-    }
-
-    @Test
-    public void testIsUserAction_DecisionTablePropsOverload_WhenDoesntHaveColumnSizeDefined() {
-
-        final DecisionTableProps decisionTableProps = new DecisionTableProps(NAME,
-                                                                             "data type",
-                                                                             "hit policy",
-                                                                             AGGREGATION,
-                                                                             null,
-                                                                             null,
-                                                                             null,
-                                                                             null);
-
-        doReturn(true).when(view).haveAllClauses(decisionTableProps);
-        doReturn(false).when(view).haveAtLeastOneColumnSizeDefined(decisionTableProps);
-        doReturn(true).when(view).areRulesLoaded(decisionTableProps);
-
-        final boolean isUserAction = view.isUserAction(decisionTableProps);
-
-        assertFalse(isUserAction);
-
-        verify(view).haveAllClauses(decisionTableProps);
-        verify(view).haveAtLeastOneColumnSizeDefined(decisionTableProps);
-        verify(view, never()).areRulesLoaded(decisionTableProps);
-    }
-
-    @Test
-    public void tesIsUserAction_DecisionTablePropsOverload_WhenDoesntHaveAllClauses() {
-
-        final DecisionTableProps decisionTableProps = new DecisionTableProps(NAME,
-                                                                             "data type",
-                                                                             "hit policy",
-                                                                             AGGREGATION,
-                                                                             null,
-                                                                             null,
-                                                                             null,
-                                                                             null);
-
-        doReturn(false).when(view).haveAllClauses(decisionTableProps);
-
-        final boolean isUserAction = view.isUserAction(decisionTableProps);
-
-        assertFalse(isUserAction);
-
-        verify(view).haveAllClauses(decisionTableProps);
-        verify(view, never()).haveAtLeastOneColumnSizeDefined(decisionTableProps);
-        verify(view, never()).areRulesLoaded(decisionTableProps);
-    }
-
-    @Test
-    public void testAreRulesLoaded() {
-
-        final DecisionTableRule rule1 = mock(DecisionTableRule.class);
-        final DecisionTableRule rule2 = mock(DecisionTableRule.class);
-
-        final DecisionTableRule[] rules = new DecisionTableRule[]{rule1, rule2};
-
-        final DecisionTableProps expressionProps = new DecisionTableProps(NAME,
-                                                                          "data type",
-                                                                          "hit policy",
-                                                                          AGGREGATION,
-                                                                          null,
-                                                                          null,
-                                                                          null,
-                                                                          rules);
-
-        doReturn(false).when(view).ruleHaveNullClauses(rule1);
-        doReturn(false).when(view).ruleHaveNullClauses(rule2);
-        doReturn(true).when(view).haveAllEntries(expressionProps, rule1);
-        doReturn(true).when(view).haveAllEntries(expressionProps, rule2);
-
-        final boolean areRulesLoaded = view.areRulesLoaded(expressionProps);
-
-        assertTrue(areRulesLoaded);
-
-        verify(view).haveAllEntries(expressionProps, rule1);
-        verify(view).haveAllEntries(expressionProps, rule2);
-        verify(view).ruleHaveNullClauses(rule1);
-        verify(view).ruleHaveNullClauses(rule2);
-    }
-
-    @Test
-    public void testAreRulesLoaded_WhenDoesntHaveAllEntries() {
-
-        final DecisionTableRule rule1 = mock(DecisionTableRule.class);
-
-        final DecisionTableRule[] rules = new DecisionTableRule[]{rule1};
-
-        final DecisionTableProps decisionTableProps = new DecisionTableProps(NAME,
-                                                                             "data type",
-                                                                             "hit policy",
-                                                                             AGGREGATION,
-                                                                             null,
-                                                                             null,
-                                                                             null,
-                                                                             rules);
-
-        doReturn(false).when(view).ruleHaveNullClauses(rule1);
-        doReturn(false).when(view).haveAllEntries(decisionTableProps, rule1);
-
-        final boolean areRulesLoaded = view.areRulesLoaded(decisionTableProps);
-
-        assertFalse(areRulesLoaded);
-
-        verify(view).haveAllEntries(decisionTableProps, rule1);
-    }
-
-    @Test
-    public void testAreRulesLoaded_WhenRuleHaveNullClauses() {
-
-        final DecisionTableRule rule1 = mock(DecisionTableRule.class);
-
-        final DecisionTableRule[] rules = new DecisionTableRule[]{rule1};
-
-        final DecisionTableProps expressionProps = new DecisionTableProps(NAME,
-                                                                          "data type",
-                                                                          "hit policy",
-                                                                          AGGREGATION,
-                                                                          null,
-                                                                          null,
-                                                                          null,
-                                                                          rules);
-
-        doReturn(true).when(view).ruleHaveNullClauses(rule1);
-        doReturn(true).when(view).haveAllEntries(expressionProps, rule1);
-
-        final boolean areValid = view.areRulesLoaded(expressionProps);
-
-        assertFalse(areValid);
-
-        verify(view).haveAllEntries(expressionProps, rule1);
-        verify(view).ruleHaveNullClauses(rule1);
-    }
-
-    @Test
-    public void testRuleHaveNullClauses() {
-
-        final String[] inputEntries = new String[]{"input"};
-        final String[] outputEntries = new String[]{"output"};
-        final String[] annotationEntries = new String[]{"annotation"};
-
-        final DecisionTableRule rule = new DecisionTableRule(inputEntries,
-                                                             outputEntries,
-                                                             annotationEntries);
-
-        final boolean haveHull = view.ruleHaveNullClauses(rule);
-
-        assertFalse(haveHull);
-    }
-
-    @Test
-    public void testRuleHaveNullClauses_WhenInputHasNull() {
-
-        final String[] inputEntries = new String[]{"input", null};
-        final String[] outputEntries = new String[]{"output"};
-        final String[] annotationEntries = new String[]{"annotation"};
-
-        final DecisionTableRule rule = new DecisionTableRule(inputEntries,
-                                                             outputEntries,
-                                                             annotationEntries);
-
-        final boolean haveHull = view.ruleHaveNullClauses(rule);
-
-        assertTrue(haveHull);
-    }
-
-    @Test
-    public void testRuleHaveNullClauses_WhenOutputHasNull() {
-
-        final String[] inputEntries = new String[]{"input"};
-        final String[] outputEntries = new String[]{"output", null};
-        final String[] annotationEntries = new String[]{"annotation"};
-
-        final DecisionTableRule rule = new DecisionTableRule(inputEntries,
-                                                             outputEntries,
-                                                             annotationEntries);
-
-        final boolean haveHull = view.ruleHaveNullClauses(rule);
-
-        assertTrue(haveHull);
-    }
-
-    @Test
-    public void testRuleHaveNullClauses_WhenAnnotationsHasNull() {
-
-        final String[] inputEntries = new String[]{"input"};
-        final String[] outputEntries = new String[]{"output"};
-        final String[] annotationEntries = new String[]{"annotation", null};
-
-        final DecisionTableRule rule = new DecisionTableRule(inputEntries,
-                                                             outputEntries,
-                                                             annotationEntries);
-
-        final boolean haveHull = view.ruleHaveNullClauses(rule);
-
-        assertTrue(haveHull);
-    }
-
-    @Test
     public void testClear() {
 
         final ExpressionContainerGrid expressionContainerGrid = mock(ExpressionContainerGrid.class);
@@ -976,7 +637,7 @@ public class ExpressionEditorViewImplTest {
 
         final ContextProps props = mock(ContextProps.class);
 
-        doReturn(true).when(view).isUserAction(props);
+        when(userActionChecker.isUserAction(props)).thenReturn(true);
 
         doNothing().when(view).executeIfItHaveChanges(any());
 
@@ -995,7 +656,7 @@ public class ExpressionEditorViewImplTest {
 
         final ContextProps props = mock(ContextProps.class);
 
-        doReturn(false).when(view).isUserAction(props);
+        when(userActionChecker.isUserAction(props)).thenReturn(false);
 
         doNothing().when(view).executeIfItHaveChanges(any());
 
@@ -1005,76 +666,11 @@ public class ExpressionEditorViewImplTest {
     }
 
     @Test
-    public void testIsUserAction_ContextPropsOverload() {
-
-        final ExpressionProps expression1 = mock(ExpressionProps.class);
-        final ExpressionProps expression2 = mock(ExpressionProps.class);
-
-        final ContextEntryProps entry1 = new ContextEntryProps(null, expression1);
-        final ContextEntryProps entry2 = new ContextEntryProps(null, expression2);
-
-        final ContextProps props = new ContextProps(null,
-                                                    null,
-                                                    new ContextEntryProps[]{entry1, entry2},
-                                                    null,
-                                                    null,
-                                                    null);
-
-        doReturn(true).when(view).isUserAction(expression1);
-        doReturn(true).when(view).isUserAction(expression2);
-
-        final boolean isValid = view.isUserAction(props);
-
-        assertTrue(isValid);
-
-        verify(view).isUserAction(expression1);
-        verify(view).isUserAction(expression2);
-    }
-
-    @Test
-    public void testIsUserAction_ContextPropsOverload_WhenItIsNot() {
-
-        final ExpressionProps expression1 = mock(ExpressionProps.class);
-
-        final ContextEntryProps entry1 = new ContextEntryProps(null, expression1);
-
-        final ContextProps props = new ContextProps(null,
-                                                    null,
-                                                    new ContextEntryProps[]{entry1},
-                                                    null,
-                                                    null,
-                                                    null);
-
-        doReturn(false).when(view).isUserAction(expression1);
-
-        final boolean isUserAction = view.isUserAction(props);
-
-        assertFalse(isUserAction);
-
-        verify(view).isUserAction(expression1);
-    }
-
-    @Test
-    public void testIsUserAction_ContextPropsOverload_WhenDoesNotContainsEntries() {
-
-        final ContextProps props = new ContextProps(null,
-                                                    null,
-                                                    null,
-                                                    null,
-                                                    null,
-                                                    null);
-
-        final boolean isUserAction = view.isUserAction(props);
-
-        assertFalse(isUserAction);
-    }
-
-    @Test
     public void testBroadcastContextExpressionDefinition_WhenIsValidProps() {
 
         final RelationProps props = mock(RelationProps.class);
 
-        doReturn(true).when(view).isUserAction(props);
+        when(userActionChecker.isUserAction(props)).thenReturn(true);
 
         doNothing().when(view).executeIfItHaveChanges(any());
 
@@ -1093,7 +689,7 @@ public class ExpressionEditorViewImplTest {
 
         final RelationProps props = mock(RelationProps.class);
 
-        doReturn(false).when(view).isUserAction(props);
+        when(userActionChecker.isUserAction(props)).thenReturn(false);
 
         doNothing().when(view).executeIfItHaveChanges(any());
 
@@ -1124,7 +720,7 @@ public class ExpressionEditorViewImplTest {
 
         final InvocationProps props = mock(InvocationProps.class);
 
-        doReturn(true).when(view).isUserAction(props);
+        when(userActionChecker.isUserAction(props)).thenReturn(true);
 
         doNothing().when(view).executeIfItHaveChanges(any());
 
@@ -1143,7 +739,7 @@ public class ExpressionEditorViewImplTest {
 
         final InvocationProps props = mock(InvocationProps.class);
 
-        doReturn(false).when(view).isUserAction(props);
+        when(userActionChecker.isUserAction(props)).thenReturn(false);
 
         doNothing().when(view).executeIfItHaveChanges(any());
 
@@ -1174,7 +770,7 @@ public class ExpressionEditorViewImplTest {
 
         final DecisionTableProps props = mock(DecisionTableProps.class);
 
-        doReturn(true).when(view).isUserAction(props);
+        when(userActionChecker.isUserAction(props)).thenReturn(true);
 
         doNothing().when(view).executeIfItHaveChanges(any());
 
@@ -1193,460 +789,13 @@ public class ExpressionEditorViewImplTest {
 
         final ContextProps props = mock(ContextProps.class);
 
-        doReturn(false).when(view).isUserAction(props);
+        when(userActionChecker.isUserAction(props)).thenReturn(false);
 
         doNothing().when(view).executeIfItHaveChanges(any());
 
         view.broadcastContextExpressionDefinition(props);
 
         verify(view, never()).executeIfItHaveChanges(any());
-    }
-
-    @Test
-    public void testColumnsMatchesRows() {
-
-        final Column[] columns = new Column[3];
-        final String[][] rows = new String[1][3];
-
-        final boolean matches = view.columnsMatchesRows(columns, rows);
-
-        assertTrue(matches);
-    }
-
-    @Test
-    public void testColumnsMatchesRows_WhenDoesnt() {
-
-        final Column[] columns = new Column[2];
-        final String[][] rows = new String[1][3];
-
-        final boolean matches = view.columnsMatchesRows(columns, rows);
-
-        assertFalse(matches);
-    }
-
-    @Test
-    public void testUserAction_RelationPropsOverload() {
-
-        final Column column1 = new Column(null, null, 0.0d);
-        final Column column2 = new Column(null, null, 0.0d);
-        final Column[] columns = Arrays.array(column1, column2);
-        final String[][] rows = new String[0][];
-
-        final RelationProps relationProps = new RelationProps(NAME,
-                                                              DATA_TYPE,
-                                                              columns,
-                                                              new String[0][]);
-        doReturn(true).when(view).columnsMatchesRows(columns, rows);
-
-        final boolean isUserAction = view.isUserAction(relationProps);
-
-        assertTrue(isUserAction);
-
-        verify(view).columnsMatchesRows(columns, rows);
-    }
-
-    @Test
-    public void testUserAction_RelationPropsOverload_WhenColumnsDoesntMatchRows() {
-
-        final Column column1 = new Column(null, null, 0.0d);
-        final Column column2 = new Column(null, null, 0.0d);
-        final Column[] columns = Arrays.array(column1, column2);
-        final String[][] rows = new String[0][];
-
-        final RelationProps relationProps = new RelationProps(NAME,
-                                                              DATA_TYPE,
-                                                              columns,
-                                                              new String[0][]);
-        doReturn(false).when(view).columnsMatchesRows(columns, rows);
-
-        final boolean isValid = view.isUserAction(relationProps);
-
-        assertFalse(isValid);
-
-        verify(view).columnsMatchesRows(columns, rows);
-    }
-
-    @Test
-    public void testUserAction_RelationPropsOverload_WhenDoestHaveColumnWithNullWidth() {
-
-        final Column column1 = new Column(null, null, 0.0d);
-        final Column column2 = new Column(null, null, null);
-        final Column[] columns = Arrays.array(column1, column2);
-        final String[][] rows = new String[0][];
-
-        final RelationProps relationProps = new RelationProps(NAME,
-                                                              DATA_TYPE,
-                                                              columns,
-                                                              new String[0][]);
-        doReturn(true).when(view).columnsMatchesRows(columns, rows);
-
-        final boolean isValid = view.isUserAction(relationProps);
-
-        assertFalse(isValid);
-
-        verify(view).columnsMatchesRows(columns, rows);
-    }
-
-    @Test
-    public void testHaveAllClauses() {
-
-        final Annotation[] annotations = new Annotation[0];
-        final Clause[] input = new Clause[0];
-        final Clause[] output = new Clause[0];
-
-        final DecisionTableProps decisionTableProps = new DecisionTableProps(NAME,
-                                                                             DATA_TYPE,
-                                                                             HIT_POLICY,
-                                                                             AGGREGATION,
-                                                                             annotations,
-                                                                             input,
-                                                                             output,
-                                                                             null);
-
-        final boolean haveAllClauses = view.haveAllClauses(decisionTableProps);
-
-        assertTrue(haveAllClauses);
-    }
-
-    @Test
-    public void testHaveAllClauses_WhenDoesntHaveInput() {
-
-        final Annotation[] annotations = new Annotation[0];
-        final Clause[] output = new Clause[0];
-
-        final DecisionTableProps decisionTableProps = new DecisionTableProps(NAME,
-                                                                             DATA_TYPE,
-                                                                             HIT_POLICY,
-                                                                             AGGREGATION,
-                                                                             annotations,
-                                                                             null,
-                                                                             output,
-                                                                             null);
-
-        final boolean haveAllClauses = view.haveAllClauses(decisionTableProps);
-
-        assertFalse(haveAllClauses);
-    }
-
-    @Test
-    public void testHaveAllClauses_WhenDoesntHaveAnnotations() {
-
-        final Clause[] input = new Clause[0];
-        final Clause[] output = new Clause[0];
-
-        final DecisionTableProps decisionTableProps = new DecisionTableProps(NAME,
-                                                                             DATA_TYPE,
-                                                                             HIT_POLICY,
-                                                                             AGGREGATION,
-                                                                             null,
-                                                                             input,
-                                                                             output,
-                                                                             null);
-
-        final boolean haveAllClauses = view.haveAllClauses(decisionTableProps);
-
-        assertFalse(haveAllClauses);
-    }
-
-    @Test
-    public void testHaveAllClauses_WhenDoesntHaveOutput() {
-
-        final Annotation[] annotations = new Annotation[0];
-        final Clause[] input = new Clause[0];
-
-        final DecisionTableProps decisionTableProps = new DecisionTableProps(NAME,
-                                                                             DATA_TYPE,
-                                                                             HIT_POLICY,
-                                                                             AGGREGATION,
-                                                                             annotations,
-                                                                             input,
-                                                                             null,
-                                                                             null);
-
-        final boolean haveAllClauses = view.haveAllClauses(decisionTableProps);
-
-        assertFalse(haveAllClauses);
-    }
-
-    @Test
-    public void testHaveAtLeastOneColumnSizeDefined_WhenDoesnt() {
-
-        final Annotation annotation1 = new Annotation(NAME, null);
-        final Annotation annotation2 = new Annotation(NAME, null);
-        final Clause input1 = new Clause(NAME, DATA_TYPE, null);
-        final Clause input2 = new Clause(NAME, DATA_TYPE, null);
-        final Clause output1 = new Clause(NAME, DATA_TYPE, null);
-        final Clause output2 = new Clause(NAME, DATA_TYPE, null);
-        final Annotation[] annotations = Arrays.array(annotation1, annotation2);
-        final Clause[] input = Arrays.array(input1, input2);
-        final Clause[] output = Arrays.array(output1, output2);
-
-        final DecisionTableProps decisionTableProps = new DecisionTableProps(NAME,
-                                                                             DATA_TYPE,
-                                                                             HIT_POLICY,
-                                                                             AGGREGATION,
-                                                                             annotations,
-                                                                             input,
-                                                                             output,
-                                                                             null);
-
-        final boolean isDefined = view.haveAtLeastOneColumnSizeDefined(decisionTableProps);
-
-        assertFalse(isDefined);
-    }
-
-    @Test
-    public void testHaveAtLeastOneColumnSizeDefined_WhenIsAnInput() {
-
-        final Annotation annotation1 = new Annotation(NAME, null);
-        final Annotation annotation2 = new Annotation(NAME, null);
-        final Clause input1 = new Clause(NAME, DATA_TYPE, null);
-        final Clause input2 = new Clause(NAME, DATA_TYPE, 1.0);
-        final Clause output1 = new Clause(NAME, DATA_TYPE, null);
-        final Clause output2 = new Clause(NAME, DATA_TYPE, null);
-        final Annotation[] annotations = Arrays.array(annotation1, annotation2);
-        final Clause[] input = Arrays.array(input1, input2);
-        final Clause[] output = Arrays.array(output1, output2);
-
-        final DecisionTableProps decisionTableProps = new DecisionTableProps(NAME,
-                                                                             DATA_TYPE,
-                                                                             HIT_POLICY,
-                                                                             AGGREGATION,
-                                                                             annotations,
-                                                                             input,
-                                                                             output,
-                                                                             null);
-
-        final boolean isDefined = view.haveAtLeastOneColumnSizeDefined(decisionTableProps);
-
-        assertTrue(isDefined);
-    }
-
-    @Test
-    public void testHaveAtLeastOneColumnSizeDefined_WhenIsAnOutput() {
-
-        final Annotation annotation1 = new Annotation(NAME, null);
-        final Annotation annotation2 = new Annotation(NAME, null);
-        final Clause input1 = new Clause(NAME, DATA_TYPE, null);
-        final Clause input2 = new Clause(NAME, DATA_TYPE, null);
-        final Clause output1 = new Clause(NAME, DATA_TYPE, null);
-        final Clause output2 = new Clause(NAME, DATA_TYPE, 1.0);
-        final Annotation[] annotations = Arrays.array(annotation1, annotation2);
-        final Clause[] input = Arrays.array(input1, input2);
-        final Clause[] output = Arrays.array(output1, output2);
-
-        final DecisionTableProps decisionTableProps = new DecisionTableProps(NAME,
-                                                                             DATA_TYPE,
-                                                                             HIT_POLICY,
-                                                                             AGGREGATION,
-                                                                             annotations,
-                                                                             input,
-                                                                             output,
-                                                                             null);
-
-        final boolean isDefined = view.haveAtLeastOneColumnSizeDefined(decisionTableProps);
-
-        assertTrue(isDefined);
-    }
-
-    @Test
-    public void testHaveAtLeastOneColumnSizeDefined_WhenIsAnAnnotation() {
-
-        final Annotation annotation1 = new Annotation(NAME, null);
-        final Annotation annotation2 = new Annotation(NAME, 1.0);
-        final Clause input1 = new Clause(NAME, DATA_TYPE, null);
-        final Clause input2 = new Clause(NAME, DATA_TYPE, null);
-        final Clause output1 = new Clause(NAME, DATA_TYPE, null);
-        final Clause output2 = new Clause(NAME, DATA_TYPE, null);
-        final Annotation[] annotations = Arrays.array(annotation1, annotation2);
-        final Clause[] input = Arrays.array(input1, input2);
-        final Clause[] output = Arrays.array(output1, output2);
-
-        final DecisionTableProps decisionTableProps = new DecisionTableProps(NAME,
-                                                                             DATA_TYPE,
-                                                                             HIT_POLICY,
-                                                                             AGGREGATION,
-                                                                             annotations,
-                                                                             input,
-                                                                             output,
-                                                                             null);
-
-        final boolean isDefined = view.haveAtLeastOneColumnSizeDefined(decisionTableProps);
-
-        assertTrue(isDefined);
-    }
-
-    @Test
-    public void testHaveAllEntries() {
-
-        final String[] inputEntries = new String[0];
-        final String[] annotationEntries = new String[0];
-        final String[] outputEntries = new String[0];
-        final DecisionTableRule rule = new DecisionTableRule(inputEntries, outputEntries, annotationEntries);
-
-        final Annotation[] annotations = new Annotation[0];
-        final Clause[] input = new Clause[0];
-        final Clause[] output = new Clause[0];
-        final DecisionTableProps decisionTableProps = new DecisionTableProps(NAME,
-                                                                             DATA_TYPE,
-                                                                             HIT_POLICY,
-                                                                             AGGREGATION,
-                                                                             annotations,
-                                                                             input,
-                                                                             output,
-                                                                             null);
-
-        final boolean haveAllEntries = view.haveAllEntries(decisionTableProps, rule);
-
-        assertTrue(haveAllEntries);
-    }
-
-    @Test
-    public void testHaveAllEntries_WhenDoesntHaveInputEntries() {
-
-        final String[] inputEntries = new String[1];
-        final String[] annotationEntries = new String[0];
-        final String[] outputEntries = new String[0];
-        final DecisionTableRule rule = new DecisionTableRule(inputEntries, outputEntries, annotationEntries);
-
-        final Annotation[] annotations = new Annotation[0];
-        final Clause[] input = new Clause[0];
-        final Clause[] output = new Clause[0];
-        final DecisionTableProps decisionTableProps = new DecisionTableProps(NAME,
-                                                                             DATA_TYPE,
-                                                                             HIT_POLICY,
-                                                                             AGGREGATION,
-                                                                             annotations,
-                                                                             input,
-                                                                             output,
-                                                                             null);
-
-        final boolean haveAllEntries = view.haveAllEntries(decisionTableProps, rule);
-
-        assertFalse(haveAllEntries);
-    }
-
-    @Test
-    public void testHaveAllEntries_WhenDoesntHaveOutputEntries() {
-
-        final String[] inputEntries = new String[0];
-        final String[] annotationEntries = new String[0];
-        final String[] outputEntries = new String[1];
-        final DecisionTableRule rule = new DecisionTableRule(inputEntries, outputEntries, annotationEntries);
-
-        final Annotation[] annotations = new Annotation[0];
-        final Clause[] input = new Clause[0];
-        final Clause[] output = new Clause[0];
-        final DecisionTableProps decisionTableProps = new DecisionTableProps(NAME,
-                                                                             DATA_TYPE,
-                                                                             HIT_POLICY,
-                                                                             AGGREGATION,
-                                                                             annotations,
-                                                                             input,
-                                                                             output,
-                                                                             null);
-
-        final boolean haveAllEntries = view.haveAllEntries(decisionTableProps, rule);
-
-        assertFalse(haveAllEntries);
-    }
-
-    @Test
-    public void testHaveAllEntries_WhenDoesntHaveAnnotationEntries() {
-
-        final String[] inputEntries = new String[0];
-        final String[] annotationEntries = new String[1];
-        final String[] outputEntries = new String[0];
-        final DecisionTableRule rule = new DecisionTableRule(inputEntries, outputEntries, annotationEntries);
-
-        final Annotation[] annotations = new Annotation[0];
-        final Clause[] input = new Clause[0];
-        final Clause[] output = new Clause[0];
-        final DecisionTableProps decisionTableProps = new DecisionTableProps(NAME,
-                                                                             DATA_TYPE,
-                                                                             HIT_POLICY,
-                                                                             AGGREGATION,
-                                                                             annotations,
-                                                                             input,
-                                                                             output,
-                                                                             null);
-
-        final boolean haveAllEntries = view.haveAllEntries(decisionTableProps, rule);
-
-        assertFalse(haveAllEntries);
-    }
-
-    @Test
-    public void testUserAction_InvocationPropsOverload() {
-
-        final ExpressionProps entryExpression1 = mock(ExpressionProps.class);
-        final ExpressionProps entryExpression2 = mock(ExpressionProps.class);
-
-        final ContextEntryProps entry1 = new ContextEntryProps(null, entryExpression1);
-        final ContextEntryProps entry2 = new ContextEntryProps(null, entryExpression2);
-
-        final ContextEntryProps[] bindingEntries = Arrays.array(entry1, entry2);
-
-        doReturn(true).when(view).isUserAction(entryExpression1);
-        doReturn(true).when(view).isUserAction(entryExpression2);
-
-        final InvocationProps props = new InvocationProps(NAME,
-                                                          DATA_TYPE,
-                                                          null,
-                                                          bindingEntries,
-                                                          null,
-                                                          null);
-
-        final boolean isUserAction = view.isUserAction(props);
-
-        assertTrue(isUserAction);
-
-        verify(view).isUserAction(entryExpression1);
-        verify(view).isUserAction(entryExpression2);
-    }
-
-    @Test
-    public void testUserAction_InvocationPropsOverload_WhenThereIsNoBindingEntries() {
-
-        final InvocationProps props = new InvocationProps(NAME,
-                                                          DATA_TYPE,
-                                                          null,
-                                                          null,
-                                                          null,
-                                                          null);
-
-        final boolean isUserAction = view.isUserAction(props);
-
-        assertTrue(isUserAction);
-    }
-
-    @Test
-    public void testUserAction_InvocationPropsOverload_WhenThereIsAnNonUserExpression() {
-
-        final ExpressionProps entryExpression1 = mock(ExpressionProps.class);
-        final ExpressionProps entryExpression2 = mock(ExpressionProps.class);
-
-        final ContextEntryProps entry1 = new ContextEntryProps(null, entryExpression1);
-        final ContextEntryProps entry2 = new ContextEntryProps(null, entryExpression2);
-
-        final ContextEntryProps[] bindingEntries = Arrays.array(entry1, entry2);
-
-        doReturn(true).when(view).isUserAction(entryExpression1);
-        doReturn(false).when(view).isUserAction(entryExpression2);
-
-        final InvocationProps props = new InvocationProps(NAME,
-                                                          DATA_TYPE,
-                                                          null,
-                                                          bindingEntries,
-                                                          null,
-                                                          null);
-
-        final boolean isUserAction = view.isUserAction(props);
-
-        assertFalse(isUserAction);
-
-        verify(view).isUserAction(entryExpression1);
-        verify(view).isUserAction(entryExpression2);
     }
 
     @Test

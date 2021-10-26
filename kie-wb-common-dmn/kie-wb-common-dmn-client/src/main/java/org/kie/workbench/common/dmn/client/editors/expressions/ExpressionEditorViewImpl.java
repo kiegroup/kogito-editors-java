@@ -15,8 +15,6 @@
  */
 package org.kie.workbench.common.dmn.client.editors.expressions;
 
-import java.util.Arrays;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -53,11 +51,8 @@ import org.kie.workbench.common.dmn.client.editors.expressions.commands.FillInvo
 import org.kie.workbench.common.dmn.client.editors.expressions.commands.FillListExpressionCommand;
 import org.kie.workbench.common.dmn.client.editors.expressions.commands.FillLiteralExpressionCommand;
 import org.kie.workbench.common.dmn.client.editors.expressions.commands.FillRelationExpressionCommand;
-import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.Column;
-import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.ContextEntryProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.ContextProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.DecisionTableProps;
-import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.DecisionTableRule;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.EntryInfo;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.ExpressionProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.FunctionProps;
@@ -71,6 +66,7 @@ import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.util.Bo
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.util.ExpressionPropsFiller;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinitions;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.function.supplementary.pmml.PMMLDocumentMetadataProvider;
+import org.kie.workbench.common.dmn.client.editors.expressions.util.UserActionChecker;
 import org.kie.workbench.common.dmn.client.js.DMNLoader;
 import org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants;
 import org.kie.workbench.common.dmn.client.session.DMNSession;
@@ -104,10 +100,6 @@ import org.uberfire.ext.wires.core.grids.client.widget.grid.impl.KeyboardOperati
 import org.uberfire.ext.wires.core.grids.client.widget.layer.pinning.TransformMediator;
 import org.uberfire.ext.wires.core.grids.client.widget.layer.pinning.impl.RestrictedMousePanMediator;
 
-import static org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionType.CONTEXT;
-import static org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionType.DECISION_TABLE;
-import static org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionType.INVOCATION;
-import static org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionType.RELATION;
 import static org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionType.UNDEFINED;
 
 @Templated
@@ -171,6 +163,7 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
     private HasExpression hasExpression;
     private Optional<HasName> hasName;
     private boolean isOnlyVisualChangeAllowed;
+    private UserActionChecker userActionChecker;
 
     public ExpressionEditorViewImpl() {
         //CDI proxy
@@ -197,7 +190,8 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
                                     final HTMLDivElement betaBoxedExpressionToggle,
                                     final HTMLDivElement newBoxedExpression,
                                     final HTMLDivElement dmnExpressionType,
-                                    final HTMLDivElement dmnExpressionEditor) {
+                                    final HTMLDivElement dmnExpressionEditor,
+                                    final UserActionChecker userActionChecker) {
         this.returnToLink = returnToLink;
         this.expressionName = expressionName;
         this.expressionType = expressionType;
@@ -222,6 +216,7 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
         this.newBoxedExpression = newBoxedExpression;
         this.dmnExpressionType = dmnExpressionType;
         this.dmnExpressionEditor = dmnExpressionEditor;
+        this.userActionChecker = userActionChecker;
     }
 
     @Override
@@ -417,7 +412,7 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
 
     public void broadcastContextExpressionDefinition(final ContextProps contextProps) {
 
-        if (!isUserAction(contextProps)) {
+        if (!userActionChecker.isUserAction(contextProps)) {
             return;
         }
         final FillContextExpressionCommand expression = new FillContextExpressionCommand(getHasExpression(),
@@ -429,130 +424,9 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
         executeIfItHaveChanges(expression);
     }
 
-    boolean isUserAction(final ContextProps contextProps) {
-        if (Objects.isNull(contextProps.contextEntries)) {
-            return false;
-        }
-        for (final ContextEntryProps contextEntry : contextProps.contextEntries) {
-            if (!isUserAction(contextEntry.entryExpression)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    // The Boxed Expression Editor does broadcast at each change, but we want
-    // to create commands only for user action commands.
-    boolean isUserAction(final ExpressionProps entryExpression) {
-        if (Objects.equals(entryExpression.logicType, DECISION_TABLE.getText())) {
-            return isUserAction((DecisionTableProps) entryExpression);
-        } else if (Objects.equals(entryExpression.logicType, CONTEXT.getText())) {
-            return isUserAction((ContextProps) entryExpression);
-        } else if (Objects.equals(entryExpression.logicType, INVOCATION.getText())) {
-            return isUserAction((InvocationProps) entryExpression);
-        } else if (Objects.equals(entryExpression.logicType, RELATION.getText())) {
-            return isUserAction((RelationProps) entryExpression);
-        }
-        return true;
-    }
-
-    boolean isUserAction(final RelationProps relationProps) {
-
-        if (!columnsMatchesRows(relationProps.columns, relationProps.rows)) {
-            return false;
-        }
-
-        for (final Column column : relationProps.columns) {
-            if (Objects.isNull(column.width)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    boolean isUserAction(final DecisionTableProps decisionTableProps) {
-        return haveAllClauses(decisionTableProps)
-                && haveAtLeastOneColumnSizeDefined(decisionTableProps)
-                && areRulesLoaded(decisionTableProps);
-    }
-
-    boolean areRulesLoaded(final DecisionTableProps decisionTableProps) {
-        return Arrays.stream(decisionTableProps.rules)
-                .noneMatch(rule -> !haveAllEntries(decisionTableProps, rule)
-                        || ruleHaveNullClauses(rule));
-    }
-
-    boolean ruleHaveNullClauses(final DecisionTableRule rule) {
-        for (int j = 0; j < rule.inputEntries.length; j++) {
-            if (Objects.isNull(rule.inputEntries[j])) {
-                return true;
-            }
-        }
-
-        for (int j = 0; j < rule.outputEntries.length; j++) {
-            if (Objects.isNull(rule.outputEntries[j])) {
-                return true;
-            }
-        }
-
-        for (int j = 0; j < rule.annotationEntries.length; j++) {
-            if (Objects.isNull(rule.annotationEntries[j])) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    boolean haveAllClauses(final DecisionTableProps decisionTableProps) {
-        return !Objects.isNull(decisionTableProps.input)
-                && !Objects.isNull(decisionTableProps.annotations)
-                && !Objects.isNull(decisionTableProps.output);
-    }
-
-    boolean haveAtLeastOneColumnSizeDefined(final DecisionTableProps decisionTableProps) {
-        for (int i = 0; i < decisionTableProps.input.length; i++) {
-            if (!Objects.isNull(decisionTableProps.input[i].width)) {
-                return true;
-            }
-        }
-
-        for (int i = 0; i < decisionTableProps.output.length; i++) {
-            if (!Objects.isNull(decisionTableProps.output[i].width)) {
-                return true;
-            }
-        }
-
-        for (int i = 0; i < decisionTableProps.annotations.length; i++) {
-            if (!Objects.isNull(decisionTableProps.annotations[i].width)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    boolean haveAllEntries(final DecisionTableProps decisionTableProps,
-                           final DecisionTableRule rule) {
-        return rule.inputEntries.length == decisionTableProps.input.length
-                && rule.outputEntries.length == decisionTableProps.output.length
-                && rule.annotationEntries.length == decisionTableProps.annotations.length;
-    }
-
-    boolean isUserAction(final InvocationProps invocationProps) {
-
-        if (!Objects.isNull(invocationProps.bindingEntries)) {
-            for (final ContextEntryProps bindingEntry : invocationProps.bindingEntries) {
-                if (!isUserAction(bindingEntry.entryExpression)) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
-    }
-
     public void broadcastRelationExpressionDefinition(final RelationProps relationProps) {
 
-        if (!isUserAction(relationProps)) {
+        if (!userActionChecker.isUserAction(relationProps)) {
             return;
         }
 
@@ -578,7 +452,7 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
 
     public void broadcastInvocationExpressionDefinition(final InvocationProps invocationProps) {
 
-        if (!isUserAction(invocationProps)) {
+        if (!userActionChecker.isUserAction(invocationProps)) {
             return;
         }
 
@@ -592,6 +466,7 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
     }
 
     public void broadcastFunctionExpressionDefinition(final FunctionProps functionProps) {
+
         final FillFunctionExpressionCommand expression = new FillFunctionExpressionCommand(getHasExpression(),
                                                                                            functionProps,
                                                                                            getEditorSelectedEvent(),
@@ -603,7 +478,7 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
 
     public void broadcastDecisionTableExpressionDefinition(final DecisionTableProps decisionTableProps) {
 
-        if (!isUserAction(decisionTableProps)) {
+        if (!userActionChecker.isUserAction(decisionTableProps)) {
             return;
         }
 
@@ -652,18 +527,6 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
 
     CompositeCommand.Builder<AbstractCanvasHandler, CanvasViolation> createCommandBuilder() {
         return new CompositeCommand.Builder<>();
-    }
-
-    boolean columnsMatchesRows(final Column[] columns,
-                               final String[][] rows) {
-
-        for (int i = 0; i < rows.length; i++) {
-            if (rows[i].length != columns.length) {
-                return false;
-            }
-        }
-
-        return true;
     }
 
     void renderNewBoxedExpression() {
