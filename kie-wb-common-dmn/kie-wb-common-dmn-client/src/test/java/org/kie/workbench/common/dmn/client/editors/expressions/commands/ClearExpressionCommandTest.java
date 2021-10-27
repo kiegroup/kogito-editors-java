@@ -32,6 +32,7 @@ import org.kie.workbench.common.dmn.client.widgets.grid.model.ExpressionEditorCh
 import org.mockito.Mock;
 
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.verify;
 
 @RunWith(GwtMockitoTestRunner.class)
 public class ClearExpressionCommandTest {
@@ -73,5 +74,13 @@ public class ClearExpressionCommandTest {
     public void testGetNewExpression() {
 
         assertTrue(Objects.isNull(expressionCommand.getNewExpression()));
+    }
+
+    @Test
+    public void testFill() {
+
+        expressionCommand.fill();
+
+        verify(view).clear();
     }
 }

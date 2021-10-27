@@ -48,7 +48,7 @@ public abstract class FillExpressionCommand<E extends ExpressionProps> extends A
     private String savedExpressionName;
     private QName savedTypeRef;
     private Optional<Expression> savedExpression;
-    private boolean enableRedo;
+    private boolean isRedo;
 
     public FillExpressionCommand(final HasExpression hasExpression,
                                  final E expressionProps,
@@ -94,12 +94,12 @@ public abstract class FillExpressionCommand<E extends ExpressionProps> extends A
         this.savedExpression = savedExpression;
     }
 
-    public boolean isEnableRedo() {
-        return enableRedo;
+    public boolean isRedo() {
+        return isRedo;
     }
 
-    public void setEnableRedo(boolean enableRedo) {
-        this.enableRedo = enableRedo;
+    public void setIsRedo(boolean isRedo) {
+        this.isRedo = isRedo;
     }
 
     public ExpressionEditorView getView() {
@@ -135,8 +135,8 @@ public abstract class FillExpressionCommand<E extends ExpressionProps> extends A
         setTypeRef(getExpressionProps().dataType);
         createExpression();
         fill();
-        if (isEnableRedo()) {
-            setEnableRedo(false);
+        if (isRedo()) {
+            setIsRedo(false);
             view.activate();
         }
         return buildResult();
@@ -157,7 +157,7 @@ public abstract class FillExpressionCommand<E extends ExpressionProps> extends A
         restoreExpressionName();
         fireEditorSelectedEvent();
         view.activate();
-        setEnableRedo(true);
+        setIsRedo(true);
         return buildResult();
     }
 
@@ -173,8 +173,8 @@ public abstract class FillExpressionCommand<E extends ExpressionProps> extends A
     }
 
     boolean hasNewNameToApply() {
-        if (hasExpression instanceof HasName) {
-            final HasName hasName = (HasName) hasExpression;
+        if (getHasExpression() instanceof HasName) {
+            final HasName hasName = (HasName) getHasExpression();
             return !hasName.getName().getValue().equals(expressionProps.name);
         }
         return false;
@@ -189,14 +189,14 @@ public abstract class FillExpressionCommand<E extends ExpressionProps> extends A
     }
 
     void restoreTypeRef() {
-        if (hasExpression instanceof HasVariable) {
+        if (getHasExpression() instanceof HasVariable) {
             final HasVariable<InformationItemPrimary> hasVariable = (HasVariable<InformationItemPrimary>) hasExpression;
             hasVariable.getVariable().setTypeRef(getSavedTypeRef());
         }
     }
 
     QName getCurrentTypeRef() {
-        if (hasExpression instanceof HasVariable) {
+        if (getHasExpression() instanceof HasVariable) {
             final HasVariable<InformationItemPrimary> hasVariable = (HasVariable<InformationItemPrimary>) hasExpression;
             return hasVariable.getVariable().getTypeRef();
         }

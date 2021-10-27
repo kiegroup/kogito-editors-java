@@ -19,13 +19,19 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.definition.model.Context;
 import org.kie.workbench.common.dmn.api.definition.model.DMNModelInstrumentedBase;
+import org.kie.workbench.common.dmn.api.definition.model.Expression;
 import org.kie.workbench.common.dmn.api.definition.model.LiteralExpression;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class HasExpressionTest {
@@ -77,5 +83,52 @@ public class HasExpressionTest {
         assertNotNull(hasExpression.getExpression());
         assertEquals(context, hasExpression.getExpression());
         assertEquals(parent, hasExpression.asDMNModelInstrumentedBase());
+    }
+
+    @Test
+    public void testWrapEquals() {
+
+        final Expression expression = mock(Expression.class);
+        final HasExpression hasExpression = HasExpression.wrap(parent, expression);
+
+        final Expression otherExpression = mock(Expression.class);
+        final HasExpression otherHasExpression = HasExpression.wrap(parent, otherExpression);
+
+        when(expression.equals(otherExpression, true)).thenReturn(true);
+
+        final boolean isEquals = hasExpression.equals(otherHasExpression, true);
+
+        assertTrue(isEquals);
+        verify(expression).equals(otherExpression, true);
+    }
+
+    @Test
+    public void testWrapEquals_NotIgnoringId() {
+
+        final Expression expression = mock(Expression.class);
+        final HasExpression hasExpression = HasExpression.wrap(parent, expression);
+
+        final Expression otherExpression = mock(Expression.class);
+        final HasExpression otherHasExpression = HasExpression.wrap(parent, otherExpression);
+
+        when(expression.equals(otherExpression, false)).thenReturn(true);
+
+        final boolean isEquals = hasExpression.equals(otherHasExpression, false);
+
+        assertTrue(isEquals);
+        verify(expression).equals(otherExpression, false);
+    }
+
+    @Test
+    public void testWrapEquals_WhenOtherIsNotWrapped() {
+
+        final Expression expression = mock(Expression.class);
+        final HasExpression hasExpression = HasExpression.wrap(parent, expression);
+
+        final Object otherHasExpression = mock(Object.class);
+
+        final boolean isEquals = hasExpression.equals(otherHasExpression, true);
+
+        assertFalse(isEquals);
     }
 }

@@ -31,6 +31,7 @@ import org.kie.workbench.common.dmn.api.definition.model.Expression;
 import org.kie.workbench.common.dmn.api.definition.model.InformationItemPrimary;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.api.property.dmn.QName;
+import org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType;
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorView;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.ExpressionProps;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.ExpressionEditorChanged;
@@ -83,13 +84,12 @@ public class FillExpressionCommandTest {
 
     private final String dataType = "data type";
 
-    private final String logicType = "logic type";
-
     private FillExpressionCommandMock command;
 
     @Before
     public void setup() {
 
+        String logicType = "logic type";
         expressionProps = new ExpressionProps(name,
                                               dataType,
                                               logicType);
@@ -117,11 +117,108 @@ public class FillExpressionCommandTest {
     }
 
     @Test
-    public void testExecute_WhenIsNotRedo() {
+    public void testHasChangesInExpression_WhenItHave() {
+
+        when(temporaryExpression.equals(existingExpression, true)).thenReturn(false);
+
+        final boolean actual = command.hasChangesInExpression();
+
+        assertTrue(actual);
+
+        verify(temporaryExpression).equals(existingExpression, true);
+        verify(temporaryExpression, never()).equals(existingExpression, false);
+    }
+
+    @Test
+    public void testHasChanges() {
+
+        doReturn(true).when(command).hasNewNameToApply();
+        doReturn(true).when(command).hasNewTypeRefToApply();
+        doReturn(true).when(command).hasNewExpressionToApply();
+
+        final boolean hasChanges = command.hasChanges();
+
+        assertTrue(hasChanges);
+    }
+
+    @Test
+    public void testHasChanges_WhenThereIsNotNewExpression() {
+
+        doReturn(true).when(command).hasNewNameToApply();
+        doReturn(true).when(command).hasNewTypeRefToApply();
+        doReturn(false).when(command).hasNewExpressionToApply();
+
+        final boolean hasChanges = command.hasChanges();
+
+        assertTrue(hasChanges);
+    }
+
+    @Test
+    public void testHasChanges_WhenThereIsNotNewTypeRefToApply() {
+
+        doReturn(true).when(command).hasNewNameToApply();
+        doReturn(false).when(command).hasNewTypeRefToApply();
+        doReturn(true).when(command).hasNewExpressionToApply();
+
+        final boolean hasChanges = command.hasChanges();
+
+        assertTrue(hasChanges);
+    }
+
+    @Test
+    public void testHasChanges_WhenThereIsNotNewNameToApply() {
+
+        doReturn(false).when(command).hasNewNameToApply();
+        doReturn(true).when(command).hasNewTypeRefToApply();
+        doReturn(true).when(command).hasNewExpressionToApply();
+
+        final boolean hasChanges = command.hasChanges();
+
+        assertTrue(hasChanges);
+    }
+
+    @Test
+    public void testHasChanges_WhenThereIsNotNewExpressionAndTypeRef() {
+
+        doReturn(true).when(command).hasNewNameToApply();
+        doReturn(false).when(command).hasNewTypeRefToApply();
+        doReturn(false).when(command).hasNewExpressionToApply();
+
+        final boolean hasChanges = command.hasChanges();
+
+        assertTrue(hasChanges);
+    }
+
+    @Test
+    public void testHasChanges_WhenThereIsNotNewNameAndTypeRef() {
+
+        doReturn(false).when(command).hasNewNameToApply();
+        doReturn(false).when(command).hasNewTypeRefToApply();
+        doReturn(true).when(command).hasNewExpressionToApply();
+
+        final boolean hasChanges = command.hasChanges();
+
+        assertTrue(hasChanges);
+    }
+
+    @Test
+    public void testHasChanges_WhenThereIsNotAnyChange() {
+
+        doReturn(false).when(command).hasNewNameToApply();
+        doReturn(false).when(command).hasNewTypeRefToApply();
+        doReturn(false).when(command).hasNewExpressionToApply();
+
+        final boolean hasChanges = command.hasChanges();
+
+        assertFalse(hasChanges);
+    }
+
+    @Test
+    public void testExecute_WhenItIsNotRedo() {
 
         final InOrder inOrder = Mockito.inOrder(command, view);
 
-        doReturn(false).when(command).isEnableRedo();
+        command.setIsRedo(false);
 
         doNothing().when(command).saveCurrentState();
         doNothing().when(command).setExpressionName(expressionProps.name);
@@ -137,7 +234,7 @@ public class FillExpressionCommandTest {
         inOrder.verify(command).setTypeRef(dataType);
         inOrder.verify(command).createExpression();
         inOrder.verify(command).fill();
-        inOrder.verify(command, never()).setEnableRedo(false);
+        inOrder.verify(command, never()).setIsRedo(false);
         inOrder.verify(view, never()).activate();
     }
 
@@ -146,7 +243,7 @@ public class FillExpressionCommandTest {
 
         final InOrder inOrder = Mockito.inOrder(command, view);
 
-        doReturn(true).when(command).isEnableRedo();
+        doReturn(true).when(command).isRedo();
 
         doNothing().when(command).saveCurrentState();
         doNothing().when(command).setExpressionName(expressionProps.name);
@@ -162,7 +259,7 @@ public class FillExpressionCommandTest {
         inOrder.verify(command).setTypeRef(dataType);
         inOrder.verify(command).createExpression();
         inOrder.verify(command).fill();
-        inOrder.verify(command).setEnableRedo(false);
+        inOrder.verify(command).setIsRedo(false);
         inOrder.verify(view).activate();
     }
 
@@ -194,7 +291,7 @@ public class FillExpressionCommandTest {
         inOrder.verify(command).restoreExpressionName();
         inOrder.verify(command).fireEditorSelectedEvent();
         inOrder.verify(view).activate();
-        inOrder.verify(command).setEnableRedo(true);
+        inOrder.verify(command).setIsRedo(true);
     }
 
     @Test
@@ -219,6 +316,7 @@ public class FillExpressionCommandTest {
 
     @Test
     public void testHasNewExpressionToApply_WhenThereIsNoChanges() {
+
         doReturn(false).when(command).hasChangesInExpression();
 
         final boolean hasNewExpression = command.hasNewExpressionToApply();
@@ -246,6 +344,17 @@ public class FillExpressionCommandTest {
         final boolean hasNewNameToApply = command.hasNewNameToApply();
 
         assertTrue(hasNewNameToApply);
+    }
+
+    @Test
+    public void testHasNewNameToApply_WhenHasExpressionIsNotHasName() {
+
+        final HasExpression hasExpression = mock(HasExpression.class);
+        doReturn(hasExpression).when(command).getHasExpression();
+
+        final boolean hasNewNameToApply = command.hasNewNameToApply();
+
+        assertFalse(hasNewNameToApply);
     }
 
     @Test
@@ -298,8 +407,7 @@ public class FillExpressionCommandTest {
 
         when(((HasName) hasExpression).getName()).thenReturn(currentName);
 
-        doReturn(savedExpressionName).when(command).getSavedExpressionName();
-
+        command.setSavedExpressionName(savedExpressionName);
         command.restoreExpressionName();
 
         verify(currentName).setValue(savedExpressionName);
@@ -311,12 +419,27 @@ public class FillExpressionCommandTest {
         final InformationItemPrimary variable = mock(InformationItemPrimary.class);
         final QName savedTypeRef = mock(QName.class);
 
-        doReturn(savedTypeRef).when(command).getSavedTypeRef();
+        command.setSavedTypeRef(savedTypeRef);
+
         when(((HasVariable) hasExpression).getVariable()).thenReturn(variable);
 
         command.restoreTypeRef();
 
         verify(variable).setTypeRef(savedTypeRef);
+    }
+
+    @Test
+    public void testRestoreTypeRef_WhenHasExpressionIsNotHasVariable() {
+
+        final InformationItemPrimary variable = mock(InformationItemPrimary.class);
+        final QName savedTypeRef = mock(QName.class);
+        final HasExpression hasExpression = mock(HasExpression.class);
+
+        doReturn(hasExpression).when(command).getHasExpression();
+
+        command.restoreTypeRef();
+
+        verify(variable, never()).setTypeRef(savedTypeRef);
     }
 
     @Test
@@ -334,12 +457,24 @@ public class FillExpressionCommandTest {
     }
 
     @Test
+    public void testGetCurrentTypeRef_WhenHasExpressionIsNotHasVariable() {
+
+        final HasExpression hasExpression = mock(HasExpression.class);
+
+        doReturn(hasExpression).when(command).getHasExpression();
+
+        final QName actual = command.getCurrentTypeRef();
+
+        assertEquals(BuiltInType.UNDEFINED.asQName(), actual);
+    }
+
+    @Test
     public void testRestoreExpression() {
 
         final Expression savedExpression = mock(Expression.class);
         final Optional<Expression> optionalSavedExpression = Optional.of(savedExpression);
 
-        doReturn(optionalSavedExpression).when(command).getSavedExpression();
+        command.setSavedExpression(optionalSavedExpression);
 
         command.restoreExpression();
 
@@ -442,6 +577,23 @@ public class FillExpressionCommandTest {
         command.saveCurrentTypeRef();
 
         verify(command).setSavedTypeRef(currentTypeRef);
+    }
+
+    @Test
+    public void testGetTypeRef() {
+
+        for (final BuiltInType value : BuiltInType.values()) {
+            final QName result = command.getTypeRef(value.getName());
+            assertEquals(value.asQName(), result);
+        }
+    }
+
+    @Test
+    public void testGetTypeRef_WhenIsAUnknownTypeRef() {
+
+        final QName result = command.getTypeRef("unknown");
+
+        assertEquals(BuiltInType.UNDEFINED.asQName(), result);
     }
 
     class FillExpressionCommandMock extends FillExpressionCommand {
