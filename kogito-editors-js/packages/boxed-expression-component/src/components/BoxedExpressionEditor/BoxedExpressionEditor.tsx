@@ -35,7 +35,13 @@ import "./BoxedExpressionEditor.css";
 export interface BoxedExpressionEditorProps {
   /** All expression properties used to define it */
   expressionDefinition: ExpressionProps;
-  /** False, for having the clear button not available on the root expression */
+  /**
+   * A boolean used for making (or not) the clear button available on the root expression
+   * Note that this parameter will be used only for the root expression.
+   *
+   * Each expression (internally) has a `noClearAction` property (ExpressionProps interface).
+   * You can set directly it for enabling or not the clear button for such expression.
+   * */
   clearSupportedOnRootExpression?: boolean;
   /** PMML parameters */
   pmmlParams?: PMMLParams;

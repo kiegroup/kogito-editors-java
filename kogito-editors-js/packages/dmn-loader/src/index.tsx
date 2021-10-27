@@ -99,13 +99,13 @@ const BoxedExpressionWrapper: React.FunctionComponent<BoxedExpressionEditorProps
 const renderBoxedExpressionEditor = (
   selector: string,
   expressionDefinition: ExpressionProps,
-  clearSupported: boolean,
+  clearSupportedOnRootExpression: boolean,
   pmmlParams: PMMLParams
 ) => {
   ReactDOM.render(
     <BoxedExpressionWrapper
       expressionDefinition={expressionDefinition}
-      clearSupportedOnRootExpression={clearSupported}
+      clearSupportedOnRootExpression={clearSupportedOnRootExpression}
       pmmlParams={pmmlParams}
     />,
     document.querySelector(selector)
