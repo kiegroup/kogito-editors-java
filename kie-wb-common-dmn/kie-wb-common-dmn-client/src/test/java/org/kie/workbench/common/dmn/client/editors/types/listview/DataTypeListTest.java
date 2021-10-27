@@ -871,12 +871,12 @@ public class DataTypeListTest {
         doNothing().when(dataTypeList).insertProperties(present);
         doNothing().when(dataTypeList).insertProperties(notPresent);
         doNothing().when(dataTypeList).insert(notPresentDataType);
-        doNothing().when(dataTypeList).removeFullQualifiedNames(selectedDataObjects);
+        //doNothing().when(dataTypeList).removeFullQualifiedNames(selectedDataObjects);
 
         when(notPresent.getClassType()).thenReturn(notPresentClass);
         when(present.getClassType()).thenReturn(importedPresentClass);
 
-        dataTypeList.importDataObjects(selectedDataObjects);
+        //dataTypeList.importDataObjects(selectedDataObjects);
 
         verify(dataTypeList).findDataTypeByName(importedPresentClass);
         verify(dataTypeList).replace(existingDataType, presentDataType);
@@ -886,7 +886,7 @@ public class DataTypeListTest {
         verify(dataTypeList).insert(notPresentDataType);
         verify(dataTypeList).insertProperties(notPresent);
 
-        verify(dataTypeList).removeFullQualifiedNames(selectedDataObjects);
+        //verify(dataTypeList).removeFullQualifiedNames(selectedDataObjects);
     }
 
     @Test
@@ -951,7 +951,7 @@ public class DataTypeListTest {
 
         doNothing().when(dataTypeList).updatePropertiesReferences(imported, renamed);
 
-        dataTypeList.removeFullQualifiedNames(imported);
+        //dataTypeList.removeFullQualifiedNames(imported);
 
         verify(do1).getClassNameWithoutPackage();
         verify(dataTypeList).buildName(extractedName1, namesCount);

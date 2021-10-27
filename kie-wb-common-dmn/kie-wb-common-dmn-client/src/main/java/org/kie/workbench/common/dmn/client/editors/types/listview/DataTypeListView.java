@@ -25,6 +25,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.event.dom.client.ClickEvent;
 import elemental2.dom.Element;
@@ -37,12 +38,12 @@ import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
-import org.kie.workbench.common.dmn.api.editors.types.DataObject;
 import org.kie.workbench.common.dmn.client.editors.common.messages.FlashMessage;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataType;
 import org.kie.workbench.common.dmn.client.editors.types.common.ScrollHelper;
-import org.kie.workbench.common.dmn.client.editors.types.listview.draganddrop.DNDListComponent;
 import org.kie.workbench.common.dmn.client.editors.types.jsinterop.ImportJavaClassesService;
+import org.kie.workbench.common.dmn.client.editors.types.jsinterop.JavaClass;
+import org.kie.workbench.common.dmn.client.editors.types.listview.draganddrop.DNDListComponent;
 import org.kie.workbench.common.dmn.client.js.DMNLoader;
 import org.kie.workbench.common.stunner.core.client.ReadOnlyProvider;
 import org.uberfire.client.views.pfly.selectpicker.ElementHelper;
@@ -165,9 +166,9 @@ public class DataTypeListView implements DataTypeList.View {
         addButton.disabled = readOnlyProvider.isReadOnlyDiagram();
     }
 
-    public void importDataObjects(final List<DataObject> imported) {
-        if (imported != null && !imported.isEmpty()) {
-            presenter.importDataObjects(imported);
+    public void importDataObjects(final JavaClass[] javaClasses) {
+        if (javaClasses != null && javaClasses.length > 0) {
+            presenter.importJavaClasses(javaClasses);
             fireSuccessfullyImportedData();
         }
     }

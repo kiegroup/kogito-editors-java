@@ -16,23 +16,25 @@
 
 package org.kie.workbench.common.dmn.client.editors.types.jsinterop;
 
-import jsinterop.annotations.JsMethod;
-import jsinterop.annotations.JsPackage;
 import jsinterop.annotations.JsType;
-import org.kie.workbench.common.dmn.client.editors.types.listview.DataTypeListView;
 
-@JsType(namespace = JsPackage.GLOBAL, name = "importJavaClassesAPIWrapper")
-public class ImportJavaClassesService {
+@JsType
+public class JavaField {
 
-    private static DataTypeListView dataTypeListView;
+    /* Field Name */
+    public final String name;
+    /* The Java Type of the field (eg. java.lang.String OR com.mypackace.Test) */
+    public final String type;
+    /* List Type */
+    public final boolean isList;
+    /* The Java Type of the field (eg. java.lang.String OR com.mypackace.Test) */
+    public final String dmnTypeRef;
 
-    public static void registerBroadcastForImportJavaClasses(final DataTypeListView dataTypeListView) {
-        ImportJavaClassesService.dataTypeListView = dataTypeListView;
-    }
-
-    @JsMethod
-    public static void importJavaClasses(JavaClass[] javaClasses) {
-        dataTypeListView.importDataObjects(javaClasses);
+    public JavaField(final String name, final String type, final boolean isList, final String dmnTypeRef) {
+        this.name = name;
+        this.type = type;
+        this.isList = isList;
+        this.dmnTypeRef = dmnTypeRef;
     }
 
 }

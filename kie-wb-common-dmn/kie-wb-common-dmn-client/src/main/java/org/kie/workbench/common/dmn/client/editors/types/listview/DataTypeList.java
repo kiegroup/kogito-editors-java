@@ -17,6 +17,7 @@
 package org.kie.workbench.common.dmn.client.editors.types.listview;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +43,8 @@ import org.kie.workbench.common.dmn.api.editors.types.DataObjectProperty;
 import org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataType;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataTypeManager;
+import org.kie.workbench.common.dmn.client.editors.types.jsinterop.JavaClass;
+import org.kie.workbench.common.dmn.client.editors.types.jsinterop.JavaField;
 import org.kie.workbench.common.dmn.client.editors.types.listview.common.DataTypeEditModeToggleEvent;
 import org.kie.workbench.common.dmn.client.editors.types.listview.common.DataTypeStackHash;
 import org.kie.workbench.common.dmn.client.editors.types.listview.draganddrop.DNDDataTypesHandler;
@@ -439,6 +442,22 @@ public class DataTypeList {
         searchBar.refresh();
     }
 
+    public void importJavaClasses(final JavaClass[] javaClasses) {
+
+        for (JavaClass javaClass : Arrays.asList(javaClasses)) {
+            DataType newDataType = createNewDataType(javaClass);
+            final Optional<DataType> existing = findDataTypeByName(newDataType.getName());
+            if (existing.isPresent()) {
+                replace(existing.get(), newDataType);
+            } else {
+                insert(newDataType);
+            }
+            if (javaClass.fields != null && javaClass.fields.length > 0) {
+                insertFields(newDataType, javaClass);
+            }
+        }
+    }
+
     public void importDataObjects(final List<DataObject> selectedDataObjects) {
 
         removeFullQualifiedNames(selectedDataObjects);
@@ -511,6 +530,15 @@ public class DataTypeList {
         return nameCandidate;
     }
 
+    private void insertFields(DataType structureDataType, final JavaClass javaClass) {
+        findItem(structureDataType).ifPresent(item -> {
+            for (final JavaField javaField : Arrays.asList(javaClass.fields)) {
+                final DataType newDataType = createNewDataType(javaField);
+                item.insertNestedField(newDataType);
+            }
+        });
+    }
+
     void insertProperties(final DataObject dataObject) {
 
         final Optional<DataType> existing = findDataTypeByName(dataObject.getClassType());
@@ -542,10 +570,25 @@ public class DataTypeList {
         return newDataType;
     }
 
+    private DataType createNewDataType(final JavaField javaField) {
+        final DataType newDataType = dataTypeManager.fromNew()
+                .withType(javaField.dmnTypeRef)
+                .asList(javaField.isList)
+                .get();
+        newDataType.setName(javaField.name);
+        return newDataType;
+    }
+
     DataType createNewDataType(final DataObject dataObject) {
 
         final DataType newDataType = dataTypeManager.fromNew().withType(dataTypeManager.structure()).get();
         newDataType.setName(dataObject.getClassType());
+        return newDataType;
+    }
+
+    private DataType createNewDataType(final JavaClass javaClass) {
+        final DataType newDataType = dataTypeManager.fromNew().withType(dataTypeManager.structure()).get();
+        newDataType.setName(javaClass.name.substring(javaClass.name.lastIndexOf('.') + 1));
         return newDataType;
     }
 
