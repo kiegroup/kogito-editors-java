@@ -61,6 +61,7 @@ export const PMMLLiteralExpression: React.FunctionComponent<PMMLLiteralExpressio
 
   return (
     <Select
+      data-testid={"pmml-selector"}
       className={`pmml-literal-expression ${showingPlaceholder() ? "showing-placeholder" : ""}`}
       menuAppendTo={globalContext.boxedExpressionEditorRef?.current ?? "inline"}
       ouiaId="pmml-literal-expression-selector"

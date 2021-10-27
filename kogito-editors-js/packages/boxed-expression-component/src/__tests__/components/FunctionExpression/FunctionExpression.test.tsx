@@ -78,12 +78,14 @@ describe("FunctionExpression tests", () => {
     await clearTableRow(container, baseElement);
 
     expect(mockedBroadcastDefinition).toHaveBeenLastCalledWith({
-      dataType: DataType.Undefined,
-      expression: expect.objectContaining({}),
+      dataType: undefined,
+      expression: {
+        logicType: LogicType.LiteralExpression,
+      },
       formalParameters: [],
       functionKind: "FEEL",
       logicType: "Function",
-      name: "p-1",
+      name: undefined,
       parametersWidth: 370,
       uid: undefined,
     });
@@ -248,14 +250,14 @@ describe("FunctionExpression tests", () => {
 
     function checkFormalParameters(mockedBroadcastDefinition: jest.Mock, formalParameters: EntryInfo[]) {
       expect(mockedBroadcastDefinition).toHaveBeenCalledWith({
-        dataType: DataType.Undefined,
+        dataType: undefined,
         expression: {
           logicType: "Literal expression",
         },
         formalParameters,
         functionKind: "FEEL",
         logicType: "Function",
-        name: "p-1",
+        name: undefined,
         parametersWidth: 370,
         uid: undefined,
       });
@@ -371,17 +373,18 @@ describe("FunctionExpression tests", () => {
       const mockedBroadcastDefinition = jest.fn();
       mockBroadcastDefinition(mockedBroadcastDefinition);
 
-      const { baseElement, container } = render(
+      const { container } = render(
         usingTestingBoxedExpressionI18nContext(
           wrapComponentInContext(
             <FunctionExpression logicType={LogicType.Function} functionKind={FunctionKind.Pmml} formalParameters={[]} />
           )
         ).wrapper
       );
+
       await openPMMLLiteralExpressionSelector(container, 0);
-      await selectPMMLElement(baseElement, documentName);
+      await selectPMMLElement(container, 0);
       await openPMMLLiteralExpressionSelector(container, 1);
-      await selectPMMLElement(baseElement, model);
+      await selectPMMLElement(container, 1);
 
       expect(mockedBroadcastDefinition).toHaveBeenLastCalledWith(
         expect.objectContaining({
@@ -437,9 +440,13 @@ describe("FunctionExpression tests", () => {
     });
   }
 
-  async function selectPMMLElement(baseElement: Element, element: string) {
+  async function selectPMMLElement(container: Element, position: number) {
     await act(async () => {
-      (baseElement.querySelector(`[data-ouia-component-id='${element}']`) as HTMLButtonElement).click();
+      (
+        container.querySelectorAll(`[data-ouia-component-id='pmml-literal-expression-selector']`)[
+          position
+        ]! as HTMLButtonElement
+      ).click();
       await flushPromises();
       jest.runAllTimers();
     });
