@@ -65,10 +65,10 @@ export const ModalWizard: React.FunctionComponent<ModalWizardProps> = ({
     }
   };
   const onSave = () => {
+    onClose();
     if (onWizardSave) {
       onWizardSave();
     }
-    onClose();
   };
   const WizardButton: React.FunctionComponent = () => {
     return (

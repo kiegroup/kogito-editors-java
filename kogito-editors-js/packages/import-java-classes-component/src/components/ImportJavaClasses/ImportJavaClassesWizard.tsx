@@ -88,7 +88,7 @@ export const ImportJavaClassesWizard: React.FunctionComponent<ImportJavaClassesW
     setJavaClasses([]);
   };
   const onWizardFinishing = () => {
-    window.importJavaClassesAPI?.importJavaClasses?.();
+    window.importJavaClassesAPI?.importJavaClasses?.(javaClasses);
   };
   const steps = [
     {

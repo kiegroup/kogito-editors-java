@@ -29,7 +29,7 @@ import {
   RelationProps,
 } from "boxed-expression-component";
 import { HelloWorld } from "hello-world-component";
-import { ImportJavaClasses, ImportJavaClassesProps } from "import-java-classes-component";
+import { ImportJavaClasses, ImportJavaClassesProps, JavaClass } from "import-java-classes-component";
 import * as React from "react";
 import { useEffect, useState } from "react";
 import * as ReactDOM from "react-dom";
@@ -110,8 +110,8 @@ const ImportJavaClassesWrapper: React.FunctionComponent<ImportJavaClassesProps> 
   buttonTooltipMessage,
 }: ImportJavaClassesProps) => {
   window.importJavaClassesAPI = {
-    importJavaClasses: () => {
-      window.importJavaClassesAPIWrapper?.importJavaClasses?.();
+    importJavaClasses: (javaClasses: JavaClass[]) => {
+      window.importJavaClassesAPIWrapper?.importJavaClasses?.(javaClasses);
     },
   };
   window.envelopeMock = {
@@ -119,7 +119,7 @@ const ImportJavaClassesWrapper: React.FunctionComponent<ImportJavaClassesProps> 
     lspGetClassFieldsServiceMocked: (className: string) => lspGetClassFieldsServiceMocked(className),
   };
 
-  /* This function temporary mocks a call to the LSP service method getClasses */
+  /** BEGIN - TEMPORARY MOCK CODE TO TEST COMPONENT INSIDE THE EDITOR - TO BE REMOVED */
   const lspGetClassServiceMocked = (value: string) => {
     /* Mocked data retrieved from LSP Service */
     const booClassesList = ["org.kie.test.kogito.Book", "org.kie.test.kogito.Boom"];
@@ -145,7 +145,7 @@ const ImportJavaClassesWrapper: React.FunctionComponent<ImportJavaClassesProps> 
     bookClassFieldsList.set("year", "java.lang.Integer");
     bookClassFieldsList.set("boom", "org.kie.test.kogito.Boom");
     const boomClassFieldsList = new Map<string, string>();
-    boomClassFieldsList.set("time", "java.util.Date");
+    boomClassFieldsList.set("startTime", "java.util.Date");
     boomClassFieldsList.set("big", "java.lang.Boolean");
     boomClassFieldsList.set("color", "java.lang.String");
     boomClassFieldsList.set("countdown", "java.time.Duration");
@@ -168,6 +168,7 @@ const ImportJavaClassesWrapper: React.FunctionComponent<ImportJavaClassesProps> 
   };
 
   const delay = () => new Promise((res) => setTimeout(res, Math.random() * (4000 - 750) + 1000));
+  /** END TEMPORARY MOCK CODE TO TEST COMPONENT INSIDE THE EDITOR - TO BE REMOVED */
 
   return <ImportJavaClasses buttonDisabledStatus={buttonDisabledStatus} buttonTooltipMessage={buttonTooltipMessage} />;
 };

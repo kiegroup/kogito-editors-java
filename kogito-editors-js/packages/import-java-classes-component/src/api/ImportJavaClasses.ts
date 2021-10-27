@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { JavaClass } from "../components/ImportJavaClasses/Model/JavaClass";
+
 export {};
 
 declare global {
@@ -23,7 +25,7 @@ declare global {
   }
 
   interface ImportJavaClassesAPI {
-    importJavaClasses: () => void;
+    importJavaClasses: (javaClasses: JavaClass[]) => void;
   }
 
   interface Window {
