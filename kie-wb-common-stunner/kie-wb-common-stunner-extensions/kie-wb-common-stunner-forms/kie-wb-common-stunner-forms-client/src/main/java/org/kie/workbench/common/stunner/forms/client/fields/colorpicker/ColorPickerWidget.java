@@ -40,7 +40,6 @@ public class ColorPickerWidget extends Composite implements HasValue<String> {
     private TextBox colorTextBox;
 
     private String color;
-    private boolean readOnly;
 
     @EventHandler("colorTextBox")
     public void onColorTextBoxChange(final ChangeEvent changeEvent) {
@@ -87,7 +86,6 @@ public class ColorPickerWidget extends Composite implements HasValue<String> {
     }
 
     public void setReadOnly(boolean readOnly) {
-        this.readOnly = readOnly;
         getColorTextBox().setReadOnly(readOnly);
     }
 
