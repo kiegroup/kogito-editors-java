@@ -228,9 +228,12 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = (context
     return resetEntry(row);
   }, []);
 
-  const onHorizontalResizeStop = useCallback((width: number) => {
-    setExpressionWidth(width);
-  }, [setExpressionWidth]);
+  const onHorizontalResizeStop = useCallback(
+    (width: number) => {
+      setExpressionWidth(width);
+    },
+    [setExpressionWidth]
+  );
 
   const shouldRenderResult = useMemo(() => {
     if (contextExpression.renderResult === undefined) {

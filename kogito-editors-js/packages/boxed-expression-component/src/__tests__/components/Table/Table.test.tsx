@@ -308,7 +308,7 @@ describe("Table tests", () => {
 
       const textarea = container.querySelector("table tbody tr td textarea") as HTMLTextAreaElement;
 
-      fireEvent.change(textarea, { target: { value: `${newRowValue}</>` } });
+      fireEvent.change(textarea, { target: { value: `${newRowValue}` } });
       // onblur is triggered by Monaco (mock), and the new value relies on Monaco implementation
 
       expect(mockedOnRowsUpdate).toHaveBeenCalled();

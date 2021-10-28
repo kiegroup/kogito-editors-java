@@ -434,7 +434,7 @@ describe("FunctionExpression tests", () => {
 
   async function openPMMLLiteralExpressionSelector(container: Element, position: number) {
     await act(async () => {
-      (container.querySelectorAll(".pmml-literal-expression button")[position]! as HTMLElement).click();
+      fireEvent.click(container.querySelectorAll(".pmml-literal-expression button")[position]! as HTMLElement);
       await flushPromises();
       jest.runAllTimers();
     });
@@ -442,11 +442,7 @@ describe("FunctionExpression tests", () => {
 
   async function selectPMMLElement(container: Element, position: number) {
     await act(async () => {
-      (
-        container.querySelectorAll(`[data-ouia-component-id='pmml-literal-expression-selector']`)[
-          position
-        ]! as HTMLButtonElement
-      ).click();
+      (container.querySelector(`[data-ouia-component-id='mining pmml']`)! as HTMLButtonElement).click();
       await flushPromises();
       jest.runAllTimers();
     });

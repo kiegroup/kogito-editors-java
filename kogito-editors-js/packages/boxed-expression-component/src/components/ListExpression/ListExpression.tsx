@@ -16,7 +16,7 @@
 
 import "./ListExpression.css";
 import * as React from "react";
-import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useContext, useMemo } from "react";
 import {
   ContextEntryRecord,
   DataType,
@@ -33,7 +33,6 @@ import { ContextEntryExpressionCell } from "../ContextExpression";
 import { Table } from "../Table";
 import { useBoxedExpressionEditorI18n } from "../../i18n";
 import { DataRecord, Row } from "react-table";
-import * as _ from "lodash";
 import { hashfy } from "../Resizer";
 import { BoxedExpressionGlobalContext } from "../../context";
 import nextId from "react-id-generator";
@@ -79,25 +78,26 @@ export const ListExpression: React.FunctionComponent<ListProps> = (listExpressio
 
   const items = useMemo(() => {
     if (listExpression.items === undefined || listExpression.items?.length === 0) {
-      return [{ entryExpression: generateLiteralExpression }] as DataRecord[];
+      return [{ entryExpression: generateLiteralExpression }];
     } else {
-      return listExpression.items as DataRecord[];
+      return listExpression.items.map((item) => ({ entryExpression: item }));
     }
   }, [listExpression.items, generateLiteralExpression]);
 
   const spreadListExpressionDefinition = useCallback(
     (updatedListExpression?: Partial<ListProps>) => {
-      const newItems = updatedListExpression?.items ? updatedListExpression.items : items;
-
       const updatedDefinition: Partial<ListProps> = {
         uid: listExpression.uid,
         name: listExpression.name,
         dataType: listExpression.dataType,
         logicType: LogicType.List,
         width: listExpression.width ?? LIST_EXPRESSION_MIN_WIDTH,
-        items: newItems as ExpressionProps[],
         ...updatedListExpression,
       };
+
+      updatedDefinition.items = (updatedListExpression?.items ? updatedListExpression.items : items).map(
+        (listItem: DataRecord) => listItem.entryExpression as ExpressionProps
+      );
 
       if (listExpression.isHeadless) {
         listExpression.onUpdatingRecursiveExpression?.(updatedDefinition);
@@ -169,7 +169,7 @@ export const ListExpression: React.FunctionComponent<ListProps> = (listExpressio
         headerVisibility={TableHeaderVisibility.None}
         defaultCell={defaultCell}
         columns={columns}
-        rows={items}
+        rows={items as DataRecord[]}
         onRowsUpdate={onRowsUpdate}
         onRowAdding={onRowAdding}
         handlerConfiguration={handlerConfiguration}

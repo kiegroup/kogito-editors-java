@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { fireEvent, render } from "@testing-library/react";
+import { act, fireEvent, render } from "@testing-library/react";
 import * as _ from "lodash";
 import * as React from "react";
 import { EditableCell, EDIT_MODE, READ_MODE } from "../../../components/Table";
@@ -108,20 +108,27 @@ describe("EditableCell", () => {
     };
     const mockedOnCellUpdate = jest.fn(onCellUpdate);
 
-    beforeEach(() => {
-      container = render(
-        usingTestingBoxedExpressionI18nContext(
-          <EditableCell value={value} rowIndex={rowIndex} columnId={columnId} onCellUpdate={mockedOnCellUpdate} />
-        ).wrapper
-      ).container;
-
-      fireEvent.change(container.querySelector("textarea") as HTMLTextAreaElement, {
-        target: { value: `${newValue}</>` },
-      });
-      // onblur is triggered by Monaco (mock), and the new value relies on Monaco implementation
-    });
-
     test("triggers the onCellUpdate function", () => {
+      const { getByTestId } = render(
+        usingTestingBoxedExpressionI18nContext(
+          <EditableCell
+            value={value}
+            rowIndex={rowIndex}
+            columnId={columnId}
+            onCellUpdate={mockedOnCellUpdate}
+            readOnly={false}
+          />
+        ).wrapper
+      );
+
+      const textArea = getByTestId("editable-cell-textarea");
+      act(() => {
+        fireEvent.change(textArea, {
+          target: { value: `${newValue}` },
+        });
+      });
+
+      // triggers the textarea onChange method
       expect(mockedOnCellUpdate).toHaveBeenCalled();
       expect(mockedOnCellUpdate).toHaveBeenCalledWith(rowIndex, columnId, newValue);
     });

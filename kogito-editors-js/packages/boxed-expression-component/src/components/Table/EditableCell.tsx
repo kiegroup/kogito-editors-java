@@ -123,15 +123,15 @@ export function EditableCell({ value, rowIndex, columnId, onCellUpdate, readOnly
 
       if (textarea.current && isPastedValue) {
         const pasteValue = newValue.slice(value.length);
-
         paste(pasteValue, textarea.current);
         triggerReadMode();
         return;
       }
 
+      onCellUpdate(rowIndex, columnId, newValue ?? value);
       triggerEditMode();
     },
-    [triggerEditMode, value, triggerReadMode]
+    [triggerEditMode, value, triggerReadMode, onCellUpdate, rowIndex, columnId]
   );
 
   // Feel Handlers ===========================================================
@@ -209,6 +209,7 @@ export function EditableCell({ value, rowIndex, columnId, onCellUpdate, readOnly
       >
         <span className="editable-cell-value" dangerouslySetInnerHTML={{ __html: preview }} />
         <textarea
+          data-testid={"editable-cell-textarea"}
           className="editable-cell-textarea"
           ref={textarea}
           value={textValue}
