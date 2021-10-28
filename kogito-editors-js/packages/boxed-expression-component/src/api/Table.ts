@@ -102,6 +102,8 @@ export type Row = string[];
 export type Rows = Row[];
 
 export interface Column {
+  /** Column identifier */
+  id: string;
   /** Column name */
   name: string;
   /** Column data type */
