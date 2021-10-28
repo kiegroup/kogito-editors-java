@@ -31,8 +31,7 @@ import * as _ from "lodash";
 
 describe("FunctionExpression tests", () => {
   const documentName = "document";
-  const model = "model";
-  const parametersFromModel: EntryInfo[] = [{ name: "p-1", dataType: DataType.Number }];
+  const modelName = "model";
 
   test("should show a table with two levels visible header, with one row and one column", () => {
     const { container } = render(
@@ -371,24 +370,49 @@ describe("FunctionExpression tests", () => {
 
     test("should populate parameters list with parameters related to selected PMML model", async () => {
       const mockedBroadcastDefinition = jest.fn();
-      mockBroadcastDefinition(mockedBroadcastDefinition);
 
-      const { container } = render(
-        usingTestingBoxedExpressionI18nContext(
-          wrapComponentInContext(
-            <FunctionExpression logicType={LogicType.Function} functionKind={FunctionKind.Pmml} formalParameters={[]} />
-          )
-        ).wrapper
+      let props: FunctionProps = {
+        logicType: LogicType.Function,
+        functionKind: FunctionKind.Pmml,
+        formalParameters: [],
+      };
+
+      const mockBroadcastDefinition = () => {
+        window.beeApi = _.extend(window.beeApi || {}, {
+          broadcastFunctionExpressionDefinition: (definition: FunctionProps) => {
+            props = {
+              ...props,
+              ...definition,
+            };
+            mockedBroadcastDefinition(definition);
+          },
+        });
+      };
+      mockBroadcastDefinition();
+
+      const screen = render(
+        usingTestingBoxedExpressionI18nContext(wrapComponentInContext(<FunctionExpression {...props} />)).wrapper
       );
 
-      await openPMMLLiteralExpressionSelector(container, 0);
-      await selectPMMLElement(container, 0);
-      await openPMMLLiteralExpressionSelector(container, 1);
-      await selectPMMLElement(container, 1);
+      await act(async () => {
+        fireEvent.click(screen.container.querySelectorAll(".pmml-literal-expression button")[0]! as HTMLElement);
+        fireEvent.click(await screen.findByTestId("pmml-selector-document"));
+        fireEvent.click(await screen.findByTestId("pmml-document"));
+      });
+
+      screen.rerender(
+        usingTestingBoxedExpressionI18nContext(wrapComponentInContext(<FunctionExpression {...props} />)).wrapper
+      );
+      await act(async () => {
+        fireEvent.click(screen.container.querySelectorAll(".pmml-literal-expression button")[1]! as HTMLElement);
+        fireEvent.click(await screen.findByTestId("pmml-selector-model"));
+        fireEvent.click(await screen.findByTestId("pmml-model"));
+      });
 
       expect(mockedBroadcastDefinition).toHaveBeenLastCalledWith(
         expect.objectContaining({
-          formalParameters: parametersFromModel,
+          document: documentName,
+          model: modelName,
         })
       );
     });
@@ -430,22 +454,6 @@ describe("FunctionExpression tests", () => {
     expect(container.querySelectorAll(entriesSelector)).toHaveLength(2);
     expect(container.querySelectorAll(entriesSelector)[0]).toContainHTML(firstEntry);
     expect(container.querySelectorAll(entriesSelector)[1]).toContainHTML(secondEntry);
-  }
-
-  async function openPMMLLiteralExpressionSelector(container: Element, position: number) {
-    await act(async () => {
-      fireEvent.click(container.querySelectorAll(".pmml-literal-expression button")[position]! as HTMLElement);
-      await flushPromises();
-      jest.runAllTimers();
-    });
-  }
-
-  async function selectPMMLElement(container: Element, position: number) {
-    await act(async () => {
-      (container.querySelector(`[data-ouia-component-id='mining pmml']`)! as HTMLButtonElement).click();
-      await flushPromises();
-      jest.runAllTimers();
-    });
   }
 });
 

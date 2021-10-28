@@ -16,21 +16,27 @@
 
 import "./PMMLLiteralExpression.css";
 import * as React from "react";
-import { useCallback, useContext, useMemo, useState } from "react";
+import { useCallback, useContext, useRef, useState } from "react";
 import { PMMLLiteralExpressionProps } from "../../api";
 import { Select, SelectOption, SelectVariant } from "@patternfly/react-core";
+import * as _ from "lodash";
 import { BoxedExpressionGlobalContext } from "../../context";
 
 export const PMMLLiteralExpression: React.FunctionComponent<PMMLLiteralExpressionProps> = (
   props: PMMLLiteralExpressionProps
 ) => {
-  const [selectOpen, setSelectOpen] = useState(false);
   const globalContext = useContext(BoxedExpressionGlobalContext);
+
+  const selection = useRef(props.selected);
+
+  const [selectOpen, setSelectOpen] = useState(false);
+
   const onSelectToggle = useCallback((isOpen) => setSelectOpen(isOpen), []);
 
   const onSelect = useCallback(
     (event, updatedSelection) => {
       setSelectOpen(false);
+      selection.current = updatedSelection;
       props.onUpdatingRecursiveExpression?.({
         ...props,
         selected: updatedSelection,
@@ -39,19 +45,23 @@ export const PMMLLiteralExpression: React.FunctionComponent<PMMLLiteralExpressio
     [props]
   );
 
-  const getOptions = useMemo(() => {
-    return props.getOptions().map((key) => (
+  const getOptions = useCallback(() => {
+    return _.map(props.getOptions(), (key) => (
       <SelectOption data-testid={`pmml-${key}`} key={key} value={key} data-ouia-component-id={key}>
         {key}
       </SelectOption>
     ));
   }, [props]);
 
-  const showingPlaceholder = useMemo(() => props.selected === undefined, [props.selected]);
+  const getSelection = useCallback(() => {
+    return _.includes(props.getOptions(), selection.current) ? selection.current : undefined;
+  }, [props]);
+
+  const showingPlaceholder = useCallback(() => _.isEmpty(getSelection()), [getSelection]);
 
   return (
     <Select
-      className={`pmml-literal-expression ${showingPlaceholder ? "showing-placeholder" : ""}`}
+      className={`pmml-literal-expression ${showingPlaceholder() ? "showing-placeholder" : ""}`}
       menuAppendTo={globalContext.boxedExpressionEditorRef?.current ?? "inline"}
       ouiaId="pmml-literal-expression-selector"
       placeholderText={props.noOptionsLabel}
@@ -60,9 +70,10 @@ export const PMMLLiteralExpression: React.FunctionComponent<PMMLLiteralExpressio
       onToggle={onSelectToggle}
       onSelect={onSelect}
       isOpen={selectOpen}
-      selections={props.selected}
+      selections={getSelection()}
+      data-testid={props.testId}
     >
-      {getOptions}
+      {getOptions()}
     </Select>
   );
 };

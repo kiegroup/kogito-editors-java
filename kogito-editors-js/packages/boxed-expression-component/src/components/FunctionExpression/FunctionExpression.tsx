@@ -107,6 +107,7 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (
         entryExpression: {
           noClearAction: true,
           logicType: LogicType.PMMLLiteralExpression,
+          testId: "pmml-selector-document",
           noOptionsLabel: i18n.pmml.firstSelection,
           getOptions: () => _.map(pmmlParams, "document"),
           selected: pmmlDocument ?? "",
@@ -118,6 +119,7 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (
           noClearAction: true,
           logicType: LogicType.PMMLLiteralExpression,
           noOptionsLabel: i18n.pmml.secondSelection,
+          testId: "pmml-selector-model",
           getOptions: () =>
             _.map(_.find(pmmlParams, (param) => param.document === pmmlDocument)?.modelsFromDocument, "model"),
           selected: pmmlModel ?? "",
