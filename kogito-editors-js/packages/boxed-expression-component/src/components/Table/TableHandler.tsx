@@ -18,6 +18,7 @@ import * as React from "react";
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import {
   DataType,
+  generateUuid,
   GroupOperations,
   GroupOperationsByColumnType,
   TableHandlerConfiguration,
@@ -128,7 +129,7 @@ export const TableHandler: React.FunctionComponent<TableHandlerProps> = ({
   const generateNextAvailableColumnName: (lastIndex: number, groupType?: string) => string = useCallback(
     (lastIndex, groupType) => {
       const candidateName = `${getColumnPrefix(groupType)}${lastIndex}`;
-      const columnWithCandidateName = _.find(getColumnsAtLastLevel(tableColumns.current), { accessor: candidateName });
+      const columnWithCandidateName = _.find(getColumnsAtLastLevel(tableColumns.current), { label: candidateName });
       return columnWithCandidateName ? generateNextAvailableColumnName(lastIndex + 1, groupType) : candidateName;
     },
     [getColumnPrefix, tableColumns]
@@ -147,7 +148,7 @@ export const TableHandler: React.FunctionComponent<TableHandlerProps> = ({
     const nextAvailableColumnName = generateNextAvailableColumnName(columnsLength, groupType);
 
     return {
-      accessor: nextAvailableColumnName,
+      accessor: generateUuid(),
       label: nextAvailableColumnName,
       ...(selectedColumn.dataType ? { dataType: DataType.Undefined } : {}),
       inlineEditable: selectedColumn.inlineEditable,
