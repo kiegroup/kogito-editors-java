@@ -55,22 +55,27 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (
   const { boxedExpressionEditorRef, setSupervisorHash, pmmlParams } = useContext(BoxedExpressionGlobalContext);
   const pmmlDocument = useMemo(
     () => (functionExpression as PmmlFunctionProps).document,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [(functionExpression as PmmlFunctionProps).document]
   );
   const pmmlModel = useMemo(
     () => (functionExpression as PmmlFunctionProps).model,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [(functionExpression as PmmlFunctionProps).model]
   );
   const javaClassName = useMemo(
     () => (functionExpression as JavaFunctionProps).className,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [(functionExpression as JavaFunctionProps).className]
   );
   const javaMethodName = useMemo(
     () => (functionExpression as JavaFunctionProps).methodName,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [(functionExpression as JavaFunctionProps).methodName]
   );
   const fellExpression = useMemo(
     () => (functionExpression as FeelFunctionProps).expression,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [(functionExpression as FeelFunctionProps).expression]
   );
 
