@@ -23,6 +23,7 @@ import {
   ColumnInstance,
   ContextMenuEvent,
   DataRecord,
+  Row,
   useBlockLayout,
   useResizeColumns,
   useTable,
@@ -30,12 +31,13 @@ import {
 import { v4 as uuid } from "uuid";
 import { TableHeaderVisibility, TableOperation, TableProps } from "../../api";
 import { BoxedExpressionGlobalContext } from "../../context";
-import { pasteOnTable, PASTE_OPERATION } from "./common";
+import { PASTE_OPERATION, pasteOnTable } from "./common";
 import { EditableCell } from "./EditableCell";
 import "./Table.css";
 import { TableBody } from "./TableBody";
 import { TableHandler } from "./TableHandler";
 import { TableHeader } from "./TableHeader";
+
 export const NO_TABLE_CONTEXT_MENU_CLASS = "no-table-context-menu";
 const NUMBER_OF_ROWS_COLUMN = "#";
 const NUMBER_OF_ROWS_SUBCOLUMN = "0";
@@ -78,7 +80,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
   headerVisibility,
   headerLevels = 0,
   skipLastHeaderGroup = false,
-  getRowKey = (row) => row.id as string,
+  getRowKey = (row) => (row.original as Row).id as string,
   getColumnKey = (column) => column.id as string,
   resetRowCustomFunction,
 }: TableProps) => {
@@ -328,8 +330,6 @@ export const Table: React.FunctionComponent<TableProps> = ({
           editColumnLabel={editColumnLabel}
           headerVisibility={headerVisibility}
           skipLastHeaderGroup={skipLastHeaderGroup}
-          tableRows={tableRows}
-          onRowsUpdate={onRowsUpdateCallback}
           tableColumns={tableColumns}
           getColumnKey={getColumnKey}
           onColumnsUpdate={onColumnsUpdateCallback}

@@ -90,7 +90,7 @@ export const TableBody: React.FunctionComponent<TableBodyProps> = ({
       return (
         <Td
           {...tableInstance.getTdProps(cellIndex, rowIndex)}
-          key={`${getColumnKey(cell.column)}-${cellIndex}`}
+          key={`${rowIndex}-${getColumnKey(cell.column)}-${cellIndex}`}
           data-ouia-component-id={"expression-column-" + cellIndex}
           className={`${cellType}`}
         >
@@ -105,12 +105,7 @@ export const TableBody: React.FunctionComponent<TableBodyProps> = ({
     (row: Row, rowIndex: number) => {
       const rowProps = { ...row.getRowProps(), style: {} };
       return (
-        <Tr
-          className="table-row"
-          {...rowProps}
-          key={`${getRowKey(row)}-${rowIndex}`}
-          ouiaId={"expression-row-" + rowIndex}
-        >
+        <Tr className="table-row" {...rowProps} key={`${getRowKey(row)}`} ouiaId={"expression-row-" + rowIndex}>
           {row.cells.map((cell: Cell, cellIndex: number) => renderCell(cellIndex, cell, rowIndex))}
         </Tr>
       );
