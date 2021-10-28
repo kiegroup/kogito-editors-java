@@ -60,7 +60,7 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = (relat
 
   const tableColumns = useRef<RelationColumn[]>(
     relationProps.columns === undefined
-      ? [{ name: FIRST_COLUMN_NAME, dataType: DataType.Undefined, width: DEFAULT_MIN_WIDTH }]
+      ? [{ id: generateUuid(), name: FIRST_COLUMN_NAME, dataType: DataType.Undefined, width: DEFAULT_MIN_WIDTH }]
       : relationProps.columns
   );
 
@@ -94,8 +94,8 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = (relat
         tableColumns.current,
         (column: RelationColumn) =>
           ({
+            accessor: column.id,
             label: column.name,
-            accessor: column.name,
             dataType: column.dataType,
             ...(column.width ? { width: column.width } : {}),
           } as Column)
@@ -109,7 +109,8 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = (relat
         _.reduce(
           tableColumns.current,
           (tableRow: DataRecord, column, columnIndex) => {
-            tableRow[column.name] = row[columnIndex] || "";
+            tableRow.id = generateUuid();
+            tableRow[column.id] = row[columnIndex] || "";
             return tableRow;
           },
           {}
@@ -124,7 +125,7 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = (relat
         _.reduce(
           tableColumns.current,
           (row: string[], column: RelationColumn) => {
-            row.push((tableRow[column.name]! as string) || "");
+            row.push((tableRow[column.id]! as string) || "");
             return row;
           },
           []
@@ -138,7 +139,8 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = (relat
   const onSavingColumns = useCallback(
     (columns) => {
       tableColumns.current = _.map(columns, (columnInstance: ColumnInstance) => ({
-        name: columnInstance.accessor,
+        id: columnInstance.accessor,
+        name: columnInstance.label as string,
         dataType: columnInstance.dataType,
         width: columnInstance.width,
       }));
