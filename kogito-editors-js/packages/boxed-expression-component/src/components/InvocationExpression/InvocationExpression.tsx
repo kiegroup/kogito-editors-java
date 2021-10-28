@@ -65,66 +65,7 @@ export const InvocationExpression: React.FunctionComponent<InvocationProps> = (i
     );
   }, [invocationProps.bindingEntries]);
 
-  const [infoWidth, setInfoWidth] = useState(invocationProps.entryInfoWidth ?? DEFAULT_ENTRY_INFO_MIN_WIDTH);
-  const [expressionWidth, setExpressionWidth] = useState(
-    invocationProps.entryExpressionWidth ?? DEFAULT_ENTRY_EXPRESSION_MIN_WIDTH
-  );
-  const [functionName, setFunctionName] = useState(invocationProps.invokedFunction);
   const { setSupervisorHash } = useContext(BoxedExpressionGlobalContext);
-
-  const onBlurCallback = useCallback((event) => {
-    setFunctionName(event.target.value);
-  }, []);
-
-  const headerCellElement = useMemo(
-    () => (
-      <div className="function-definition-container">
-        <input
-          className="function-definition pf-u-text-truncate"
-          type="text"
-          placeholder={i18n.enterFunction}
-          defaultValue={functionName}
-          onBlur={onBlurCallback}
-        />
-      </div>
-    ),
-    [functionName, onBlurCallback, i18n.enterFunction]
-  );
-
-  const columns = useMemo(
-    () => [
-      {
-        label: invocationProps.name ?? DEFAULT_PARAMETER_NAME,
-        accessor: invocationProps.name ?? DEFAULT_PARAMETER_NAME,
-        dataType: invocationProps.dataType ?? DEFAULT_PARAMETER_DATA_TYPE,
-        disableHandlerOnHeader: true,
-        columns: [
-          {
-            headerCellElement,
-            accessor: "functionDefinition",
-            disableHandlerOnHeader: true,
-            columns: [
-              {
-                accessor: "entryInfo",
-                disableHandlerOnHeader: true,
-                width: invocationProps.entryInfoWidth ?? infoWidth,
-                setWidth: setInfoWidth,
-                minWidth: DEFAULT_ENTRY_INFO_MIN_WIDTH,
-              },
-              {
-                accessor: "entryExpression",
-                disableHandlerOnHeader: true,
-                width: invocationProps.entryExpressionWidth ?? expressionWidth,
-                setWidth: setExpressionWidth,
-                minWidth: DEFAULT_ENTRY_EXPRESSION_MIN_WIDTH,
-              },
-            ],
-          },
-        ],
-      },
-    ],
-    [invocationProps, infoWidth, expressionWidth, headerCellElement]
-  );
 
   const spreadInvocationExpressionDefinition = useCallback(
     (invocationExpressionUpdated?: Partial<InvocationProps>) => {
@@ -134,9 +75,9 @@ export const InvocationExpression: React.FunctionComponent<InvocationProps> = (i
         name: invocationProps.name ?? DEFAULT_PARAMETER_NAME,
         dataType: invocationProps.dataType ?? DEFAULT_PARAMETER_DATA_TYPE,
         bindingEntries: rows as ContextEntries,
-        invokedFunction: functionName,
-        entryInfoWidth: infoWidth,
-        entryExpressionWidth: expressionWidth,
+        invokedFunction: invocationProps.invokedFunction,
+        entryInfoWidth: invocationProps.entryInfoWidth ?? DEFAULT_ENTRY_INFO_MIN_WIDTH,
+        entryExpressionWidth: invocationProps.entryExpressionWidth ?? DEFAULT_ENTRY_EXPRESSION_MIN_WIDTH,
         ...invocationExpressionUpdated,
       };
 
@@ -156,13 +97,79 @@ export const InvocationExpression: React.FunctionComponent<InvocationProps> = (i
         );
       }
     },
-    [invocationProps, expressionWidth, functionName, infoWidth, rows, setSupervisorHash]
+    [invocationProps, rows, setSupervisorHash]
   );
 
-  useEffect(() => {
-    spreadInvocationExpressionDefinition();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rows, functionName]);
+  const onBlurCallback = useCallback(
+    (event) => {
+      spreadInvocationExpressionDefinition({ invokedFunction: event.target.value });
+    },
+    [spreadInvocationExpressionDefinition]
+  );
+
+  const headerCellElement = useMemo(
+    () => (
+      <div className="function-definition-container">
+        <input
+          className="function-definition pf-u-text-truncate"
+          type="text"
+          placeholder={i18n.enterFunction}
+          defaultValue={invocationProps.invokedFunction}
+          onBlur={onBlurCallback}
+        />
+      </div>
+    ),
+    [invocationProps.invokedFunction, onBlurCallback, i18n.enterFunction]
+  );
+
+  const setInfoWidth = useCallback(
+    (newInfoWidth) => {
+      spreadInvocationExpressionDefinition({ entryInfoWidth: newInfoWidth });
+    },
+    [spreadInvocationExpressionDefinition]
+  );
+
+  const setExpressionWidth = useCallback(
+    (newEntryExpressionWidth) => {
+      spreadInvocationExpressionDefinition({ entryExpressionWidth: newEntryExpressionWidth });
+    },
+    [spreadInvocationExpressionDefinition]
+  );
+
+  const columns = useMemo(
+    () => [
+      {
+        label: invocationProps.name ?? DEFAULT_PARAMETER_NAME,
+        accessor: invocationProps.name ?? DEFAULT_PARAMETER_NAME,
+        dataType: invocationProps.dataType ?? DEFAULT_PARAMETER_DATA_TYPE,
+        disableHandlerOnHeader: true,
+        columns: [
+          {
+            headerCellElement,
+            accessor: "functionDefinition",
+            disableHandlerOnHeader: true,
+            columns: [
+              {
+                accessor: "entryInfo",
+                disableHandlerOnHeader: true,
+                width: invocationProps.entryInfoWidth ?? DEFAULT_ENTRY_INFO_MIN_WIDTH,
+                setWidth: setInfoWidth,
+                minWidth: DEFAULT_ENTRY_INFO_MIN_WIDTH,
+              },
+              {
+                accessor: "entryExpression",
+                disableHandlerOnHeader: true,
+                width: invocationProps.entryExpressionWidth ?? DEFAULT_ENTRY_EXPRESSION_MIN_WIDTH,
+                setWidth: setExpressionWidth,
+                minWidth: DEFAULT_ENTRY_EXPRESSION_MIN_WIDTH,
+              },
+            ],
+          },
+        ],
+      },
+    ],
+    [invocationProps, headerCellElement, setInfoWidth, setExpressionWidth]
+  );
 
   const onColumnsUpdate = useCallback(
     ([expressionColumn]: [ColumnInstance]) => {
