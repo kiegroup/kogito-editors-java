@@ -22,6 +22,7 @@ import {
   Column as RelationColumn,
   DataType,
   executeIfExpressionDefinitionChanged,
+  generateUuid,
   RelationProps,
   Row,
   TableOperation,
@@ -30,6 +31,7 @@ import { Table } from "../Table";
 import { useBoxedExpressionEditorI18n } from "../../i18n";
 import * as _ from "lodash";
 import { Column, ColumnInstance, DataRecord } from "react-table";
+import { DEFAULT_MIN_WIDTH } from "../Resizer";
 
 export const RelationExpression: React.FunctionComponent<RelationProps> = (relationProps: RelationProps) => {
   const FIRST_COLUMN_NAME = "column-1";
@@ -58,7 +60,7 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = (relat
 
   const tableColumns = useRef<RelationColumn[]>(
     relationProps.columns === undefined
-      ? [{ name: FIRST_COLUMN_NAME, dataType: DataType.Undefined }]
+      ? [{ name: FIRST_COLUMN_NAME, dataType: DataType.Undefined, width: DEFAULT_MIN_WIDTH }]
       : relationProps.columns
   );
 
