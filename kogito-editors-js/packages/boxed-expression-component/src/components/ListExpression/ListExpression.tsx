@@ -42,9 +42,7 @@ const LIST_EXPRESSION_MIN_WIDTH = 430;
 
 export const ListExpression: React.FunctionComponent<ListProps> = (listExpression: ListProps) => {
   const { i18n } = useBoxedExpressionEditorI18n();
-  const [listWidth, setListWidth] = useState(listExpression.width || LIST_EXPRESSION_MIN_WIDTH);
   const { setSupervisorHash } = useContext(BoxedExpressionGlobalContext);
-  const storedExpressionDefinition = useRef({} as ListProps);
 
   const generateLiteralExpression = useMemo(
     () =>
@@ -57,16 +55,6 @@ export const ListExpression: React.FunctionComponent<ListProps> = (listExpressio
       } as LiteralExpressionProps),
     []
   );
-
-  const [listItems, setListItems] = useState<Array<DataRecord>>(() => {
-    if (_.isEmpty(listExpression.items)) {
-      return [{ entryExpression: generateLiteralExpression } as DataRecord];
-    } else {
-      return _.map(listExpression.items, (item) => ({ entryExpression: item } as DataRecord));
-    }
-  });
-
-  const columns = useMemo(() => [{ accessor: "list", width: listWidth, setWidth: setListWidth }], [listWidth]);
 
   const handlerConfiguration: TableHandlerConfiguration = useMemo(
     () => [
@@ -89,7 +77,9 @@ export const ListExpression: React.FunctionComponent<ListProps> = (listExpressio
     ]
   );
 
-  const listTableGetRowKey = useCallback((row: Row) => (row.original as ContextEntryRecord).entryExpression.uid!, []);
+  const listTableGetRowKey = useCallback((row: Row) => {
+    return (row.original as ContextEntryRecord).entryExpression.uid!;
+  }, []);
 
   const onRowAdding = useCallback(
     () => ({
@@ -98,54 +88,87 @@ export const ListExpression: React.FunctionComponent<ListProps> = (listExpressio
     [generateLiteralExpression]
   );
 
-  const itemsMemo = useMemo(() => {
-    return _.map(listItems, (listItem: DataRecord) => listItem.entryExpression as ExpressionProps);
-  }, [listItems]);
+  const spreadListExpressionDefinition = useCallback(
+    (updatedListExpression?: Partial<ListProps>) => {
+      let items;
+      if (updatedListExpression?.items) {
+        items = updatedListExpression.items;
+      } else if (listExpression.items === undefined || listExpression.items?.length === 0) {
+        items = [{ entryExpression: generateLiteralExpression }] as DataRecord[];
+      } else {
+        items = listExpression.items;
+      }
 
-  const spreadRelationExpressionDefinition = useCallback(() => {
-    const updatedDefinition: ListProps = {
-      uid: listExpression.uid,
-      name: listExpression.name,
-      dataType: listExpression.dataType,
-      logicType: LogicType.List,
-      width: listWidth,
-      items: itemsMemo,
-    };
+      const updatedDefinition: Partial<ListProps> = {
+        uid: listExpression.uid,
+        name: listExpression.name,
+        dataType: listExpression.dataType,
+        logicType: LogicType.List,
+        width: listExpression.width ?? LIST_EXPRESSION_MIN_WIDTH,
+        items,
+        ...updatedListExpression,
+      };
 
-    if (listExpression.isHeadless) {
-      listExpression.onUpdatingRecursiveExpression?.(updatedDefinition);
-    } else {
-      executeIfExpressionDefinitionChanged(
-        storedExpressionDefinition.current,
-        updatedDefinition,
-        () => {
-          setSupervisorHash(hashfy(updatedDefinition));
-          window.beeApi?.broadcastListExpressionDefinition?.(updatedDefinition);
-          storedExpressionDefinition.current = updatedDefinition;
-        },
-        ["width", "items"]
-      );
-    }
-  }, [listExpression, listWidth, itemsMemo, setSupervisorHash]);
+      if (listExpression.isHeadless) {
+        listExpression.onUpdatingRecursiveExpression?.(updatedDefinition);
+      } else {
+        executeIfExpressionDefinitionChanged(
+          listExpression,
+          updatedDefinition,
+          () => {
+            setSupervisorHash(hashfy(updatedDefinition));
+            window.beeApi?.broadcastListExpressionDefinition?.(updatedDefinition as ListProps);
+          },
+          ["width", "items"]
+        );
+      }
+    },
+    [listExpression, setSupervisorHash, generateLiteralExpression]
+  );
 
   useEffect(() => {
-    spreadRelationExpressionDefinition();
+    spreadListExpressionDefinition();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [itemsMemo]);
+  }, [listExpression.items]);
+
+  const setListWidth = useCallback(
+    (newInfoWidth) => {
+      spreadListExpressionDefinition({ width: newInfoWidth });
+    },
+    [spreadListExpressionDefinition]
+  );
+
+  const columns = useMemo(
+    () => [{ accessor: "list", width: listExpression.width ?? LIST_EXPRESSION_MIN_WIDTH, setWidth: setListWidth }],
+    [listExpression.width, setListWidth]
+  );
 
   const resetRowCustomFunction = useCallback((row: DataRecord) => {
     return { entryExpression: { uid: (row.entryExpression as ExpressionProps).uid } };
   }, []);
 
-  const onRowsUpdate = useCallback((rows) => {
-    setListItems(rows);
-  }, []);
+  const onRowsUpdate = useCallback(
+    (newItems: any[]) => {
+      const newEntryExpressions = newItems.map((newItem) => {
+        return { entryExpression: newItem.entryExpression };
+      });
+      spreadListExpressionDefinition({
+        items: newEntryExpressions as ExpressionProps[],
+      });
+    },
+    [spreadListExpressionDefinition]
+  );
 
   const defaultCell = useMemo(
     () => ({
       list: ContextEntryExpressionCell,
     }),
     []
+  );
+
+  const rows = useMemo(
+    () => (listExpression.items ?? ([] as ExpressionProps[])) as DataRecord[],
+    [listExpression.items]
   );
 
   return (
@@ -155,7 +178,7 @@ export const ListExpression: React.FunctionComponent<ListProps> = (listExpressio
         headerVisibility={TableHeaderVisibility.None}
         defaultCell={defaultCell}
         columns={columns}
-        rows={listItems as DataRecord[]}
+        rows={rows}
         onRowsUpdate={onRowsUpdate}
         onRowAdding={onRowAdding}
         handlerConfiguration={handlerConfiguration}
