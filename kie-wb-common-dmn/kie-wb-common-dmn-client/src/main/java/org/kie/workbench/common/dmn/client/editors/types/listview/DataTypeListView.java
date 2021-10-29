@@ -25,7 +25,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.event.dom.client.ClickEvent;
 import elemental2.dom.Element;
@@ -241,13 +240,6 @@ public class DataTypeListView implements DataTypeList.View {
         presenter.addDataType();
         activateReactComponents();
     }
-
-    /*
-    @SuppressWarnings("unused")
-    @EventHandler("import-data-object-button")
-    public void onImportDataObjectClick(final ClickEvent e) {
-        importDataObjectModal.show(presenter.getExistingDataTypesNames());
-    }*/
 
     @EventHandler("read-only-message-close-button")
     public void onReadOnlyMessageCloseButtonClick(final ClickEvent e) {

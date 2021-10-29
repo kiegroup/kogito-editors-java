@@ -39,7 +39,7 @@ export interface ModalWizardProps {
   wizardSteps: WizardStep[];
   /** Action to apply at Wizard closure */
   onWizardClose?: () => void;
-  /** Action to apply at Wizard final step action button pressed*/
+  /** Action to apply at Wizard final step action button pressed */
   onWizardSave?: () => void;
 }
 
