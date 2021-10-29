@@ -24,8 +24,11 @@ import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvas;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.command.DefaultCanvasCommandFactory;
+import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyboardControl;
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.CanvasSelectionEvent;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
+import org.kie.workbench.common.stunner.core.client.session.ClientSession;
+import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.client.shape.ElementShape;
 import org.kie.workbench.common.stunner.core.client.shape.ShapeState;
 import org.kie.workbench.common.stunner.core.command.Command;
@@ -75,6 +78,12 @@ public class ElementProxyTest {
 
     @Mock
     private SessionManager sessionManager;
+
+    @Mock
+    private EditorSession currentSession;
+
+    @Mock
+    private KeyboardControl<AbstractCanvas, ClientSession> keyboardControl;
 
     private ElementProxy tested;
     private ElementProxyViewMock<ElementShape> view;
@@ -142,6 +151,14 @@ public class ElementProxyTest {
         tested.execute(c);
         verify(commandManager, times(1)).execute(eq(canvasHandler), eq(c));
         verify(commandManager, never()).allow(any(), any());
+    }
+
+    @Test
+    public void testDestroy() {
+        when(sessionManager.getCurrentSession()).thenReturn(currentSession);
+        when(currentSession.getKeyboardControl()).thenReturn(keyboardControl);
+        tested.destroy();
+        verify(keyboardControl, times(1)).removeKeyShortcutCallback(any());
     }
 
     static class ElementProxyViewMock<S extends ElementShape>

@@ -22,6 +22,8 @@ public interface KeyEventHandler {
 
     KeyEventHandler addKeyShortcutCallback(final KeyboardControl.KeyShortcutCallback shortcutCallback);
 
+    void removeKeyShortcutCallback(final KeyboardControl.KeyShortcutCallback shortcutCallback);
+
     void clear();
 
     void setEnabled(boolean enabled);

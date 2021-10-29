@@ -16,6 +16,9 @@
 
 package org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Default;
 import javax.inject.Inject;
@@ -48,10 +51,21 @@ public class KeyboardControlImpl
         this.keyEventHandler = keyEventHandler;
     }
 
+    private Map<KeyShortcutCallback, SessionKeyShortcutCallback> sessionMap = new HashMap<>();
+
     @Override
     public KeyboardControl<AbstractCanvas, ClientSession> addKeyShortcutCallback(final KeyShortcutCallback shortcutCallback) {
-        this.keyEventHandler.addKeyShortcutCallback(new SessionKeyShortcutCallback(shortcutCallback));
+        final SessionKeyShortcutCallback sessionKeyShortcutCallback = new SessionKeyShortcutCallback(shortcutCallback);
+        sessionMap.put(shortcutCallback, sessionKeyShortcutCallback);
+        this.keyEventHandler.addKeyShortcutCallback(sessionKeyShortcutCallback);
         return this;
+    }
+
+    @Override
+    public void removeKeyShortcutCallback(final KeyShortcutCallback shortcutCallback) {
+        final SessionKeyShortcutCallback sessionKeyShortcutCallback = sessionMap.get(shortcutCallback);
+        this.keyEventHandler.removeKeyShortcutCallback(sessionKeyShortcutCallback);
+        sessionMap.remove(shortcutCallback);
     }
 
     @Override

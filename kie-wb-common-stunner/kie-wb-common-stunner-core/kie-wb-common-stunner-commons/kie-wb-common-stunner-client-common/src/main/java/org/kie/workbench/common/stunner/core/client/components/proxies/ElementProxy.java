@@ -102,6 +102,9 @@ public class ElementProxy implements ShapeProxy {
 
     @Override
     public void destroy() {
+        ((EditorSession) (sessionManager.getCurrentSession()))
+                .getKeyboardControl().removeKeyShortcutCallback(unselect);
+
         if (null != view) {
             view.destroy();
         }
@@ -115,15 +118,17 @@ public class ElementProxy implements ShapeProxy {
         return commandManager.execute(canvasHandler, command);
     }
 
+    private KeyboardControl.KogitoKeyPress unselect;
+
     void handleCancelKey() {
-        ((EditorSession)(sessionManager.getCurrentSession()))
+        unselect = new KeyboardControl.KogitoKeyPress(
+                new KeyboardEvent.Key[]{KeyboardEvent.Key.ESC},
+                "Unselect",
+                this::destroy
+        );
+        ((EditorSession) (sessionManager.getCurrentSession()))
                 .getKeyboardControl()
-                .addKeyShortcutCallback(
-                        new KeyboardControl.KogitoKeyPress(
-                                new KeyboardEvent.Key[]{KeyboardEvent.Key.ESC},
-                                "Unselect",
-                                this::destroy
-                        ));
+                .addKeyShortcutCallback(unselect);
     }
 
     public Canvas getCanvas() {
