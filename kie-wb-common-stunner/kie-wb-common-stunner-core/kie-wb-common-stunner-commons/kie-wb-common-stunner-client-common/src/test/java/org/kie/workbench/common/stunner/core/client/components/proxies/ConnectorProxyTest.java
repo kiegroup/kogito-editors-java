@@ -23,9 +23,12 @@ import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvas;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.command.DefaultCanvasCommandFactory;
+import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyboardControl;
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.CanvasSelectionEvent;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommand;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
+import org.kie.workbench.common.stunner.core.client.session.ClientSession;
+import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.client.shape.EdgeShape;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
@@ -92,6 +95,12 @@ public class ConnectorProxyTest {
     @Mock
     private SessionManager sessionManager;
 
+    @Mock
+    private EditorSession currentSession;
+
+    @Mock
+    private KeyboardControl<AbstractCanvas, ClientSession> keyboardControl;
+
     private ConnectorProxy tested;
     private ElementProxy proxy;
     private ElementProxyTest.ElementProxyViewMock<EdgeShape> view;
@@ -147,6 +156,8 @@ public class ConnectorProxyTest {
 
     @Test
     public void testDestroy() {
+        when(sessionManager.getCurrentSession()).thenReturn(currentSession);
+        when(currentSession.getKeyboardControl()).thenReturn(keyboardControl);
         tested.init();
         tested.destroy();
         verify(proxy, times(1)).destroy();
