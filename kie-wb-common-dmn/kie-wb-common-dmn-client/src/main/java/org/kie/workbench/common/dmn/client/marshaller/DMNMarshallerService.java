@@ -128,9 +128,7 @@ public class DMNMarshallerService {
 
     public void marshall(final Diagram diagram,
                          final ServiceCallback<String> contentServiceCallback) {
-        final DMN12MarshallCallback jsCallback = result -> {
-            contentServiceCallback.onSuccess(result);
-        };
+        final DMN12MarshallCallback jsCallback = contentServiceCallback::onSuccess;
 
         if (Objects.isNull(diagram)) {
             contentServiceCallback.onError(new ClientRuntimeError("The Diagram cannot be null."));
