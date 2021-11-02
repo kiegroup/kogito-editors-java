@@ -129,14 +129,7 @@ public class DMNMarshallerService {
     public void marshall(final Diagram diagram,
                          final ServiceCallback<String> contentServiceCallback) {
         final DMN12MarshallCallback jsCallback = result -> {
-            final String xml;
-            final String prefix = "<?xml version=\"1.0\" ?>";
-            if (result.startsWith(prefix)) {
-                xml = result;
-            } else {
-                xml = prefix + result;
-            }
-            contentServiceCallback.onSuccess(xml);
+            contentServiceCallback.onSuccess(result);
         };
 
         if (Objects.isNull(diagram)) {
