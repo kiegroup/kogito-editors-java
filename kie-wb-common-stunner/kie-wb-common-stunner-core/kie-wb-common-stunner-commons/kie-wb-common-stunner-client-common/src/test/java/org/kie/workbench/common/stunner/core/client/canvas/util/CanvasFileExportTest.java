@@ -16,14 +16,21 @@
 
 package org.kie.workbench.common.stunner.core.client.canvas.util;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
+import org.kie.workbench.common.stunner.core.client.canvas.controls.SelectionControl;
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.CanvasClearSelectionEvent;
+import org.kie.workbench.common.stunner.core.client.canvas.event.selection.CanvasSelectionEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.export.CanvasExport;
 import org.kie.workbench.common.stunner.core.client.canvas.export.CanvasExportSettings;
 import org.kie.workbench.common.stunner.core.client.canvas.export.CanvasURLExportSettings;
+import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.mockito.ArgumentCaptor;
@@ -72,6 +79,9 @@ public class CanvasFileExportTest {
     private AbstractCanvasHandler canvasHandler;
 
     @Mock
+    private SessionManager sessionManager;
+
+    @Mock
     private Diagram diagram;
 
     @Mock
@@ -88,9 +98,28 @@ public class CanvasFileExportTest {
     @Mock
     private EventSourceMock<CanvasClearSelectionEvent> clearSelectionEvent;
 
+    @Mock
+    private EventSourceMock<CanvasSelectionEvent> selectionEvent;
+
+    @Mock
+    EditorSession session;
+
+    @Mock
+    private SelectionControl selectionControl;
+
+
     @Before
     @SuppressWarnings("unchecked")
     public void setup() throws Exception {
+        when(sessionManager.getCurrentSession()).thenReturn(session);
+        when(session.getSelectionControl()).thenReturn(selectionControl);
+        final Collection<String> selectedItems = new ArrayList<String>(3) {{
+            add("someId1");
+            add("someId2");
+            add("someId3");
+        }};
+
+        when(selectionControl.getSelectedItems()).thenReturn(selectedItems);
         when(canvasHandler.getDiagram()).thenReturn(diagram);
         when(diagram.getMetadata()).thenReturn(metadata);
         when(metadata.getTitle()).thenReturn(TITLE);
@@ -104,7 +133,9 @@ public class CanvasFileExportTest {
                                                pdfFileExport,
                                                preferences,
                                                svgFileExport,
-                                               clearSelectionEvent));
+                                               clearSelectionEvent,
+                                               sessionManager,
+                                               selectionEvent));
     }
 
     @Test
@@ -125,6 +156,7 @@ public class CanvasFileExportTest {
         assertEquals(JPG_DATA_URI,
                      imageDataUriContent.getUri());
         verify(clearSelectionEvent).fire(any(CanvasClearSelectionEvent.class));
+        verify(selectionEvent).fire(any(CanvasSelectionEvent.class));
     }
 
     @Test
@@ -145,6 +177,7 @@ public class CanvasFileExportTest {
         assertEquals(PNG_DATA_URI,
                      imageDataUriContent.getUri());
         verify(clearSelectionEvent).fire(any(CanvasClearSelectionEvent.class));
+        verify(selectionEvent).fire(any(CanvasSelectionEvent.class));
     }
 
     @Test
@@ -160,6 +193,7 @@ public class CanvasFileExportTest {
                times(1)).export(any(PdfDocument.class),
                                 eq("file1.pdf"));
         verify(clearSelectionEvent).fire(any(CanvasClearSelectionEvent.class));
+        verify(selectionEvent).fire(any(CanvasSelectionEvent.class));
     }
 
     @Test
@@ -168,6 +202,7 @@ public class CanvasFileExportTest {
         tested.exportToSvg(canvasHandler, "file1");
         verify(svgFileExport, times(1)).export(context2D, "file1.svg");
         verify(clearSelectionEvent).fire(any(CanvasClearSelectionEvent.class));
+        verify(selectionEvent).fire(any(CanvasSelectionEvent.class));
     }
 
     @Test
@@ -182,5 +217,6 @@ public class CanvasFileExportTest {
 
         verify(tested).clearSelection(canvasHandler);
         assertEquals(expectedImage, actualImage);
+        verify(selectionEvent).fire(any(CanvasSelectionEvent.class));
     }
 }
