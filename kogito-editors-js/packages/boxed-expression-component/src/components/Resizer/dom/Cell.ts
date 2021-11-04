@@ -106,7 +106,7 @@ export class Cell {
     }
 
     // sum the colSpan to determine the header size;
-    const headerElements = document.querySelectorAll(".colspan-header");
+    const headerElements = (refSibling as HTMLElement).parentNode?.querySelectorAll(".colspan-header") ?? [];
     const headerSize = Array.from(headerElements).reduce(
       (acc, th: HTMLTableHeaderCellElement) => acc + (th.colSpan || 1),
       0
@@ -150,7 +150,7 @@ export class Cell {
   }
 
   private getHeaderType() {
-    const cssClasses = (this.getParent()?.classList || []) as DOMTokenList;
+    const cssClasses = (this.getParent()?.classList || []) as any as DOMTokenList;
 
     if (cssClasses.contains("input")) {
       return "input";
