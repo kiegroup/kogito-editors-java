@@ -151,14 +151,6 @@ public class DataTypeListView implements DataTypeList.View {
         setupListElement();
 
         setupAddButtonReadOnlyStatus();
-
-        ImportJavaClassesService.registerBroadcastForImportJavaClasses(this);
-    }
-
-    private void activateReactComponents() {
-        DMNLoader.renderImportJavaClasses(".kie-import-java-classes",
-                                          false,
-                                          null);
     }
 
     void setupAddButtonReadOnlyStatus() {
@@ -238,7 +230,6 @@ public class DataTypeListView implements DataTypeList.View {
     public void onAddButtonClick(final ClickEvent e) {
         scrollHelper.animatedScrollToBottom(listItems);
         presenter.addDataType();
-        activateReactComponents();
     }
 
     @EventHandler("read-only-message-close-button")
@@ -408,4 +399,10 @@ public class DataTypeListView implements DataTypeList.View {
         return listItems;
     }
 
+    @Override
+    public void renderImportJavaClasses() {
+        DMNLoader.renderImportJavaClasses(".kie-import-java-classes",
+                                          false,
+                                          null);
+    }
 }

@@ -35,12 +35,14 @@ import javax.inject.Inject;
 
 import elemental2.dom.Element;
 import elemental2.dom.HTMLElement;
+import org.appformer.client.context.Channel;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.kie.workbench.common.dmn.api.editors.types.BuiltInTypeUtils;
 import org.kie.workbench.common.dmn.api.editors.types.DataObject;
 import org.kie.workbench.common.dmn.api.editors.types.DataObjectProperty;
 import org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType;
+import org.kie.workbench.common.dmn.client.common.KogitoChannelHelper;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataType;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataTypeManager;
 import org.kie.workbench.common.dmn.client.editors.types.jsinterop.JavaClass;
@@ -86,6 +88,8 @@ public class DataTypeList {
 
     private final SessionManager sessionManager;
 
+    private final KogitoChannelHelper kogitoChannelHelper;
+
     private Consumer<DataTypeListItem> onDataTypeListItemUpdate = e -> { /* Nothing. */ };
 
     private List<DataTypeListItem> items = new ArrayList<>();
@@ -106,7 +110,8 @@ public class DataTypeList {
                         final DNDDataTypesHandler dndDataTypesHandler,
                         final DataTypeListHighlightHelper highlightHelper,
                         final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
-                        final SessionManager sessionManager) {
+                        final SessionManager sessionManager,
+                        final KogitoChannelHelper kogitoChannelHelper) {
         this.view = view;
         this.listItems = listItems;
         this.dataTypeManager = dataTypeManager;
@@ -119,6 +124,7 @@ public class DataTypeList {
         this.renamedImportedDataTypes = new HashMap<>();
         this.commandManager = sessionCommandManager;
         this.sessionManager = sessionManager;
+        this.kogitoChannelHelper = kogitoChannelHelper;
     }
 
     @PostConstruct
@@ -297,6 +303,9 @@ public class DataTypeList {
                 listItem.enableEditMode();
             }
             refreshItemsCSSAndHTMLPosition();
+            if (kogitoChannelHelper.isCurrentChannelEnabled(Arrays.asList(Channel.VSCODE, Channel.DEFAULT))) {
+                view.renderImportJavaClasses();
+            }
 
             return CanvasCommandResultBuilder.SUCCESS;
         });
@@ -657,5 +666,7 @@ public class DataTypeList {
         void showReadOnlyMessage(final boolean show);
 
         HTMLElement getListItems();
+
+        void renderImportJavaClasses();
     }
 }
