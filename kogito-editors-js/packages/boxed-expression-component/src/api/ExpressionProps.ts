@@ -21,7 +21,7 @@ import { ContextEntries, EntryInfo } from "./ContextEntry";
 import { HitPolicy } from "./HitPolicy";
 import { BuiltinAggregation } from "./BuiltinAggregation";
 import { Annotation, Clause, DecisionTableRule } from "./DecisionTableRule";
-import { FeelFunctionProps, FunctionKind, JavaFunctionProps, PmmlFunctionProps } from "./FunctionKind";
+import { FeelFunctionProps, JavaFunctionProps, PmmlFunctionProps } from "./FunctionKind";
 
 export interface ExpressionProps {
   /** Unique identifier used to identify the expression */

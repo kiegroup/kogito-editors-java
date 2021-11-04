@@ -20,7 +20,7 @@ import "monaco-editor/dev/vs/editor/editor.main.css";
 import * as React from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { CellProps } from "../../api";
-import { blurActiveElement, focusNextTextArea, focusTextArea, firstIterableValue, paste } from "./common";
+import { blurActiveElement, focusNextTextArea, focusTextArea, paste } from "./common";
 import "./EditableCell.css";
 
 const CELL_LINE_HEIGHT = 20;

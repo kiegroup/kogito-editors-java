@@ -16,7 +16,7 @@
 
 import "./InvocationExpression.css";
 import * as React from "react";
-import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useContext, useMemo } from "react";
 import {
   ContextEntries,
   ContextEntryRecord,
