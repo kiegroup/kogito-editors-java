@@ -82,6 +82,7 @@
 
 .expression-container .table-component table th:not(.no-clickable-cell) .header-cell-info .label {
   min-height: 21px;
+  color: inherit;
 }
 
 .expression-container .table-component table thead tr:not(:first-of-type) {
