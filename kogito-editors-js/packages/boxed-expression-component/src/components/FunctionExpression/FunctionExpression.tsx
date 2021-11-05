@@ -251,7 +251,24 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (
       };
 
       if (functionExpression.isHeadless) {
-        functionExpression.onUpdatingRecursiveExpression?.(_.omit(updatedDefinition, ["name", "dataType"]));
+        const headlessDefinition = _.omit(updatedDefinition, ["name", "dataType", "isHeadless"]);
+        executeIfExpressionDefinitionChanged(
+          functionExpression,
+          headlessDefinition,
+          () => {
+            functionExpression.onUpdatingRecursiveExpression?.(headlessDefinition);
+          },
+          [
+            "functionKind",
+            "formalParameters",
+            "parametersWidth",
+            "className",
+            "methodName",
+            "document",
+            "model",
+            "expression",
+          ]
+        );
       } else {
         executeIfExpressionDefinitionChanged(
           functionExpression,

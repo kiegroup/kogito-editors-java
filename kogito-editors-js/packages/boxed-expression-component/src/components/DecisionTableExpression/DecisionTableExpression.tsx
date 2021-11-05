@@ -49,7 +49,7 @@ const DASH_SYMBOL = "-";
 const EMPTY_SYMBOL = "";
 const DECISION_NODE_DEFAULT_NAME = "output-1";
 
-export function DecisionTableExpression(decisionTableProps: PropsWithChildren<DecisionTableProps>) {
+export function DecisionTableExpression(decisionTable: PropsWithChildren<DecisionTableProps>) {
   const { i18n } = useBoxedExpressionEditorI18n();
 
   const getColumnPrefix = useCallback((groupType?: string) => {
@@ -107,7 +107,7 @@ export function DecisionTableExpression(decisionTableProps: PropsWithChildren<De
   }, [i18n.editClause.input, i18n.editClause.output]);
 
   const columns = useMemo(() => {
-    const inputColumns = (decisionTableProps.input ?? [{ name: "input-1", dataType: DataType.Undefined }])?.map(
+    const inputColumns = (decisionTable.input ?? [{ name: "input-1", dataType: DataType.Undefined }])?.map(
       (inputClause) =>
         ({
           label: inputClause.name,
@@ -119,7 +119,7 @@ export function DecisionTableExpression(decisionTableProps: PropsWithChildren<De
         } as ColumnInstance)
     );
     const outputColumns = (
-      decisionTableProps.output ?? [{ name: DECISION_NODE_DEFAULT_NAME, dataType: DataType.Undefined }]
+      decisionTable.output ?? [{ name: DECISION_NODE_DEFAULT_NAME, dataType: DataType.Undefined }]
     )?.map(
       (outputClause) =>
         ({
@@ -131,7 +131,7 @@ export function DecisionTableExpression(decisionTableProps: PropsWithChildren<De
           cssClasses: "decision-table--output",
         } as ColumnInstance)
     );
-    const annotationColumns = (decisionTableProps.annotations ?? [{ name: "annotation-1" }])?.map(
+    const annotationColumns = (decisionTable.annotations ?? [{ name: "annotation-1" }])?.map(
       (annotation) =>
         ({
           label: annotation.name,
@@ -152,9 +152,9 @@ export function DecisionTableExpression(decisionTableProps: PropsWithChildren<De
     };
     const outputSection = {
       groupType: DecisionTableColumnType.OutputClause,
-      label: decisionTableProps.name ?? DECISION_NODE_DEFAULT_NAME,
-      accessor: decisionTableProps.name ?? DECISION_NODE_DEFAULT_NAME,
-      dataType: decisionTableProps.dataType ?? DataType.Undefined,
+      label: decisionTable.name ?? DECISION_NODE_DEFAULT_NAME,
+      accessor: decisionTable.name ?? DECISION_NODE_DEFAULT_NAME,
+      dataType: decisionTable.dataType ?? DataType.Undefined,
       cssClasses: "decision-table--output",
       columns: outputColumns,
       appendColumnsOnChildren: true,
@@ -170,17 +170,17 @@ export function DecisionTableExpression(decisionTableProps: PropsWithChildren<De
 
     return [inputSection, outputSection, annotationSection];
   }, [
-    decisionTableProps.annotations,
-    decisionTableProps.dataType,
-    decisionTableProps.input,
-    decisionTableProps.name,
-    decisionTableProps.output,
+    decisionTable.annotations,
+    decisionTable.dataType,
+    decisionTable.input,
+    decisionTable.name,
+    decisionTable.output,
   ]);
 
   const rows = useMemo(
     () =>
       (
-        decisionTableProps.rules ?? [
+        decisionTable.rules ?? [
           { inputEntries: [DASH_SYMBOL], outputEntries: [EMPTY_SYMBOL], annotationEntries: [EMPTY_SYMBOL] },
         ]
       ).map((rule) => {
@@ -190,7 +190,7 @@ export function DecisionTableExpression(decisionTableProps: PropsWithChildren<De
           return tableRow;
         }, {});
       }),
-    [columns, decisionTableProps.rules]
+    [columns, decisionTable.rules]
   );
 
   const spreadDecisionTableExpressionDefinition = useCallback(
@@ -216,13 +216,13 @@ export function DecisionTableExpression(decisionTableProps: PropsWithChildren<De
         annotationEntries: _.map(annotations, (annotation) => row[annotation.name] as string),
       }));
 
-      const expressionDefinition: Partial<DecisionTableProps> = {
-        uid: decisionTableProps.uid,
+      const updatedDefinition: Partial<DecisionTableProps> = {
+        uid: decisionTable.uid,
         logicType: LogicType.DecisionTable,
-        name: decisionTableProps.name ?? DECISION_NODE_DEFAULT_NAME,
-        dataType: decisionTableProps.dataType ?? DataType.Undefined,
-        hitPolicy: decisionTableProps.hitPolicy ?? HitPolicy.Unique,
-        aggregation: decisionTableProps.aggregation ?? BuiltinAggregation["<None>"],
+        name: decisionTable.name ?? DECISION_NODE_DEFAULT_NAME,
+        dataType: decisionTable.dataType ?? DataType.Undefined,
+        hitPolicy: decisionTable.hitPolicy ?? HitPolicy.Unique,
+        aggregation: decisionTable.aggregation ?? BuiltinAggregation["<None>"],
         input: input ?? [{ name: "input-1", dataType: DataType.Undefined }],
         output: output ?? [{ name: DECISION_NODE_DEFAULT_NAME, dataType: DataType.Undefined }],
         annotations: annotations ?? [{ name: "annotation-1" }],
@@ -232,21 +232,29 @@ export function DecisionTableExpression(decisionTableProps: PropsWithChildren<De
         ...updatedDecisionTable,
       };
 
-      if (decisionTableProps.isHeadless) {
-        decisionTableProps?.onUpdatingRecursiveExpression?.(expressionDefinition);
+      if (decisionTable.isHeadless) {
+        const headlessDefinition = _.omit(updatedDefinition, ["name", "dataType", "isHeadless"]);
+        executeIfExpressionDefinitionChanged(
+          decisionTable,
+          headlessDefinition,
+          () => {
+            decisionTable.onUpdatingRecursiveExpression?.(headlessDefinition);
+          },
+          ["hitPolicy", "aggregation", "input", "output", "annotations", "rules"]
+        );
       } else {
         executeIfExpressionDefinitionChanged(
-          decisionTableProps,
-          expressionDefinition,
+          decisionTable,
+          updatedDefinition,
           () => {
-            setSupervisorHash(hashfy(expressionDefinition));
-            window.beeApi?.broadcastDecisionTableExpressionDefinition?.(expressionDefinition as DecisionTableProps);
+            setSupervisorHash(hashfy(updatedDefinition));
+            window.beeApi?.broadcastDecisionTableExpressionDefinition?.(updatedDefinition as DecisionTableProps);
           },
           ["name", "dataType", "hitPolicy", "aggregation", "input", "output", "annotations", "rules"]
         );
       }
     },
-    [columns, decisionTableProps, rows, setSupervisorHash]
+    [columns, decisionTable, rows, setSupervisorHash]
   );
 
   const singleOutputChildDataType = useRef(DataType.Undefined);
@@ -259,13 +267,13 @@ export function DecisionTableExpression(decisionTableProps: PropsWithChildren<De
         if (updatedSingleOutputChildDataType !== singleOutputChildDataType.current) {
           singleOutputChildDataType.current = updatedSingleOutputChildDataType;
           decisionNodeColumn.dataType = updatedSingleOutputChildDataType;
-        } else if (decisionNodeColumn.dataType !== decisionTableProps.dataType ?? DataType.Undefined) {
+        } else if (decisionNodeColumn.dataType !== decisionTable.dataType ?? DataType.Undefined) {
           singleOutputChildDataType.current = decisionNodeColumn.dataType;
           (_.first(decisionNodeColumn.columns) as ColumnInstance).dataType = decisionNodeColumn.dataType;
         }
       }
     },
-    [decisionTableProps.dataType]
+    [decisionTable.dataType]
   );
 
   const onColumnsUpdate = useCallback(
@@ -279,11 +287,11 @@ export function DecisionTableExpression(decisionTableProps: PropsWithChildren<De
         },
         [...updatedColumns]
       );
-      decisionTableProps.onUpdatingNameAndDataType?.(decisionNodeColumn.label, decisionNodeColumn.dataType);
+      decisionTable.onUpdatingNameAndDataType?.(decisionNodeColumn.label, decisionNodeColumn.dataType);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [
-      decisionTableProps.onUpdatingNameAndDataType,
+      decisionTable.onUpdatingNameAndDataType,
       spreadDecisionTableExpressionDefinition,
       synchronizeDecisionNodeDataTypeWithSingleOutputColumnDataType,
     ]
@@ -336,17 +344,17 @@ export function DecisionTableExpression(decisionTableProps: PropsWithChildren<De
   const controllerCell = useMemo(
     () => (
       <HitPolicySelector
-        selectedHitPolicy={decisionTableProps.hitPolicy ?? HitPolicy.Unique}
-        selectedBuiltInAggregator={decisionTableProps.aggregation ?? BuiltinAggregation["<None>"]}
+        selectedHitPolicy={decisionTable.hitPolicy ?? HitPolicy.Unique}
+        selectedBuiltInAggregator={decisionTable.aggregation ?? BuiltinAggregation["<None>"]}
         onHitPolicySelect={onHitPolicySelect}
         onBuiltInAggregatorSelect={onBuiltInAggregatorSelect}
       />
     ),
-    [decisionTableProps.aggregation, decisionTableProps.hitPolicy, onBuiltInAggregatorSelect, onHitPolicySelect]
+    [decisionTable.aggregation, decisionTable.hitPolicy, onBuiltInAggregatorSelect, onHitPolicySelect]
   );
 
   return (
-    <div className={`decision-table-expression ${decisionTableProps.uid}`}>
+    <div className={`decision-table-expression ${decisionTable.uid}`}>
       <Table
         headerLevels={1}
         headerVisibility={TableHeaderVisibility.Full}

@@ -99,19 +99,19 @@ export const ListExpression: React.FunctionComponent<ListProps> = (listExpressio
         (listItem: DataRecord) => listItem.entryExpression as ExpressionProps
       );
 
-      if (listExpression.isHeadless) {
-        listExpression.onUpdatingRecursiveExpression?.(updatedDefinition);
-      } else {
-        executeIfExpressionDefinitionChanged(
-          listExpression,
-          updatedDefinition,
-          () => {
+      executeIfExpressionDefinitionChanged(
+        listExpression,
+        updatedDefinition,
+        () => {
+          if (listExpression.isHeadless) {
+            listExpression.onUpdatingRecursiveExpression?.(updatedDefinition);
+          } else {
             setSupervisorHash(hashfy(updatedDefinition));
             window.beeApi?.broadcastListExpressionDefinition?.(updatedDefinition as ListProps);
-          },
-          ["width", "items"]
-        );
-      }
+          }
+        },
+        ["width", "items"]
+      );
     },
     [listExpression, items, setSupervisorHash]
   );

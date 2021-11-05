@@ -49,7 +49,7 @@ export const InvocationExpression: React.FunctionComponent<InvocationProps> = (i
 
   const rows = useMemo(() => {
     return (
-      invocationProps.bindingEntries || [
+      invocationProps.bindingEntries ?? [
         {
           entryInfo: {
             name: DEFAULT_PARAMETER_NAME,
@@ -75,22 +75,28 @@ export const InvocationExpression: React.FunctionComponent<InvocationProps> = (i
         name: invocationProps.name ?? DEFAULT_PARAMETER_NAME,
         dataType: invocationProps.dataType ?? DEFAULT_PARAMETER_DATA_TYPE,
         bindingEntries: rows as ContextEntries,
-        invokedFunction: invocationProps.invokedFunction,
+        invokedFunction: invocationProps.invokedFunction ?? "",
         entryInfoWidth: invocationProps.entryInfoWidth ?? DEFAULT_ENTRY_INFO_MIN_WIDTH,
         entryExpressionWidth: invocationProps.entryExpressionWidth ?? DEFAULT_ENTRY_EXPRESSION_MIN_WIDTH,
         ...invocationExpressionUpdated,
       };
 
-      const expression = _.omit(updatedDefinition, ["name", "dataType"]);
-
       if (invocationProps.isHeadless) {
-        invocationProps.onUpdatingRecursiveExpression?.(expression);
+        const headlessDefinition = _.omit(updatedDefinition, ["name", "dataType", "isHeadless"]);
+        executeIfExpressionDefinitionChanged(
+          invocationProps,
+          headlessDefinition,
+          () => {
+            invocationProps.onUpdatingRecursiveExpression?.(headlessDefinition);
+          },
+          ["bindingEntries", "invokedFunction", "entryInfoWidth", "entryExpressionWidth"]
+        );
       } else {
         executeIfExpressionDefinitionChanged(
           invocationProps,
           updatedDefinition,
           () => {
-            setSupervisorHash(hashfy(expression));
+            setSupervisorHash(hashfy(updatedDefinition));
             window.beeApi?.broadcastInvocationExpressionDefinition?.(updatedDefinition);
           },
           ["name", "dataType", "bindingEntries", "invokedFunction", "entryInfoWidth", "entryExpressionWidth"]
@@ -185,7 +191,7 @@ export const InvocationExpression: React.FunctionComponent<InvocationProps> = (i
 
   const onRowAdding = useCallback(() => {
     const generatedName = generateNextAvailableEntryName(
-      _.map(rows, (row: ContextEntryRecord) => row.entryInfo) as EntryInfo[],
+      rows.map((row: DataRecord & ContextEntryRecord) => row.entryInfo) as EntryInfo[],
       "p"
     );
     return {
@@ -237,7 +243,7 @@ export const InvocationExpression: React.FunctionComponent<InvocationProps> = (i
         skipLastHeaderGroup={true}
         defaultCell={defaultCell}
         columns={columns}
-        rows={rows as DataRecord[]}
+        rows={(rows ?? []) as DataRecord[]}
         onColumnsUpdate={onColumnsUpdate}
         onRowAdding={onRowAdding}
         onRowsUpdate={setRowsCallback}
