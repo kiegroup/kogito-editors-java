@@ -407,44 +407,16 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (
           spreadFunctionExpressionDefinition({ expression: entries.entryExpression });
           break;
         case FunctionKind.Java:
-          const updatedJavaProperties = entries.entryExpression.contextEntries?.reduce(
-            (acc: any, contextEntry: any) => {
-              if (contextEntry.entryInfo.name?.includes("method")) {
-                acc.methodName = contextEntry.entryExpression.content;
-              }
-              if (contextEntry.entryInfo.name?.includes("class")) {
-                acc.className = contextEntry.entryExpression.content;
-              }
-              return acc;
-            },
-            {}
-          );
-          if (updatedJavaProperties) {
-            spreadFunctionExpressionDefinition({
-              className: updatedJavaProperties.className,
-              methodName: updatedJavaProperties.methodName,
-            });
-          }
+          spreadFunctionExpressionDefinition({
+            className: entries.entryExpression.contextEntries?.[0]?.entryExpression.content ?? "",
+            methodName: entries.entryExpression.contextEntries?.[1]?.entryExpression.content ?? "",
+          });
           break;
         case FunctionKind.Pmml:
-          const updatedPmmlProperties = entries.entryExpression.contextEntries?.reduce(
-            (acc: any, contextEntry: any) => {
-              if (contextEntry.entryInfo.name.includes("model")) {
-                acc.model = contextEntry.entryExpression.selected;
-              }
-              if (contextEntry.entryInfo.name.includes("document")) {
-                acc.document = contextEntry.entryExpression.selected;
-              }
-              return acc;
-            },
-            {}
-          );
-          if (updatedPmmlProperties) {
-            spreadFunctionExpressionDefinition({
-              document: updatedPmmlProperties.document,
-              model: updatedPmmlProperties.model,
-            });
-          }
+          spreadFunctionExpressionDefinition({
+            document: entries.entryExpression.contextEntries?.[0]?.entryExpression.selected ?? "",
+            model: entries.entryExpression.contextEntries?.[1]?.entryExpression.selected ?? "",
+          });
           break;
       }
     },
