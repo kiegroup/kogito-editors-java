@@ -276,17 +276,20 @@ public class ExpressionModelFillerTest {
     @Test
     public void testFillDecisionTableExpression() {
         final DecisionTable decisionTableExpression = new DecisionTable();
+        final String annotationId = "Annotation id";
         final String annotationName = "Annotation name";
         final double annotationWidth = 456d;
-        final Annotation[] annotations = new Annotation[]{new Annotation(annotationName, annotationWidth)};
+        final Annotation[] annotations = new Annotation[]{new Annotation(annotationId, annotationName, annotationWidth)};
+        final String inputId = "Input id";
         final String inputColumn = "Input column";
         final String inputDataType = BuiltInType.DATE_TIME.asQName().getLocalPart();
         final double inputWidth = 123d;
-        final Clause[] input = new Clause[]{new Clause(inputColumn, inputDataType, inputWidth)};
+        final Clause[] input = new Clause[]{new Clause(inputId, inputColumn, inputDataType, inputWidth)};
+        final String outputId = "Output id";
         final String outputColumn = "Output column";
         final String outputDataType = BuiltInType.STRING.asQName().getLocalPart();
         final double outputWidth = 223d;
-        final Clause[] output = new Clause[]{new Clause(outputColumn, outputDataType, outputWidth)};
+        final Clause[] output = new Clause[]{new Clause(outputId, outputColumn, outputDataType, outputWidth)};
         final String inputValue = "input value";
         final String outputValue = "output value";
         final String annotationValue = "annotation value";

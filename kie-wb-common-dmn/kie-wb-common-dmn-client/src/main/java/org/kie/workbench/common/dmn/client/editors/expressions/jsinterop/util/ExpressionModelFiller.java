@@ -346,6 +346,7 @@ public class ExpressionModelFiller {
                 .stream(Optional.ofNullable(decisionTableProps.input).orElse(new Clause[0]))
                 .map(input -> {
                     final InputClause inputClause = new InputClause();
+                    inputClause.getInputExpression().getId().setValue(input.id);
                     inputClause.getInputExpression().setText(new Text(input.name));
                     inputClause.getInputExpression().setTypeRefHolder(
                             new QNameHolder(
@@ -364,6 +365,7 @@ public class ExpressionModelFiller {
                 .stream(Optional.ofNullable(decisionTableProps.output).orElse(new Clause[0]))
                 .map(output -> {
                     final OutputClause outputClause = new OutputClause();
+                    outputClause.setId(new Id(output.id));
                     outputClause.setName(output.name);
                     outputClause.setTypeRef(BuiltInTypeUtils
                                                     .findBuiltInTypeByName(output.dataType)
@@ -379,6 +381,7 @@ public class ExpressionModelFiller {
                 .stream(Optional.ofNullable(decisionTableProps.annotations).orElse(new Annotation[0]))
                 .map(annotation -> {
                     final RuleAnnotationClause ruleAnnotationClause = new RuleAnnotationClause();
+                    ruleAnnotationClause.setId(new Id(annotation.id));
                     ruleAnnotationClause.setName(new Name(annotation.name));
                     return ruleAnnotationClause;
                 })

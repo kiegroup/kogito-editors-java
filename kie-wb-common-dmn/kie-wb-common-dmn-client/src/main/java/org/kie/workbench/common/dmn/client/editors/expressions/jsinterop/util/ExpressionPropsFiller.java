@@ -33,6 +33,7 @@ import org.kie.workbench.common.dmn.api.definition.model.LiteralExpression;
 import org.kie.workbench.common.dmn.api.definition.model.OutputClause;
 import org.kie.workbench.common.dmn.api.definition.model.Relation;
 import org.kie.workbench.common.dmn.api.definition.model.RuleAnnotationClause;
+import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.Annotation;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.Clause;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.Column;
@@ -211,10 +212,11 @@ public class ExpressionPropsFiller {
         return IntStream.range(0, decisionTableExpression.getInput().size())
                 .mapToObj(index -> {
                     final InputClause inputClause = decisionTableExpression.getInput().get(index);
+                    final String id = inputClause.getInputExpression().getId().getValue();
                     final String name = inputClause.getInputExpression().getText().getValue();
                     final String dataType = inputClause.getInputExpression().getTypeRefHolder().getValue().getLocalPart();
                     final Double width = decisionTableExpression.getComponentWidths().get(index + 1);
-                    return new Clause(name, dataType, width);
+                    return new Clause(id, name, dataType, width);
                 })
                 .toArray(Clause[]::new);
     }
@@ -223,14 +225,15 @@ public class ExpressionPropsFiller {
         return IntStream.range(0, decisionTableExpression.getOutput().size())
                 .mapToObj(index -> {
                     final OutputClause outputClause = decisionTableExpression.getOutput().get(index);
+                    final String id = outputClause.getId().getValue();
                     final String name = outputClause.getName();
                     final String dataType = outputClause.getTypeRef().getLocalPart();
                     final Double width = decisionTableExpression.getComponentWidths().get(decisionTableExpression.getInput().size() + index + 1);
                     // When output clause is empty, then we should use expression name and dataType for it
                     if (name == null) {
-                        return new Clause(expressionName, expressionDataType, width);
+                        return new Clause(id, expressionName, expressionDataType, width);
                     }
-                    return new Clause(name, dataType, width);
+                    return new Clause(id, name, dataType, width);
                 })
                 .toArray(Clause[]::new);
     }
@@ -241,7 +244,9 @@ public class ExpressionPropsFiller {
                     final RuleAnnotationClause ruleAnnotationClause = decisionTableExpression.getAnnotations().get(index);
                     final Double width = decisionTableExpression.getComponentWidths()
                             .get(decisionTableExpression.getInput().size() + decisionTableExpression.getOutput().size() + index + 1);
-                    return new Annotation(ruleAnnotationClause.getName().getValue(), width);
+                    final String annotationId = Optional.ofNullable(ruleAnnotationClause.getId()).orElse(new Id()).getValue();
+                    final String annotationName = ruleAnnotationClause.getName().getValue();
+                    return new Annotation(annotationId, annotationName, width);
                 })
                 .toArray(Annotation[]::new);
     }
