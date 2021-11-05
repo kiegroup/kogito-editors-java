@@ -237,8 +237,8 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (
         {
           uid: functionExpression.uid,
           logicType: functionExpression.logicType,
-          name: functionExpression.name,
-          dataType: functionExpression.dataType,
+          name: functionExpression.name ?? DEFAULT_FIRST_PARAM_NAME,
+          dataType: functionExpression.dataType ?? DataType.Undefined,
           functionKind: functionExpression.functionKind ?? FunctionKind.Feel,
           parametersWidth: functionExpression.parametersWidth ?? DEFAULT_ENTRY_EXPRESSION_MIN_WIDTH,
           formalParameters: functionExpression.formalParameters ?? [],

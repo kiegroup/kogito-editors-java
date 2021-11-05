@@ -77,14 +77,14 @@ describe("FunctionExpression tests", () => {
     await clearTableRow(container, baseElement);
 
     expect(mockedBroadcastDefinition).toHaveBeenLastCalledWith({
-      dataType: undefined,
+      dataType: DataType.Undefined,
       expression: {
         logicType: LogicType.LiteralExpression,
       },
       formalParameters: [],
       functionKind: "FEEL",
       logicType: "Function",
-      name: undefined,
+      name: "p-1",
       parametersWidth: 370,
       uid: undefined,
     });
@@ -249,14 +249,14 @@ describe("FunctionExpression tests", () => {
 
     function checkFormalParameters(mockedBroadcastDefinition: jest.Mock, formalParameters: EntryInfo[]) {
       expect(mockedBroadcastDefinition).toHaveBeenCalledWith({
-        dataType: undefined,
+        dataType: DataType.Undefined,
         expression: {
           logicType: "Literal expression",
         },
         formalParameters,
         functionKind: "FEEL",
         logicType: "Function",
-        name: undefined,
+        name: "p-1",
         parametersWidth: 370,
         uid: undefined,
       });
