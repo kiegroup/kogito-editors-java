@@ -346,7 +346,7 @@ public class ExpressionModelFiller {
                 .stream(Optional.ofNullable(decisionTableProps.input).orElse(new Clause[0]))
                 .map(input -> {
                     final InputClause inputClause = new InputClause();
-                    inputClause.getInputExpression().getId().setValue(input.id);
+                    inputClause.setId(new Id(input.id));
                     inputClause.getInputExpression().setText(new Text(input.name));
                     inputClause.getInputExpression().setTypeRefHolder(
                             new QNameHolder(

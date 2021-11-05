@@ -212,7 +212,7 @@ public class ExpressionPropsFiller {
         return IntStream.range(0, decisionTableExpression.getInput().size())
                 .mapToObj(index -> {
                     final InputClause inputClause = decisionTableExpression.getInput().get(index);
-                    final String id = inputClause.getInputExpression().getId().getValue();
+                    final String id = inputClause.getId().getValue();
                     final String name = inputClause.getInputExpression().getText().getValue();
                     final String dataType = inputClause.getInputExpression().getTypeRefHolder().getValue().getLocalPart();
                     final Double width = decisionTableExpression.getComponentWidths().get(index + 1);
