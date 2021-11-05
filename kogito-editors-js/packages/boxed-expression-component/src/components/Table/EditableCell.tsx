@@ -68,9 +68,6 @@ export function EditableCell({ value, rowIndex, columnId, onCellUpdate, readOnly
     if (value === "") {
       setPreview("");
     }
-    if (textarea.current) {
-      textarea.current.value = value ?? "";
-    }
   }, [value]);
 
   const triggerReadMode = useCallback(
@@ -171,8 +168,7 @@ export function EditableCell({ value, rowIndex, columnId, onCellUpdate, readOnly
         focusNextTextArea(textarea.current);
       }
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [triggerReadMode]
+    [triggerReadMode, previousValue]
   );
 
   const onFeelChange = useCallback((_e, newValue, newPreview) => {
@@ -183,10 +179,7 @@ export function EditableCell({ value, rowIndex, columnId, onCellUpdate, readOnly
   }, []);
 
   const onFeelLoad = useCallback((newPreview) => {
-    // function being called before component is rendered
-    if (textarea.current) {
-      setPreview(newPreview);
-    }
+    setPreview(newPreview);
   }, []);
 
   const textValue = useMemo(() => {
