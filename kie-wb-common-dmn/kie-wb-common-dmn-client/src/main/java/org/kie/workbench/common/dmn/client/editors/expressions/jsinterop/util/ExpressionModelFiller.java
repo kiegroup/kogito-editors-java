@@ -321,6 +321,7 @@ public class ExpressionModelFiller {
                 .stream(Optional.ofNullable(decisionTableProps.rules).orElse(new DecisionTableRule[0]))
                 .map(rule -> {
                     final DecisionRule decisionRule = new DecisionRule();
+                    decisionRule.setId(new Id(rule.id));
                     decisionRule.getAnnotationEntry().addAll(Arrays.stream(rule.annotationEntries).map(annotationEntry -> {
                         final RuleAnnotationClauseText ruleAnnotationClauseText = new RuleAnnotationClauseText();
                         ruleAnnotationClauseText.setText(new Text(annotationEntry));

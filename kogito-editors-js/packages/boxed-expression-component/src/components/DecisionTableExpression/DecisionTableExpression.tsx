@@ -62,7 +62,14 @@ export const DecisionTableExpression: React.FunctionComponent<DecisionTableProps
   input = [{ name: "input-1", dataType: DataType.Undefined }],
   output = [{ name: DECISION_NODE_DEFAULT_NAME, dataType: DataType.Undefined }],
   annotations = [{ name: "annotation-1" }],
-  rules = [{ inputEntries: [DASH_SYMBOL], outputEntries: [EMPTY_SYMBOL], annotationEntries: [EMPTY_SYMBOL] }],
+  rules = [
+    {
+      id: generateUuid(),
+      inputEntries: [DASH_SYMBOL],
+      outputEntries: [EMPTY_SYMBOL],
+      annotationEntries: [EMPTY_SYMBOL],
+    },
+  ],
 }) => {
   const { i18n } = useBoxedExpressionEditorI18n();
 
@@ -199,9 +206,9 @@ export const DecisionTableExpression: React.FunctionComponent<DecisionTableProps
   };
 
   const evaluateRows = () =>
-    _.map(rules, (rule) => {
+    _.map(rules, (rule: DecisionTableRule) => {
       const rowArray = [...rule.inputEntries, ...rule.outputEntries, ...rule.annotationEntries];
-      return _.reduce(
+      const tableRow = _.reduce(
         getColumnsAtLastLevel(columns.current),
         (tableRow: DataRecord, column, columnIndex: number) => {
           tableRow[column.accessor] = rowArray[columnIndex] || EMPTY_SYMBOL;
@@ -209,6 +216,8 @@ export const DecisionTableExpression: React.FunctionComponent<DecisionTableProps
         },
         {}
       );
+      tableRow.id = rule.id;
+      return tableRow;
     });
 
   const decisionName = useRef(name);
@@ -236,11 +245,16 @@ export const DecisionTableExpression: React.FunctionComponent<DecisionTableProps
       name: annotation.label as string,
       width: annotation.width,
     }));
-    const rules: DecisionTableRule[] = _.map(rows.current, (row: DataRecord) => ({
-      inputEntries: _.map(input, (inputClause) => row[inputClause.id] as string),
-      outputEntries: _.map(output, (outputClause) => row[outputClause.id] as string),
-      annotationEntries: _.map(annotations, (annotation) => row[annotation.id] as string),
-    }));
+    const rules: DecisionTableRule[] = _.map(
+      rows.current,
+      (row: DataRecord) =>
+        ({
+          id: row.id,
+          inputEntries: _.map(input, (inputClause) => row[inputClause.id] as string),
+          outputEntries: _.map(output, (outputClause) => row[outputClause.id] as string),
+          annotationEntries: _.map(annotations, (annotation) => row[annotation.id] as string),
+        } as DecisionTableRule)
+    );
 
     const expressionDefinition: DecisionTableProps = {
       uid,
@@ -309,8 +323,8 @@ export const DecisionTableExpression: React.FunctionComponent<DecisionTableProps
 
   const fillMissingCellValues = useCallback(
     (updatedRows: DataRecord[]) =>
-      _.map(updatedRows, (row) =>
-        _.reduce(
+      _.map(updatedRows, (row) => {
+        const updatedRow = _.reduce(
           getColumnsAtLastLevel(columns.current),
           (filledRow: DataRecord, column: ColumnInstance) => {
             if (_.isNil(row[column.accessor])) {
@@ -322,8 +336,10 @@ export const DecisionTableExpression: React.FunctionComponent<DecisionTableProps
             return filledRow;
           },
           {}
-        )
-      ),
+        );
+        updatedRow.id = row.id;
+        return updatedRow;
+      }),
     []
   );
 

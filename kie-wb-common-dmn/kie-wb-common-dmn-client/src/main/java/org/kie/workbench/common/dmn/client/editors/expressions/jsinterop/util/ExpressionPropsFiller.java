@@ -202,6 +202,7 @@ public class ExpressionPropsFiller {
                 .getRule()
                 .stream()
                 .map(rule -> new DecisionTableRule(
+                        rule.getId().getValue(),
                         rule.getInputEntry().stream().map(inputEntry -> inputEntry.getText().getValue()).toArray(String[]::new),
                         rule.getOutputEntry().stream().map(outputEntry -> outputEntry.getText().getValue()).toArray(String[]::new),
                         rule.getAnnotationEntry().stream().map(annotationClauseText -> annotationClauseText.getText().getValue()).toArray(String[]::new)))

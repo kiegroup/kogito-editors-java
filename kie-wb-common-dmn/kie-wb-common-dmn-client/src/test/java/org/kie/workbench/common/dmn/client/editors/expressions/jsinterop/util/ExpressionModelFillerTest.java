@@ -293,7 +293,7 @@ public class ExpressionModelFillerTest {
         final String inputValue = "input value";
         final String outputValue = "output value";
         final String annotationValue = "annotation value";
-        DecisionTableRule[] rules = new DecisionTableRule[]{new DecisionTableRule(new String[]{inputValue}, new String[]{outputValue}, new String[]{annotationValue})};
+        DecisionTableRule[] rules = new DecisionTableRule[]{new DecisionTableRule("rule-1", new String[]{inputValue}, new String[]{outputValue}, new String[]{annotationValue})};
         final DecisionTableProps decisionTableProps = new DecisionTableProps(EXPRESSION_NAME, DATA_TYPE, HitPolicy.COLLECT.value(), BuiltinAggregator.MAX.getCode(), annotations, input, output, rules);
 
         ExpressionModelFiller.fillDecisionTableExpression(decisionTableExpression, decisionTableProps);

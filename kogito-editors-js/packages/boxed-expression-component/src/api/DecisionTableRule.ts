@@ -37,6 +37,8 @@ export interface Annotation {
 }
 
 export interface DecisionTableRule {
+  /** Rule identifier */
+  id: string;
   /** Values for the input columns */
   inputEntries: string[];
   /** Values for the output columns */

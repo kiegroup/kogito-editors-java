@@ -103,7 +103,9 @@ describe("DecisionTableExpression tests", () => {
     const inputEntry = "input entry";
     const outputEntry = "output entry";
     const annotation = "annotation";
-    const rules = [{ inputEntries: [inputEntry], outputEntries: [outputEntry], annotationEntries: [annotation] }];
+    const rules = [
+      { id: "rule-1", inputEntries: [inputEntry], outputEntries: [outputEntry], annotationEntries: [annotation] },
+    ];
 
     const { container } = render(
       usingTestingBoxedExpressionI18nContext(
@@ -164,16 +166,16 @@ describe("DecisionTableExpression tests", () => {
     expect(mockedBroadcastDefinition).toHaveBeenLastCalledWith(
       expect.objectContaining({
         rules: [
-          {
+          expect.objectContaining({
             inputEntries: ["-"],
             outputEntries: [""],
             annotationEntries: [""],
-          },
-          {
+          }),
+          expect.objectContaining({
             inputEntries: ["-"],
             outputEntries: [""],
             annotationEntries: [""],
-          },
+          }),
         ],
       })
     );
