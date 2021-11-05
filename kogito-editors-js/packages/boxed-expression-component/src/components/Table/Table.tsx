@@ -29,7 +29,7 @@ import {
   useTable,
 } from "react-table";
 import { v4 as uuid } from "uuid";
-import { TableHeaderVisibility, TableOperation, TableProps } from "../../api";
+import { generateUuid, TableHeaderVisibility, TableOperation, TableProps } from "../../api";
 import { BoxedExpressionGlobalContext } from "../../context";
 import { PASTE_OPERATION, pasteOnTable } from "./common";
 import { EditableCell } from "./EditableCell";
@@ -131,8 +131,17 @@ export const Table: React.FunctionComponent<TableProps> = ({
     [generateNumberOfRowsSubColumnRecursively, headerLevels]
   );
 
+  const evaluateRows = useCallback((rows: DataRecord[]) => {
+    return _.map(rows, (row) => {
+      if (_.isEmpty(row.id)) {
+        row.id = generateUuid();
+      }
+      return row;
+    });
+  }, []);
+
   const tableColumns = useRef<Column[]>(generateNumberOfRowsColumn(currentControllerCell, columns));
-  const tableRows = useRef<DataRecord[]>(rows);
+  const tableRows = useRef<DataRecord[]>(evaluateRows(rows));
   const [showTableHandler, setShowTableHandler] = useState(false);
   const [tableHandlerTarget, setTableHandlerTarget] = useState(document.body);
   const [tableHandlerAllowedOperations, setTableHandlerAllowedOperations] = useState(

@@ -277,7 +277,7 @@ describe("Table tests", () => {
       // onblur is triggered by Monaco (mock), and the new value relies on Monaco implementation
 
       expect(mockedOnRowsUpdate).toHaveBeenCalled();
-      expect(mockedOnRowsUpdate).toHaveBeenCalledWith([newRow]);
+      expect(mockedOnRowsUpdate).toHaveBeenCalledWith([expect.objectContaining(newRow)]);
     });
   });
 
@@ -489,7 +489,10 @@ describe("Table tests", () => {
       await openContextMenu(container.querySelector(expressionCell(0, 1))!);
       await selectMenuEntryIfNotDisabled(baseElement, "Insert row above");
 
-      expect(mockedOnRowsUpdate).toHaveBeenCalledWith([{ width: DEFAULT_MIN_WIDTH }, row]);
+      expect(mockedOnRowsUpdate).toHaveBeenCalledWith([
+        expect.objectContaining({ width: DEFAULT_MIN_WIDTH }),
+        expect.objectContaining(row),
+      ]);
     });
 
     test("should trigger onRowsUpdate, when inserting a new row below", async () => {
@@ -519,7 +522,10 @@ describe("Table tests", () => {
       await openContextMenu(container.querySelector(expressionCell(0, 1))!);
       await selectMenuEntryIfNotDisabled(baseElement, "Insert row below");
 
-      expect(mockedOnRowsUpdate).toHaveBeenCalledWith([row, { width: DEFAULT_MIN_WIDTH }]);
+      expect(mockedOnRowsUpdate).toHaveBeenCalledWith([
+        expect.objectContaining(row),
+        expect.objectContaining({ width: DEFAULT_MIN_WIDTH }),
+      ]);
     });
 
     test("should trigger onRowsUpdate, when deleting a row", async () => {
