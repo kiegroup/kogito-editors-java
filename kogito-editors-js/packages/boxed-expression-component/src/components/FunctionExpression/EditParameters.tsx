@@ -46,7 +46,7 @@ export const EditParameters: React.FunctionComponent<EditParametersProps> = ({ p
 
   const onNameChange = useCallback(
     (index: number) => (event: ChangeEvent<HTMLInputElement>) => {
-      const parametersCopy = [...parameters].map(parameter => Object.assign({}, parameter));
+      const parametersCopy = [...parameters].map((parameter) => Object.assign({}, parameter));
       parametersCopy[index].name = event.target.value;
       setParameters([...parametersCopy]);
     },
@@ -55,7 +55,7 @@ export const EditParameters: React.FunctionComponent<EditParametersProps> = ({ p
 
   const onDataTypeChange = useCallback(
     (index: number) => (dataType: DataType) => {
-      const parametersCopy = [...parameters].map(parameter => Object.assign({}, parameter));
+      const parametersCopy = [...parameters].map((parameter) => Object.assign({}, parameter));
       parametersCopy[index].dataType = dataType;
       setParameters([...parametersCopy]);
     },
