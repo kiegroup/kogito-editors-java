@@ -194,7 +194,7 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (
   );
 
   const extendDefinitionBasedOnFunctionKind = useCallback(
-    (definition: Partial<FunctionProps>, functionKind?: FunctionKind) => {
+    (definition: Partial<FunctionProps>, updatedDefinition?: Partial<FunctionProps>, functionKind?: FunctionKind) => {
       const currentFunctionKind = functionKind ?? functionExpression.functionKind;
       switch (currentFunctionKind) {
         case FunctionKind.Java: {
@@ -210,12 +210,19 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (
           const documentValue =
             (_.nth(contextProps.contextEntries, 0)?.entryExpression as PMMLLiteralExpressionProps)?.selected || "";
           const modelValue = retrieveModelValue(documentValue, contextProps);
+          const modelHasChanged =
+            ((definition as PmmlFunctionProps)?.model ?? "") !==
+            ((updatedDefinition as PmmlFunctionProps)?.model ?? "");
           if (pmmlModel !== "") {
             const parametersFromPmmlProps = extractParametersFromPmmlProps;
-            if (!_.isEmpty(parametersFromPmmlProps) && parametersFromPmmlProps) {
+            if (
+              !_.isEmpty(parametersFromPmmlProps) &&
+              parametersFromPmmlProps &&
+              definition.formalParameters?.length === 0
+            ) {
               definition.formalParameters = parametersFromPmmlProps;
             }
-          } else {
+          } else if (modelHasChanged) {
             definition.formalParameters = [];
           }
           return _.extend(definition, { document: documentValue, model: modelValue });
@@ -241,10 +248,12 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (
           dataType: functionExpression.dataType ?? DataType.Undefined,
           functionKind: functionExpression.functionKind ?? FunctionKind.Feel,
           parametersWidth: functionExpression.parametersWidth ?? DEFAULT_ENTRY_EXPRESSION_MIN_WIDTH,
-          formalParameters: functionExpression.formalParameters ?? [],
+          formalParameters: functionExpression.formalParameters,
         } as Partial<FunctionProps>,
+        updatedFunctionExpression,
         updatedFunctionExpression?.functionKind
       );
+
       const updatedDefinition = {
         ...extendedDefinition,
         ...updatedFunctionExpression,
