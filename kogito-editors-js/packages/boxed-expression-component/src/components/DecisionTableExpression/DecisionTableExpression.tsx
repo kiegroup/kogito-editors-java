@@ -26,6 +26,7 @@ import {
   DecisionTableProps,
   DecisionTableRule,
   executeIfExpressionDefinitionChanged,
+  generateUuid,
   GroupOperations,
   HitPolicy,
   LogicType,
@@ -134,10 +135,10 @@ export const DecisionTableExpression: React.FunctionComponent<DecisionTableProps
   const evaluateColumns = () => {
     const inputColumns = _.map(
       input,
-      (inputClause) =>
+      (inputClause: Clause) =>
         ({
+          accessor: inputClause.id ?? generateUuid(),
           label: inputClause.name,
-          accessor: inputClause.name,
           dataType: inputClause.dataType,
           width: inputClause.width,
           groupType: DecisionTableColumnType.InputClause,
@@ -146,10 +147,10 @@ export const DecisionTableExpression: React.FunctionComponent<DecisionTableProps
     );
     const outputColumns = _.map(
       output,
-      (outputClause) =>
+      (outputClause: Clause) =>
         ({
+          accessor: outputClause.id ?? generateUuid(),
           label: outputClause.name,
-          accessor: outputClause.name,
           dataType: outputClause.dataType,
           width: outputClause.width,
           groupType: DecisionTableColumnType.OutputClause,
@@ -158,10 +159,10 @@ export const DecisionTableExpression: React.FunctionComponent<DecisionTableProps
     );
     const annotationColumns = _.map(
       annotations,
-      (annotation) =>
+      (annotation: Annotation) =>
         ({
+          accessor: annotation.id ?? generateUuid(),
           label: annotation.name,
-          accessor: annotation.name,
           width: annotation.width,
           inlineEditable: true,
           groupType: DecisionTableColumnType.Annotation,
@@ -171,15 +172,15 @@ export const DecisionTableExpression: React.FunctionComponent<DecisionTableProps
 
     const inputSection = {
       groupType: DecisionTableColumnType.InputClause,
-      label: "Input",
       accessor: "Input",
+      label: "Input",
       cssClasses: "decision-table--input",
       columns: inputColumns,
     };
     const outputSection = {
       groupType: DecisionTableColumnType.OutputClause,
+      accessor: uid,
       label: decisionName.current,
-      accessor: decisionName.current,
       dataType: decisionDataType.current,
       cssClasses: "decision-table--output",
       columns: outputColumns,
@@ -187,8 +188,8 @@ export const DecisionTableExpression: React.FunctionComponent<DecisionTableProps
     };
     const annotationSection = {
       groupType: DecisionTableColumnType.Annotation,
-      label: "Annotations",
       accessor: "Annotations",
+      label: "Annotations",
       cssClasses: "decision-table--annotation",
       columns: annotationColumns,
       inlineEditable: true,
@@ -219,23 +220,26 @@ export const DecisionTableExpression: React.FunctionComponent<DecisionTableProps
   const spreadDecisionTableExpressionDefinition = useCallback(() => {
     const groupedColumns = _.groupBy(getColumnsAtLastLevel(columns.current), (column) => column.groupType);
     const input: Clause[] = _.map(groupedColumns[DecisionTableColumnType.InputClause], (inputClause) => ({
-      name: inputClause.accessor,
+      id: inputClause.accessor,
+      name: inputClause.label as string,
       dataType: inputClause.dataType,
       width: inputClause.width,
     }));
     const output: Clause[] = _.map(groupedColumns[DecisionTableColumnType.OutputClause], (outputClause) => ({
-      name: outputClause.accessor,
+      id: outputClause.accessor,
+      name: outputClause.label as string,
       dataType: outputClause.dataType,
       width: outputClause.width,
     }));
     const annotations: Annotation[] = _.map(groupedColumns[DecisionTableColumnType.Annotation], (annotation) => ({
-      name: annotation.accessor,
+      id: annotation.accessor,
+      name: annotation.label as string,
       width: annotation.width,
     }));
     const rules: DecisionTableRule[] = _.map(rows.current, (row: DataRecord) => ({
-      inputEntries: _.map(input, (inputClause) => row[inputClause.name] as string),
-      outputEntries: _.map(output, (outputClause) => row[outputClause.name] as string),
-      annotationEntries: _.map(annotations, (annotation) => row[annotation.name] as string),
+      inputEntries: _.map(input, (inputClause) => row[inputClause.id] as string),
+      outputEntries: _.map(output, (outputClause) => row[outputClause.id] as string),
+      annotationEntries: _.map(annotations, (annotation) => row[annotation.id] as string),
     }));
 
     const expressionDefinition: DecisionTableProps = {

@@ -17,6 +17,8 @@
 import { DataType } from "./DataType";
 
 export interface Clause {
+  /** Clause identifier */
+  id: string;
   /** Clause name */
   name: string;
   /** Clause data type */
@@ -26,6 +28,8 @@ export interface Clause {
 }
 
 export interface Annotation {
+  /** Annotation identifier */
+  id: string;
   /** Annotation name */
   name: string;
   /** Annotation width */
