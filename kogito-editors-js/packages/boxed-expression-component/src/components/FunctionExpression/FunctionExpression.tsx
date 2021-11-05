@@ -407,16 +407,20 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (
           spreadFunctionExpressionDefinition({ expression: entries.entryExpression });
           break;
         case FunctionKind.Java:
-          spreadFunctionExpressionDefinition({
-            className: entries.entryExpression.contextEntries?.[0]?.entryExpression.content ?? "",
-            methodName: entries.entryExpression.contextEntries?.[1]?.entryExpression.content ?? "",
-          });
+          if (entries.entryExpression.contextEntries) {
+            spreadFunctionExpressionDefinition({
+              className: entries.entryExpression.contextEntries[0]?.entryExpression.content ?? "",
+              methodName: entries.entryExpression.contextEntries[1]?.entryExpression.content ?? "",
+            });
+          }
           break;
         case FunctionKind.Pmml:
-          spreadFunctionExpressionDefinition({
-            document: entries.entryExpression.contextEntries?.[0]?.entryExpression.selected ?? "",
-            model: entries.entryExpression.contextEntries?.[1]?.entryExpression.selected ?? "",
-          });
+          if (entries.entryExpression.contextEntries) {
+            spreadFunctionExpressionDefinition({
+              document: entries.entryExpression.contextEntries[0]?.entryExpression.selected ?? "",
+              model: entries.entryExpression.contextEntries[1]?.entryExpression.selected ?? "",
+            });
+          }
           break;
       }
     },

@@ -86,6 +86,37 @@ describe("Logic type selection", () => {
     expect(baseElement.querySelector(".logic-type-selector")).toBeTruthy();
     expect(baseElement.querySelector(".logic-type-selector")).toHaveClass("logic-type-selected");
   });
+
+  test("should reset the selection, when logic type is selected and clear button gets clicked", async () => {
+    const expression = { name: "Test", logicType: LogicType.LiteralExpression, dataType: DataType.Undefined };
+    const onLogicTypeResetting = jest.fn().mockImplementation(() => {
+      expression.logicType = LogicType.Undefined;
+    });
+
+    const logicTypeSelector = usingTestingBoxedExpressionI18nContext(
+      <LogicTypeSelector
+        selectedExpression={expression}
+        getPlacementRef={() => document.body as HTMLDivElement}
+        onLogicTypeResetting={onLogicTypeResetting}
+        onLogicTypeUpdating={_.identity}
+      />
+    ).wrapper;
+
+    const screen = render(logicTypeSelector);
+
+    await triggerContextMenu(screen.baseElement as HTMLElement, ".logic-type-selector");
+
+    act(() => {
+      const clearButtonElement = screen.baseElement.querySelector(".context-menu-container button")!;
+      const clearButton = clearButtonElement as HTMLButtonElement;
+      clearButton.click();
+    });
+
+    screen.rerender(logicTypeSelector);
+
+    expect(screen.baseElement.querySelector(".logic-type-selector")).toBeTruthy();
+    expect(screen.baseElement.querySelector(".logic-type-selector")).toHaveClass("logic-type-not-present");
+  });
 });
 
 const triggerContextMenu = async (container: HTMLElement, selector: string) => {

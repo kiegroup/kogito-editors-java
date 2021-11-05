@@ -28,25 +28,4 @@ describe("BoxedExpressionEditor tests", () => {
 
     expect(container).toMatchSnapshot();
   });
-
-  test("should reset the selection, when logic type is selected and clear button gets clicked", async () => {
-    const expression = {
-      name: "Test",
-      logicType: LogicType.LiteralExpression,
-      dataType: DataType.Undefined,
-    };
-
-    const { baseElement } = render(<BoxedExpressionEditor expressionDefinition={expression} />);
-
-    fireEvent.contextMenu(baseElement.querySelector(".logic-type-selector") as HTMLElement);
-
-    act(() => {
-      const clearButtonElement = baseElement.querySelector(".context-menu-container button")!;
-      const clearButton = clearButtonElement as HTMLButtonElement;
-      clearButton.click();
-    });
-
-    expect(baseElement.querySelector(".logic-type-selector")).toBeTruthy();
-    expect(baseElement.querySelector(".logic-type-selector")).toHaveClass("logic-type-not-present");
-  });
 });
