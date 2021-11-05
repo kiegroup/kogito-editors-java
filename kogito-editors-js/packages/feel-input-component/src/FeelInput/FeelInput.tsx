@@ -81,7 +81,11 @@ export const FeelInput: React.FunctionComponent<FeelInputProps> = ({
   useEffect(() => {
     if (enabled) {
       if (!isInitialized()) {
-        initializeEditor(value || "");
+        initializeEditor(value ?? "");
+      } else if (value) {
+        const editor = FeelEditorService.getStandaloneEditor();
+        editor?.setValue(value);
+        editor?.setPosition(calculatePosition(value));
       }
       return;
     }
