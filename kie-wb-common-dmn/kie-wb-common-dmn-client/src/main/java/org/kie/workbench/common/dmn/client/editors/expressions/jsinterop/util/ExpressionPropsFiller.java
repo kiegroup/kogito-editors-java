@@ -116,7 +116,7 @@ public class ExpressionPropsFiller {
                 .mapToObj(index -> {
                     final InformationItem informationItem = relationExpression.getColumn().get(index);
                     final Double columnWidth = relationExpression.getComponentWidths().get(index + 1);
-                    return new Column(informationItem.getName().getValue(), informationItem.getTypeRef().getLocalPart(), columnWidth);
+                    return new Column(informationItem.getId().getValue(), informationItem.getName().getValue(), informationItem.getTypeRef().getLocalPart(), columnWidth);
                 })
                 .toArray(Column[]::new);
     }

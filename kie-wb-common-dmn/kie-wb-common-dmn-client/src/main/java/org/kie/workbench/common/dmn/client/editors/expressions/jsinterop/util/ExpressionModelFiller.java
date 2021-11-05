@@ -44,6 +44,7 @@ import org.kie.workbench.common.dmn.api.definition.model.RuleAnnotationClause;
 import org.kie.workbench.common.dmn.api.definition.model.RuleAnnotationClauseText;
 import org.kie.workbench.common.dmn.api.definition.model.UnaryTests;
 import org.kie.workbench.common.dmn.api.editors.types.BuiltInTypeUtils;
+import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.api.property.dmn.QNameHolder;
 import org.kie.workbench.common.dmn.api.property.dmn.Text;
@@ -228,6 +229,7 @@ public class ExpressionModelFiller {
                 .stream(Optional.ofNullable(relationProps.columns).orElse(new Column[0]))
                 .map(column -> {
                     final InformationItem informationItem = new InformationItem();
+                    informationItem.setId(new Id(column.id));
                     informationItem.setName(new Name(column.name));
                     informationItem.setTypeRef(BuiltInTypeUtils
                                                        .findBuiltInTypeByName(column.dataType)

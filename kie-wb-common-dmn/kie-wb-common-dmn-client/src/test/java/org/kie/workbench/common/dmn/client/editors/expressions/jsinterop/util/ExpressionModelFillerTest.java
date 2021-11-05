@@ -131,9 +131,11 @@ public class ExpressionModelFillerTest {
     @Test
     public void testFillRelationExpression() {
         final Relation relationExpression = new Relation();
+        final String firstColumnId = "Column Id";
         final String firstColumnName = "Column Name";
         final String firstColumnDataType = BuiltInType.BOOLEAN.asQName().getLocalPart();
         final double firstColumnWidth = 200d;
+        final String secondColumnId = "Another Column Name";
         final String secondColumnName = "Another Column Name";
         final String secondColumnDataType = BuiltInType.DATE.asQName().getLocalPart();
         final double secondColumnWidth = 315d;
@@ -141,7 +143,7 @@ public class ExpressionModelFillerTest {
         final String secondCell = "second cell";
         final String thirdCell = "third cell";
         final String fourthCell = "fourth cell";
-        final Column[] columns = new Column[]{new Column(firstColumnName, firstColumnDataType, firstColumnWidth), new Column(secondColumnName, secondColumnDataType, secondColumnWidth)};
+        final Column[] columns = new Column[]{new Column(firstColumnId, firstColumnName, firstColumnDataType, firstColumnWidth), new Column(secondColumnId, secondColumnName, secondColumnDataType, secondColumnWidth)};
         final String[][] rows = new String[][]{new String[]{firstCell, secondCell}, new String[]{thirdCell, fourthCell}};
         final RelationProps relationProps = new RelationProps(EXPRESSION_NAME, DATA_TYPE, columns, rows);
 
