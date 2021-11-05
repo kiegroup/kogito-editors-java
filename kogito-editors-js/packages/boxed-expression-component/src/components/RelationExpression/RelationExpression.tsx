@@ -109,7 +109,6 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = (relat
         _.reduce(
           tableColumns.current,
           (tableRow: DataRecord, column, columnIndex) => {
-            tableRow.id = generateUuid();
             tableRow[column.id] = row[columnIndex] || "";
             return tableRow;
           },
