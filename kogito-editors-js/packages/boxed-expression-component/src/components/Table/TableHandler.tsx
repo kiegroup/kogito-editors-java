@@ -199,6 +199,14 @@ export const TableHandler: React.FunctionComponent<TableHandlerProps> = ({
     updateColumnsThenRows();
   };
 
+  const generateRow = useCallback(() => {
+    const row = onRowAdding();
+    if (_.isEmpty(row.id)) {
+      row.id = generateUuid();
+    }
+    return row;
+  }, [onRowAdding]);
+
   const handlingOperation = useCallback(
     (tableOperation: TableOperation) => {
       switch (tableOperation) {
@@ -212,10 +220,10 @@ export const TableHandler: React.FunctionComponent<TableHandlerProps> = ({
           updateTargetColumns(deleteAt);
           break;
         case TableOperation.RowInsertAbove:
-          onRowsUpdate(insertBefore(tableRows.current, selectedRowIndex, onRowAdding()));
+          onRowsUpdate(insertBefore(tableRows.current, selectedRowIndex, generateRow()));
           break;
         case TableOperation.RowInsertBelow:
-          onRowsUpdate(insertAfter(tableRows.current, selectedRowIndex, onRowAdding()));
+          onRowsUpdate(insertAfter(tableRows.current, selectedRowIndex, generateRow()));
           break;
         case TableOperation.RowDelete:
           onRowsUpdate(deleteAt(tableRows.current, selectedRowIndex));
@@ -232,7 +240,7 @@ export const TableHandler: React.FunctionComponent<TableHandlerProps> = ({
     [
       generateNextAvailableColumn,
       updateColumnsThenRows,
-      onRowAdding,
+      generateRow,
       onRowsUpdate,
       selectedRowIndex,
       setShowTableHandler,
