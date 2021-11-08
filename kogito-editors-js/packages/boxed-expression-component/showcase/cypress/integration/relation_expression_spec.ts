@@ -33,7 +33,7 @@ describe("Relation Expression Tests", () => {
 
     const relationColumns = new Array(50);
     for (let index = 0; index < 50; index++) {
-      relationColumns[index] = { name: `column-${index}`, dataType: "<Undefined>", width: 150 };
+      relationColumns[index] = { id: `column-${index}`, name: `column-${index}`, dataType: "<Undefined>", width: 150 };
     }
 
     const relationRows = new Array(50);
