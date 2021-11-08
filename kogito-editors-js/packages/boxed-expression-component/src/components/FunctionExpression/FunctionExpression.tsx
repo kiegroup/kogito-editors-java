@@ -73,7 +73,7 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [(functionExpression as JavaFunctionProps).methodName]
   );
-  const fellExpression = useMemo(
+  const feelExpression = useMemo(
     () => (functionExpression as FeelFunctionProps).expression,
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [(functionExpression as FeelFunctionProps).expression]
@@ -172,12 +172,12 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (
         case FunctionKind.Feel:
         default: {
           return {
-            entryExpression: fellExpression || { logicType: LogicType.LiteralExpression },
+            entryExpression: feelExpression || { logicType: LogicType.LiteralExpression },
           } as DataRecord;
         }
       }
     },
-    [extractContextEntriesFromJavaProps, extractContextEntriesFromPmmlProps, fellExpression]
+    [extractContextEntriesFromJavaProps, extractContextEntriesFromPmmlProps, feelExpression]
   );
 
   const retrieveModelValue = useCallback(
@@ -283,7 +283,7 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (
           functionExpression,
           updatedDefinition,
           () => {
-            setSupervisorHash(hashfy(rows(updatedFunctionExpression?.functionKind ?? functionExpression.functionKind)));
+            setSupervisorHash(hashfy(updatedDefinition));
             window.beeApi?.broadcastFunctionExpressionDefinition?.(updatedDefinition as FunctionProps);
           },
           [
@@ -301,7 +301,7 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (
         );
       }
     },
-    [extendDefinitionBasedOnFunctionKind, setSupervisorHash, functionExpression, rows]
+    [extendDefinitionBasedOnFunctionKind, setSupervisorHash, functionExpression]
   );
 
   const editParametersPopoverAppendTo = useCallback(() => {
@@ -436,22 +436,29 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (
     [spreadFunctionExpressionDefinition, functionExpression.functionKind]
   );
 
+  const tableRows = useMemo(() => [rows(functionExpression.functionKind)], [rows, functionExpression.functionKind]);
+
+  const controllerCell = useMemo(
+    () => (
+      <FunctionKindSelector
+        selectedFunctionKind={functionExpression.functionKind ?? FunctionKind.Feel}
+        onFunctionKindSelect={onFunctionKindSelect}
+      />
+    ),
+    [functionExpression.functionKind, onFunctionKindSelect]
+  );
+
   return (
     <div className={`function-expression ${functionExpression.uid}`}>
       <Table
         handlerConfiguration={handlerConfiguration}
         columns={columns}
         onColumnsUpdate={onColumnsUpdate}
-        rows={[rows(functionExpression.functionKind)]}
+        rows={tableRows}
         onRowsUpdate={onRowsUpdate}
         headerLevels={1}
         headerVisibility={getHeaderVisibility}
-        controllerCell={
-          <FunctionKindSelector
-            selectedFunctionKind={functionExpression.functionKind ?? FunctionKind.Feel}
-            onFunctionKindSelect={onFunctionKindSelect}
-          />
-        }
+        controllerCell={controllerCell}
         defaultCell={defaultCell}
         resetRowCustomFunction={resetRowCustomFunction}
       />

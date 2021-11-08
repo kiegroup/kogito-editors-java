@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { FeelInput } from "feel-input-component";
+import { FeelInput, FeelInputRef } from "feel-input-component";
 import * as Monaco from "monaco-editor";
 import "monaco-editor/dev/vs/editor/editor.main.css";
 import * as React from "react";
@@ -36,16 +36,6 @@ const MONACO_OPTIONS: Monaco.editor.IStandaloneEditorConstructionOptions = {
 export const READ_MODE = "editable-cell--read-mode";
 export const EDIT_MODE = "editable-cell--edit-mode";
 
-function usePrevious(value: any) {
-  const ref = useRef();
-
-  useEffect(() => {
-    ref.current = value;
-  }, [value]);
-
-  return ref.current;
-}
-
 export interface EditableCellProps extends CellProps {
   /** Cell's value */
   value: string;
@@ -61,6 +51,8 @@ export function EditableCell({ value, rowIndex, columnId, onCellUpdate, readOnly
   const [cellHeight, setCellHeight] = useState(CELL_LINE_HEIGHT * 3);
   const [preview, setPreview] = useState<string>("");
   const textarea = useRef<HTMLTextAreaElement>(null);
+  const [previousValue, setPreviousValue] = useState("");
+  const feelInputRef = useRef<FeelInputRef>(null)
 
   // Common Handlers =========================================================
 
@@ -86,9 +78,10 @@ export function EditableCell({ value, rowIndex, columnId, onCellUpdate, readOnly
   );
 
   const triggerEditMode = useCallback(() => {
+    setPreviousValue(value);
     blurActiveElement();
     setMode(EDIT_MODE);
-  }, []);
+  }, [value]);
 
   const cssClass = useCallback(() => {
     const selectedClass = isSelected ? "editable-cell--selected" : "";
@@ -134,14 +127,13 @@ export function EditableCell({ value, rowIndex, columnId, onCellUpdate, readOnly
   // Feel Handlers ===========================================================
 
   const onFeelBlur = useCallback(
-    (newValue: string) => {
-      triggerReadMode(newValue);
+    (valueOnBlur: string) => {
+      triggerReadMode(valueOnBlur);
       setMode(READ_MODE);
     },
     [triggerReadMode]
   );
 
-  const previousValue = usePrevious(value);
   const onFeelKeyDown = useCallback(
     (event: Monaco.IKeyboardEvent, newValue: string) => {
       const key = event?.code.toLowerCase() ?? "";
@@ -160,6 +152,7 @@ export function EditableCell({ value, rowIndex, columnId, onCellUpdate, readOnly
       }
 
       if (isEsc) {
+        feelInputRef.current?.setMonacoValue(previousValue);
         triggerReadMode(previousValue);
         setMode(READ_MODE);
       }
@@ -212,6 +205,7 @@ export function EditableCell({ value, rowIndex, columnId, onCellUpdate, readOnly
           readOnly={readOnly}
         />
         <FeelInput
+          ref={feelInputRef}
           enabled={mode === EDIT_MODE}
           value={textValue}
           onKeyDown={onFeelKeyDown}
