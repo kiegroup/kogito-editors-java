@@ -64,7 +64,9 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = (relat
       : relationProps.columns
   );
 
-  const tableRows = useRef<Row[]>(relationProps.rows === undefined ? [[""]] : relationProps.rows);
+  const tableRows = useRef<Row[]>(
+    relationProps.rows === undefined ? [{ id: generateUuid(), cells: [""] }] : relationProps.rows
+  );
 
   const spreadRelationExpressionDefinition = useCallback(() => {
     const expressionDefinition = {
@@ -105,31 +107,34 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = (relat
 
   const convertRowsForTheTable = useCallback(
     () =>
-      _.map(tableRows.current, (row) =>
-        _.reduce(
+      _.map(tableRows.current, (row) => {
+        const updatedRow = _.reduce(
           tableColumns.current,
           (tableRow: DataRecord, column, columnIndex) => {
-            tableRow[column.id] = row[columnIndex] || "";
+            tableRow[column.id] = row.cells[columnIndex] || "";
             return tableRow;
           },
           {}
-        )
-      ),
+        );
+        updatedRow.id = row.id;
+        return updatedRow;
+      }),
     []
   );
 
   const onSavingRows = useCallback(
     (rows: DataRecord[]) => {
-      tableRows.current = _.map(rows, (tableRow: DataRecord) =>
-        _.reduce(
+      tableRows.current = _.map(rows, (tableRow: DataRecord) => {
+        const cells = _.reduce(
           tableColumns.current,
           (row: string[], column: RelationColumn) => {
             row.push((tableRow[column.id]! as string) || "");
             return row;
           },
           []
-        )
-      );
+        );
+        return { id: tableRow.id as string, cells };
+      });
       spreadRelationExpressionDefinition();
     },
     [spreadRelationExpressionDefinition]

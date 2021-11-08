@@ -97,7 +97,12 @@ export type TableHandlerConfiguration = GroupOperations[] | GroupOperationsByCol
 
 export type AllowedOperations = TableOperation[];
 
-export type Row = string[];
+export type Row = {
+  /** Row identifier */
+  id: string;
+  /** Cells */
+  cells: string[];
+};
 
 export type Rows = Row[];
 

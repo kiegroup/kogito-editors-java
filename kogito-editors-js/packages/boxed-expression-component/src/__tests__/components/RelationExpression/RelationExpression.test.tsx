@@ -60,7 +60,7 @@ describe("RelationExpression tests", () => {
     const columnName = "a column";
     const column = { id: generateUuid(), name: columnName, dataType: DataType.Date };
     const rowValue = "value";
-    const row: Row = [rowValue];
+    const row: Row = { id: "row-id", cells: [rowValue] };
 
     const container = buildRelationComponent(column, row);
 
@@ -74,7 +74,7 @@ describe("RelationExpression tests", () => {
     const columnName = "a column";
     const column = { id: generateUuid(), name: columnName, dataType: DataType.Date };
     const rowValue = "value";
-    const row: Row = [rowValue, "another value", "and another one"];
+    const row: Row = { id: "row-id", cells: [rowValue, "another value", "and another one"] };
 
     const container = buildRelationComponent(column, row);
 
