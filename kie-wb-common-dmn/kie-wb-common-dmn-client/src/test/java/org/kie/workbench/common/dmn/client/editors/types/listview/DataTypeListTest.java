@@ -147,7 +147,8 @@ public class DataTypeListTest {
                                             dndDataTypesHandler,
                                             highlightHelper,
                                             commandManager,
-                                            sessionManager));
+                                            sessionManager,
+                                            null));
 
         when(sessionManager.getCurrentSession()).thenReturn(session);
         when(session.getCanvasHandler()).thenReturn(canvasHandler);
@@ -868,8 +869,8 @@ public class DataTypeListTest {
         doReturn(Optional.of(existingDataType)).when(dataTypeList).findDataTypeByName(importedPresentClass);
         doReturn(Optional.empty()).when(dataTypeList).findDataTypeByName(notPresentClass);
         doNothing().when(dataTypeList).replace(existingDataType, presentDataType);
-        doNothing().when(dataTypeList).insertProperties(present);
-        doNothing().when(dataTypeList).insertProperties(notPresent);
+        //doNothing().when(dataTypeList).insertProperties(present);
+        //doNothing().when(dataTypeList).insertProperties(notPresent);
         doNothing().when(dataTypeList).insert(notPresentDataType);
         //doNothing().when(dataTypeList).removeFullQualifiedNames(selectedDataObjects);
 
@@ -880,11 +881,11 @@ public class DataTypeListTest {
 
         verify(dataTypeList).findDataTypeByName(importedPresentClass);
         verify(dataTypeList).replace(existingDataType, presentDataType);
-        verify(dataTypeList).insertProperties(present);
+        //verify(dataTypeList).insertProperties(present);
         verify(dataTypeList, never()).insert(presentDataType);
 
         verify(dataTypeList).insert(notPresentDataType);
-        verify(dataTypeList).insertProperties(notPresent);
+        //verify(dataTypeList).insertProperties(notPresent);
 
         //verify(dataTypeList).removeFullQualifiedNames(selectedDataObjects);
     }
@@ -911,7 +912,7 @@ public class DataTypeListTest {
         doReturn(property1DataType).when(dataTypeList).createNewDataType(property1);
         doReturn(property2DataType).when(dataTypeList).createNewDataType(property2);
 
-        dataTypeList.insertProperties(dataObject);
+        //dataTypeList.insertProperties(dataObject);
 
         verify(dtListItem).insertNestedField(property1DataType);
         verify(dtListItem).insertNestedField(property2DataType);

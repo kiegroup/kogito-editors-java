@@ -151,6 +151,8 @@ public class DataTypeListView implements DataTypeList.View {
         setupListElement();
 
         setupAddButtonReadOnlyStatus();
+
+        ImportJavaClassesService.registerBroadcastForImportJavaClasses(this);
     }
 
     void setupAddButtonReadOnlyStatus() {

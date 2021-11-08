@@ -465,38 +465,7 @@ public class DataTypeList {
                 insertFields(newDataType, javaClass);
             }
         }
-    }
 
-    public void importDataObjects(final List<DataObject> selectedDataObjects) {
-
-        removeFullQualifiedNames(selectedDataObjects);
-        for (final DataObject dataObject : selectedDataObjects) {
-            final DataType newDataType = createNewDataType(dataObject);
-            final Optional<DataType> existing = findDataTypeByName(dataObject.getClassType());
-            if (existing.isPresent()) {
-                replace(existing.get(), newDataType);
-            } else {
-                insert(newDataType);
-            }
-            insertProperties(dataObject);
-        }
-    }
-
-    void removeFullQualifiedNames(final List<DataObject> imported) {
-
-        final Map<String, Integer> namesCount = getImportedNamesOccurrencesCount();
-        final Map<String, String> renamed = getRenamedImportedDataTypes();
-        namesCount.clear();
-        renamed.clear();
-
-        for (final DataObject dataObject : imported) {
-            final String nameCandidate = dataObject.getClassNameWithoutPackage();
-            final String newName = buildName(nameCandidate, namesCount);
-            renamed.put(dataObject.getClassType(), newName);
-            dataObject.setClassType(newName);
-        }
-
-        updatePropertiesReferences(imported, renamed);
     }
 
     Map<String, Integer> getImportedNamesOccurrencesCount() {
