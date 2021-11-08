@@ -192,8 +192,6 @@ public abstract class BaseCardComponent<R extends BaseIncludedModelActiveRecord,
     public interface ContentView extends UberElemental<BaseCardComponent>,
                                          IsElement {
 
-        void onRemoveButtonClick(final ClickEvent e);
-
         void setPath(final String path);
 
         void setPathLink(final String path);
