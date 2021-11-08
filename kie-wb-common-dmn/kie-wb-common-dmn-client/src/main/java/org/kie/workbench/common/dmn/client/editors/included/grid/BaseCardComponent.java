@@ -23,7 +23,6 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
 
 import com.google.gwt.dom.client.Style.HasCssName;
-import com.google.gwt.event.dom.client.ClickEvent;
 import elemental2.dom.HTMLElement;
 import org.appformer.kogito.bridge.client.workspace.WorkspaceService;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
