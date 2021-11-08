@@ -131,9 +131,9 @@ public class ExpressionPropsFillerTest {
         assertThat(((RelationProps) expressionProps).rows)
                 .isNotNull()
                 .hasSize(1);
-        assertThat(((RelationProps) expressionProps).rows[0]).hasSize(2);
-        assertThat(((RelationProps) expressionProps).rows[0][0]).isEqualTo(firstCellValue);
-        assertThat(((RelationProps) expressionProps).rows[0][1]).isEqualTo(secondCellValue);
+        assertThat(((RelationProps) expressionProps).rows[0].cells).hasSize(2);
+        assertThat(((RelationProps) expressionProps).rows[0].cells[0]).isEqualTo(firstCellValue);
+        assertThat(((RelationProps) expressionProps).rows[0].cells[1]).isEqualTo(secondCellValue);
     }
 
     @Test

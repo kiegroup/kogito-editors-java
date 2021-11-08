@@ -66,6 +66,7 @@ import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.L
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.LiteralProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.PmmlFunctionProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.RelationProps;
+import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.Row;
 import org.kie.workbench.common.stunner.core.util.StringUtils;
 
 import static org.kie.workbench.common.dmn.api.definition.model.LiteralExpressionPMMLDocument.VARIABLE_DOCUMENT;
@@ -208,12 +209,13 @@ public class ExpressionModelFiller {
 
     private static Collection<List> rowsConvertForRelationExpression(final RelationProps relationProps, final Relation relationExpression) {
         return Arrays
-                .stream(Optional.ofNullable(relationProps.rows).orElse(new String[0][]))
+                .stream(Optional.ofNullable(relationProps.rows).orElse(new Row[0]))
                 .map(row -> {
                     final List list = new List();
+                    list.setId(new Id(row.id));
                     list.getExpression().addAll(
                             IntStream.range(0, Optional.ofNullable(relationProps.columns).orElse(new Column[0]).length).mapToObj(columnIndex -> {
-                                final String cell = row.length <= columnIndex ? "" : row[columnIndex];
+                                final String cell = row.cells.length <= columnIndex ? "" : row.cells[columnIndex];
                                 final LiteralExpression wrappedExpression = new LiteralExpression();
                                 wrappedExpression.setText(new Text(cell));
                                 return HasExpression.wrap(relationExpression, wrappedExpression);

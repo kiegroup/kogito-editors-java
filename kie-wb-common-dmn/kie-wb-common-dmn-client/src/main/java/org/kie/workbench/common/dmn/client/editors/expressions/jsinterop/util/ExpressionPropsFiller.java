@@ -51,6 +51,7 @@ import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.L
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.LiteralProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.PmmlFunctionProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.RelationProps;
+import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.Row;
 
 import static org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionType.UNDEFINED;
 
@@ -122,17 +123,19 @@ public class ExpressionPropsFiller {
                 .toArray(Column[]::new);
     }
 
-    private static String[][] rowsConvertForRelationProps(final Relation relationExpression) {
+    private static Row[] rowsConvertForRelationProps(final Relation relationExpression) {
         return relationExpression
                 .getRow()
                 .stream()
-                .map(list -> list
-                        .getExpression()
-                        .stream()
-                        .map(wrappedLiteralExpression -> ((LiteralExpression) wrappedLiteralExpression.getExpression()).getText().getValue())
-                        .toArray(String[]::new)
+                .map(list -> {
+                         final String[] cells = list
+                                 .getExpression()
+                                 .stream()
+                                 .map(wrappedLiteralExpression -> ((LiteralExpression) wrappedLiteralExpression.getExpression()).getText().getValue()).toArray(String[]::new);
+                         return new Row(list.getId().getValue(), cells);
+                     }
                 )
-                .toArray(String[][]::new);
+                .toArray(Row[]::new);
     }
 
     private static ExpressionProps[] itemsConvertForListProps(final List listExpression) {

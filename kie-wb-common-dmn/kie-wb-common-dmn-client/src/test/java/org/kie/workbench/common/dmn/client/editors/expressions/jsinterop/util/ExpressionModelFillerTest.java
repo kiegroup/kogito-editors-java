@@ -54,6 +54,7 @@ import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.L
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.LiteralProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.PmmlFunctionProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.RelationProps;
+import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.Row;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -144,7 +145,7 @@ public class ExpressionModelFillerTest {
         final String thirdCell = "third cell";
         final String fourthCell = "fourth cell";
         final Column[] columns = new Column[]{new Column(firstColumnId, firstColumnName, firstColumnDataType, firstColumnWidth), new Column(secondColumnId, secondColumnName, secondColumnDataType, secondColumnWidth)};
-        final String[][] rows = new String[][]{new String[]{firstCell, secondCell}, new String[]{thirdCell, fourthCell}};
+        final Row[] rows = new Row[]{new Row("first-row", new String[]{firstCell, secondCell}), new Row("second-id", new String[]{thirdCell, fourthCell})};
         final RelationProps relationProps = new RelationProps(EXPRESSION_NAME, DATA_TYPE, columns, rows);
 
         ExpressionModelFiller.fillRelationExpression(relationExpression, relationProps);
