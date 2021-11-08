@@ -25,8 +25,10 @@ import javax.enterprise.event.Event;
 import com.google.gwt.dom.client.Style.HasCssName;
 import com.google.gwt.event.dom.client.ClickEvent;
 import elemental2.dom.HTMLElement;
+import org.appformer.kogito.bridge.client.workspace.WorkspaceService;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.kie.workbench.common.dmn.client.api.included.legacy.DMNIncludeModelsClient;
+import org.kie.workbench.common.dmn.client.common.KogitoChannelHelper;
 import org.kie.workbench.common.dmn.client.docks.navigator.events.RefreshDecisionComponents;
 import org.kie.workbench.common.dmn.client.editors.included.BaseIncludedModelActiveRecord;
 import org.kie.workbench.common.dmn.client.editors.included.commands.RemoveIncludedModelCommand;
@@ -54,18 +56,22 @@ public abstract class BaseCardComponent<R extends BaseIncludedModelActiveRecord,
     protected final SessionManager sessionManager;
     protected final ImportRecordEngine recordEngine;
     protected final DMNIncludeModelsClient client;
+    protected final KogitoChannelHelper kogitoChannelHelper;
+    protected final WorkspaceService workspaceService;
 
     protected R includedModel;
 
     protected DMNCardsGridComponent grid;
 
-    public BaseCardComponent(final V contentView,
-                             final Event<RefreshDecisionComponents> refreshDecisionComponentsEvent,
-                             final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
-                             final SessionManager sessionManager,
-                             final ImportRecordEngine recordEngine,
-                             final DMNIncludeModelsClient client,
-                             final Event<RefreshDataTypesListEvent> refreshDataTypesListEvent) {
+    protected BaseCardComponent(final V contentView,
+                                final Event<RefreshDecisionComponents> refreshDecisionComponentsEvent,
+                                final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
+                                final SessionManager sessionManager,
+                                final ImportRecordEngine recordEngine,
+                                final DMNIncludeModelsClient client,
+                                final Event<RefreshDataTypesListEvent> refreshDataTypesListEvent,
+                                final KogitoChannelHelper kogitoChannelHelper,
+                                final WorkspaceService workspaceService) {
         this.contentView = contentView;
         this.refreshDecisionComponentsEvent = refreshDecisionComponentsEvent;
         this.sessionCommandManager = sessionCommandManager;
@@ -73,6 +79,8 @@ public abstract class BaseCardComponent<R extends BaseIncludedModelActiveRecord,
         this.recordEngine = recordEngine;
         this.client = client;
         this.refreshDataTypesListEvent = refreshDataTypesListEvent;
+        this.kogitoChannelHelper = kogitoChannelHelper;
+        this.workspaceService = workspaceService;
     }
 
     @PostConstruct
@@ -88,7 +96,11 @@ public abstract class BaseCardComponent<R extends BaseIncludedModelActiveRecord,
     }
 
     protected void refreshView() {
-        contentView.setPath(getTruncatedSubTitle());
+        if (kogitoChannelHelper.isIncludedModelLinkEnabled()) {
+            contentView.setPathLink(getTruncatedSubTitle());
+        } else {
+            contentView.setPath(getTruncatedSubTitle());
+        }
     }
 
     @Override
@@ -166,11 +178,17 @@ public abstract class BaseCardComponent<R extends BaseIncludedModelActiveRecord,
         return grid;
     }
 
+    public void openPathLink() {
+        workspaceService.openFile("./" + getIncludedModel().getPath());
+    }
+
     public interface ContentView extends UberElemental<BaseCardComponent>,
                                          IsElement {
 
         void onRemoveButtonClick(final ClickEvent e);
 
         void setPath(final String path);
+
+        void setPathLink(String path);
     }
 }

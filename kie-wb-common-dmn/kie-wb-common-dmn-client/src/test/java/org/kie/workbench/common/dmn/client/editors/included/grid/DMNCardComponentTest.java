@@ -44,7 +44,9 @@ public class DMNCardComponentTest extends BaseCardComponentTest<DMNCardComponent
                                     sessionManager,
                                     recordEngine,
                                     client,
-                                    refreshDataTypesListEvent);
+                                    refreshDataTypesListEvent,
+                                    null,
+                                    null);
     }
 
     @Override

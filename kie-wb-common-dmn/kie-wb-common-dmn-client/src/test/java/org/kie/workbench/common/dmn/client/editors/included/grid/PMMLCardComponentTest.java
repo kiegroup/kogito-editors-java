@@ -41,7 +41,9 @@ public class PMMLCardComponentTest extends BaseCardComponentTest<PMMLCardCompone
                                      sessionManager,
                                      recordEngine,
                                      client,
-                                     refreshDataTypesListEvent);
+                                     refreshDataTypesListEvent,
+                                     null,
+                                     null);
     }
 
     @Override

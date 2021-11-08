@@ -41,7 +41,7 @@ public class DefaultCardComponentTest extends BaseCardComponentTest<DefaultCardC
                                         sessionManager,
                                         recordEngine,
                                         client,
-                                        refreshDataTypesListEvent);
+                                        refreshDataTypesListEvent, null, null);
     }
 
     @Override
