@@ -201,8 +201,12 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = (context
 
   const onUpdatingRecursiveExpression = useCallback(
     (expression: any) => {
-      const filteredExpression = _.omit(expression, "onUpdatingRecursiveExpression");
-      spreadContextExpressionDefinition({ result: { ...filteredExpression } });
+      if (expression.logicType === LogicType.Undefined) {
+        spreadContextExpressionDefinition({ result: { logicType: LogicType.Undefined } });
+      } else {
+        const filteredExpression = _.omit(expression, "onUpdatingRecursiveExpression");
+        spreadContextExpressionDefinition({ result: { ...filteredExpression } });
+      }
     },
     [spreadContextExpressionDefinition]
   );
