@@ -38,9 +38,9 @@ describe("Relation Expression Tests", () => {
 
     const relationRows = new Array(50);
     for (let rowIndex = 0; rowIndex < 50; rowIndex++) {
-      const row = new Array(50);
+      const row = { id: `row-${rowIndex}`, cells: new Array(50) };
       for (let columnIndex = 0; columnIndex < 50; columnIndex++) {
-        row[columnIndex] = `row ${rowIndex} column ${columnIndex}`;
+        row.cells[columnIndex] = `row ${rowIndex} column ${columnIndex}`;
       }
       relationRows[rowIndex] = row;
     }
