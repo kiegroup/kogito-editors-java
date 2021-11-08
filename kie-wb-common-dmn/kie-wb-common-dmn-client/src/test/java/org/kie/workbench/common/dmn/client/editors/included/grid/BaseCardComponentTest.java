@@ -317,7 +317,7 @@ public abstract class BaseCardComponentTest<C extends BaseCardComponent<R, V>, V
     }
 
     @Test
-    public void testOpenLinkFullPathUnix() {
+    public void testOpenLinkFullPath() {
         final BaseIncludedModelActiveRecord includedModel = prepareIncludedModelMock();
         final String expected = "/src/path/kie/dmn";
 
@@ -329,29 +329,4 @@ public abstract class BaseCardComponentTest<C extends BaseCardComponent<R, V>, V
         verify(workspaceServiceMock, times(1)).openFile(expected);
     }
 
-    @Test
-    public void testOpenLinkFullPathWin() {
-        final BaseIncludedModelActiveRecord includedModel = prepareIncludedModelMock();
-        final String expected = "C:\\src\\path\\kie\\dmn";
-
-        doReturn(includedModel).when(card).getIncludedModel();
-        when(includedModel.getPath()).thenReturn(expected);
-
-        card.openPathLink();
-
-        verify(workspaceServiceMock, times(1)).openFile(expected);
-    }
-
-    @Test
-    public void testOpenLinkSimpleFile() {
-        final BaseIncludedModelActiveRecord includedModel = prepareIncludedModelMock();
-        final String expected = "test.dmn";
-
-        doReturn(includedModel).when(card).getIncludedModel();
-        when(includedModel.getPath()).thenReturn(expected);
-
-        card.openPathLink();
-
-        verify(workspaceServiceMock, times(1)).openFile("./" + expected);
-    }
 }
