@@ -20,10 +20,12 @@ import javax.enterprise.event.Event;
 
 import com.google.gwt.dom.client.Style.HasCssName;
 import elemental2.dom.HTMLElement;
+import org.appformer.kogito.bridge.client.workspace.WorkspaceService;
 import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.junit.Before;
 import org.junit.Test;
 import org.kie.workbench.common.dmn.client.api.included.legacy.DMNIncludeModelsClient;
+import org.kie.workbench.common.dmn.client.common.KogitoChannelHelper;
 import org.kie.workbench.common.dmn.client.docks.navigator.events.RefreshDecisionComponents;
 import org.kie.workbench.common.dmn.client.editors.included.BaseIncludedModelActiveRecord;
 import org.kie.workbench.common.dmn.client.editors.included.commands.RemoveIncludedModelCommand;
@@ -49,6 +51,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -74,6 +77,12 @@ public abstract class BaseCardComponentTest<C extends BaseCardComponent<R, V>, V
 
     @Mock
     private AbstractCanvasHandler canvasHandler;
+
+    @Mock
+    protected KogitoChannelHelper kogitoChannelHelperMock;
+
+    @Mock
+    protected WorkspaceService workspaceServiceMock;
 
     protected C card;
 
@@ -128,10 +137,17 @@ public abstract class BaseCardComponentTest<C extends BaseCardComponent<R, V>, V
 
         when(includedModel.getNamespace()).thenReturn(path);
         doReturn(includedModel).when(card).getIncludedModel();
+        when(kogitoChannelHelperMock.isIncludedModelLinkEnabled()).thenReturn(false);
 
         card.refreshView();
 
         verify(cardView).setPath("...111111222222222222222333333333333333444444444444444/file.dmn");
+
+        when(kogitoChannelHelperMock.isIncludedModelLinkEnabled()).thenReturn(true);
+
+        card.refreshView();
+
+        verify(cardView).setPathLink("...111111222222222222222333333333333333444444444444444/file.dmn");
     }
 
     @Test
@@ -298,5 +314,44 @@ public abstract class BaseCardComponentTest<C extends BaseCardComponent<R, V>, V
         assertEquals(recordEngine, command.getRecordEngine());
         assertEquals(refreshDataTypesListEvent, command.getRefreshDataTypesListEvent());
         assertEquals(expectedIncludedModel, command.getIncludedModel());
+    }
+
+    @Test
+    public void testOpenLinkFullPathUnix() {
+        final BaseIncludedModelActiveRecord includedModel = prepareIncludedModelMock();
+        final String expected = "/src/path/kie/dmn";
+
+        doReturn(includedModel).when(card).getIncludedModel();
+        when(includedModel.getPath()).thenReturn(expected);
+
+        card.openPathLink();
+
+        verify(workspaceServiceMock, times(1)).openFile(expected);
+    }
+
+    @Test
+    public void testOpenLinkFullPathWin() {
+        final BaseIncludedModelActiveRecord includedModel = prepareIncludedModelMock();
+        final String expected = "C:\\src\\path\\kie\\dmn";
+
+        doReturn(includedModel).when(card).getIncludedModel();
+        when(includedModel.getPath()).thenReturn(expected);
+
+        card.openPathLink();
+
+        verify(workspaceServiceMock, times(1)).openFile(expected);
+    }
+
+    @Test
+    public void testOpenLinkSimpleFile() {
+        final BaseIncludedModelActiveRecord includedModel = prepareIncludedModelMock();
+        final String expected = "test.dmn";
+
+        doReturn(includedModel).when(card).getIncludedModel();
+        when(includedModel.getPath()).thenReturn(expected);
+
+        card.openPathLink();
+
+        verify(workspaceServiceMock, times(1)).openFile("./" + expected);
     }
 }

@@ -45,8 +45,8 @@ public class DMNCardComponentTest extends BaseCardComponentTest<DMNCardComponent
                                     recordEngine,
                                     client,
                                     refreshDataTypesListEvent,
-                                    null,
-                                    null);
+                                    kogitoChannelHelperMock,
+                                    workspaceServiceMock);
     }
 
     @Override

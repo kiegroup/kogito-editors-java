@@ -41,7 +41,9 @@ public class DefaultCardComponentTest extends BaseCardComponentTest<DefaultCardC
                                         sessionManager,
                                         recordEngine,
                                         client,
-                                        refreshDataTypesListEvent, null, null);
+                                        refreshDataTypesListEvent,
+                                        kogitoChannelHelperMock,
+                                        workspaceServiceMock);
     }
 
     @Override

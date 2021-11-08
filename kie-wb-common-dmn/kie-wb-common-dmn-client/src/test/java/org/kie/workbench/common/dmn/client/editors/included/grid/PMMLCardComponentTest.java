@@ -42,8 +42,8 @@ public class PMMLCardComponentTest extends BaseCardComponentTest<PMMLCardCompone
                                      recordEngine,
                                      client,
                                      refreshDataTypesListEvent,
-                                     null,
-                                     null);
+                                     kogitoChannelHelperMock,
+                                     workspaceServiceMock);
     }
 
     @Override

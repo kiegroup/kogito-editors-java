@@ -179,7 +179,14 @@ public abstract class BaseCardComponent<R extends BaseIncludedModelActiveRecord,
     }
 
     public void openPathLink() {
-        workspaceService.openFile("./" + getIncludedModel().getPath());
+        String path = getIncludedModel().getPath();
+        /* Note: currently Included DMN Files ALWAYS live inside the same folder of the current opened file.
+         * Therfore, this `if` should ALWAYS evaluate as true. */
+        if (!path.contains("/") && !path.contains("\\")) {
+            path = "./" + path;
+        }
+
+        workspaceService.openFile(path);
     }
 
     public interface ContentView extends UberElemental<BaseCardComponent>,
@@ -189,6 +196,6 @@ public abstract class BaseCardComponent<R extends BaseIncludedModelActiveRecord,
 
         void setPath(final String path);
 
-        void setPathLink(String path);
+        void setPathLink(final String path);
     }
 }
