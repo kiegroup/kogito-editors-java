@@ -135,6 +135,12 @@ public class DataTypeList {
         dndListComponent.setOnDropItem(getOnDropDataType());
     }
 
+    public void activate() {
+        if (kogitoChannelHelper.isCurrentChannelEnabled(Arrays.asList(Channel.VSCODE, Channel.DEFAULT))) {
+            view.renderImportJavaClasses();
+        }
+    }
+
     BiConsumer<Element, Element> getOnDropDataType() {
         return dndDataTypesHandler::onDropDataType;
     }
@@ -303,9 +309,6 @@ public class DataTypeList {
                 listItem.enableEditMode();
             }
             refreshItemsCSSAndHTMLPosition();
-            if (kogitoChannelHelper.isCurrentChannelEnabled(Arrays.asList(Channel.VSCODE, Channel.DEFAULT))) {
-                view.renderImportJavaClasses();
-            }
 
             return CanvasCommandResultBuilder.SUCCESS;
         });
@@ -611,6 +614,7 @@ public class DataTypeList {
     public void cleanHighlightClass() {
         highlightHelper.cleanHighlightClass();
     }
+
 
     public interface View extends UberElemental<DataTypeList>,
                                   IsElement {

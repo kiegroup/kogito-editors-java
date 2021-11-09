@@ -403,8 +403,10 @@ public class DataTypeListView implements DataTypeList.View {
 
     @Override
     public void renderImportJavaClasses() {
-        DMNLoader.renderImportJavaClasses(".kie-import-java-classes",
-                                          false,
-                                          null);
+        if (!importJavaClassesContainer.hasChildNodes()) {
+            DMNLoader.renderImportJavaClasses(".kie-import-java-classes",
+                                              false,
+                                              null);
+        }
     }
 }
