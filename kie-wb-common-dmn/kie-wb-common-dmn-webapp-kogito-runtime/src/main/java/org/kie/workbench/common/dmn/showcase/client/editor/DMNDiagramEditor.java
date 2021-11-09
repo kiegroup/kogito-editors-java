@@ -55,6 +55,8 @@ import org.kie.workbench.common.stunner.core.client.command.SessionCommandManage
 import org.kie.workbench.common.stunner.core.client.components.layout.LayoutHelper;
 import org.kie.workbench.common.stunner.core.client.components.layout.OpenDiagramLayoutExecutor;
 import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
+import org.kie.workbench.common.stunner.core.client.shape.Shape;
+import org.kie.workbench.common.stunner.core.client.shape.ShapeState;
 import org.kie.workbench.common.stunner.core.client.util.WindowJSType;
 import org.kie.workbench.common.stunner.core.documentation.DocumentationView;
 import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
@@ -155,7 +157,30 @@ public class DMNDiagramEditor extends AbstractDMNDiagramEditor {
         if (canvas != null) {
             LienzoPanel panel = (LienzoPanel) canvas.getView().getPanel();
             LienzoBoundsPanel lienzoPanel = panel.getView();
-            JsCanvas jsCanvas = new JsCanvas(lienzoPanel, lienzoPanel.getLayer());
+            JsCanvas jsCanvas = new JsCanvas(lienzoPanel, lienzoPanel.getLayer(), (UUID, state) -> {
+                Shape shape = stunnerEditor.getCanvasHandler().getCanvas().getShape(UUID);
+                if (shape != null) {
+                    ShapeState shapeState = null;
+                    switch (state) {
+                        case "None":
+                            shapeState = ShapeState.NONE;
+                            break;
+                        case "Selected":
+                            shapeState = ShapeState.SELECTED;
+                            break;
+                        case "Highlight":
+                            shapeState = ShapeState.HIGHLIGHT;
+                            break;
+                        case "Invalid":
+                            shapeState = ShapeState.INVALID;
+                            break;
+                    }
+
+                    if (shapeState != null) {
+                        shape.applyState(shapeState);
+                    }
+                }
+            });
             setupJsCanvasTypeNative(jsCanvas);
         }
     }
