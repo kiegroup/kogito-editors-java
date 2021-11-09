@@ -17,8 +17,6 @@
 import * as React from "react";
 import { useCallback, useState } from "react";
 import * as ReactDOM from "react-dom";
-import "@patternfly/react-core/dist/styles/base-no-reset.css";
-import "@patternfly/react-styles/css/components/Drawer/drawer.css";
 import "./index.css";
 // noinspection ES6PreferShortImport
 import {
