@@ -42,7 +42,12 @@ export interface TableProps {
   /** Function to be executed when columns are modified */
   onColumnsUpdate?: (columns: ReactTableColumn[], operation?: TableOperation, columnIndex?: number) => void;
   /** Function to be executed when one or more rows are modified */
-  onRowsUpdate?: (rows: DataRecord[], operation?: TableOperation, rowIndex?: number) => void;
+  onRowsUpdate?: (
+    rows: DataRecord[],
+    operation?: TableOperation,
+    rowIndex?: number,
+    columns?: ReactTableColumn[]
+  ) => void;
   /** Function to be executed when adding a new row to the table */
   onRowAdding?: () => DataRecord;
   /** Custom configuration for the table handler */

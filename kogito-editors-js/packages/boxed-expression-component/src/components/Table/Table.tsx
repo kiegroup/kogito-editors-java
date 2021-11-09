@@ -192,9 +192,9 @@ export const Table: React.FunctionComponent<TableProps> = ({
   const onRowsUpdateCallback = useCallback(
     (rows: DataRecord[], operation?: TableOperation, rowIndex?: number) => {
       tableRows.current = rows;
-      onRowsUpdate?.([...rows], operation, rowIndex);
+      onRowsUpdate?.([...rows], operation, rowIndex, columns);
     },
-    [onRowsUpdate]
+    [onRowsUpdate, columns]
   );
 
   const onCellUpdate = useCallback(

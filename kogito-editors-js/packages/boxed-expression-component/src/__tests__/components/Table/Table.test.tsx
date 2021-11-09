@@ -18,7 +18,7 @@ import { fireEvent, render } from "@testing-library/react";
 import * as _ from "lodash";
 import * as React from "react";
 import { act } from "react-dom/test-utils";
-import { Column, ColumnInstance, DataRecord } from "react-table";
+import { Column as ReactTableColumn, Column, ColumnInstance, DataRecord } from "react-table";
 import { PASTE_OPERATION } from "../../../../showcase/src/lib/components/Table/common/CopyAndPasteUtils";
 import { DataType, TableHandlerConfiguration, TableOperation } from "../../../api";
 import { Table } from "../../../components/Table";
@@ -254,12 +254,13 @@ describe("Table tests", () => {
       const orRowsUpdate = (rows: DataRecord[]) => {
         _.identity(rows);
       };
+      const columns = [{ label: columnName, accessor: columnName, dataType: DataType.Boolean } as ColumnInstance];
       const mockedOnRowsUpdate = jest.fn(orRowsUpdate);
 
       const { container, baseElement } = render(
         usingTestingBoxedExpressionI18nContext(
           <Table
-            columns={[{ label: columnName, accessor: columnName, dataType: DataType.Boolean } as ColumnInstance]}
+            columns={columns}
             rows={[row]}
             onColumnsUpdate={_.identity}
             onRowsUpdate={mockedOnRowsUpdate}
@@ -275,7 +276,7 @@ describe("Table tests", () => {
       );
 
       expect(mockedOnRowsUpdate).toHaveBeenCalled();
-      expect(mockedOnRowsUpdate).toHaveBeenCalledWith([newRow], undefined, undefined);
+      expect(mockedOnRowsUpdate).toHaveBeenCalledWith([newRow], undefined, undefined, columns);
     });
   });
 
@@ -287,6 +288,7 @@ describe("Table tests", () => {
       const newRowValue = "new value";
       row[columnName] = rowValue;
       newRow[columnName] = newRowValue;
+      const columns = [{ label: columnName, accessor: columnName, dataType: DataType.Boolean } as ColumnInstance];
 
       row[columnName] = "value";
       const orRowsUpdate = (rows: DataRecord[]) => {
@@ -297,7 +299,7 @@ describe("Table tests", () => {
       const { container } = render(
         usingTestingBoxedExpressionI18nContext(
           <Table
-            columns={[{ label: columnName, accessor: columnName, dataType: DataType.Boolean } as ColumnInstance]}
+            columns={columns}
             rows={[row]}
             onColumnsUpdate={_.identity}
             onRowsUpdate={mockedOnRowsUpdate}
@@ -312,7 +314,7 @@ describe("Table tests", () => {
       // onblur is triggered by Monaco (mock), and the new value relies on Monaco implementation
 
       expect(mockedOnRowsUpdate).toHaveBeenCalled();
-      expect(mockedOnRowsUpdate).toHaveBeenCalledWith([newRow], undefined, undefined);
+      expect(mockedOnRowsUpdate).toHaveBeenCalledWith([newRow], undefined, undefined, columns);
     });
   });
 
@@ -511,7 +513,13 @@ describe("Table tests", () => {
     test("should trigger onRowsUpdate, when inserting a new row above", async () => {
       const row: DataRecord = {};
       row[columnName] = "value";
-      const onRowsUpdate = (rows: DataRecord[], operation?: TableOperation, rowIndex?: number) => {
+      const columns = [{ label: columnName, accessor: columnName, dataType: DataType.Undefined } as ColumnInstance];
+      const onRowsUpdate = (
+        rows: DataRecord[],
+        operation?: TableOperation,
+        rowIndex?: number,
+        columns?: ReactTableColumn[]
+      ) => {
         _.identity(rows);
       };
       const mockedOnRowsUpdate = jest.fn(onRowsUpdate);
@@ -519,7 +527,7 @@ describe("Table tests", () => {
       const { container, baseElement } = render(
         usingTestingBoxedExpressionI18nContext(
           <Table
-            columns={[{ label: columnName, accessor: columnName, dataType: DataType.Undefined } as ColumnInstance]}
+            columns={columns}
             rows={[row]}
             onColumnsUpdate={_.identity}
             onRowsUpdate={mockedOnRowsUpdate}
@@ -538,22 +546,29 @@ describe("Table tests", () => {
       expect(mockedOnRowsUpdate).toHaveBeenCalledWith(
         [{ width: DEFAULT_MIN_WIDTH }, row],
         TableOperation.RowInsertAbove,
-        0
+        0,
+        columns
       );
     });
 
     test("should trigger onRowsUpdate, when inserting a new row below", async () => {
       const row: DataRecord = {};
       row[columnName] = "value";
-      const onRowsUpdate = (rows: DataRecord[], operation?: TableOperation, rowIndex?: number) => {
+      const onRowsUpdate = (
+        rows: DataRecord[],
+        operation?: TableOperation,
+        rowIndex?: number,
+        columns?: ReactTableColumn[]
+      ) => {
         _.identity(rows);
       };
       const mockedOnRowsUpdate = jest.fn(onRowsUpdate);
+      const columns = [{ label: columnName, accessor: columnName, dataType: DataType.Undefined } as ColumnInstance];
 
       const { container, baseElement } = render(
         usingTestingBoxedExpressionI18nContext(
           <Table
-            columns={[{ label: columnName, accessor: columnName, dataType: DataType.Undefined } as ColumnInstance]}
+            columns={columns}
             rows={[row]}
             onColumnsUpdate={_.identity}
             onRowsUpdate={mockedOnRowsUpdate}
@@ -572,7 +587,8 @@ describe("Table tests", () => {
       expect(mockedOnRowsUpdate).toHaveBeenCalledWith(
         [row, { width: DEFAULT_MIN_WIDTH }],
         TableOperation.RowInsertBelow,
-        0
+        0,
+        columns
       );
     });
 
@@ -581,15 +597,21 @@ describe("Table tests", () => {
       const secondRow: DataRecord = {};
       firstRow[columnName] = "value";
       secondRow[columnName] = "another value";
-      const onRowsUpdate = (rows: DataRecord[]) => {
+      const onRowsUpdate = (
+        rows: DataRecord[],
+        operation?: TableOperation,
+        rowIndex?: number,
+        columns?: ReactTableColumn[]
+      ) => {
         _.identity(rows);
       };
       const mockedOnRowsUpdate = jest.fn(onRowsUpdate);
+      const columns = [{ label: columnName, accessor: columnName, dataType: DataType.Undefined } as ColumnInstance];
 
       const { container, baseElement } = render(
         usingTestingBoxedExpressionI18nContext(
           <Table
-            columns={[{ label: columnName, accessor: columnName, dataType: DataType.Undefined } as ColumnInstance]}
+            columns={columns}
             rows={[firstRow, secondRow]}
             onColumnsUpdate={_.identity}
             onRowsUpdate={mockedOnRowsUpdate}
@@ -605,7 +627,7 @@ describe("Table tests", () => {
       await openContextMenu(container.querySelector(expressionCell(0, 1))!);
       await selectMenuEntryIfNotDisabled(baseElement, "Delete");
 
-      expect(mockedOnRowsUpdate).toHaveBeenCalledWith([secondRow], TableOperation.RowDelete, 0);
+      expect(mockedOnRowsUpdate).toHaveBeenCalledWith([secondRow], TableOperation.RowDelete, 0, columns);
     });
   });
 });

@@ -28,7 +28,7 @@ import {
 } from "../../api";
 import { Table } from "../Table";
 import { useBoxedExpressionEditorI18n } from "../../i18n";
-import { Column, ColumnInstance, DataRecord } from "react-table";
+import { Column as ReactTableColumn, Column, ColumnInstance, DataRecord } from "react-table";
 
 export const RelationExpression: React.FunctionComponent<RelationProps> = (relationProps: RelationProps) => {
   const FIRST_COLUMN_NAME = "column-1";
@@ -115,16 +115,16 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = (relat
   );
 
   const onRowsUpdate = useCallback(
-    (rows: DataRecord[]) => {
+    (rows: DataRecord[], _, __, columns: ReactTableColumn[]) => {
       const newRows = rows.map((tableRow: DataRecord) =>
-        columns.reduce((row: string[], column: RelationColumn) => {
-          row.push((tableRow[column.name]! as string) || "");
+        columns.reduce((row: string[], column) => {
+          row.push((tableRow[(column as any).label] as string) ?? "");
           return row;
         }, [])
       );
       spreadRelationExpressionDefinition(undefined, newRows);
     },
-    [spreadRelationExpressionDefinition, columns]
+    [spreadRelationExpressionDefinition]
   );
 
   const onColumnsUpdate = useCallback(
