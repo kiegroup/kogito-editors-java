@@ -52,7 +52,7 @@ export function EditableCell({ value, rowIndex, columnId, onCellUpdate, readOnly
   const [preview, setPreview] = useState<string>("");
   const textarea = useRef<HTMLTextAreaElement>(null);
   const [previousValue, setPreviousValue] = useState("");
-  const feelInputRef = useRef<FeelInputRef>(null)
+  const feelInputRef = useRef<FeelInputRef>(null);
 
   // Common Handlers =========================================================
 
