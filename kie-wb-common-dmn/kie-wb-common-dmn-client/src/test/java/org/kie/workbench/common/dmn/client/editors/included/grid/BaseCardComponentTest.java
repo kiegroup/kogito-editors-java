@@ -20,12 +20,10 @@ import javax.enterprise.event.Event;
 
 import com.google.gwt.dom.client.Style.HasCssName;
 import elemental2.dom.HTMLElement;
-import org.appformer.kogito.bridge.client.workspace.WorkspaceService;
 import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.junit.Before;
 import org.junit.Test;
 import org.kie.workbench.common.dmn.client.api.included.legacy.DMNIncludeModelsClient;
-import org.kie.workbench.common.dmn.client.common.KogitoChannelHelper;
 import org.kie.workbench.common.dmn.client.docks.navigator.events.RefreshDecisionComponents;
 import org.kie.workbench.common.dmn.client.editors.included.BaseIncludedModelActiveRecord;
 import org.kie.workbench.common.dmn.client.editors.included.commands.RemoveIncludedModelCommand;
@@ -78,12 +76,6 @@ public abstract class BaseCardComponentTest<C extends BaseCardComponent<R, V>, V
     @Mock
     private AbstractCanvasHandler canvasHandler;
 
-    @Mock
-    protected KogitoChannelHelper kogitoChannelHelperMock;
-
-    @Mock
-    protected WorkspaceService workspaceServiceMock;
-
     protected C card;
 
     protected V cardView;
@@ -132,18 +124,21 @@ public abstract class BaseCardComponentTest<C extends BaseCardComponent<R, V>, V
 
     @Test
     public void testRefreshView() {
+        final DMNCardsGridComponent gridMock = mock(DMNCardsGridComponent.class);
         final BaseIncludedModelActiveRecord includedModel = prepareIncludedModelMock();
         final String path = "/bla/bla/bla/111111111111111222222222222222333333333333333444444444444444/file.dmn";
 
         when(includedModel.getNamespace()).thenReturn(path);
         doReturn(includedModel).when(card).getIncludedModel();
-        when(kogitoChannelHelperMock.isIncludedModelLinkEnabled()).thenReturn(false);
+
+        doReturn(gridMock).when(card).getGrid();
+        when(gridMock.presentPathAsLink()).thenReturn(false);
 
         card.refreshView();
 
         verify(cardView).setPath("...111111222222222222222333333333333333444444444444444/file.dmn");
 
-        when(kogitoChannelHelperMock.isIncludedModelLinkEnabled()).thenReturn(true);
+        when(gridMock.presentPathAsLink()).thenReturn(true);
 
         card.refreshView();
 
@@ -318,15 +313,17 @@ public abstract class BaseCardComponentTest<C extends BaseCardComponent<R, V>, V
 
     @Test
     public void testOpenLinkFullPath() {
+        final DMNCardsGridComponent gridMock = mock(DMNCardsGridComponent.class);
         final BaseIncludedModelActiveRecord includedModel = prepareIncludedModelMock();
         final String expected = "/src/path/kie/dmn";
 
+        doReturn(gridMock).when(card).getGrid();
+        when(gridMock.presentPathAsLink()).thenReturn(true);
         doReturn(includedModel).when(card).getIncludedModel();
         when(includedModel.getPath()).thenReturn(expected);
 
         card.openPathLink();
 
-        verify(workspaceServiceMock, times(1)).openFile(expected);
+        verify(gridMock, times(1)).openPathLink(expected);
     }
-
 }

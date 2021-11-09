@@ -24,10 +24,8 @@ import javax.enterprise.event.Event;
 
 import com.google.gwt.dom.client.Style.HasCssName;
 import elemental2.dom.HTMLElement;
-import org.appformer.kogito.bridge.client.workspace.WorkspaceService;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.kie.workbench.common.dmn.client.api.included.legacy.DMNIncludeModelsClient;
-import org.kie.workbench.common.dmn.client.common.KogitoChannelHelper;
 import org.kie.workbench.common.dmn.client.docks.navigator.events.RefreshDecisionComponents;
 import org.kie.workbench.common.dmn.client.editors.included.BaseIncludedModelActiveRecord;
 import org.kie.workbench.common.dmn.client.editors.included.commands.RemoveIncludedModelCommand;
@@ -55,8 +53,6 @@ public abstract class BaseCardComponent<R extends BaseIncludedModelActiveRecord,
     protected final SessionManager sessionManager;
     protected final ImportRecordEngine recordEngine;
     protected final DMNIncludeModelsClient client;
-    protected final KogitoChannelHelper kogitoChannelHelper;
-    protected final WorkspaceService workspaceService;
 
     protected R includedModel;
 
@@ -68,9 +64,7 @@ public abstract class BaseCardComponent<R extends BaseIncludedModelActiveRecord,
                                 final SessionManager sessionManager,
                                 final ImportRecordEngine recordEngine,
                                 final DMNIncludeModelsClient client,
-                                final Event<RefreshDataTypesListEvent> refreshDataTypesListEvent,
-                                final KogitoChannelHelper kogitoChannelHelper,
-                                final WorkspaceService workspaceService) {
+                                final Event<RefreshDataTypesListEvent> refreshDataTypesListEvent) {
         this.contentView = contentView;
         this.refreshDecisionComponentsEvent = refreshDecisionComponentsEvent;
         this.sessionCommandManager = sessionCommandManager;
@@ -78,8 +72,6 @@ public abstract class BaseCardComponent<R extends BaseIncludedModelActiveRecord,
         this.recordEngine = recordEngine;
         this.client = client;
         this.refreshDataTypesListEvent = refreshDataTypesListEvent;
-        this.kogitoChannelHelper = kogitoChannelHelper;
-        this.workspaceService = workspaceService;
     }
 
     @PostConstruct
@@ -95,7 +87,7 @@ public abstract class BaseCardComponent<R extends BaseIncludedModelActiveRecord,
     }
 
     protected void refreshView() {
-        if (kogitoChannelHelper.isIncludedModelLinkEnabled()) {
+        if (getGrid().presentPathAsLink()) {
             contentView.setPathLink(getTruncatedSubTitle());
         } else {
             contentView.setPath(getTruncatedSubTitle());
@@ -178,7 +170,7 @@ public abstract class BaseCardComponent<R extends BaseIncludedModelActiveRecord,
     }
 
     public void openPathLink() {
-        workspaceService.openFile(getIncludedModel().getPath());
+        getGrid().openPathLink(getIncludedModel().getPath());
     }
 
     public interface ContentView extends UberElemental<BaseCardComponent>,
