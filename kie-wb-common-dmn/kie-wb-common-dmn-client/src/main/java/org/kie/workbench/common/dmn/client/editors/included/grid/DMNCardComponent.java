@@ -20,9 +20,7 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
-import org.appformer.kogito.bridge.client.workspace.WorkspaceService;
 import org.kie.workbench.common.dmn.client.api.included.legacy.DMNIncludeModelsClient;
-import org.kie.workbench.common.dmn.client.common.KogitoChannelHelper;
 import org.kie.workbench.common.dmn.client.docks.navigator.events.RefreshDecisionComponents;
 import org.kie.workbench.common.dmn.client.editors.included.DMNIncludedModelActiveRecord;
 import org.kie.workbench.common.dmn.client.editors.included.commands.RemoveDMNIncludedModelCommand;
@@ -42,18 +40,14 @@ public class DMNCardComponent extends BaseCardComponent<DMNIncludedModelActiveRe
                             final SessionManager sessionManager,
                             final ImportRecordEngine recordEngine,
                             final DMNIncludeModelsClient client,
-                            final Event<RefreshDataTypesListEvent> refreshDataTypesListEvent,
-                            final KogitoChannelHelper kogitoChannelHelper,
-                            final WorkspaceService workspaceService) {
+                            final Event<RefreshDataTypesListEvent> refreshDataTypesListEvent) {
         super(contentView,
               refreshDecisionComponentsEvent,
               sessionCommandManager,
               sessionManager,
               recordEngine,
               client,
-              refreshDataTypesListEvent,
-              kogitoChannelHelper,
-              workspaceService);
+              refreshDataTypesListEvent);
     }
 
     @PostConstruct
