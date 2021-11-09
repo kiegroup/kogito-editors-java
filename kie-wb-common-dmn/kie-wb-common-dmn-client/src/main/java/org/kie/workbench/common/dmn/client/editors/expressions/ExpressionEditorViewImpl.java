@@ -64,10 +64,8 @@ import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.P
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.RelationProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.util.BoxedExpressionService;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.util.ExpressionModelFiller;
-import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.util.ExpressionPropsFiller;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinitions;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.function.supplementary.pmml.PMMLDocumentMetadataProvider;
-import org.kie.workbench.common.dmn.client.js.DMNLoader;
 import org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants;
 import org.kie.workbench.common.dmn.client.session.DMNSession;
 import org.kie.workbench.common.dmn.client.widgets.grid.BoundaryTransformMediator;
@@ -296,12 +294,12 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
 
     @Override
     public void activate() {
-        DMNLoader.renderBoxedExpressionEditor(
-                ".kie-dmn-new-expression-editor",
-                ExpressionPropsFiller.buildAndFillJsInteropProp(hasExpression.getExpression(), getExpressionName(), getTypeRef()),
-                hasExpression.isClearSupported(),
-                buildPmmlParams()
-        );
+//        DMNLoader.renderBoxedExpressionEditor(
+//                ".kie-dmn-new-expression-editor",
+//                ExpressionPropsFiller.buildAndFillJsInteropProp(hasExpression.getExpression(), getExpressionName(), getTypeRef()),
+//                hasExpression.isClearSupported(),
+//                buildPmmlParams()
+//        );
     }
 
     @Override
