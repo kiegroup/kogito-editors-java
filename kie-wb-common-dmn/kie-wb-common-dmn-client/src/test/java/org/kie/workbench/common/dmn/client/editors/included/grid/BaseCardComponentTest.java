@@ -48,6 +48,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -127,6 +128,7 @@ public abstract class BaseCardComponentTest<C extends BaseCardComponent<R, V>, V
         final DMNCardsGridComponent gridMock = mock(DMNCardsGridComponent.class);
         final BaseIncludedModelActiveRecord includedModel = prepareIncludedModelMock();
         final String path = "/bla/bla/bla/111111111111111222222222222222333333333333333444444444444444/file.dmn";
+        final String expectedPathReference = "...111111222222222222222333333333333333444444444444444/file.dmn";
 
         when(includedModel.getNamespace()).thenReturn(path);
         doReturn(includedModel).when(card).getIncludedModel();
@@ -136,13 +138,24 @@ public abstract class BaseCardComponentTest<C extends BaseCardComponent<R, V>, V
 
         card.refreshView();
 
-        verify(cardView).setPath("...111111222222222222222333333333333333444444444444444/file.dmn");
+        verify(cardView, times(1)).setPath(expectedPathReference);
+
+        reset(cardView);
 
         when(gridMock.presentPathAsLink()).thenReturn(true);
 
         card.refreshView();
 
-        verify(cardView).setPathLink("...111111222222222222222333333333333333444444444444444/file.dmn");
+        verify(cardView, times(1)).setPath(expectedPathReference);
+
+        reset(cardView);
+
+        when(gridMock.presentPathAsLink()).thenReturn(true);
+        when(includedModel.getPath()).thenReturn(path);
+
+        card.refreshView();
+
+        verify(cardView, times(1)).setPathLink(expectedPathReference);
     }
 
     @Test
