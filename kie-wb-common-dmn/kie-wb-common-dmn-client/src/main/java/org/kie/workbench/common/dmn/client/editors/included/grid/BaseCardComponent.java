@@ -87,7 +87,7 @@ public abstract class BaseCardComponent<R extends BaseIncludedModelActiveRecord,
     }
 
     protected void refreshView() {
-        if (getGrid().presentPathAsLink()) {
+        if (getGrid().presentPathAsLink() && !isEmpty(getIncludedModel().getPath())) {
             contentView.setPathLink(getTruncatedSubTitle());
         } else {
             contentView.setPath(getTruncatedSubTitle());
