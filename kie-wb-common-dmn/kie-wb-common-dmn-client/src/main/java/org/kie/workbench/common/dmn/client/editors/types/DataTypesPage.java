@@ -134,11 +134,11 @@ public class DataTypesPage extends DMNPage {
     }
 
     public void reload() {
-
         loadedDMNModelNamespace = currentDMNModelNamespace();
 
         cleanDataTypeStore();
         loadDataTypes();
+        enableShortcuts();
     }
 
     void refreshPageView() {

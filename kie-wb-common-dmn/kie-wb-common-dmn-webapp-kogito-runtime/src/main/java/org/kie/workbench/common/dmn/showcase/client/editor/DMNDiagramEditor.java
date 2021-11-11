@@ -138,9 +138,6 @@ public class DMNDiagramEditor extends AbstractDMNDiagramEditor {
         Optional.ofNullable(stunnerEditor.getCanvasHandler()).ifPresent(c -> {
             commands.bind(stunnerEditor.getSession());
             decisionNavigatorDock.reload();
-            dataTypesPage.reload();
-            dataTypesPage.onFocus();
-            dataTypesPage.enableShortcuts();
             lazyCanvasFocusUtils.releaseFocus();
             if (includedModelContext.isIncludedModelChannel()) {
                 includedModelsPage.reload();
