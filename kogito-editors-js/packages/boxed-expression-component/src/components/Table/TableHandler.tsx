@@ -191,9 +191,22 @@ export const TableHandler: React.FunctionComponent<TableHandlerProps> = ({
         if (selectedColumn.appendColumnsOnChildren && _.isArray(selectedColumn.columns)) {
           appendOnColumnChildren(operationCallback);
         } else {
-          const columnIndex = _.findIndex(tableColumns, getColumnSearchPredicate(selectedColumn));
-          const updatedColumns = operationCallback(tableColumns, columnIndex, generateNextAvailableColumn());
-          updateColumnsThenRows(operation, columnIndex, updatedColumns);
+          let columnIndex = -1;
+          for (const column of tableColumns as Array<ColumnInstance>) {
+            const foundIndex = column.columns?.findIndex(getColumnSearchPredicate(selectedColumn));
+            if (column.columns && foundIndex !== undefined && foundIndex !== -1) {
+              column.columns = operationCallback(column.columns!, foundIndex, generateNextAvailableColumn());
+              columnIndex = foundIndex;
+              break;
+            }
+          }
+          if (columnIndex !== -1) {
+            updateColumnsThenRows(operation, columnIndex, tableColumns);
+          } else {
+            const columnIndex = _.findIndex(tableColumns, getColumnSearchPredicate(selectedColumn));
+            const updatedColumns = operationCallback(tableColumns, columnIndex, generateNextAvailableColumn());
+            updateColumnsThenRows(operation, columnIndex, updatedColumns);
+          }
           return;
         }
       }
