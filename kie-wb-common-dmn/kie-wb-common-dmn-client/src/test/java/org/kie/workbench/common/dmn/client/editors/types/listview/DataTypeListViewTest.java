@@ -61,8 +61,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -118,7 +120,7 @@ public class DataTypeListViewTest {
     private DataTypeList presenter;
 
     @Mock
-    private SpanElement importDataObjectButton;
+    private SpanElement importJavaClassesContainer;
 
     @Mock
     private EventSourceMock<FlashMessage> flashMessageEvent;
@@ -154,7 +156,7 @@ public class DataTypeListViewTest {
         dataTypeButton.classList = mock(DOMTokenList.class);
         listItems.childNodes = new NodeList<>();
 
-        view = spy(new DataTypeListView(listItems, addButton, addButtonPlaceholder, dataTypeButton, placeholder, searchBarContainer, expandAll, collapseAll, noDataTypesFound, readOnlyMessage, readOnlyMessageCloseButton, scrollHelper, importDataObjectButton, flashMessageEvent, translationService, readOnlyProvider));
+        view = spy(new DataTypeListView(listItems, addButton, addButtonPlaceholder, dataTypeButton, placeholder, searchBarContainer, expandAll, collapseAll, noDataTypesFound, readOnlyMessage, readOnlyMessageCloseButton, scrollHelper, importJavaClassesContainer, flashMessageEvent, translationService, readOnlyProvider));
         view.init(presenter);
 
         doReturn(element).when(view).getElement();

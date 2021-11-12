@@ -165,10 +165,10 @@ public class DataTypesPage extends DMNPage {
 
     void loadDataTypes() {
         dataTypeList.setupItems(itemDefinitionUtils
-                                    .all()
-                                    .stream()
-                                    .map(this::makeDataType)
-                                    .collect(Collectors.toList()));
+                                        .all()
+                                        .stream()
+                                        .map(this::makeDataType)
+                                        .collect(Collectors.toList()));
     }
 
     DataType makeDataType(final ItemDefinition itemDefinition) {

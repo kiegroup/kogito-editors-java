@@ -135,6 +135,9 @@ public class DataTypeList {
         dndListComponent.setOnDropItem(getOnDropDataType());
     }
 
+    /**
+     * It activates the React Components in the DataTypeList Widget
+     */
     public void activate() {
         if (kogitoChannelHelper.isCurrentChannelEnabled(Arrays.asList(Channel.VSCODE, Channel.DEFAULT))) {
             view.renderImportJavaClasses();

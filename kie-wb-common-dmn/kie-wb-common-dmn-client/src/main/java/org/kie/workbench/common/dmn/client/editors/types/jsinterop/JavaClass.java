@@ -21,9 +21,9 @@ import jsinterop.annotations.JsType;
 @JsType
 public class JavaClass {
 
-    /** Java Class Name (eg. java.lang.String OR com.mypackage.Test) */
+    /* Java Class Name (eg. java.lang.String OR com.mypackage.Test) */
     public final String name;
-    /** Java Fields of the class */
+    /* Java Fields of the class */
     public final JavaField[] fields;
 
     public JavaClass(final String name, final JavaField[] fields) {
