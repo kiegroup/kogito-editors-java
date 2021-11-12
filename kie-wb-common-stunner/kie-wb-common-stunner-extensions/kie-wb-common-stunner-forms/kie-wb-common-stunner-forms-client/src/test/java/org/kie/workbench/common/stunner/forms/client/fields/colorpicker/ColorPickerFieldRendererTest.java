@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2021 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,33 +14,38 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.dmn.client.editors.included.grid;
+package org.kie.workbench.common.stunner.forms.client.fields.colorpicker;
 
 import com.google.gwtmockito.GwtMockitoTestRunner;
-import elemental2.dom.HTMLElement;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 
-import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.verify;
 
 @RunWith(GwtMockitoTestRunner.class)
-public class PMMLCardComponentContentViewTest extends BaseCardComponentContentViewTest<PMMLCardComponentContentView> {
+public class ColorPickerFieldRendererTest {
 
     @Mock
-    private HTMLElement modelCount;
+    private ColorPickerWidget colorPickerMock;
 
-    @Override
-    protected PMMLCardComponentContentView getCardView() {
-        return new PMMLCardComponentContentView(path, pathLink, modelCount, removeButton);
+    private ColorPickerFieldRenderer renderer;
+
+    @Before
+    public void setUp() throws Exception {
+        renderer = new ColorPickerFieldRenderer(colorPickerMock);
     }
 
     @Test
-    public void testSetModelCount() {
-        modelCount.textContent = "something";
+    public void testReadOnly() {
+        renderer.setReadOnly(true);
+        verify(colorPickerMock).setReadOnly(true);
 
-        view.setModelCount(123);
+        reset(colorPickerMock);
 
-        assertEquals("123", modelCount.textContent);
+        renderer.setReadOnly(false);
+        verify(colorPickerMock).setReadOnly(false);
     }
 }

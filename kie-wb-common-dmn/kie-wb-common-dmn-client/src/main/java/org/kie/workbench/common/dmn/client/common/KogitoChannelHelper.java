@@ -24,6 +24,12 @@ import javax.inject.Inject;
 import org.appformer.client.context.Channel;
 import org.appformer.client.context.EditorContextProvider;
 
+import static java.util.Arrays.asList;
+import static org.appformer.client.context.Channel.DEFAULT;
+import static org.appformer.client.context.Channel.EMBEDDED;
+import static org.appformer.client.context.Channel.ONLINE_MULTI_FILE;
+import static org.appformer.client.context.Channel.VSCODE;
+
 /**
  * Scope of this Helper class is to retrieve and check the current Channel where the editor lives.
  */
@@ -46,6 +52,14 @@ public class KogitoChannelHelper {
 
     public boolean isCurrentChannelEnabled(List<Channel> enabledChannels) {
         return enabledChannels.stream().anyMatch(this::isCurrentChannelEnabled);
+    }
+
+    public boolean isIncludedModelEnabled() {
+        return isCurrentChannelEnabled(asList(DEFAULT, EMBEDDED, ONLINE_MULTI_FILE, VSCODE));
+    }
+
+    public boolean isIncludedModelLinkEnabled() {
+        return isCurrentChannelEnabled(asList(ONLINE_MULTI_FILE, VSCODE));
     }
 
 }
