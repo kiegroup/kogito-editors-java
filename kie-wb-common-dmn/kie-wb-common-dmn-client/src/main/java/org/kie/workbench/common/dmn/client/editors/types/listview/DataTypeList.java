@@ -38,10 +38,6 @@ import elemental2.dom.HTMLElement;
 import org.appformer.client.context.Channel;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
-import org.kie.workbench.common.dmn.api.editors.types.BuiltInTypeUtils;
-import org.kie.workbench.common.dmn.api.editors.types.DataObject;
-import org.kie.workbench.common.dmn.api.editors.types.DataObjectProperty;
-import org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType;
 import org.kie.workbench.common.dmn.client.common.KogitoChannelHelper;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataType;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataTypeManager;
@@ -482,25 +478,6 @@ public class DataTypeList {
         return renamedImportedDataTypes;
     }
 
-    void updatePropertiesReferences(final List<DataObject> imported,
-                                    final Map<String, String> renamed) {
-
-        for (final DataObject dataObject : imported) {
-            for (final DataObjectProperty property : dataObject.getProperties()) {
-                String propertyType = renamed.getOrDefault(property.getType(), property.getType());
-                if (!isPropertyTypePresent(propertyType, imported)) {
-                    propertyType = BuiltInType.ANY.getName();
-                }
-                property.setType(propertyType);
-            }
-        }
-    }
-
-    boolean isPropertyTypePresent(final String type, final List<DataObject> imported) {
-        return BuiltInTypeUtils.isBuiltInType(type)
-                || imported.stream().anyMatch(dataObject -> Objects.equals(dataObject.getClassType(), type));
-    }
-
     String buildName(final String nameCandidate, final Map<String, Integer> namesCount) {
 
         if (namesCount.containsKey(nameCandidate)) {
@@ -533,29 +510,12 @@ public class DataTypeList {
         insert(newDataType);
     }
 
-    DataType createNewDataType(final DataObjectProperty dataProperty) {
-
-        final DataType newDataType = dataTypeManager.fromNew()
-                .withType(dataProperty.getType())
-                .asList(dataProperty.isList())
-                .get();
-        newDataType.setName(dataProperty.getProperty());
-        return newDataType;
-    }
-
     private DataType createNewDataType(final JavaField javaField) {
         final DataType newDataType = dataTypeManager.fromNew()
                 .withType(javaField.dmnTypeRef)
                 .asList(javaField.isList)
                 .get();
         newDataType.setName(javaField.name);
-        return newDataType;
-    }
-
-    DataType createNewDataType(final DataObject dataObject) {
-
-        final DataType newDataType = dataTypeManager.fromNew().withType(dataTypeManager.structure()).get();
-        newDataType.setName(dataObject.getClassType());
         return newDataType;
     }
 
