@@ -16,22 +16,19 @@
 
 import "./RelationExpression.css";
 import * as React from "react";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useMemo } from "react";
 import "@patternfly/react-styles/css/utilities/Text/text.css";
 import {
   Column as RelationColumn,
   DataType,
   executeIfExpressionDefinitionChanged,
-  generateUuid,
   RelationProps,
   Row,
   TableOperation,
 } from "../../api";
 import { Table } from "../Table";
 import { useBoxedExpressionEditorI18n } from "../../i18n";
-import * as _ from "lodash";
-import { Column, ColumnInstance, DataRecord } from "react-table";
-import { DEFAULT_MIN_WIDTH } from "../Resizer";
+import { Column as ReactTableColumn, Column, ColumnInstance, DataRecord } from "react-table";
 
 export const RelationExpression: React.FunctionComponent<RelationProps> = (relationProps: RelationProps) => {
   const FIRST_COLUMN_NAME = "column-1";
@@ -56,119 +53,111 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = (relat
     },
   ];
 
-  const storedExpressionDefinition = useRef({} as RelationProps);
-
-  const tableColumns = useRef<RelationColumn[]>(
-    relationProps.columns === undefined
-      ? [{ id: generateUuid(), name: FIRST_COLUMN_NAME, dataType: DataType.Undefined, width: DEFAULT_MIN_WIDTH }]
-      : relationProps.columns
+  const columns: RelationColumn[] = useMemo(
+    () =>
+      relationProps.columns === undefined
+        ? [{ name: FIRST_COLUMN_NAME, accessor: FIRST_COLUMN_NAME, dataType: DataType.Undefined }]
+        : relationProps.columns,
+    [relationProps]
   );
 
-  const tableRows = useRef<Row[]>(
-    relationProps.rows === undefined ? [{ id: generateUuid(), cells: [""] }] : relationProps.rows
-  );
+  const rows: Row[] = useMemo(() => {
+    return relationProps.rows === undefined ? [[""]] : relationProps.rows;
+  }, [relationProps]);
 
-  const spreadRelationExpressionDefinition = useCallback(() => {
-    const expressionDefinition = {
-      ...relationProps,
-      columns: tableColumns.current,
-      rows: tableRows.current,
-    };
+  const spreadRelationExpressionDefinition = useCallback(
+    (newColumns?: RelationColumn[], newRows?: Row[]) => {
+      const expressionDefinition = {
+        ...relationProps,
+        columns: newColumns ?? columns,
+        rows: newRows ?? rows,
+      };
 
-    if (relationProps.isHeadless) {
-      relationProps.onUpdatingRecursiveExpression?.(expressionDefinition);
-    } else {
       executeIfExpressionDefinitionChanged(
-        storedExpressionDefinition.current,
+        relationProps,
         expressionDefinition,
         () => {
-          window.beeApi?.broadcastRelationExpressionDefinition?.(expressionDefinition);
-          storedExpressionDefinition.current = expressionDefinition;
+          if (relationProps.isHeadless) {
+            relationProps.onUpdatingRecursiveExpression?.(expressionDefinition);
+          } else {
+            window.beeApi?.broadcastRelationExpressionDefinition?.(expressionDefinition);
+          }
         },
         ["columns", "rows"]
       );
-    }
-  }, [relationProps]);
+    },
+    [relationProps, columns, rows]
+  );
 
-  const convertColumnsForTheTable = useCallback(
+  const convertColumnsForTheTable = useMemo(
     () =>
-      _.map(
-        tableColumns.current,
+      columns.map(
         (column: RelationColumn) =>
           ({
-            accessor: column.id,
             label: column.name,
+            accessor: column.name,
             dataType: column.dataType,
             ...(column.width ? { width: column.width } : {}),
           } as Column)
       ),
-    []
+    [columns]
   );
 
-  const convertRowsForTheTable = useCallback(
+  const convertRowsForTheTable = useMemo(
     () =>
-      _.map(tableRows.current, (row) => {
-        const updatedRow = _.reduce(
-          tableColumns.current,
-          (tableRow: DataRecord, column, columnIndex) => {
-            tableRow[column.id] = row.cells[columnIndex] || "";
-            return tableRow;
-          },
-          {}
-        );
-        updatedRow.id = row.id;
-        return updatedRow;
-      }),
-    []
+      rows.map((row) =>
+        columns.reduce((tableRow: DataRecord, column, columnIndex) => {
+          tableRow[column.name] = row[columnIndex] || "";
+          return tableRow;
+        }, {})
+      ),
+    [rows, columns]
   );
 
-  const onSavingRows = useCallback(
-    (rows: DataRecord[]) => {
-      tableRows.current = _.map(rows, (tableRow: DataRecord) => {
-        const cells = _.reduce(
-          tableColumns.current,
-          (row: string[], column: RelationColumn) => {
-            row.push((tableRow[column.id]! as string) || "");
-            return row;
-          },
-          []
-        );
-        return { id: tableRow.id as string, cells };
-      });
-      spreadRelationExpressionDefinition();
+  const onRowsUpdate = useCallback(
+    (rows: DataRecord[], _, __, columns: ReactTableColumn[]) => {
+      const newRows = rows.map((tableRow: DataRecord) =>
+        columns.reduce((row: string[], column) => {
+          row.push((tableRow[(column as any).label] as string) ?? "");
+          return row;
+        }, [])
+      );
+      spreadRelationExpressionDefinition(undefined, newRows);
     },
     [spreadRelationExpressionDefinition]
   );
 
-  const onSavingColumns = useCallback(
-    (columns) => {
-      tableColumns.current = _.map(columns, (columnInstance: ColumnInstance) => ({
-        id: columnInstance.accessor,
-        name: columnInstance.label as string,
+  const onColumnsUpdate = useCallback(
+    (columns, operation, columnIndex) => {
+      const newColumns = columns.map((columnInstance: ColumnInstance) => ({
+        name: columnInstance.accessor,
         dataType: columnInstance.dataType,
         width: columnInstance.width,
       }));
-      spreadRelationExpressionDefinition();
+      const newRows = rows.map((tableRow: Row) => {
+        switch (operation) {
+          case TableOperation.ColumnInsertLeft:
+            return [...tableRow.slice(0, columnIndex), "", ...tableRow.slice(columnIndex)] as Row;
+          case TableOperation.ColumnInsertRight:
+            return [...tableRow.slice(0, columnIndex + 1), "", ...tableRow.slice(columnIndex + 1)] as Row;
+          case TableOperation.ColumnDelete:
+            return [...tableRow.slice(0, columnIndex), ...tableRow.slice(columnIndex + 1)] as Row;
+        }
+        return [...tableRow];
+      });
+      spreadRelationExpressionDefinition(newColumns, newRows);
     },
-    [spreadRelationExpressionDefinition]
+    [spreadRelationExpressionDefinition, rows]
   );
-
-  const onRowAdding = useCallback(() => ({}), []);
-
-  useEffect(() => {
-    /** Function executed only the first time the component is loaded */
-    spreadRelationExpressionDefinition();
-  }, [spreadRelationExpressionDefinition]);
 
   return (
     <div className="relation-expression">
       <Table
         editColumnLabel={i18n.editRelation}
-        columns={convertColumnsForTheTable()}
-        rows={convertRowsForTheTable()}
-        onColumnsUpdate={onSavingColumns}
-        onRowsUpdate={onSavingRows}
-        onRowAdding={onRowAdding}
+        columns={convertColumnsForTheTable}
+        rows={convertRowsForTheTable}
+        onColumnsUpdate={onColumnsUpdate}
+        onRowsUpdate={onRowsUpdate}
         handlerConfiguration={handlerConfiguration}
       />
     </div>
