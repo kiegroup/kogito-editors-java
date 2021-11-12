@@ -152,15 +152,15 @@ public class DataTypeListView implements DataTypeList.View {
 
         setupAddButtonReadOnlyStatus();
 
-        ImportJavaClassesService.registerBroadcastForImportJavaClasses(this);
+        registerBroadcastForImportJavaClasses();
     }
 
     void setupAddButtonReadOnlyStatus() {
         addButton.disabled = readOnlyProvider.isReadOnlyDiagram();
     }
 
-    public void importDataObjects(final JavaClass[] javaClasses) {
-        if (javaClasses != null && javaClasses.length > 0) {
+    public void importJavaClasses(final List<JavaClass> javaClasses) {
+        if (javaClasses != null && !javaClasses.isEmpty()) {
             presenter.importJavaClasses(javaClasses);
             fireSuccessfullyImportedData();
         }
@@ -404,9 +404,27 @@ public class DataTypeListView implements DataTypeList.View {
     @Override
     public void renderImportJavaClasses() {
         if (!importJavaClassesContainer.hasChildNodes()) {
-            DMNLoader.renderImportJavaClasses(".kie-import-java-classes",
+            renderImportJavaClasses(".kie-import-java-classes",
                                               false,
                                               null);
         }
+    }
+
+    /**
+     * Indirection for Test purposes only
+     */
+    protected void renderImportJavaClasses(final String selector,
+                                           final boolean buttonDisabledStatus,
+                                           final String buttonTooltipMessage) {
+        DMNLoader.renderImportJavaClasses(selector,
+                                          buttonDisabledStatus,
+                                          buttonTooltipMessage);
+    }
+
+    /**
+     * Indirection for Test purposes only
+     */
+    protected void registerBroadcastForImportJavaClasses() {
+        ImportJavaClassesService.registerBroadcastForImportJavaClasses(this);
     }
 }

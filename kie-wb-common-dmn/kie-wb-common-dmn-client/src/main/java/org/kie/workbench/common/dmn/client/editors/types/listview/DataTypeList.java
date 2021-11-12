@@ -457,9 +457,9 @@ public class DataTypeList {
         searchBar.refresh();
     }
 
-    public void importJavaClasses(final JavaClass[] javaClasses) {
+    public void importJavaClasses(final List<JavaClass> javaClasses) {
 
-        for (JavaClass javaClass : Arrays.asList(javaClasses)) {
+        for (JavaClass javaClass : javaClasses) {
             DataType newDataType = createNewDataType(javaClass);
             final Optional<DataType> existing = findDataTypeByName(newDataType.getName());
             if (existing.isPresent()) {
@@ -521,17 +521,6 @@ public class DataTypeList {
                 item.insertNestedField(newDataType);
             }
         });
-    }
-
-    void insertProperties(final DataObject dataObject) {
-
-        final Optional<DataType> existing = findDataTypeByName(dataObject.getClassType());
-        existing.ifPresent(dataType -> findItem(dataType).ifPresent(item -> {
-            for (final DataObjectProperty property : dataObject.getProperties()) {
-                final DataType newDataType = createNewDataType(property);
-                item.insertNestedField(newDataType);
-            }
-        }));
     }
 
     void insert(final DataType newDataType) {

@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.dmn.client.editors.types.jsinterop;
 
+import java.util.Arrays;
+
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsPackage;
 import jsinterop.annotations.JsType;
@@ -32,7 +34,7 @@ public class ImportJavaClassesService {
 
     @JsMethod
     public static void importJavaClasses(JavaClass[] javaClasses) {
-        dataTypeListView.importDataObjects(javaClasses);
+        dataTypeListView.importJavaClasses(Arrays.asList(javaClasses));
     }
 
 }
