@@ -521,7 +521,8 @@ public class DataTypeList {
 
     private DataType createNewDataType(final JavaClass javaClass) {
         final DataType newDataType = dataTypeManager.fromNew().withType(dataTypeManager.structure()).get();
-        newDataType.setName(javaClass.name.substring(javaClass.name.lastIndexOf('.') + 1));
+        String javaClassSimpleName = javaClass.name.substring(javaClass.name.lastIndexOf('.') + 1);
+        newDataType.setName(javaClassSimpleName);
         return newDataType;
     }
 
