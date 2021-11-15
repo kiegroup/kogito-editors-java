@@ -20,28 +20,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.ait.lienzo.client.core.shape.AbstractMultiPointShape;
-import com.ait.lienzo.client.core.shape.Circle;
 import com.ait.lienzo.client.core.shape.Group;
 import com.ait.lienzo.client.core.shape.IDirectionalMultiPointShape;
-import com.ait.lienzo.client.core.shape.MultiPath;
-import com.ait.lienzo.client.core.shape.PolyMorphicLine;
 import com.ait.lienzo.client.core.shape.OrthogonalPolyLine;
 import com.ait.lienzo.client.core.shape.PolyLine;
-import com.ait.lienzo.client.core.shape.wires.IConnectionAcceptor;
-import com.ait.lienzo.client.core.shape.wires.IContainmentAcceptor;
+import com.ait.lienzo.client.core.shape.PolyMorphicLine;
 import com.ait.lienzo.client.core.shape.wires.IControlHandle;
 import com.ait.lienzo.client.core.shape.wires.IControlHandleList;
-import com.ait.lienzo.client.core.shape.wires.IControlPointsAcceptor;
-import com.ait.lienzo.client.core.shape.wires.IDockingAcceptor;
-import com.ait.lienzo.client.core.shape.wires.ILocationAcceptor;
-import com.ait.lienzo.client.core.shape.wires.WiresConnector;
-import com.ait.lienzo.client.core.shape.wires.WiresManager;
-import com.ait.lienzo.client.core.shape.wires.WiresShape;
 import com.ait.lienzo.client.core.types.Point2D;
 import com.ait.lienzo.client.core.types.Point2DArray;
 import com.ait.lienzo.client.widget.panel.LienzoPanel;
 import com.ait.lienzo.shared.core.types.Direction;
-import com.ait.lienzo.shared.core.types.IColor;
 import com.google.gwt.dom.client.Style;
 import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLButtonElement;
@@ -60,10 +49,6 @@ public class BasicLinesExample extends BaseExample implements Example {
     private static final String LINE_ORTHOGONAL = "orthogonal";
     private static final String LINE_POLYMORPHIC = "polymorphic";
 
-    private WiresManager wiresManager;
-    private WiresShape sourceShape;
-    private WiresShape targetShape;
-    private WiresConnector connector;
     private IDirectionalMultiPointShape line;
     private Group pointsContainer;
     private HTMLTextAreaElement pointsElement;
@@ -155,18 +140,7 @@ public class BasicLinesExample extends BaseExample implements Example {
 
     @Override
     public void run() {
-        initWires();
         refresh();
-    }
-
-    private void initWires() {
-        wiresManager = WiresManager.get(layer);
-        wiresManager.enableSelectionManager();
-        wiresManager.setLocationAcceptor(ILocationAcceptor.ALL);
-        wiresManager.setContainmentAcceptor(IContainmentAcceptor.ALL);
-        wiresManager.setDockingAcceptor(IDockingAcceptor.ALL);
-        wiresManager.setConnectionAcceptor(IConnectionAcceptor.ALL);
-        wiresManager.setControlPointsAcceptor(IControlPointsAcceptor.ALL);
     }
 
     private void onUpButtonClick() {
@@ -189,7 +163,7 @@ public class BasicLinesExample extends BaseExample implements Example {
         if (line instanceof AbstractMultiPointShape) {
             int lastIndex = ((AbstractMultiPointShape) line).getPoints().size() - 1;
             Point2D p = ((AbstractMultiPointShape) line).getPoints().get(lastIndex);
-            ((AbstractMultiPointShape) line).update(lastIndex, p.getX() + dx, p.getY() + dy);
+            ((AbstractMultiPointShape) line).updatePointAtIndex(lastIndex, p.getX() + dx, p.getY() + dy);
             layer.draw();
             onLogPointsButtonClick();
         }
@@ -256,15 +230,6 @@ public class BasicLinesExample extends BaseExample implements Example {
     }
 
     private void refresh() {
-        if (null != connector) {
-            wiresManager.deregister(connector);
-        }
-        if (null != targetShape) {
-            wiresManager.deregister(targetShape);
-        }
-        if (null != sourceShape) {
-            wiresManager.deregister(sourceShape);
-        }
         layer.removeAll();
         layer.clear();
         layer.add(pointsContainer);
@@ -275,44 +240,8 @@ public class BasicLinesExample extends BaseExample implements Example {
         } else if (LINE_POLYLINE.equals(lineTypeElement.value)) {
             refreshPolyLine();
         }
-        // refreshWiresStuff();
         layer.draw();
         onLogPointsButtonClick();
-    }
-
-    private void refreshWiresStuff() {
-        sourceShape = createRect("r1");
-        sourceShape.setLocation(new Point2D(100, 200));
-        targetShape = createRect("r2");
-        targetShape.setLocation(new Point2D(300, 200));
-        connector = WiresUtils.connect(sourceShape.getMagnets(),
-                                       3,
-                                       targetShape.getMagnets(),
-                                       7,
-                                       wiresManager,
-                                       true);
-    }
-
-    private WiresShape createRect(String id) {
-        WiresShape shape = new WiresShape(new MultiPath().rect(0, 0, 100, 100)
-                                                  .setStrokeColor("#FF0000")
-                                                  .setFillColor("#FF0000"))
-                .setDraggable(true);
-        shape.getGroup().setID(id);
-        shape.getGroup().setUserData(id);
-
-        wiresManager.register(shape);
-        wiresManager.getMagnetManager().createMagnets(shape);
-        return shape;
-    }
-
-    private void fillPoints(Point2DArray points, IColor fillColor, IColor strokeColor, double radius) {
-        points.getPoints().forEach(point -> {
-            pointsContainer.add(new Circle(radius)
-                                        .setStrokeColor(strokeColor)
-                                        .setFillColor(fillColor)
-                                        .setLocation(point));
-        });
     }
 
     private void refreshPolyLine() {
