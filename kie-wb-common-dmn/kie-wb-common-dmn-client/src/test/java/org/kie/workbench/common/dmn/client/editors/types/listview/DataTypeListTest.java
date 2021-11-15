@@ -28,6 +28,7 @@ import java.util.function.Supplier;
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import elemental2.dom.Element;
 import elemental2.dom.HTMLElement;
+import org.appformer.client.context.Channel;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,6 +36,7 @@ import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.editors.types.DataObject;
 import org.kie.workbench.common.dmn.api.editors.types.DataObjectProperty;
 import org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType;
+import org.kie.workbench.common.dmn.client.common.KogitoChannelHelper;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataType;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataTypeManager;
 import org.kie.workbench.common.dmn.client.editors.types.listview.common.DataTypeEditModeToggleEvent;
@@ -65,6 +67,7 @@ import static org.kie.workbench.common.dmn.client.editors.types.common.DataType.
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyListOf;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doCallRealMethod;
@@ -72,6 +75,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -119,6 +123,9 @@ public class DataTypeListTest {
     @Mock
     private AbstractCanvasHandler canvasHandler;
 
+    @Mock
+    private KogitoChannelHelper kogitoChannelHelperMock;
+
     private DataTypeStore dataTypeStore;
 
     private DataTypeStackHash dataTypeStackHash;
@@ -148,7 +155,7 @@ public class DataTypeListTest {
                                             highlightHelper,
                                             commandManager,
                                             sessionManager,
-                                            null));
+                                            kogitoChannelHelperMock));
 
         when(sessionManager.getCurrentSession()).thenReturn(session);
         when(session.getCanvasHandler()).thenReturn(canvasHandler);
@@ -166,24 +173,28 @@ public class DataTypeListTest {
 
         verify(view).init(dataTypeList);
         verify(highlightHelper).init(dataTypeList);
-       // verify(view).showImportDataObjectButton();
         verify(dndDataTypesHandler).init(dataTypeList);
         verify(dndListComponent).setOnDropItem(consumer);
     }
 
     @Test
-    public void testSetupViewWhenIsKogito() {
+    public void activate() {
+        // Included channel
+        when(kogitoChannelHelperMock.isCurrentChannelEnabled(anyList())).thenReturn(true);
 
-        final BiConsumer<Element, Element> consumer = (a, b) -> {/* Nothing. */};
+        dataTypeList.activate();
 
-        doReturn(consumer).when(dataTypeList).getOnDropDataType();
+        verify(kogitoChannelHelperMock, times(1)).isCurrentChannelEnabled(Arrays.asList(Channel.VSCODE, Channel.DEFAULT));
+        verify(view, times(1)).renderImportJavaClasses();
 
-        dataTypeList.setup();
+        // Excluded channel
+        reset(kogitoChannelHelperMock, view);
+        when(kogitoChannelHelperMock.isCurrentChannelEnabled(anyList())).thenReturn(false);
 
-        verify(view).init(dataTypeList);
-        //verify(view).hideImportDataObjectButton();
-        verify(dndDataTypesHandler).init(dataTypeList);
-        verify(dndListComponent).setOnDropItem(consumer);
+        dataTypeList.activate();
+
+        verify(kogitoChannelHelperMock, times(1)).isCurrentChannelEnabled(Arrays.asList(Channel.VSCODE, Channel.DEFAULT));
+        verify(view, never()).renderImportJavaClasses();
     }
 
     @Test
