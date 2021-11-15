@@ -16,7 +16,7 @@
 
 import "./LiteralExpression.css";
 import * as React from "react";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import {
   DataType,
   executeIfExpressionDefinitionChanged,
@@ -91,6 +91,11 @@ export const LiteralExpression: React.FunctionComponent<LiteralExpressionProps> 
     },
     [spreadLiteralExpressionDefinition]
   );
+
+  useEffect(() => {
+    /** Function executed only the first time the component is loaded */
+    spreadLiteralExpressionDefinition();
+  }, [spreadLiteralExpressionDefinition]);
 
   return (
     <div className="literal-expression">
