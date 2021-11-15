@@ -38,6 +38,7 @@ pipeline {
                     if (isNormalPRCheck() && isSonarCloudEnabled()) {
                         mvnCmd.withProfiles(['run-code-coverage'])
                     }
+                    mvnCmd.withOptions(['-pl !kogito-editors-js'])
                     mvnCmd.run('clean install')
                 }
             }
