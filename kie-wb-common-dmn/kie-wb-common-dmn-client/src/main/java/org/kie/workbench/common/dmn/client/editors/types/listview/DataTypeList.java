@@ -567,7 +567,6 @@ public class DataTypeList {
         highlightHelper.cleanHighlightClass();
     }
 
-
     public interface View extends UberElemental<DataTypeList>,
                                   IsElement {
 

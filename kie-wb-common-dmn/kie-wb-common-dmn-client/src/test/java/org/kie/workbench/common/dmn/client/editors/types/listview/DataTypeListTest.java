@@ -65,10 +65,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.kie.workbench.common.dmn.client.editors.types.common.DataType.TOP_LEVEL_PARENT_UUID;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anyListOf;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doNothing;
@@ -564,7 +562,7 @@ public class DataTypeListTest {
         doReturn(Optional.of(listItem)).when(dataTypeList).findItem(dataType1);
         doReturn(Optional.empty()).when(dataTypeList).findItem(dataType2);
         doReturn(Optional.empty()).when(dataTypeList).findItem(dataType3);
-        doNothing().when(dataTypeList).refreshSubItemsFromListItem(any(), anyListOf(DataType.class));
+        doNothing().when(dataTypeList).refreshSubItemsFromListItem(any(), anyList());
         when(dataType1.getUUID()).thenReturn(uuid1);
         when(dataType2.getUUID()).thenReturn(uuid2);
         when(dataType3.getUUID()).thenReturn(uuid3);
@@ -1091,70 +1089,6 @@ public class DataTypeListTest {
         verify(dndDataTypesHandler).deleteKeepingReferences(existing);
 
         verify(dataTypeList).insert(newDataType);
-    }
-
-    public void testCreateNewDataTypeFromProperty() {
-
-        final DataObjectProperty dataProperty = mock(DataObjectProperty.class);
-        final String propertyName = "name";
-        final String propertyType = "type";
-        final DataType newType = mock(DataType.class);
-        when(dataProperty.getProperty()).thenReturn(propertyName);
-        when(dataProperty.getType()).thenReturn(propertyType);
-
-        when(dataTypeManager.fromNew()).thenReturn(dataTypeManager);
-        when(dataTypeManager.asList(anyBoolean())).thenReturn(dataTypeManager);
-        when(dataTypeManager.withType(propertyType)).thenReturn(dataTypeManager);
-        when(dataTypeManager.get()).thenReturn(newType);
-
-        //final DataType actual = dataTypeList.createNewDataType(dataProperty);
-
-        //assertEquals(newType, actual);
-
-        verify(dataTypeManager).asList(false);
-        verify(newType).setName(propertyName);
-    }
-
-    public void testCreateNewDataTypeFromPropertyWhenIsList() {
-
-        final DataObjectProperty dataProperty = mock(DataObjectProperty.class);
-        final String propertyName = "name";
-        final String propertyType = "type";
-        final DataType newType = mock(DataType.class);
-        when(dataProperty.getProperty()).thenReturn(propertyName);
-        when(dataProperty.getType()).thenReturn(propertyType);
-        when(dataProperty.isList()).thenReturn(true);
-
-        when(dataTypeManager.fromNew()).thenReturn(dataTypeManager);
-        when(dataTypeManager.asList(anyBoolean())).thenReturn(dataTypeManager);
-        when(dataTypeManager.withType(propertyType)).thenReturn(dataTypeManager);
-        when(dataTypeManager.get()).thenReturn(newType);
-
-        //final DataType actual = dataTypeList.createNewDataType(dataProperty);
-
-        //assertEquals(newType, actual);
-
-        verify(dataTypeManager).asList(true);
-        verify(newType).setName(propertyName);
-    }
-
-    public void testCreateNewDataTypeFromDataObject() {
-
-        final DataObject dataObject = mock(DataObject.class);
-        final DataType dataType = mock(DataType.class);
-        final String structure = "structure";
-        final String classType = "classType";
-        when(dataObject.getClassType()).thenReturn(classType);
-
-        when(dataTypeManager.structure()).thenReturn(structure);
-        when(dataTypeManager.fromNew()).thenReturn(dataTypeManager);
-        when(dataTypeManager.withType(structure)).thenReturn(dataTypeManager);
-        when(dataTypeManager.get()).thenReturn(dataType);
-
-        //final DataType actual = dataTypeList.createNewDataType(dataObject);
-        //assertEquals(dataType, actual);
-
-        verify(dataType).setName(classType);
     }
 
     @Test
