@@ -611,7 +611,9 @@ public class DataTypeListViewTest {
 
     @Test
     public void importJavaClassesTest() {
-        List<JavaClass> javaClasses = Arrays.asList(new JavaClass("com.test", null));
+        JavaClass javaClass = mock(JavaClass.class);
+        when(javaClass.getName()).thenReturn("com.test");
+        List<JavaClass> javaClasses = Arrays.asList(javaClass);
         view.importJavaClasses(javaClasses);
         verify(presenter, times(1)).importJavaClasses(javaClasses);
         verify(view, times(1)).fireSuccessfullyImportedData();

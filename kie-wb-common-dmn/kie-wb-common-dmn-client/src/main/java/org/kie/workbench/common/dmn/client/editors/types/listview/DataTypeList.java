@@ -92,10 +92,6 @@ public class DataTypeList {
 
     private DataTypeListItem currentEditingItem;
 
-    private Map<String, Integer> importedNamesOccurrencesCount;
-
-    private Map<String, String> renamedImportedDataTypes;
-
     @Inject
     public DataTypeList(final View view,
                         final ManagedInstance<DataTypeListItem> listItems,
@@ -116,8 +112,6 @@ public class DataTypeList {
         this.dataTypeStackHash = dataTypeStackHash;
         this.dndDataTypesHandler = dndDataTypesHandler;
         this.highlightHelper = highlightHelper;
-        this.importedNamesOccurrencesCount = new HashMap<>();
-        this.renamedImportedDataTypes = new HashMap<>();
         this.commandManager = sessionCommandManager;
         this.sessionManager = sessionManager;
         this.kogitoChannelHelper = kogitoChannelHelper;
@@ -463,20 +457,47 @@ public class DataTypeList {
             } else {
                 insert(newDataType);
             }
-            if (javaClass.fields != null && javaClass.fields.length > 0) {
+            if (javaClass.getFields() != null && !javaClass.getFields().isEmpty()) {
                 insertFields(newDataType, javaClass);
             }
         }
 
     }
 
-    Map<String, Integer> getImportedNamesOccurrencesCount() {
-        return importedNamesOccurrencesCount;
+    void manageDuplicateJavaClasses(final List<JavaClass> javaClasses) {
+        final Map<String, Integer> namesCount = new HashMap<>();
+        final Map<String, String> renamed = new HashMap<>();
+
+        for (final JavaClass javaClass : javaClasses) {
+            final String nameCandidate = javaClass.getName().substring(javaClass.getName().lastIndexOf('.') + 1);
+
+            final String newName = buildName(nameCandidate, namesCount);
+            renamed.put(javaClass.getName(), newName);
+            javaClass.setName(newName);
+        }
+
+        //updatePropertiesReferences(java, renamed);
     }
 
-    Map<String, String> getRenamedImportedDataTypes() {
-        return renamedImportedDataTypes;
+    /*void updatePropertiesReferences(final List<DataObject> imported,
+                                    final Map<String, String> renamed) {
+
+        for (final DataObject dataObject : imported) {
+            for (final DataObjectProperty property : dataObject.getProperties()) {
+                String propertyType = renamed.getOrDefault(property.getType(), property.getType());
+                if (!isPropertyTypePresent(propertyType, imported)) {
+                    propertyType = BuiltInType.ANY.getName();
+                }
+                property.setType(propertyType);
+            }
+        }
     }
+
+    boolean isPropertyTypePresent(final String type, final List<DataObject> imported) {
+        return BuiltInTypeUtils.isBuiltInType(type)
+                || imported.stream().anyMatch(dataObject -> Objects.equals(dataObject.getClassType(), type));
+    }
+    */
 
     String buildName(final String nameCandidate, final Map<String, Integer> namesCount) {
 
@@ -493,7 +514,7 @@ public class DataTypeList {
 
     private void insertFields(DataType structureDataType, final JavaClass javaClass) {
         findItem(structureDataType).ifPresent(item -> {
-            for (final JavaField javaField : Arrays.asList(javaClass.fields)) {
+            for (final JavaField javaField : javaClass.getFields()) {
                 final DataType newDataType = createNewDataType(javaField);
                 item.insertNestedField(newDataType);
             }
@@ -512,16 +533,16 @@ public class DataTypeList {
 
     private DataType createNewDataType(final JavaField javaField) {
         final DataType newDataType = dataTypeManager.fromNew()
-                .withType(javaField.dmnTypeRef)
-                .asList(javaField.isList)
+                .withType(javaField.getDmnTypeRef())
+                .asList(javaField.isList())
                 .get();
-        newDataType.setName(javaField.name);
+        newDataType.setName(javaField.getName());
         return newDataType;
     }
 
     private DataType createNewDataType(final JavaClass javaClass) {
         final DataType newDataType = dataTypeManager.fromNew().withType(dataTypeManager.structure()).get();
-        String javaClassSimpleName = javaClass.name.substring(javaClass.name.lastIndexOf('.') + 1);
+        String javaClassSimpleName = javaClass.getName().substring(javaClass.getName().lastIndexOf('.') + 1);
         newDataType.setName(javaClassSimpleName);
         return newDataType;
     }

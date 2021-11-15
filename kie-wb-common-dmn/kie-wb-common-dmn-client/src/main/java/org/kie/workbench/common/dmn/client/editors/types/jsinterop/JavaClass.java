@@ -16,18 +16,38 @@
 
 package org.kie.workbench.common.dmn.client.editors.types.jsinterop;
 
-import jsinterop.annotations.JsType;
+import java.util.List;
 
-@JsType
+import jsinterop.annotations.JsOverlay;
+import jsinterop.annotations.JsPackage;
+import jsinterop.annotations.JsProperty;
+import jsinterop.annotations.JsType;
+import jsinterop.base.JsArrayLike;
+import org.appformer.kogito.bridge.client.pmmleditor.marshaller.model.JSIUtils;
+
+@JsType(isNative = true, namespace = JsPackage.GLOBAL)
 public class JavaClass {
 
-    /* Java Class Name (eg. java.lang.String OR com.mypackage.Test) */
-    public final String name;
-    /* Java Fields of the class */
-    public final JavaField[] fields;
+    /** Java Class Name (eg. java.lang.String OR com.mypackage.Test) */
+    @JsProperty(name = "name")
+    public native String getName();
 
-    public JavaClass(final String name, final JavaField[] fields) {
-        this.name = name;
-        this.fields = fields;
+    @JsProperty(name = "name")
+    public native void setName(String name);
+
+    /** Java Fields of the class */
+    @JsOverlay
+    public final List<JavaField> getFields() {
+        if (getNativeFields() == null) {
+            setNativeFields(JSIUtils.getNativeArray());
+        }
+        return JSIUtils.toList(JSIUtils.getUnwrappedElementsArray(getNativeFields()));
     }
+
+    @JsProperty(name = "fields")
+    public native JsArrayLike<JavaField> getNativeFields();
+
+    @JsProperty(name = "fields")
+    public native void setNativeFields(JsArrayLike<JavaField> models);
+
 }

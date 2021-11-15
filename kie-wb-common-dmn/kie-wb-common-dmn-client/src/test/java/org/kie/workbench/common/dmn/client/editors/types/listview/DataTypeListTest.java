@@ -944,8 +944,8 @@ public class DataTypeListTest {
         namesCount.put("trash", 0);
         renamed.put("trash.from.previous", "previous");
 
-        doReturn(namesCount).when(dataTypeList).getImportedNamesOccurrencesCount();
-        doReturn(renamed).when(dataTypeList).getRenamedImportedDataTypes();
+        //doReturn(namesCount).when(dataTypeList).getImportedNamesOccurrencesCount();
+        //doReturn(renamed).when(dataTypeList).getRenamedImportedDataTypes();
 
         final List<DataObject> imported = Arrays.asList(do1, do2, do3);
         when(do1.getClassNameWithoutPackage()).thenReturn(extractedName1);

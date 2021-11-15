@@ -16,25 +16,27 @@
 
 package org.kie.workbench.common.dmn.client.editors.types.jsinterop;
 
+import jsinterop.annotations.JsPackage;
+import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
 
-@JsType
+@JsType(isNative = true, namespace = JsPackage.GLOBAL)
 public class JavaField {
 
-    /* Field Name */
-    public final String name;
-    /* The Java Type of the field (eg. java.lang.String OR com.mypackace.Test) */
-    public final String type;
-    /* List Type */
-    public final boolean isList;
-    /* The Java Type of the field (eg. java.lang.String OR com.mypackace.Test) */
-    public final String dmnTypeRef;
+    /** Field Name */
+    @JsProperty(name = "name")
+    public native String getName();
 
-    public JavaField(final String name, final String type, final boolean isList, final String dmnTypeRef) {
-        this.name = name;
-        this.type = type;
-        this.isList = isList;
-        this.dmnTypeRef = dmnTypeRef;
-    }
+    /** Java Class Name (eg. java.lang.String OR com.mypackage.Test) */
+    @JsProperty(name = "type")
+    public native String getType();
+
+    /** List Type */
+    @JsProperty(name = "isList")
+    public native boolean isList();
+
+    /** The assigned DMN Type of the field (eg. Simple DMN Type (ANY, NUMBER, STRING, .. ) OR custom one */
+    @JsProperty(name = "dmnTypeRef")
+    public native String getDmnTypeRef();
 
 }
