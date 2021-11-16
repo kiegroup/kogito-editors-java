@@ -70,7 +70,7 @@ export const InvocationExpression: React.FunctionComponent<InvocationProps> = (i
   const spreadInvocationExpressionDefinition = useCallback(
     (invocationExpressionUpdated?: Partial<InvocationProps>) => {
       const updatedDefinition: InvocationProps = {
-        uid: invocationProps.uid,
+        id: invocationProps.id,
         logicType: LogicType.Invocation,
         name: invocationProps.name ?? DEFAULT_PARAMETER_NAME,
         dataType: invocationProps.dataType ?? DEFAULT_PARAMETER_DATA_TYPE,
@@ -235,9 +235,9 @@ export const InvocationExpression: React.FunctionComponent<InvocationProps> = (i
   }, [i18n]);
 
   return (
-    <div className={`invocation-expression ${invocationProps.uid}`}>
+    <div className={`invocation-expression ${invocationProps.id}`}>
       <Table
-        tableId={invocationProps.uid}
+        tableId={invocationProps.id}
         headerLevels={2}
         headerVisibility={getHeaderVisibility}
         skipLastHeaderGroup={true}

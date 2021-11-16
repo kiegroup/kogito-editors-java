@@ -71,7 +71,7 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = (context
   const spreadContextExpressionDefinition = useCallback(
     (contextExpressionUpdated: Partial<ContextProps>) => {
       const updatedDefinition: Partial<ContextProps> = {
-        uid: contextExpression.uid,
+        id: contextExpression.id,
         logicType: LogicType.Context,
         name: contextExpression.name ?? DEFAULT_CONTEXT_ENTRY_NAME,
         dataType: contextExpression.dataType ?? DEFAULT_CONTEXT_ENTRY_DATA_TYPE,
@@ -248,9 +248,9 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = (context
   }, [contextExpression.renderResult]);
 
   return (
-    <div className={`context-expression ${contextExpression.uid}`}>
+    <div className={`context-expression ${contextExpression.id}`}>
       <Table
-        tableId={contextExpression.uid}
+        tableId={contextExpression.id}
         headerLevels={1}
         headerVisibility={getHeaderVisibility}
         defaultCell={defaultCell}

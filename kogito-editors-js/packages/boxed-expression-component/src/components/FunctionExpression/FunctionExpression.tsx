@@ -242,7 +242,7 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (
     (updatedFunctionExpression?: Partial<FunctionProps>) => {
       const extendedDefinition = extendDefinitionBasedOnFunctionKind(
         {
-          uid: functionExpression.uid,
+          id: functionExpression.id,
           logicType: functionExpression.logicType,
           name: functionExpression.name ?? DEFAULT_FIRST_PARAM_NAME,
           dataType: functionExpression.dataType ?? DataType.Undefined,
@@ -449,7 +449,7 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (
   );
 
   return (
-    <div className={`function-expression ${functionExpression.uid}`}>
+    <div className={`function-expression ${functionExpression.id}`}>
       <Table
         handlerConfiguration={handlerConfiguration}
         columns={columns}

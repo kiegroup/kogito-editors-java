@@ -75,5 +75,5 @@ export const getEntryKey = (row: Row): string => {
 
 export const resetEntry = (row: DataRecord): DataRecord => ({
   ...row,
-  entryExpression: { uid: (row.entryExpression as ExpressionProps).uid },
+  entryExpression: { id: (row.entryExpression as ExpressionProps).id },
 });

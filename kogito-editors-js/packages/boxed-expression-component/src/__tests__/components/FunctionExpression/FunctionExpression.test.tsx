@@ -86,7 +86,7 @@ describe("FunctionExpression tests", () => {
       logicType: "Function",
       name: "p-1",
       parametersWidth: 370,
-      uid: undefined,
+      id: undefined,
     });
   });
 
@@ -258,7 +258,7 @@ describe("FunctionExpression tests", () => {
         logicType: "Function",
         name: "p-1",
         parametersWidth: 370,
-        uid: undefined,
+        id: undefined,
       });
     }
   });
@@ -290,7 +290,7 @@ describe("FunctionExpression tests", () => {
             functionKind={FunctionKind.Feel}
             formalParameters={[]}
             expression={{
-              uid: "id2",
+              id: "id2",
               logicType: LogicType.Relation,
             }}
           />

@@ -159,7 +159,7 @@ export function DecisionTableExpression(decisionTable: PropsWithChildren<Decisio
     };
     const outputSection = {
       groupType: DecisionTableColumnType.OutputClause,
-      accessor: decisionTable.uid,
+      accessor: decisionTable.id,
       label: decisionTable.name ?? DECISION_NODE_DEFAULT_NAME,
       dataType: decisionTable.dataType ?? DataType.Undefined,
       cssClasses: "decision-table--output",
@@ -177,7 +177,7 @@ export function DecisionTableExpression(decisionTable: PropsWithChildren<Decisio
 
     return [inputSection, outputSection, annotationSection] as ColumnInstance[];
   }, [
-    decisionTable.uid,
+    decisionTable.id,
     decisionTable.annotations,
     decisionTable.dataType,
     decisionTable.input,
@@ -252,7 +252,7 @@ export function DecisionTableExpression(decisionTable: PropsWithChildren<Decisio
         .value();
 
       const updatedDefinition: Partial<DecisionTableProps> = {
-        uid: decisionTable.uid,
+        id: decisionTable.id,
         logicType: LogicType.DecisionTable,
         name: decisionTable.name ?? DECISION_NODE_DEFAULT_NAME,
         dataType: decisionTable.dataType ?? DataType.Undefined,
@@ -391,7 +391,7 @@ export function DecisionTableExpression(decisionTable: PropsWithChildren<Decisio
   );
 
   return (
-    <div className={`decision-table-expression ${decisionTable.uid}`}>
+    <div className={`decision-table-expression ${decisionTable.id}`}>
       <Table
         headerLevels={1}
         headerVisibility={TableHeaderVisibility.Full}
