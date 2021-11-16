@@ -1106,9 +1106,9 @@ public class DataTypeListTest {
         assertEquals(differentName + DataTypeList.NAME_SEPARATOR + "1", differentOccurrence1);
     }
 
+    @Test
     public void testUpdatePropertiesReferences() {
-
-        final List<DataObject> imported = new ArrayList<>();
+        final List<JavaClass> javaClasses = new ArrayList<>();
         final HashMap<String, String> renamed = new HashMap<>();
 
         final String propertyType1 = "type";
@@ -1117,24 +1117,20 @@ public class DataTypeListTest {
 
         renamed.put(propertyType1, propertyNewType1);
 
-        final DataObjectProperty prop1 = mock(DataObjectProperty.class);
-        final DataObjectProperty prop2 = mock(DataObjectProperty.class);
-        when(prop1.getType()).thenReturn(propertyType1);
-        when(prop2.getType()).thenReturn(uniqueType);
+        doReturn(true).when(dataTypeList).isPropertyTypePresent(uniqueType, javaClasses);
+        doReturn(true).when(dataTypeList).isPropertyTypePresent(propertyNewType1, javaClasses);
 
-        //doReturn(true).when(dataTypeList).isPropertyTypePresent(uniqueType, imported);
-        //doReturn(true).when(dataTypeList).isPropertyTypePresent(propertyNewType1, imported);
+        final JavaField prop1 = mockJavaField("f1", propertyType1, "unkwown");
+        final JavaField prop2 = mockJavaField("f2", uniqueType, "unkwown");
+        final JavaClass javaClass = mockJavaClass("name", Arrays.asList(prop1, prop2));
+        javaClasses.add(javaClass);
 
-        final DataObject do1 = new DataObject();
-        do1.setProperties(Arrays.asList(prop1, prop2));
-        imported.add(do1);
+        dataTypeList.updatePropertiesReferences(javaClasses, renamed);
 
-        //dataTypeList.updatePropertiesReferences(imported, renamed);
-
-        verify(prop1).setType(propertyNewType1);
-        verify(prop2).setType(uniqueType);
-        //verify(dataTypeList).isPropertyTypePresent(propertyNewType1, imported);
-        //verify(dataTypeList).isPropertyTypePresent(uniqueType, imported);
+        verify(prop1, times(1)).setDmnTypeRef(propertyNewType1);
+        verify(prop2, never()).setDmnTypeRef(any());
+        verify(dataTypeList, times(1)).isPropertyTypePresent(propertyNewType1, javaClasses);
+        verify(dataTypeList, never()).isPropertyTypePresent(uniqueType, javaClasses);
     }
 
     @Test
