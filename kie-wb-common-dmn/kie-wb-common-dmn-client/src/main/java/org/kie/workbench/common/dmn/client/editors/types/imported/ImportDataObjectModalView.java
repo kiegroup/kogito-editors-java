@@ -42,7 +42,6 @@ import org.kie.workbench.common.dmn.client.editors.types.imported.treelist.TreeL
 
 @Dependent
 @Templated
-@Deprecated
 public class ImportDataObjectModalView implements ImportDataObjectModal.View {
 
     static final String OPENED_CONTAINER_CSS_CLASS = "opened";
