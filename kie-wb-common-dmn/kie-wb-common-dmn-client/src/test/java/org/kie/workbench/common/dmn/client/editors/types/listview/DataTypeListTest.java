@@ -1145,15 +1145,15 @@ public class DataTypeListTest {
         final JavaClass dataObject = mock(JavaClass.class);
         when(dataObject.getName()).thenReturn(anImportedType);
 
-        final List<JavaClass> imported = Arrays.asList(dataObject);
+        final List<JavaClass> javaClasses = Arrays.asList(dataObject);
 
-        boolean isPresent = dataTypeList.isPropertyTypePresent(someBuiltInType, imported);
+        boolean isPresent = dataTypeList.isPropertyTypePresent(someBuiltInType, javaClasses);
         assertTrue("Built-in type is present", isPresent);
 
-        isPresent = dataTypeList.isPropertyTypePresent(anImportedType, imported);
+        isPresent = dataTypeList.isPropertyTypePresent(anImportedType, javaClasses);
         assertTrue("Imported type is present", isPresent);
 
-        isPresent = dataTypeList.isPropertyTypePresent(unknownType, imported);
+        isPresent = dataTypeList.isPropertyTypePresent(unknownType, javaClasses);
         assertFalse("Type not imported or not built-in is not present", isPresent);
     }
 
