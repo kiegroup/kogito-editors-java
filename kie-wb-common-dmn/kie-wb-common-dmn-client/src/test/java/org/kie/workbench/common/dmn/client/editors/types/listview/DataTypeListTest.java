@@ -933,7 +933,8 @@ public class DataTypeListTest {
         assertEquals("title", bookTitleDataType.getName());
         assertEquals("author", bookAuthorDataType.getName());
 
-
+        verify(authorDataTypeListItem, times(1)).insertNestedField(authorNameDataType);
+        verify(authorDataTypeListItem, times(1)).insertNestedField(authorBirthDateType);
         verify(bookDataTypeListItem, times(1)).insertNestedField(bookTitleDataType);
         verify(bookDataTypeListItem, times(1)).insertNestedField(bookAuthorDataType);
     }
@@ -1136,24 +1137,24 @@ public class DataTypeListTest {
         //verify(dataTypeList).isPropertyTypePresent(uniqueType, imported);
     }
 
+    @Test
     public void testIsPropertyTypePresent() {
-
         final String someBuiltInType = BuiltInType.STRING.getName();
         final String anImportedType = "SomeImportedType";
         final String unknownType = "UnknownType";
-        final DataObject dataObject = mock(DataObject.class);
-        when(dataObject.getClassType()).thenReturn(anImportedType);
+        final JavaClass dataObject = mock(JavaClass.class);
+        when(dataObject.getName()).thenReturn(anImportedType);
 
-        final List<DataObject> imported = Arrays.asList(dataObject);
+        final List<JavaClass> imported = Arrays.asList(dataObject);
 
-        //boolean isPresent = dataTypeList.isPropertyTypePresent(someBuiltInType, imported);
-        //assertTrue("Built-in type is present", isPresent);
+        boolean isPresent = dataTypeList.isPropertyTypePresent(someBuiltInType, imported);
+        assertTrue("Built-in type is present", isPresent);
 
-        //isPresent = dataTypeList.isPropertyTypePresent(anImportedType, imported);
-        //assertTrue("Imported type is present", isPresent);
+        isPresent = dataTypeList.isPropertyTypePresent(anImportedType, imported);
+        assertTrue("Imported type is present", isPresent);
 
-        //isPresent = dataTypeList.isPropertyTypePresent(unknownType, imported);
-        //assertFalse("Type not imported or not built-in is not present", isPresent);
+        isPresent = dataTypeList.isPropertyTypePresent(unknownType, imported);
+        assertFalse("Type not imported or not built-in is not present", isPresent);
     }
 
     @Test
