@@ -24,6 +24,7 @@ import {
   ExpressionProps,
   FunctionKind,
   FunctionProps,
+  generateUuid,
   InvocationProps,
   ListProps,
   LiteralExpressionProps,
@@ -39,7 +40,6 @@ import { PopoverMenu } from "../PopoverMenu";
 import { Menu, MenuGroup, MenuItem, MenuList } from "@patternfly/react-core";
 import * as _ from "lodash";
 import { useContextMenuHandler } from "../../hooks";
-import nextId from "react-id-generator";
 import { BoxedExpressionGlobalContext } from "../../context";
 import { DecisionTableExpression } from "../DecisionTableExpression";
 import { ListExpression } from "../ListExpression";
@@ -79,7 +79,7 @@ export const LogicTypeSelector: React.FunctionComponent<LogicTypeSelectorProps> 
   const expression = useMemo(() => {
     return {
       ...selectedExpression,
-      uid: selectedExpression.uid ?? nextId(),
+      id: selectedExpression.id ?? generateUuid(),
       isHeadless: isHeadless ?? false,
       onUpdatingNameAndDataType,
       onUpdatingRecursiveExpression,

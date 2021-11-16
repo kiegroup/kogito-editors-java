@@ -22,6 +22,7 @@ import {
   DataType,
   executeIfExpressionDefinitionChanged,
   ExpressionProps,
+  generateUuid,
   ListProps,
   LiteralExpressionProps,
   LogicType,
@@ -35,7 +36,6 @@ import { useBoxedExpressionEditorI18n } from "../../i18n";
 import { DataRecord, Row } from "react-table";
 import { hashfy } from "../Resizer";
 import { BoxedExpressionGlobalContext } from "../../context";
-import nextId from "react-id-generator";
 
 const LIST_EXPRESSION_MIN_WIDTH = 430;
 
@@ -46,7 +46,7 @@ export const ListExpression: React.FunctionComponent<ListProps> = (listExpressio
   const generateLiteralExpression = useMemo(
     () =>
       ({
-        uid: nextId(),
+        id: generateUuid(),
         name: "",
         dataType: DataType.Undefined,
         logicType: LogicType.LiteralExpression,

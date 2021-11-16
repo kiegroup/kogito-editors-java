@@ -24,7 +24,6 @@ import {
 } from "../../i18n";
 import { act } from "react-dom/test-utils";
 import { fireEvent } from "@testing-library/react";
-import { resetId } from "react-id-generator";
 import { BoxedExpressionGlobalContext } from "../../context";
 import { DataType } from "../../api";
 import { BoxedExpressionProvider, BoxedExpressionProviderProps } from "../../components";
@@ -161,7 +160,3 @@ export const checkEntryStyle = (entry: Element | null, cssClass: string): void =
 export const checkEntryLogicType = (entry: Element | null, cssClass: string): void => {
   expect(entry?.querySelector(".entry-expression")?.firstChild?.firstChild).toHaveClass(cssClass);
 };
-
-beforeEach(() => {
-  resetId();
-});
