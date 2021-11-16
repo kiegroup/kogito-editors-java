@@ -38,6 +38,8 @@ import elemental2.dom.HTMLElement;
 import org.appformer.client.context.Channel;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
+import org.kie.workbench.common.dmn.api.editors.types.BuiltInTypeUtils;
+import org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType;
 import org.kie.workbench.common.dmn.client.common.KogitoChannelHelper;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataType;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataTypeManager;
@@ -448,6 +450,11 @@ public class DataTypeList {
     }
 
     public void importJavaClasses(final List<JavaClass> javaClasses) {
+        if (javaClasses == null || javaClasses.isEmpty()) {
+            return;
+        }
+
+        manageDuplicateJavaClasses(javaClasses);
 
         for (JavaClass javaClass : javaClasses) {
             DataType newDataType = createNewDataType(javaClass);
@@ -476,28 +483,31 @@ public class DataTypeList {
             javaClass.setName(newName);
         }
 
-        //updatePropertiesReferences(java, renamed);
+        updatePropertiesReferences(javaClasses, renamed);
     }
 
-    /*void updatePropertiesReferences(final List<DataObject> imported,
-                                    final Map<String, String> renamed) {
+    void updatePropertiesReferences(final List<JavaClass> javaClasses, final Map<String, String> renamed) {
 
-        for (final DataObject dataObject : imported) {
-            for (final DataObjectProperty property : dataObject.getProperties()) {
-                String propertyType = renamed.getOrDefault(property.getType(), property.getType());
-                if (!isPropertyTypePresent(propertyType, imported)) {
-                    propertyType = BuiltInType.ANY.getName();
+        for (final JavaClass javaClass : javaClasses) {
+
+            for (final JavaField field : javaClass.getFields()) {
+                if (renamed.containsKey(field.getType())) {
+                    String renamedFieldType = renamed.get(field.getType());
+                    if (!isPropertyTypePresent(renamedFieldType, javaClasses)) {
+                        renamedFieldType = BuiltInType.ANY.getName();
+                    }
+                    field.setDmnTypeRef(renamedFieldType);
                 }
-                property.setType(propertyType);
             }
+
         }
+
     }
 
-    boolean isPropertyTypePresent(final String type, final List<DataObject> imported) {
+    boolean isPropertyTypePresent(final String type, final List<JavaClass> javaClasses) {
         return BuiltInTypeUtils.isBuiltInType(type)
-                || imported.stream().anyMatch(dataObject -> Objects.equals(dataObject.getClassType(), type));
+                || javaClasses.stream().anyMatch(javaClass -> Objects.equals(javaClass.getName(), type));
     }
-    */
 
     String buildName(final String nameCandidate, final Map<String, Integer> namesCount) {
 
@@ -512,7 +522,7 @@ public class DataTypeList {
         return nameCandidate;
     }
 
-    private void insertFields(DataType structureDataType, final JavaClass javaClass) {
+    void insertFields(final DataType structureDataType, final JavaClass javaClass) {
         findItem(structureDataType).ifPresent(item -> {
             for (final JavaField javaField : javaClass.getFields()) {
                 final DataType newDataType = createNewDataType(javaField);

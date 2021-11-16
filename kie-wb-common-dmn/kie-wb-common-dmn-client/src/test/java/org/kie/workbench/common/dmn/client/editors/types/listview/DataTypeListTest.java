@@ -18,6 +18,7 @@ package org.kie.workbench.common.dmn.client.editors.types.listview;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -39,6 +40,8 @@ import org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType;
 import org.kie.workbench.common.dmn.client.common.KogitoChannelHelper;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataType;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataTypeManager;
+import org.kie.workbench.common.dmn.client.editors.types.jsinterop.JavaClass;
+import org.kie.workbench.common.dmn.client.editors.types.jsinterop.JavaField;
 import org.kie.workbench.common.dmn.client.editors.types.listview.common.DataTypeEditModeToggleEvent;
 import org.kie.workbench.common.dmn.client.editors.types.listview.common.DataTypeStackHash;
 import org.kie.workbench.common.dmn.client.editors.types.listview.draganddrop.DNDDataTypesHandler;
@@ -65,6 +68,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.kie.workbench.common.dmn.client.editors.types.common.DataType.TOP_LEVEL_PARENT_UUID;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
@@ -861,7 +865,96 @@ public class DataTypeListTest {
         assertEquals(expectedElement, actualElement);
     }
 
-    public void testImportDataObjects() {
+    @Test
+    public void testImportDataObjects_NullOrEmpty() {
+        dataTypeList.importJavaClasses(null);
+        dataTypeList.importJavaClasses(Collections.emptyList());
+
+        verify(dataTypeList, never()).manageDuplicateJavaClasses(any());
+        verify(dataTypeList, never()).insert(any());
+        verify(dataTypeList, never()).replace(any(), any());
+        verify(dataTypeList, never()).insertFields(any(), any());
+    }
+
+    @Test
+    public void testImportDataObjectsNoDuplications() {
+        List<JavaClass> javaClasses = new ArrayList<>();
+        /* Author */
+        List<JavaField> authorJavaFields = new ArrayList<>();
+        JavaField nameJavaField = mockJavaField("name", "java.lang.String", "string");
+        JavaField birthDateField = mockJavaField("birthDate", "java.time.LocalDate", "date and time");
+        authorJavaFields.add(nameJavaField);
+        authorJavaFields.add(birthDateField);
+        JavaClass authorClass = mockJavaClass("org.kogito.test.Author", authorJavaFields);
+        /* Book */
+        List<JavaField> bookJavaFields = new ArrayList<>();
+        JavaField titleJavaField = mockJavaField("title", "java.lang.String", "string");
+        JavaField authorField = mockJavaField("author", "org.kogito.test.Author", "Author");
+        bookJavaFields.add(titleJavaField);
+        bookJavaFields.add(authorField);
+        JavaClass bookClass = mockJavaClass("org.kogito.test.Book", bookJavaFields);
+
+        javaClasses.add(authorClass);
+        javaClasses.add(bookClass);
+
+        when(dataTypeManager.fromNew()).thenReturn(dataTypeManager);
+        when(dataTypeManager.withType(any())).thenReturn(dataTypeManager);
+        when(dataTypeManager.asList(anyBoolean())).thenReturn(dataTypeManager);
+
+        DataType authorDataType = new DataType(null);
+        DataType authorNameDataType = new DataType(null);
+        DataType authorBirthDateType = new DataType(null);
+        DataType bookDataType = new DataType(null);
+        DataType bookTitleDataType = new DataType(null);
+        DataType bookAuthorDataType = new DataType(null);
+        DataTypeListItem authorDataTypeListItem = mock(DataTypeListItem.class);
+        DataTypeListItem bookDataTypeListItem = mock(DataTypeListItem.class);
+
+        when(dataTypeManager.get())
+                .thenReturn(authorDataType, authorNameDataType, authorBirthDateType,
+                                               bookDataType, bookTitleDataType, bookAuthorDataType)
+                .thenThrow(new IllegalStateException());
+        when(dataTypeList.findItem(authorDataType)).thenReturn(Optional.of(authorDataTypeListItem));
+        when(dataTypeList.findItem(bookDataType)).thenReturn(Optional.of(bookDataTypeListItem));
+
+        dataTypeList.importJavaClasses(javaClasses);
+
+        verify(dataTypeList, times(1)).manageDuplicateJavaClasses(javaClasses);
+        verify(dataTypeList, never()).replace(any(), any());
+        verify(dataTypeList, times(1)).insert(authorDataType);
+        verify(dataTypeList, times(1)).insert(bookDataType);
+        verify(dataTypeList, times(1)).insertFields(authorDataType, authorClass);
+        verify(dataTypeList, times(1)).insertFields(bookDataType, bookClass);
+
+        assertEquals("Author", authorDataType.getName());
+        assertEquals("name", authorNameDataType.getName());
+        assertEquals("birthDate", authorBirthDateType.getName());
+        assertEquals("Book", bookDataType.getName());
+        assertEquals("title", bookTitleDataType.getName());
+        assertEquals("author", bookAuthorDataType.getName());
+
+
+        verify(bookDataTypeListItem, times(1)).insertNestedField(bookTitleDataType);
+        verify(bookDataTypeListItem, times(1)).insertNestedField(bookAuthorDataType);
+    }
+
+    private JavaClass mockJavaClass(String name, List<JavaField> javaFields) {
+        JavaClass javaClass = mock(JavaClass.class);
+        when(javaClass.getName()).thenReturn(name);
+        when(javaClass.getFields()).thenReturn(javaFields);
+        return javaClass;
+    }
+
+    private JavaField mockJavaField(String name, String type, String dmnRef) {
+        JavaField javaField = mock(JavaField.class);
+        when(javaField.getName()).thenReturn(name);
+        when(javaField.getType()).thenReturn(type);
+        when(javaField.getDmnTypeRef()).thenReturn(dmnRef);
+        return javaField;
+    }
+
+
+    /*public void testImportDataObjects() {
 
         final DataObject present = mock(DataObject.class);
         final DataObject notPresent = mock(DataObject.class);
@@ -981,7 +1074,7 @@ public class DataTypeListTest {
         assertEquals(3, renamed.size());
 
         //verify(dataTypeList).updatePropertiesReferences(imported, renamed);
-    }
+    }*/
 
     private DataObject createDataObject(final String className) {
         final DataObject dataObject = mock(DataObject.class);
@@ -1043,7 +1136,6 @@ public class DataTypeListTest {
         //verify(dataTypeList).isPropertyTypePresent(uniqueType, imported);
     }
 
-    @Test
     public void testIsPropertyTypePresent() {
 
         final String someBuiltInType = BuiltInType.STRING.getName();

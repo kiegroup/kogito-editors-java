@@ -39,4 +39,6 @@ public class JavaField {
     @JsProperty(name = "dmnTypeRef")
     public native String getDmnTypeRef();
 
+    @JsProperty(name = "dmnTypeRef")
+    public native void setDmnTypeRef(String dmnTypeRef);
 }
