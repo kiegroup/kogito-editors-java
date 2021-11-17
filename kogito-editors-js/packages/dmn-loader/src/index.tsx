@@ -134,9 +134,9 @@ const ImportJavaClassesWrapper: React.FunctionComponent<ImportJavaClassesProps> 
   /** BEGIN - TEMPORARY MOCK CODE TO TEST COMPONENT INSIDE THE EDITOR - TO BE REMOVED */
   const lspGetClassServiceMocked = (value: string) => {
     /* Mocked data retrieved from LSP Service */
-    const booClassesList = ["org.kie.test.kogito.Book", "org.kie.test.kogito.Boom", "com.second.test.Boom"];
+    const booClassesList = ["org.kie.test.kogito.Book", "org.kie.test.kogito.Boom"];
     const bookClassesList = ["org.kie.test.kogito.Book"];
-    const boomClassesList = ["org.kie.test.kogito.Boom", "com.second.test.Boom"];
+    const boomClassesList = ["org.kie.test.kogito.Boom"];
 
     /* Temporary mocks managing */
     if (value === "Boo") {
@@ -161,15 +161,9 @@ const ImportJavaClassesWrapper: React.FunctionComponent<ImportJavaClassesProps> 
     boomClassFieldsList.set("big", "java.lang.Boolean");
     boomClassFieldsList.set("color", "java.lang.String");
     boomClassFieldsList.set("countdown", "java.time.Duration");
-    const boom2ClassFieldsList = new Map<string, string>();
-    boom2ClassFieldsList.set("startTime", "java.util.Date");
-    boom2ClassFieldsList.set("big", "java.lang.Boolean");
-    boom2ClassFieldsList.set("color", "java.lang.String");
-    boom2ClassFieldsList.set("countdown", "java.time.Duration");
     const authorClassFieldsList = new Map<string, string>();
     authorClassFieldsList.set("age", "int");
     authorClassFieldsList.set("name", "java.lang.String");
-    authorClassFieldsList.set("boom", "com.second.test.Boom");
 
     await delay();
 
@@ -178,8 +172,6 @@ const ImportJavaClassesWrapper: React.FunctionComponent<ImportJavaClassesProps> 
       return bookClassFieldsList;
     } else if (className === "org.kie.test.kogito.Boom") {
       return boomClassFieldsList;
-    } else if (className === "com.second.test.Boom") {
-      return boom2ClassFieldsList;
     } else if (className === "org.kie.test.kogito.Author") {
       return authorClassFieldsList;
     } else {
