@@ -35,7 +35,6 @@ import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType;
 import org.kie.workbench.common.dmn.client.common.KogitoChannelHelper;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataType;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataTypeManager;
@@ -1078,9 +1077,6 @@ public class DataTypeListTest {
 
         renamed.put(propertyType1, propertyNewType1);
 
-        doReturn(true).when(dataTypeList).isPropertyTypePresent(uniqueType, javaClasses);
-        doReturn(true).when(dataTypeList).isPropertyTypePresent(propertyNewType1, javaClasses);
-
         final JavaField prop1 = mockJavaField("f1", propertyType1, "unkwown", false);
         final JavaField prop2 = mockJavaField("f2", uniqueType, "unkwown", false);
         final JavaClass javaClass = mockJavaClass("name", Arrays.asList(prop1, prop2));
@@ -1090,28 +1086,6 @@ public class DataTypeListTest {
 
         verify(prop1, times(1)).setDmnTypeRef(propertyNewType1);
         verify(prop2, never()).setDmnTypeRef(any());
-        verify(dataTypeList, times(1)).isPropertyTypePresent(propertyNewType1, javaClasses);
-        verify(dataTypeList, never()).isPropertyTypePresent(uniqueType, javaClasses);
-    }
-
-    @Test
-    public void testIsPropertyTypePresent() {
-        final String someBuiltInType = BuiltInType.STRING.getName();
-        final String anImportedType = "SomeImportedType";
-        final String unknownType = "UnknownType";
-        final JavaClass dataObject = mock(JavaClass.class);
-        when(dataObject.getName()).thenReturn(anImportedType);
-
-        final List<JavaClass> javaClasses = Arrays.asList(dataObject);
-
-        boolean isPresent = dataTypeList.isPropertyTypePresent(someBuiltInType, javaClasses);
-        assertTrue("Built-in type is present", isPresent);
-
-        isPresent = dataTypeList.isPropertyTypePresent(anImportedType, javaClasses);
-        assertTrue("Imported type is present", isPresent);
-
-        isPresent = dataTypeList.isPropertyTypePresent(unknownType, javaClasses);
-        assertFalse("Type not imported or not built-in is not present", isPresent);
     }
 
     @Test

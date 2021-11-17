@@ -38,8 +38,6 @@ import elemental2.dom.HTMLElement;
 import org.appformer.client.context.Channel;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
-import org.kie.workbench.common.dmn.api.editors.types.BuiltInTypeUtils;
-import org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType;
 import org.kie.workbench.common.dmn.client.common.KogitoChannelHelper;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataType;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataTypeManager;
@@ -473,40 +471,32 @@ public class DataTypeList {
 
     void renameJavaClassToDMNName(final List<JavaClass> javaClasses) {
         final Map<String, Integer> namesCount = new HashMap<>();
-        final Map<String, String> renamed = new HashMap<>();
+        final Map<String, String> javaClassNameToDMNTypeNameMap = new HashMap<>();
 
         for (final JavaClass javaClass : javaClasses) {
             final String nameCandidate = javaClass.getName().substring(javaClass.getName().lastIndexOf('.') + 1);
-
             final String newName = buildName(nameCandidate, namesCount);
-            renamed.put(javaClass.getName(), newName);
+            javaClassNameToDMNTypeNameMap.put(javaClass.getName(), newName);
             javaClass.setName(newName);
         }
 
-        updatePropertiesReferences(javaClasses, renamed);
+        updatePropertiesReferences(javaClasses, javaClassNameToDMNTypeNameMap);
     }
 
-    void updatePropertiesReferences(final List<JavaClass> javaClasses, final Map<String, String> renamed) {
+    void updatePropertiesReferences(final List<JavaClass> javaClasses,
+                                    final Map<String, String> javaClassNameToDMNTypeNameMap) {
 
         for (final JavaClass javaClass : javaClasses) {
 
             for (final JavaField field : javaClass.getFields()) {
-                if (renamed.containsKey(field.getType())) {
-                    String renamedFieldType = renamed.get(field.getType());
-                    if (!isPropertyTypePresent(renamedFieldType, javaClasses)) {
-                        renamedFieldType = BuiltInType.ANY.getName();
-                    }
+                if (javaClassNameToDMNTypeNameMap.containsKey(field.getType())) {
+                    String renamedFieldType = javaClassNameToDMNTypeNameMap.get(field.getType());
                     field.setDmnTypeRef(renamedFieldType);
                 }
             }
 
         }
 
-    }
-
-    boolean isPropertyTypePresent(final String type, final List<JavaClass> javaClasses) {
-        return BuiltInTypeUtils.isBuiltInType(type)
-                || javaClasses.stream().anyMatch(javaClass -> Objects.equals(javaClass.getName(), type));
     }
 
     String buildName(final String nameCandidate, final Map<String, Integer> namesCount) {
