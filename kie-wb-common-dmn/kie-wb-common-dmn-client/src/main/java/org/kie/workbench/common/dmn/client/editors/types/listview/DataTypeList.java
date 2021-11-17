@@ -541,7 +541,7 @@ public class DataTypeList {
         insert(newDataType);
     }
 
-    private DataType createNewDataType(final JavaField javaField) {
+    DataType createNewDataType(final JavaField javaField) {
         final DataType newDataType = dataTypeManager.fromNew()
                 .withType(javaField.getDmnTypeRef())
                 .asList(javaField.isList())
@@ -550,7 +550,7 @@ public class DataTypeList {
         return newDataType;
     }
 
-    private DataType createNewDataType(final JavaClass javaClass) {
+    DataType createNewDataType(final JavaClass javaClass) {
         final DataType newDataType = dataTypeManager.fromNew().withType(dataTypeManager.structure()).get();
         String javaClassSimpleName = javaClass.getName().substring(javaClass.getName().lastIndexOf('.') + 1);
         newDataType.setName(javaClassSimpleName);

@@ -966,7 +966,6 @@ public class DataTypeListTest {
         verify(dataTypeManager, times(5)).asList(false);
         verify(dataTypeManager, times(1)).asList(true);
 
-
         verify(authorDataTypeListItem, times(1)).insertNestedField(authorNameDataType);
         verify(authorDataTypeListItem, times(1)).insertNestedField(authorBirthDateType);
         verify(authorDataTypeListItem, times(1)).insertNestedField(authorBooksDateType);
@@ -1140,6 +1139,71 @@ public class DataTypeListTest {
         verify(dndDataTypesHandler).deleteKeepingReferences(existing);
 
         verify(dataTypeList).insert(newDataType);
+    }
+
+    @Test
+    public void testCreateNewDataTypeFromJavaField() {
+        final String propertyName = "name";
+        final String propertyType = "type";
+        final String dmnType = "type";
+        final JavaField javaField = mockJavaField(propertyName, propertyType, dmnType, false);
+
+        final DataType newType = mock(DataType.class);
+
+        when(dataTypeManager.fromNew()).thenReturn(dataTypeManager);
+        when(dataTypeManager.asList(anyBoolean())).thenReturn(dataTypeManager);
+        when(dataTypeManager.withType(propertyType)).thenReturn(dataTypeManager);
+        when(dataTypeManager.get()).thenReturn(newType);
+
+        final DataType actual = dataTypeList.createNewDataType(javaField);
+
+        assertEquals(newType, actual);
+
+        verify(dataTypeManager, times(1)).asList(false);
+        verify(dataTypeManager, times(1)).withType(dmnType);
+        verify(newType, times(1)).setName(propertyName);
+    }
+
+    @Test
+    public void testCreateNewDataTypeFromJavaFieldWhenIsList() {
+        final String propertyName = "name";
+        final String propertyType = "type";
+        final String dmnType = "type";
+        final JavaField javaField = mockJavaField(propertyName, propertyType, dmnType, true);
+
+        final DataType newType = mock(DataType.class);
+
+        when(dataTypeManager.fromNew()).thenReturn(dataTypeManager);
+        when(dataTypeManager.asList(anyBoolean())).thenReturn(dataTypeManager);
+        when(dataTypeManager.withType(propertyType)).thenReturn(dataTypeManager);
+        when(dataTypeManager.get()).thenReturn(newType);
+
+        final DataType actual = dataTypeList.createNewDataType(javaField);
+
+        assertEquals(newType, actual);
+
+        verify(dataTypeManager, times(1)).asList(true);
+        verify(dataTypeManager, times(1)).withType(dmnType);
+        verify(newType, times(1)).setName(propertyName);
+    }
+
+    @Test
+    public void testCreateNewDataTypeFromJavaClass() {
+        final String classType = "classType";
+        final JavaClass javaClass = mockJavaClass(classType, Collections.emptyList());
+        final DataType dataType = mock(DataType.class);
+        final String structure = "structure";
+
+        when(dataTypeManager.structure()).thenReturn(structure);
+        when(dataTypeManager.fromNew()).thenReturn(dataTypeManager);
+        when(dataTypeManager.withType(structure)).thenReturn(dataTypeManager);
+        when(dataTypeManager.get()).thenReturn(dataType);
+
+        final DataType actual = dataTypeList.createNewDataType(javaClass);
+        assertEquals(dataType, actual);
+
+        verify(dataType, times(1)).setName(classType);
+        verify(dataTypeManager, times(1)).structure();
     }
 
     @Test
