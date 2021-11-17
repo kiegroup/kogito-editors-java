@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -34,7 +35,6 @@ import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.dmn.api.editors.types.DataObject;
 import org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType;
 import org.kie.workbench.common.dmn.client.common.KogitoChannelHelper;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataType;
@@ -72,6 +72,7 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doNothing;
@@ -998,35 +999,8 @@ public class DataTypeListTest {
         return javaField;
     }
 
-    /*public void testInsertProperties() {
-
-        final DataObject dataObject = mock(DataObject.class);
-        final String myImportedClass = "org.MyClass";
-        final DataType existingDt = mock(DataType.class);
-        final DataTypeListItem dtListItem = mock(DataTypeListItem.class);
-        final Optional<DataTypeListItem> dtListItemOptional = Optional.of(dtListItem);
-        final DataObjectProperty property1 = mock(DataObjectProperty.class);
-        final DataObjectProperty property2 = mock(DataObjectProperty.class);
-        final List<DataObjectProperty> properties = Arrays.asList(property1, property2);
-        final DataType property1DataType = mock(DataType.class);
-        final DataType property2DataType = mock(DataType.class);
-
-        when(dataObject.getClassType()).thenReturn(myImportedClass);
-        when(dataObject.getProperties()).thenReturn(properties);
-
-        doReturn(Optional.of(existingDt)).when(dataTypeList).findDataTypeByName(myImportedClass);
-        doReturn(dtListItemOptional).when(dataTypeList).findItem(existingDt);
-        //doReturn(property1DataType).when(dataTypeList).createNewDataType(property1);
-        //doReturn(property2DataType).when(dataTypeList).createNewDataType(property2);
-
-        //dataTypeList.insertProperties(dataObject);
-
-        verify(dtListItem).insertNestedField(property1DataType);
-        verify(dtListItem).insertNestedField(property2DataType);
-    }
-
+    @Test
     public void testRemoveFullQualifiedNames() {
-
         final String do1Class = "something.class1";
         final String do2Class = "something.class2";
         final String do3Class = "something.class3";
@@ -1036,57 +1010,39 @@ public class DataTypeListTest {
         final String builtName1 = "name1";
         final String builtName2 = "name2";
         final String builtName3 = "name3";
-        final DataObject do1 = createDataObject(do1Class);
-        final DataObject do2 = createDataObject(do2Class);
-        final DataObject do3 = createDataObject(do3Class);
-        final HashMap<String, Integer> namesCount = new HashMap<>();
-        final HashMap<String, String> renamed = new HashMap<>();
-        namesCount.put("trash", 0);
-        renamed.put("trash.from.previous", "previous");
+        final JavaClass do1 = mockJavaClass(do1Class, Collections.emptyList());
+        final JavaClass do2 = mockJavaClass(do2Class, Collections.emptyList());
+        final JavaClass do3 = mockJavaClass(do3Class, Collections.emptyList());
 
-        //doReturn(namesCount).when(dataTypeList).getImportedNamesOccurrencesCount();
-        //doReturn(renamed).when(dataTypeList).getRenamedImportedDataTypes();
+        final List<JavaClass> imported = Arrays.asList(do1, do2, do3);
 
-        final List<DataObject> imported = Arrays.asList(do1, do2, do3);
-        when(do1.getClassNameWithoutPackage()).thenReturn(extractedName1);
-        when(do2.getClassNameWithoutPackage()).thenReturn(extractedName2);
-        when(do3.getClassNameWithoutPackage()).thenReturn(extractedName3);
+        doReturn(builtName1).when(dataTypeList).buildName(eq(extractedName1), isA(Map.class));
+        doReturn(builtName2).when(dataTypeList).buildName(eq(extractedName2), isA(Map.class));
+        doReturn(builtName3).when(dataTypeList).buildName(eq(extractedName3), isA(Map.class));
 
-        doReturn(builtName1).when(dataTypeList).buildName(extractedName1, namesCount);
-        doReturn(builtName2).when(dataTypeList).buildName(extractedName2, namesCount);
-        doReturn(builtName3).when(dataTypeList).buildName(extractedName3, namesCount);
+        doNothing().when(dataTypeList).updatePropertiesReferences(eq(imported), isA(Map.class));
 
-        //doNothing().when(dataTypeList).updatePropertiesReferences(imported, renamed);
+        dataTypeList.renameJavaClassToDMNName(imported);
 
-        //dataTypeList.removeFullQualifiedNames(imported);
+        verify(dataTypeList).buildName(eq(extractedName1), isA(Map.class));
+        verify(do1).setName(builtName1);
 
-        verify(do1).getClassNameWithoutPackage();
-        verify(dataTypeList).buildName(extractedName1, namesCount);
-        assertTrue(renamed.containsKey(do1Class));
-        assertEquals(builtName1, renamed.get(do1Class));
-        verify(do1).setClassType(builtName1);
+        verify(dataTypeList).buildName(eq(extractedName2), isA(Map.class));
+        verify(do2).setName(builtName2);
 
-        verify(do2).getClassNameWithoutPackage();
-        verify(dataTypeList).buildName(extractedName2, namesCount);
-        assertTrue(renamed.containsKey(do2Class));
-        assertEquals(builtName2, renamed.get(do2Class));
-        verify(do2).setClassType(builtName2);
+        verify(dataTypeList).buildName(eq(extractedName3), isA(Map.class));
+        verify(do3).setName(builtName3);
 
-        verify(do3).getClassNameWithoutPackage();
-        verify(dataTypeList).buildName(extractedName3, namesCount);
-        assertTrue(renamed.containsKey(do3Class));
-        assertEquals(builtName3, renamed.get(do3Class));
-        verify(do3).setClassType(builtName3);
+        ArgumentCaptor<Map<String, String>> renamedArgumentCaptor = ArgumentCaptor.forClass(Map.class);
+        verify(dataTypeList).updatePropertiesReferences(eq(imported), renamedArgumentCaptor.capture());
 
-        assertEquals(3, renamed.size());
-
-        //verify(dataTypeList).updatePropertiesReferences(imported, renamed);
-    }*/
-
-    private DataObject createDataObject(final String className) {
-        final DataObject dataObject = mock(DataObject.class);
-        when(dataObject.getClassType()).thenReturn(className);
-        return dataObject;
+        assertEquals(3, renamedArgumentCaptor.getValue().size());
+        assertTrue(renamedArgumentCaptor.getValue().containsKey(do1Class));
+        assertEquals(builtName1, renamedArgumentCaptor.getValue().get(do1Class));
+        assertTrue(renamedArgumentCaptor.getValue().containsKey(do2Class));
+        assertEquals(builtName2, renamedArgumentCaptor.getValue().get(do2Class));
+        assertTrue(renamedArgumentCaptor.getValue().containsKey(do3Class));
+        assertEquals(builtName3, renamedArgumentCaptor.getValue().get(do3Class));
     }
 
     @Test
