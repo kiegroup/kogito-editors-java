@@ -116,7 +116,7 @@ export const LiteralExpression: React.FunctionComponent<LiteralExpressionProps> 
           </Resizer>
         </div>
       )}
-      <div className="literal-expression-body">
+      <div className={`${literalExpression.id} literal-expression-body`}>
         <EditableCell
           value={literalExpression.content ?? ""}
           rowIndex={0}

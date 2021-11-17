@@ -85,6 +85,7 @@ import static org.kie.workbench.common.dmn.client.editors.expressions.types.func
 public class ExpressionModelFiller {
 
     public static void fillLiteralExpression(final LiteralExpression literalExpression, final LiteralProps literalProps) {
+        literalExpression.setId(new Id(literalProps.id));
         literalExpression.getComponentWidths().set(0, literalProps.width);
         literalExpression.setText(new Text(literalProps.content));
     }
@@ -301,7 +302,7 @@ public class ExpressionModelFiller {
                 final FeelFunctionProps feelFunctionProps = (FeelFunctionProps) functionProps;
                 return buildAndFillNestedExpression(
                         Optional.ofNullable(feelFunctionProps.expression)
-                                .orElse(new LiteralProps("Nested Literal Expression", UNDEFINED.getText(), "", null))
+                                .orElse(new LiteralProps(new Id().getValue(), "Nested Literal Expression", UNDEFINED.getText(), "", null))
                 );
         }
     }

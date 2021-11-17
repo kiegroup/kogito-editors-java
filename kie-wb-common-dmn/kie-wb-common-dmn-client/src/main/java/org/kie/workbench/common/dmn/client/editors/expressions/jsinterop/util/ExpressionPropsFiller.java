@@ -21,6 +21,7 @@ import java.util.stream.IntStream;
 
 import org.kie.workbench.common.dmn.api.definition.model.Context;
 import org.kie.workbench.common.dmn.api.definition.model.ContextEntry;
+import org.kie.workbench.common.dmn.api.definition.model.DMNElement;
 import org.kie.workbench.common.dmn.api.definition.model.DecisionTable;
 import org.kie.workbench.common.dmn.api.definition.model.Expression;
 import org.kie.workbench.common.dmn.api.definition.model.FunctionDefinition;
@@ -58,10 +59,11 @@ import static org.kie.workbench.common.dmn.client.editors.expressions.types.Expr
 public class ExpressionPropsFiller {
 
     public static ExpressionProps buildAndFillJsInteropProp(final Expression wrappedExpression, final String expressionName, final String dataType) {
+        final String expressionId = Optional.ofNullable(wrappedExpression).map(DMNElement::getId).orElse(new Id()).getValue();
         if (wrappedExpression instanceof IsLiteralExpression) {
             final LiteralExpression literalExpression = (LiteralExpression) wrappedExpression;
             final Double width = literalExpression.getComponentWidths().get(0);
-            return new LiteralProps(expressionName, dataType, literalExpression.getText().getValue(), width);
+            return new LiteralProps(expressionId, expressionName, dataType, literalExpression.getText().getValue(), width);
         } else if (wrappedExpression instanceof Context) {
             final Context contextExpression = (Context) wrappedExpression;
             final Double entryInfoWidth = contextExpression.getComponentWidths().get(1);
@@ -95,7 +97,7 @@ public class ExpressionPropsFiller {
                                           outputConvertForDecisionTableProps(decisionTableExpression, expressionName, dataType),
                                           rulesConvertForDecisionTableProps(decisionTableExpression));
         }
-        return new ExpressionProps(expressionName, dataType, null);
+        return new ExpressionProps(expressionId, expressionName, dataType, null);
     }
 
     private static ExpressionProps contextResultConvertForContextProps(final Context contextExpression) {
