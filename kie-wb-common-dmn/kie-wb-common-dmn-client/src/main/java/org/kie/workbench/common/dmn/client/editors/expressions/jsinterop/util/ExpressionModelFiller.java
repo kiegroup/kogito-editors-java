@@ -91,6 +91,7 @@ public class ExpressionModelFiller {
     }
 
     public static void fillContextExpression(final Context contextExpression, final ContextProps contextProps) {
+        contextExpression.setId(new Id(contextProps.id));
         contextExpression.getComponentWidths().set(1, contextProps.entryInfoWidth);
         contextExpression.getComponentWidths().set(2, contextProps.entryExpressionWidth);
         contextExpression.getContextEntry().clear();
@@ -189,6 +190,7 @@ public class ExpressionModelFiller {
         return Arrays.stream(Optional.ofNullable(contextProps.contextEntries).orElse(new ContextEntryProps[0])).map(entryRow -> {
             final ContextEntry contextEntry = new ContextEntry();
             final InformationItem informationItem = new InformationItem();
+            informationItem.setId(new Id(entryRow.entryInfo.id));
             informationItem.setName(new Name(entryRow.entryInfo.name));
             informationItem.setTypeRef(BuiltInTypeUtils
                                                .findBuiltInTypeByName(entryRow.entryInfo.dataType)

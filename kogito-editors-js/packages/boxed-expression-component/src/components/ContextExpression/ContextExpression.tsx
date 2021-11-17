@@ -27,6 +27,7 @@ import {
   EntryInfo,
   executeIfExpressionDefinitionChanged,
   generateNextAvailableEntryName,
+  generateUuid,
   getEntryKey,
   getHandlerConfiguration,
   LogicType,
@@ -55,6 +56,7 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = (context
       contextExpression.contextEntries || [
         {
           entryInfo: {
+            id: generateUuid(),
             name: DEFAULT_CONTEXT_ENTRY_NAME,
             dataType: DEFAULT_CONTEXT_ENTRY_DATA_TYPE,
           },
@@ -180,6 +182,7 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = (context
     );
     return {
       entryInfo: {
+        id: generateUuid(),
         name: generatedName,
         dataType: DataType.Undefined,
       },

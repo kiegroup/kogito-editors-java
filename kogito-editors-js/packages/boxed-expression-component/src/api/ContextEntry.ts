@@ -22,6 +22,8 @@ import { TableHandlerConfiguration, TableOperation } from "./Table";
 import { BoxedExpressionEditorI18n } from "../i18n";
 
 export interface EntryInfo {
+  /** Entry id */
+  id: string;
   /** Entry name */
   name: string;
   /** Entry data type */
@@ -70,7 +72,7 @@ export const generateNextAvailableEntryName = (
 
 export const getEntryKey = (row: Row): string => {
   const entryRecord = row.original as ContextEntryRecord;
-  return entryRecord.entryInfo.name + entryRecord.entryInfo.dataType;
+  return entryRecord.entryInfo.id ?? (row.original as DataRecord).id;
 };
 
 export const resetEntry = (row: DataRecord): DataRecord => ({

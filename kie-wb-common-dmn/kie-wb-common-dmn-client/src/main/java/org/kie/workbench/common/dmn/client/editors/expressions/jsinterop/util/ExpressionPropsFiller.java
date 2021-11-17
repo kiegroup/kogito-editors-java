@@ -68,7 +68,7 @@ public class ExpressionPropsFiller {
             final Context contextExpression = (Context) wrappedExpression;
             final Double entryInfoWidth = contextExpression.getComponentWidths().get(1);
             final Double entryExpressionWidth = contextExpression.getComponentWidths().get(2);
-            return new ContextProps(expressionName, dataType, contextEntriesConvertForContextProps(contextExpression), contextResultConvertForContextProps(contextExpression), entryInfoWidth, entryExpressionWidth);
+            return new ContextProps(expressionId, expressionName, dataType, contextEntriesConvertForContextProps(contextExpression), contextResultConvertForContextProps(contextExpression), entryInfoWidth, entryExpressionWidth);
         } else if (wrappedExpression instanceof Relation) {
             final Relation relationExpression = (Relation) wrappedExpression;
             return new RelationProps(expressionName, dataType, columnsConvertForRelationProps(relationExpression), rowsConvertForRelationProps(relationExpression));
@@ -157,9 +157,10 @@ public class ExpressionPropsFiller {
     }
 
     private static ContextEntryProps fromModelToPropsContextEntryMapper(final InformationItem contextEntryVariable, final Expression expression) {
+        final String entryId = contextEntryVariable.getId().getValue();
         final String entryName = contextEntryVariable.getName().getValue();
         final String entryDataType = contextEntryVariable.getTypeRef().getLocalPart();
-        final EntryInfo entryInfo = new EntryInfo(entryName, entryDataType);
+        final EntryInfo entryInfo = new EntryInfo(entryId, entryName, entryDataType);
         final ExpressionProps entryExpression = buildAndFillJsInteropProp(expression, entryName, entryDataType);
         return new ContextEntryProps(entryInfo, entryExpression);
     }
