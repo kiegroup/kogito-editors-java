@@ -454,7 +454,7 @@ public class DataTypeList {
             return;
         }
 
-        manageDuplicateJavaClasses(javaClasses);
+        renameJavaClassToDMNName(javaClasses);
 
         for (JavaClass javaClass : javaClasses) {
             DataType newDataType = createNewDataType(javaClass);
@@ -471,7 +471,7 @@ public class DataTypeList {
 
     }
 
-    void manageDuplicateJavaClasses(final List<JavaClass> javaClasses) {
+    void renameJavaClassToDMNName(final List<JavaClass> javaClasses) {
         final Map<String, Integer> namesCount = new HashMap<>();
         final Map<String, String> renamed = new HashMap<>();
 
