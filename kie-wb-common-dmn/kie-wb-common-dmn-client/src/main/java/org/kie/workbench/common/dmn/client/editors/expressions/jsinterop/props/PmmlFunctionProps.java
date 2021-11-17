@@ -24,8 +24,8 @@ public class PmmlFunctionProps extends FunctionProps {
     public final String document;
     public final String model;
 
-    public PmmlFunctionProps(final String name, final String dataType, final EntryInfo[] formalParameters, final Double parametersWidth, final String document, final String model) {
-        super(name, dataType, formalParameters, parametersWidth, FunctionKind.PMML.value());
+    public PmmlFunctionProps(final String id, final String name, final String dataType, final EntryInfo[] formalParameters, final Double parametersWidth, final String document, final String model) {
+        super(id, name, dataType, formalParameters, parametersWidth, FunctionKind.PMML.value());
         this.document = document;
         this.model = model;
     }

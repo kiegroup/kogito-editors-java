@@ -24,8 +24,8 @@ public class JavaFunctionProps extends FunctionProps {
     public final String className;
     public final String methodName;
 
-    public JavaFunctionProps(final String name, final String dataType, final EntryInfo[] formalParameters, final Double parametersWidth, final String className, final String methodName) {
-        super(name, dataType, formalParameters, parametersWidth, FunctionKind.JAVA.value());
+    public JavaFunctionProps(final String id, final String name, final String dataType, final EntryInfo[] formalParameters, final Double parametersWidth, final String className, final String methodName) {
+        super(id, name, dataType, formalParameters, parametersWidth, FunctionKind.JAVA.value());
         this.className = className;
         this.methodName = methodName;
     }
