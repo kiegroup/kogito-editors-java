@@ -53,7 +53,6 @@ public class PolyMorphicLine extends AbstractDirectionalMultiPointShape<PolyMorp
 
     private double m_breakDistance;
 
-    private List<Point2D> nonOrthogonalPoints = new ArrayList<Point2D>();
     private List<Point2D> upIndexesToRecalculate = new ArrayList<Point2D>();
 
     public PolyMorphicLine(final Point2D... points) {
@@ -84,12 +83,7 @@ public class PolyMorphicLine extends AbstractDirectionalMultiPointShape<PolyMorp
 
         inferDirectionChanges();
 
-        if (parsePoints()) {
-            calculateNonOrthogonalPoints();
-            return true;
-        }
-
-        return false;
+        return parsePoints();
     }
 
     private boolean parsePoints() {
@@ -144,7 +138,7 @@ public class PolyMorphicLine extends AbstractDirectionalMultiPointShape<PolyMorp
         return true;
     }
 
-    private boolean isHeadDirectionChanged() {
+    private boolean isHeadDirectionChanged(List<Point2D> nonOrthogonalPoints) {
         int size = points.size();
         if (size >= 2) {
             Direction headDirection = getHeadDirection();
@@ -164,7 +158,7 @@ public class PolyMorphicLine extends AbstractDirectionalMultiPointShape<PolyMorp
         return false;
     }
 
-    private boolean isTailDirectionChanged() {
+    private boolean isTailDirectionChanged(List<Point2D> nonOrthogonalPoints) {
         int size = points.size();
         if (size >= 2) {
             Direction tailDirection = getTailDirection();
@@ -185,17 +179,18 @@ public class PolyMorphicLine extends AbstractDirectionalMultiPointShape<PolyMorp
     }
 
     private void inferDirectionChanges() {
-        if (isHeadDirectionChanged()) {
+        List<Point2D> nonOrthogonalPoints = computeNonOrthogonalPoints();
+        if (isHeadDirectionChanged(nonOrthogonalPoints)) {
             DomGlobal.console.log("HEAD DIRECTION CHANGED - REBUILDING POINTS!");
-            resetHeadDirectionPoints();
+            resetHeadDirectionPoints(nonOrthogonalPoints);
         }
-        if (isTailDirectionChanged()) {
+        if (isTailDirectionChanged(nonOrthogonalPoints)) {
             DomGlobal.console.log("TAIL DIRECTION CHANGED - REBUILDING POINTS!");
-            resetTailDirectionPoints();
+            resetTailDirectionPoints(nonOrthogonalPoints);
         }
     }
 
-    private void resetHeadDirectionPoints() {
+    private void resetHeadDirectionPoints(List<Point2D> nonOrthogonalPoints) {
         int size = points.size();
         Point2D p0 = points.get(0);
 
@@ -215,7 +210,7 @@ public class PolyMorphicLine extends AbstractDirectionalMultiPointShape<PolyMorp
         this.points = correctComputedPoints(headPoints, nonOrthogonalPoints);
     }
 
-    private void resetTailDirectionPoints() {
+    private void resetTailDirectionPoints(List<Point2D> nonOrthogonalPoints) {
         int size = points.size();
         Point2D p0 = points.get(size - 1);
 
@@ -236,6 +231,7 @@ public class PolyMorphicLine extends AbstractDirectionalMultiPointShape<PolyMorp
     }
 
     private void infer() {
+        List<Point2D> nonOrthogonalPoints = computeNonOrthogonalPoints();
         if (!upIndexesToRecalculate.isEmpty()) {
             Point2DArray inferred = inferOrthogonalSegments(getHeadDirection(), getTailDirection(), getDefaultHeadOffset(), getDefaultTailOffset());
             Point2DArray corrected = correctComputedPoints(inferred, nonOrthogonalPoints);
@@ -245,24 +241,25 @@ public class PolyMorphicLine extends AbstractDirectionalMultiPointShape<PolyMorp
         }
     }
 
-    public void calculateNonOrthogonalPoints() {
-        if (nonOrthogonalPoints.isEmpty()) {
-            int size = points.size();
-            if (size > 2) {
-                for (int i = 1; i < size - 1; i++) {
-                    Point2D lastP = points.get(i - 1);
-                    Point2D p = points.get(i);
-                    Point2D nextP = points.get(i + 1);
-                    if (!isOrthogonal(lastP, p) || !isOrthogonal(p, nextP)) {
-                        nonOrthogonalPoints.add(p);
-                    }
+    private List<Point2D> computeNonOrthogonalPoints() {
+        List<Point2D> nonOrthogonalPoints = new ArrayList<Point2D>();
+        int size = points.size();
+        if (size > 2) {
+            for (int i = 1; i < size - 1; i++) {
+                Point2D lastP = points.get(i - 1);
+                Point2D p = points.get(i);
+                Point2D nextP = points.get(i + 1);
+                if (!isOrthogonal(lastP, p) || !isOrthogonal(p, nextP)) {
+                    nonOrthogonalPoints.add(p);
                 }
             }
         }
+        return nonOrthogonalPoints;
     }
 
     @Override
     public int getHeadReferencePointIndex() {
+        List<Point2D> nonOrthogonalPoints = computeNonOrthogonalPoints();
         if (nonOrthogonalPoints.isEmpty()) {
             return -1;
         } else {
@@ -273,6 +270,7 @@ public class PolyMorphicLine extends AbstractDirectionalMultiPointShape<PolyMorp
 
     @Override
     public int getTailReferencePointIndex() {
+        List<Point2D> nonOrthogonalPoints = computeNonOrthogonalPoints();
         if (nonOrthogonalPoints.isEmpty()) {
             return -1;
         } else {
@@ -283,13 +281,13 @@ public class PolyMorphicLine extends AbstractDirectionalMultiPointShape<PolyMorp
 
     public void setFirstSegmentOrthogonal(boolean orthogonal) {
         if (!orthogonal) {
-            nonOrthogonalPoints.add(points.get(1));
+            // TODO nonOrthogonalPoints.add(points.get(1));
         }
     }
 
     public void setLastSegmentOrthogonal(boolean orthogonal) {
         if (!orthogonal) {
-            nonOrthogonalPoints.add(points.get(points.size() - 2));
+            // TODO nonOrthogonalPoints.add(points.get(points.size() - 2));
         }
     }
 
@@ -300,6 +298,7 @@ public class PolyMorphicLine extends AbstractDirectionalMultiPointShape<PolyMorp
 
     @Override
     public void updatePointAtIndex(int index, double x, double y) {
+        List<Point2D> nonOrthogonalPoints = computeNonOrthogonalPoints();
         boolean isHead = index == 0;
         boolean isTail = index == (points.size() - 1);
 
@@ -315,10 +314,26 @@ public class PolyMorphicLine extends AbstractDirectionalMultiPointShape<PolyMorp
             return;
         }
 
+        Point2D other = null;
+        boolean isNonOrthogonal = nonOrthogonalPoints.contains(point);
         if (isHead) {
-            propagateUp(index, dx, dy, getDefaultHeadOffset());
+            propagateUp(index, dx, dy, getDefaultHeadOffset(), nonOrthogonalPoints);
+            other = points.get(1);
         } else {
-            propagateDown(index, dx, dy, getDefaultTailOffset());
+            propagateDown(index, dx, dy, getDefaultTailOffset(), nonOrthogonalPoints);
+            other = points.get(index - 1);
+        }
+
+        if (isNonOrthogonal) {
+            if (isVertical(point, other)) {
+                // It was NON orthogonal but now, after drag the point, it results vertical
+                // TODO: The operator can be +/-, also check the hardcoded offset (2)
+                point.setX(point.getX() + 2);
+            } else if (isHorizontal(point, other)) {
+                // It was NON orthogonal but now, after drag the point, it results horiztonal
+                // TODO: The operator can be +/-, also check the hardcoded offset (2)
+                point.setY(point.getY() + 2);
+            }
         }
 
         Point2DArray corrected = correctComputedPoints(points, nonOrthogonalPoints);
@@ -326,14 +341,8 @@ public class PolyMorphicLine extends AbstractDirectionalMultiPointShape<PolyMorp
         refresh();
     }
 
-    @Override
-    public void updatePointCompleted(int index) {
-        nonOrthogonalPoints.clear();
-        super.updatePointCompleted(index);
-    }
-
     // TODO: Merge with propagateDown
-    public void propagateUp(int index, double dx, double dy, double min) {
+    public void propagateUp(int index, double dx, double dy, double min, List<Point2D> nonOrthogonalPoints) {
         if (dx == 0 && dy == 0) {
             return;
         }
@@ -381,7 +390,7 @@ public class PolyMorphicLine extends AbstractDirectionalMultiPointShape<PolyMorp
             boolean propagate = px != 0 || py != 0;
             if (propagate) {
                 // DomGlobal.console.log("PROPAGATING UP TO [" + nextIndex + "]");
-                propagateUp(nextIndex, px, py, min);
+                propagateUp(nextIndex, px, py, min, nonOrthogonalPoints);
             }
         } else {
             // DomGlobal.console.log("NON PROPAGATING [" + (index + 1) + "]");
@@ -444,7 +453,7 @@ public class PolyMorphicLine extends AbstractDirectionalMultiPointShape<PolyMorp
     }
 
     // TODO: Merge with propagateDown
-    public void propagateDown(int index, double dx, double dy, double min) {
+    public void propagateDown(int index, double dx, double dy, double min, List<Point2D> nonOrthogonalPoints) {
         if (dx == 0 && dy == 0) {
             return;
         }
@@ -492,7 +501,7 @@ public class PolyMorphicLine extends AbstractDirectionalMultiPointShape<PolyMorp
             boolean propagate = px != 0 || py != 0;
             if (propagate) {
                 // DomGlobal.console.log("PROPAGATING DOWN TO [" + nextIndex + "]");
-                propagateDown(nextIndex, px, py, min);
+                propagateDown(nextIndex, px, py, min, nonOrthogonalPoints);
             }
         }
 
