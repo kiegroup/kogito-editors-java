@@ -66,7 +66,9 @@ export function usingTestingBoxedExpressionProviderContext(
     pmmlParams: [
       {
         document: "document",
-        modelsFromDocument: [{ model: "model", parametersFromModel: [{ name: "p-1", dataType: DataType.Number }] }],
+        modelsFromDocument: [
+          { model: "model", parametersFromModel: [{ id: "p1", name: "p-1", dataType: DataType.Number }] },
+        ],
       },
     ],
     isRunnerTable: false,
@@ -94,7 +96,9 @@ export function wrapComponentInContext(component: JSX.Element): JSX.Element {
         pmmlParams: [
           {
             document: "document",
-            modelsFromDocument: [{ model: "model", parametersFromModel: [{ name: "p-1", dataType: DataType.Number }] }],
+            modelsFromDocument: [
+              { model: "model", parametersFromModel: [{ id: "p1", name: "p-1", dataType: DataType.Number }] },
+            ],
           },
         ],
         supervisorHash: "",
@@ -148,7 +152,13 @@ export async function updateElementViaPopover(
 export const contextEntry = (container: Element, index: number): Element | null =>
   container.querySelector(`table tbody tr:nth-of-type(${index})`);
 
-export const checkEntryContent = (entry: Element | null, entryRecordInfo: { name: string; dataType: string }): void => {
+export const checkEntryContent = (
+  entry: Element | null,
+  entryRecordInfo: { id?: string; name: string; dataType: string }
+): void => {
+  if (entryRecordInfo.id) {
+    expect(entry?.querySelector(".entry-info")).toHaveClass(entryRecordInfo.id);
+  }
   expect(entry).toContainHTML(entryRecordInfo.name);
   expect(entry).toContainHTML(entryRecordInfo.dataType);
 };

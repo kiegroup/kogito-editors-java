@@ -290,14 +290,14 @@ public class ExpressionModelFiller {
             case JAVA:
                 final JavaFunctionProps javaFunctionProps = (JavaFunctionProps) functionProps;
                 final Context javaWrappedContext = new Context();
-                javaWrappedContext.getContextEntry().add(buildContextEntry(javaFunctionProps.className, VARIABLE_CLASS));
-                javaWrappedContext.getContextEntry().add(buildContextEntry(javaFunctionProps.methodName, VARIABLE_METHOD_SIGNATURE));
+                javaWrappedContext.getContextEntry().add(buildContextEntry(javaFunctionProps.classFieldId, javaFunctionProps.className, VARIABLE_CLASS));
+                javaWrappedContext.getContextEntry().add(buildContextEntry(javaFunctionProps.methodFieldId, javaFunctionProps.methodName, VARIABLE_METHOD_SIGNATURE));
                 return javaWrappedContext;
             case PMML:
                 final PmmlFunctionProps pmmlFunctionProps = (PmmlFunctionProps) functionProps;
                 final Context pmmlWrappedContext = new Context();
-                pmmlWrappedContext.getContextEntry().add(buildContextEntry(pmmlFunctionProps.document, VARIABLE_DOCUMENT));
-                pmmlWrappedContext.getContextEntry().add(buildContextEntry(pmmlFunctionProps.model, VARIABLE_MODEL));
+                pmmlWrappedContext.getContextEntry().add(buildContextEntry(pmmlFunctionProps.documentFieldId, pmmlFunctionProps.document, VARIABLE_DOCUMENT));
+                pmmlWrappedContext.getContextEntry().add(buildContextEntry(pmmlFunctionProps.modelFieldId, pmmlFunctionProps.model, VARIABLE_MODEL));
                 return pmmlWrappedContext;
             default:
             case FEEL:
@@ -309,12 +309,13 @@ public class ExpressionModelFiller {
         }
     }
 
-    private static ContextEntry buildContextEntry(final String expressionText, final String variableName) {
+    private static ContextEntry buildContextEntry(final String textFieldId, final String expressionText, final String variableName) {
         final ContextEntry entry = new ContextEntry();
         final InformationItem entryVariable = new InformationItem();
         final LiteralExpression entryExpression = new LiteralExpression();
         entryVariable.setName(new Name(variableName));
         entryVariable.setTypeRef(BuiltInType.STRING.asQName());
+        entryExpression.setId(new Id(textFieldId));
         entryExpression.setText(new Text(expressionText));
         entry.setVariable(entryVariable);
         entry.setExpression(entryExpression);

@@ -51,9 +51,9 @@ export const App: React.FunctionComponent = () => {
         {
           model: "MiningModelSum",
           parametersFromModel: [
-            { name: "input1", dataType: DataType.Any },
-            { name: "input2", dataType: DataType.Any },
-            { name: "input3", dataType: DataType.Any },
+            { id: "i1", name: "input1", dataType: DataType.Any },
+            { id: "i2", name: "input2", dataType: DataType.Any },
+            { id: "i3", name: "input3", dataType: DataType.Any },
           ],
         },
       ],
@@ -64,8 +64,8 @@ export const App: React.FunctionComponent = () => {
         {
           model: "RegressionLinear",
           parametersFromModel: [
-            { name: "i1", dataType: DataType.Number },
-            { name: "i2", dataType: DataType.Number },
+            { id: "i1", name: "i1", dataType: DataType.Number },
+            { id: "i2", name: "i2", dataType: DataType.Number },
           ],
         },
       ],
