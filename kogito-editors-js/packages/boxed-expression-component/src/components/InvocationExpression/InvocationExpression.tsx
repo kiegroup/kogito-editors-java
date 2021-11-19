@@ -26,6 +26,7 @@ import {
   EntryInfo,
   executeIfExpressionDefinitionChanged,
   generateNextAvailableEntryName,
+  generateUuid,
   getEntryKey,
   getHandlerConfiguration,
   InvocationProps,
@@ -52,6 +53,7 @@ export const InvocationExpression: React.FunctionComponent<InvocationProps> = (i
       invocationProps.bindingEntries ?? [
         {
           entryInfo: {
+            id: generateUuid(),
             name: DEFAULT_PARAMETER_NAME,
             dataType: DEFAULT_PARAMETER_DATA_TYPE,
           },
@@ -196,6 +198,7 @@ export const InvocationExpression: React.FunctionComponent<InvocationProps> = (i
     );
     return {
       entryInfo: {
+        id: generateUuid(),
         name: generatedName,
         dataType: DEFAULT_PARAMETER_DATA_TYPE,
       },

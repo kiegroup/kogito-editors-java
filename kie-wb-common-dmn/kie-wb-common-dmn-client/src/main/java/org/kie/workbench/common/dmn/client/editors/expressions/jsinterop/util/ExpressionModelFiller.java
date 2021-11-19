@@ -191,14 +191,7 @@ public class ExpressionModelFiller {
     private static Collection<ContextEntry> contextEntriesConvertForContextExpression(final ContextProps contextProps) {
         return Arrays.stream(Optional.ofNullable(contextProps.contextEntries).orElse(new ContextEntryProps[0])).map(entryRow -> {
             final ContextEntry contextEntry = new ContextEntry();
-            final InformationItem informationItem = new InformationItem();
-            informationItem.setId(new Id(entryRow.entryInfo.id));
-            informationItem.setName(new Name(entryRow.entryInfo.name));
-            informationItem.setTypeRef(BuiltInTypeUtils
-                                               .findBuiltInTypeByName(entryRow.entryInfo.dataType)
-                                               .orElse(BuiltInType.UNDEFINED)
-                                               .asQName());
-            contextEntry.setVariable(informationItem);
+            contextEntry.setVariable(buildInformationItem(entryRow.entryInfo.id, entryRow.entryInfo.name, entryRow.entryInfo.dataType));
             contextEntry.setExpression(buildAndFillNestedExpression(entryRow.entryExpression));
             return contextEntry;
         }).collect(Collectors.toList());
@@ -234,16 +227,7 @@ public class ExpressionModelFiller {
     private static Collection<InformationItem> columnsConvertForRelationExpression(final RelationProps relationProps) {
         return Arrays
                 .stream(Optional.ofNullable(relationProps.columns).orElse(new Column[0]))
-                .map(column -> {
-                    final InformationItem informationItem = new InformationItem();
-                    informationItem.setId(new Id(column.id));
-                    informationItem.setName(new Name(column.name));
-                    informationItem.setTypeRef(BuiltInTypeUtils
-                                                       .findBuiltInTypeByName(column.dataType)
-                                                       .orElse(BuiltInType.UNDEFINED)
-                                                       .asQName());
-                    return informationItem;
-                })
+                .map(column -> buildInformationItem(column.id, column.name, column.dataType))
                 .collect(Collectors.toList());
     }
 
@@ -259,17 +243,22 @@ public class ExpressionModelFiller {
                 .stream(Optional.ofNullable(invocationProps.bindingEntries).orElse(new ContextEntryProps[0]))
                 .map(binding -> {
                     final Binding bindingModel = new Binding();
-                    final InformationItem informationItem = new InformationItem();
-                    informationItem.setName(new Name(binding.entryInfo.name));
-                    informationItem.setTypeRef(BuiltInTypeUtils
-                                                       .findBuiltInTypeByName(binding.entryInfo.dataType)
-                                                       .orElse(BuiltInType.UNDEFINED)
-                                                       .asQName());
-                    bindingModel.setVariable(informationItem);
+                    bindingModel.setVariable(buildInformationItem(binding.entryInfo.id, binding.entryInfo.name, binding.entryInfo.dataType));
                     bindingModel.setExpression(buildAndFillNestedExpression(binding.entryExpression));
                     return bindingModel;
                 })
                 .collect(Collectors.toList());
+    }
+
+    private static InformationItem buildInformationItem(final String id, final String name, final String dataType) {
+        final InformationItem informationItem = new InformationItem();
+        informationItem.setId(new Id(id));
+        informationItem.setName(new Name(name));
+        informationItem.setTypeRef(BuiltInTypeUtils
+                                           .findBuiltInTypeByName(dataType)
+                                           .orElse(BuiltInType.UNDEFINED)
+                                           .asQName());
+        return informationItem;
     }
 
     private static Collection<InformationItem> formalParametersConvertForFunctionExpression(final FunctionProps functionProps) {

@@ -83,7 +83,7 @@ public class ExpressionPropsFiller {
             final String invokedFunction = ((LiteralExpression) Optional.ofNullable(invocationExpression.getExpression()).orElse(new LiteralExpression())).getText().getValue();
             final Double entryInfoWidth = invocationExpression.getComponentWidths().get(1);
             final Double entryExpressionWidth = invocationExpression.getComponentWidths().get(2);
-            return new InvocationProps(expressionName, dataType, invokedFunction, bindingsConvertForInvocationProps(invocationExpression), entryInfoWidth, entryExpressionWidth);
+            return new InvocationProps(expressionId, expressionName, dataType, invokedFunction, bindingsConvertForInvocationProps(invocationExpression), entryInfoWidth, entryExpressionWidth);
         } else if (wrappedExpression instanceof FunctionDefinition) {
             final FunctionDefinition functionExpression = (FunctionDefinition) wrappedExpression;
             final EntryInfo[] formalParameters = formalParametersConvertForFunctionProps(functionExpression);
