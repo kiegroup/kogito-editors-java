@@ -157,13 +157,14 @@ public class WiresConnectorView<T> extends WiresConnector
 
     @SuppressWarnings("all")
     private void refreshControlPoints() {
-        getLine().refresh();
         if (getLine() instanceof AbstractOffsetMultiPointShape) {
             ((AbstractOffsetMultiPointShape) getLine()).parse();
         }
         if (null != getGroup().getLayer()) {
             getGroup().getLayer().batch();
         }
+
+        getLine().refresh();
     }
 
     @SuppressWarnings("unchecked")
