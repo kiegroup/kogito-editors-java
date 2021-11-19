@@ -20,11 +20,9 @@ import java.util.function.Consumer;
 import java.util.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
-import org.kie.workbench.common.stunner.core.client.canvas.event.selection.CanvasClearSelectionEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.export.CanvasExport;
 import org.kie.workbench.common.stunner.core.client.canvas.export.CanvasExportSettings;
 import org.kie.workbench.common.stunner.core.client.canvas.export.CanvasURLExportSettings;
