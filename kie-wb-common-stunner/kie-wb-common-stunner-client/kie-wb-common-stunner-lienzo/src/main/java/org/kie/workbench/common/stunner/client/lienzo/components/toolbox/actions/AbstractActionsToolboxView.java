@@ -91,9 +91,17 @@ public abstract class AbstractActionsToolboxView<V extends AbstractActionsToolbo
     public void destroy() {
         Optional.ofNullable(toolboxView).ifPresent(WiresShapeToolbox::destroy);
         Optional.ofNullable(tooltip).ifPresent(ToolboxTextTooltip::destroy);
+
+        drawTopLayer();
+
         toolboxView = null;
         tooltip = null;
         canvas = null;
+    }
+
+    protected void drawTopLayer() {
+        canvas.getView().getLayer().getTopLayer().setVisible(true);
+        canvas.getView().getLayer().getTopLayer().draw();
     }
 
     @Override
