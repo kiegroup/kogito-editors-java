@@ -38,6 +38,8 @@ import org.kie.workbench.common.dmn.api.definition.model.InputClause;
 import org.kie.workbench.common.dmn.api.definition.model.Invocation;
 import org.kie.workbench.common.dmn.api.definition.model.List;
 import org.kie.workbench.common.dmn.api.definition.model.LiteralExpression;
+import org.kie.workbench.common.dmn.api.definition.model.LiteralExpressionPMMLDocument;
+import org.kie.workbench.common.dmn.api.definition.model.LiteralExpressionPMMLDocumentModel;
 import org.kie.workbench.common.dmn.api.definition.model.OutputClause;
 import org.kie.workbench.common.dmn.api.definition.model.Relation;
 import org.kie.workbench.common.dmn.api.definition.model.RuleAnnotationClause;
@@ -290,14 +292,14 @@ public class ExpressionModelFiller {
             case JAVA:
                 final JavaFunctionProps javaFunctionProps = (JavaFunctionProps) functionProps;
                 final Context javaWrappedContext = new Context();
-                javaWrappedContext.getContextEntry().add(buildContextEntry(javaFunctionProps.classFieldId, javaFunctionProps.className, VARIABLE_CLASS));
-                javaWrappedContext.getContextEntry().add(buildContextEntry(javaFunctionProps.methodFieldId, javaFunctionProps.methodName, VARIABLE_METHOD_SIGNATURE));
+                javaWrappedContext.getContextEntry().add(buildContextEntry(new LiteralExpression(), javaFunctionProps.classFieldId, javaFunctionProps.className, VARIABLE_CLASS));
+                javaWrappedContext.getContextEntry().add(buildContextEntry(new LiteralExpression(), javaFunctionProps.methodFieldId, javaFunctionProps.methodName, VARIABLE_METHOD_SIGNATURE));
                 return javaWrappedContext;
             case PMML:
                 final PmmlFunctionProps pmmlFunctionProps = (PmmlFunctionProps) functionProps;
                 final Context pmmlWrappedContext = new Context();
-                pmmlWrappedContext.getContextEntry().add(buildContextEntry(pmmlFunctionProps.documentFieldId, pmmlFunctionProps.document, VARIABLE_DOCUMENT));
-                pmmlWrappedContext.getContextEntry().add(buildContextEntry(pmmlFunctionProps.modelFieldId, pmmlFunctionProps.model, VARIABLE_MODEL));
+                pmmlWrappedContext.getContextEntry().add(buildContextEntry(new LiteralExpressionPMMLDocument(), pmmlFunctionProps.documentFieldId, pmmlFunctionProps.document, VARIABLE_DOCUMENT));
+                pmmlWrappedContext.getContextEntry().add(buildContextEntry(new LiteralExpressionPMMLDocumentModel(), pmmlFunctionProps.modelFieldId, pmmlFunctionProps.model, VARIABLE_MODEL));
                 return pmmlWrappedContext;
             default:
             case FEEL:
@@ -309,10 +311,9 @@ public class ExpressionModelFiller {
         }
     }
 
-    private static ContextEntry buildContextEntry(final String textFieldId, final String expressionText, final String variableName) {
+    private static ContextEntry buildContextEntry(final LiteralExpression entryExpression, final String textFieldId, final String expressionText, final String variableName) {
         final ContextEntry entry = new ContextEntry();
         final InformationItem entryVariable = new InformationItem();
-        final LiteralExpression entryExpression = new LiteralExpression();
         entryVariable.setName(new Name(variableName));
         entryVariable.setTypeRef(BuiltInType.STRING.asQName());
         entryExpression.setId(new Id(textFieldId));
