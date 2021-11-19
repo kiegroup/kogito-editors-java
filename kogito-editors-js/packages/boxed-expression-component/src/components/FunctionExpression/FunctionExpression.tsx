@@ -229,17 +229,22 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (
       switch (currentFunctionKind) {
         case FunctionKind.Java: {
           const contextProps = rows(currentFunctionKind).entryExpression as ContextProps;
-          const className =
-            (_.nth(contextProps.contextEntries, 0)?.entryExpression as LiteralExpressionProps)?.content || "";
-          const methodName =
-            (_.nth(contextProps.contextEntries, 1)?.entryExpression as LiteralExpressionProps)?.content || "";
-          return _.extend(definition, { className, methodName });
+          const firstEntry = _.nth(contextProps.contextEntries, 0)?.entryExpression as LiteralExpressionProps;
+          const secondEntry = _.nth(contextProps.contextEntries, 1)?.entryExpression as LiteralExpressionProps;
+          const className = firstEntry?.content || "";
+          const classFieldId = firstEntry?.id;
+          const methodName = secondEntry?.content || "";
+          const methodFieldId = secondEntry?.id;
+          return _.extend(definition, { className, methodName, classFieldId, methodFieldId });
         }
         case FunctionKind.Pmml: {
           const contextProps = rows(currentFunctionKind).entryExpression as ContextProps;
-          const documentValue =
-            (_.nth(contextProps.contextEntries, 0)?.entryExpression as PMMLLiteralExpressionProps)?.selected || "";
+          const firstEntry = _.nth(contextProps.contextEntries, 0)?.entryExpression as PMMLLiteralExpressionProps;
+          const secondEntry = _.nth(contextProps.contextEntries, 1)?.entryExpression as PMMLLiteralExpressionProps;
+          const documentValue = firstEntry?.selected || "";
+          const documentFieldId = firstEntry?.id;
           const modelValue = retrieveModelValue(documentValue, contextProps);
+          const modelFieldId = secondEntry?.id;
           const modelHasChanged =
             ((definition as PmmlFunctionProps)?.model ?? "") !==
             ((updatedDefinition as PmmlFunctionProps)?.model ?? "");
@@ -255,7 +260,7 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (
           } else if (modelHasChanged) {
             definition.formalParameters = [];
           }
-          return _.extend(definition, { document: documentValue, model: modelValue });
+          return _.extend(definition, { document: documentValue, model: modelValue, documentFieldId, modelFieldId });
         }
         case FunctionKind.Feel:
         default: {
