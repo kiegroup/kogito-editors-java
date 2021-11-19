@@ -174,12 +174,6 @@ public class LienzoMultipleSelectionControl<H extends AbstractCanvasHandler>
     }
 
     @Override
-    protected void handleCanvasClearSelectionEvent(CanvasClearSelectionEvent event) {
-        super.handleCanvasClearSelectionEvent(event);
-        onClearSelection();;
-    }
-
-    @Override
     protected void onDestroy() {
         getSelectionManager().destroy();
         selectionShapeProvider.destroy();

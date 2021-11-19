@@ -16,7 +16,6 @@
 
 package org.kie.workbench.common.stunner.core.client.canvas.util;
 
-import java.util.Collection;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 
@@ -24,14 +23,11 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
-import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.CanvasClearSelectionEvent;
-import org.kie.workbench.common.stunner.core.client.canvas.event.selection.CanvasSelectionEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.export.CanvasExport;
 import org.kie.workbench.common.stunner.core.client.canvas.export.CanvasExportSettings;
 import org.kie.workbench.common.stunner.core.client.canvas.export.CanvasURLExportSettings;
-import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.uberfire.ext.editor.commons.client.file.exports.FileExport;
 import org.uberfire.ext.editor.commons.client.file.exports.ImageDataUriContent;
 import org.uberfire.ext.editor.commons.client.file.exports.PdfDocument;
@@ -59,13 +55,9 @@ public class CanvasFileExport {
     private final FileExportsPreferences preferences;
     private final SvgFileExport svgFileExport;
     private final Event<CanvasClearSelectionEvent> clearSelectionEvent;
-    private final SessionManager sessionManager;
-    private final Event<CanvasSelectionEvent> selectionEvent;
 
     protected CanvasFileExport() {
         this(null,
-             null,
-             null,
              null,
              null,
              null,
@@ -79,89 +71,59 @@ public class CanvasFileExport {
                             final FileExport<PdfDocument> pdfFileExport,
                             final FileExportsPreferences preferences,
                             final SvgFileExport svgFileExport,
-                            final Event<CanvasClearSelectionEvent> clearSelectionEvent,
-                            final SessionManager sessionManager,
-                            final Event<CanvasSelectionEvent> selectionEvent) {
+                            final Event<CanvasClearSelectionEvent> clearSelectionEvent) {
         this.canvasExport = canvasExport;
         this.imageFileExport = imageFileExport;
         this.pdfFileExport = pdfFileExport;
         this.preferences = preferences;
         this.svgFileExport = svgFileExport;
         this.clearSelectionEvent = clearSelectionEvent;
-        this.sessionManager = sessionManager;
-        this.selectionEvent = selectionEvent;
     }
 
     public void exportToSvg(final AbstractCanvasHandler canvasHandler,
                             final String fileName) {
-        final Collection<String> selectedItems = getSelectedItems();
         clearSelection(canvasHandler);
         final String fullFileName = fileName + "." + getFileExtension(CanvasExport.URLDataType.SVG);
         svgFileExport.export(canvasExport.toContext2D(canvasHandler, CanvasExportSettings.build()), fullFileName);
-        fireSelectionEvent(canvasHandler, selectedItems);
     }
 
     void clearSelection(AbstractCanvasHandler canvasHandler) {
-        clearSelectionEvent.fire( new CanvasClearSelectionEvent(canvasHandler));
+        clearSelectionEvent.fire(new CanvasClearSelectionEvent(canvasHandler));
     }
 
     public String exportToSvg(final AbstractCanvasHandler canvasHandler) {
-        final Collection<String> selectedItems = getSelectedItems();
         clearSelection(canvasHandler);
-        String serializedSvg = canvasExport.toContext2D(canvasHandler, CanvasExportSettings.build()).getSerializedSvg();
-        fireSelectionEvent(canvasHandler, selectedItems);
-        return serializedSvg;
-    }
-
-    private void fireSelectionEvent(AbstractCanvasHandler canvasHandler, Collection<String> selectedItems) {
-        if (!selectedItems.isEmpty()) {
-            selectionEvent.fire(new CanvasSelectionEvent(canvasHandler, selectedItems));
-        }
-    }
-
-    private Collection<String> getSelectedItems() {
-        final EditorSession session = sessionManager.getCurrentSession();
-        final Collection<String> selectedItems = session.getSelectionControl().getSelectedItems();
-        return selectedItems;
+        return canvasExport.toContext2D(canvasHandler, CanvasExportSettings.build()).getSerializedSvg();
     }
 
     public String exportToPng(final AbstractCanvasHandler canvasHandler) {
-        final Collection<String> selectedItems = getSelectedItems();
         final CanvasURLExportSettings settings = CanvasURLExportSettings.build(CanvasExport.URLDataType.PNG);
         clearSelection(canvasHandler);
-        final String image = canvasExport.toImageData(canvasHandler, settings);
-        fireSelectionEvent(canvasHandler, selectedItems);
-        return image;
+        return canvasExport.toImageData(canvasHandler, settings);
     }
 
     public void exportToJpg(final AbstractCanvasHandler canvasHandler,
                             final String fileName) {
-        final Collection<String> selectedItems = getSelectedItems();
         clearSelection(canvasHandler);
         exportImage(canvasHandler,
                     CanvasExport.URLDataType.JPG,
                     fileName);
-        fireSelectionEvent(canvasHandler, selectedItems);
     }
 
     public void exportToPng(final AbstractCanvasHandler canvasHandler,
                             final String fileName) {
-        final Collection<String> selectedItems = getSelectedItems();
         clearSelection(canvasHandler);
         exportImage(canvasHandler,
                     CanvasExport.URLDataType.PNG,
                     fileName);
-        fireSelectionEvent(canvasHandler, selectedItems);
     }
 
     public void exportToPdf(final AbstractCanvasHandler canvasHandler,
                             final String fileName) {
-        final Collection<String> selectedItems = getSelectedItems();
         clearSelection(canvasHandler);
         loadFileExportPreferences(prefs -> exportToPdf(canvasHandler,
                                                        fileName,
                                                        prefs.getPdfPreferences()));
-        fireSelectionEvent(canvasHandler, selectedItems);
     }
 
     private void exportToPdf(final AbstractCanvasHandler canvasHandler,
