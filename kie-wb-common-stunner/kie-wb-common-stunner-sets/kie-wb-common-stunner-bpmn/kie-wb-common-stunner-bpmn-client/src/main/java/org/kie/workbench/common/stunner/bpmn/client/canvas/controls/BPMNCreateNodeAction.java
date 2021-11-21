@@ -61,14 +61,14 @@ public class BPMNCreateNodeAction extends GeneralCreateNodeAction {
     @Override
     protected MagnetConnection buildSourceConnectionBetween(Node<View<?>, Edge> sourceNode, Node<View<?>, Edge> targetNode) {
         MagnetConnection connection = super.buildSourceConnectionBetween(sourceNode, targetNode);
-        connection.setAuto(true);
+        connection.setAuto(false);
         return connection;
     }
 
     @Override
     protected MagnetConnection buildTargetBetween(Node<View<?>, Edge> sourceNode, Node<View<?>, Edge> targetNode) {
         MagnetConnection connection = super.buildTargetBetween(sourceNode, targetNode);
-        connection.setAuto(true);
+        connection.setAuto(false);
         return connection;
     }
 }

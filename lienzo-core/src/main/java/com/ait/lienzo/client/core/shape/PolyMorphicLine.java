@@ -53,7 +53,7 @@ public class PolyMorphicLine extends AbstractDirectionalMultiPointShape<PolyMorp
 
     private double m_breakDistance;
 
-    private List<Point2D> upIndexesToRecalculate = new ArrayList<Point2D>();
+    private List<Point2D> orthogonalIndexesToRecalculate = new ArrayList<Point2D>();
 
     public PolyMorphicLine(final Point2D... points) {
         this(Point2DArray.fromArrayOfPoint2D(points));
@@ -139,6 +139,9 @@ public class PolyMorphicLine extends AbstractDirectionalMultiPointShape<PolyMorp
     }
 
     private boolean isHeadDirectionChanged(List<Point2D> nonOrthogonalPoints) {
+        if (!isFirstSegmentOrthogonal()) {
+            return false;
+        }
         int size = points.size();
         if (size >= 2) {
             Direction headDirection = getHeadDirection();
@@ -159,6 +162,9 @@ public class PolyMorphicLine extends AbstractDirectionalMultiPointShape<PolyMorp
     }
 
     private boolean isTailDirectionChanged(List<Point2D> nonOrthogonalPoints) {
+        if (!isLastSegmentOrthogonal()) {
+            return false;
+        }
         int size = points.size();
         if (size >= 2) {
             Direction tailDirection = getTailDirection();
@@ -232,20 +238,29 @@ public class PolyMorphicLine extends AbstractDirectionalMultiPointShape<PolyMorp
 
     private void infer() {
         List<Point2D> nonOrthogonalPoints = computeNonOrthogonalPoints();
-        if (!upIndexesToRecalculate.isEmpty()) {
+        if (!orthogonalIndexesToRecalculate.isEmpty()) {
             Point2DArray inferred = inferOrthogonalSegments(getHeadDirection(), getTailDirection(), getDefaultHeadOffset(), getDefaultTailOffset());
             Point2DArray corrected = correctComputedPoints(inferred, nonOrthogonalPoints);
             setPoints(corrected);
             getLayer().batch();
-            upIndexesToRecalculate.clear();
+            orthogonalIndexesToRecalculate.clear();
         }
     }
 
-    private List<Point2D> computeNonOrthogonalPoints() {
+    public List<Point2D> computeNonOrthogonalPoints() {
         List<Point2D> nonOrthogonalPoints = new ArrayList<Point2D>();
         int size = points.size();
         if (size > 2) {
-            for (int i = 1; i < size - 1; i++) {
+            int i = 1;
+            if (!isFirstSegmentOrthogonal()) {
+                nonOrthogonalPoints.add(points.get(1));
+                i = 2;
+            }
+            if (!isLastSegmentOrthogonal()) {
+                size -= 2;
+                nonOrthogonalPoints.add(points.get(size));
+            }
+            for (; i < size - 1; i++) {
                 Point2D lastP = points.get(i - 1);
                 Point2D p = points.get(i);
                 Point2D nextP = points.get(i + 1);
@@ -279,16 +294,23 @@ public class PolyMorphicLine extends AbstractDirectionalMultiPointShape<PolyMorp
         }
     }
 
+    private boolean isFirstSegmentOrthogonal = true;
+    private boolean isLastSegmentOrthogonal = true;
+
     public void setFirstSegmentOrthogonal(boolean orthogonal) {
-        if (!orthogonal) {
-            // TODO nonOrthogonalPoints.add(points.get(1));
-        }
+        this.isFirstSegmentOrthogonal = orthogonal;
     }
 
     public void setLastSegmentOrthogonal(boolean orthogonal) {
-        if (!orthogonal) {
-            // TODO nonOrthogonalPoints.add(points.get(points.size() - 2));
-        }
+        this.isLastSegmentOrthogonal = orthogonal;
+    }
+
+    public boolean isFirstSegmentOrthogonal() {
+        return isFirstSegmentOrthogonal;
+    }
+
+    public boolean isLastSegmentOrthogonal() {
+        return isLastSegmentOrthogonal;
     }
 
     @Override
@@ -315,7 +337,6 @@ public class PolyMorphicLine extends AbstractDirectionalMultiPointShape<PolyMorp
         }
 
         Point2D other = null;
-        boolean isNonOrthogonal = nonOrthogonalPoints.contains(point);
         if (isHead) {
             propagateUp(index, dx, dy, getDefaultHeadOffset(), nonOrthogonalPoints);
             other = points.get(1);
@@ -324,6 +345,7 @@ public class PolyMorphicLine extends AbstractDirectionalMultiPointShape<PolyMorp
             other = points.get(index - 1);
         }
 
+        boolean isNonOrthogonal = nonOrthogonalPoints.contains(other);
         if (isNonOrthogonal) {
             if (isVertical(point, other)) {
                 // It was NON orthogonal but now, after drag the point, it results vertical
@@ -405,12 +427,12 @@ public class PolyMorphicLine extends AbstractDirectionalMultiPointShape<PolyMorp
 
         if (isHorizontal) {
             if ((dy != 0) && (candidate.getY() != next.getY())) {
-                upIndexesToRecalculate.add(candidate);
+                orthogonalIndexesToRecalculate.add(candidate);
             }
         }
         if (isVertical) {
             if (dx != 0 && (candidate.getX() != next.getX())) {
-                upIndexesToRecalculate.add(candidate);
+                orthogonalIndexesToRecalculate.add(candidate);
             }
         }
 
@@ -513,12 +535,12 @@ public class PolyMorphicLine extends AbstractDirectionalMultiPointShape<PolyMorp
 
         if (isHorizontal) {
             if ((dy != 0) && (candidate.getY() != next.getY())) {
-                upIndexesToRecalculate.add(next);
+                orthogonalIndexesToRecalculate.add(next);
             }
         }
         if (isVertical) {
             if (dx != 0 && (candidate.getX() != next.getX())) {
-                upIndexesToRecalculate.add(next);
+                orthogonalIndexesToRecalculate.add(next);
             }
         }
 
@@ -566,7 +588,7 @@ public class PolyMorphicLine extends AbstractDirectionalMultiPointShape<PolyMorp
         Point2DArray copy = points;
         int size = copy.size();
         for (int i = 0; i < size; i++) {
-            if (upIndexesToRecalculate.contains(copy.get(i)) && (i < size - 1)) {
+            if (orthogonalIndexesToRecalculate.contains(copy.get(i)) && (i < size - 1)) {
                 boolean isFirstOrLastPoint = (i == 0 || i == (size - 1));
                 headOffset = isFirstOrLastPoint ? headOffset : 0;
                 tailOffset = isFirstOrLastPoint ? tailOffset : 0;
