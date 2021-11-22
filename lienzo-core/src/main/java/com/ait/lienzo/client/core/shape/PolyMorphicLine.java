@@ -187,11 +187,11 @@ public class PolyMorphicLine extends AbstractDirectionalMultiPointShape<PolyMorp
     private void inferDirectionChanges() {
         List<Point2D> nonOrthogonalPoints = computeNonOrthogonalPoints();
         if (isHeadDirectionChanged(nonOrthogonalPoints)) {
-            DomGlobal.console.log("HEAD DIRECTION CHANGED - REBUILDING POINTS!");
+            // DomGlobal.console.log("HEAD DIRECTION CHANGED - REBUILDING POINTS!");
             resetHeadDirectionPoints(nonOrthogonalPoints);
         }
         if (isTailDirectionChanged(nonOrthogonalPoints)) {
-            DomGlobal.console.log("TAIL DIRECTION CHANGED - REBUILDING POINTS!");
+            // DomGlobal.console.log("TAIL DIRECTION CHANGED - REBUILDING POINTS!");
             resetTailDirectionPoints(nonOrthogonalPoints);
         }
     }
@@ -237,26 +237,27 @@ public class PolyMorphicLine extends AbstractDirectionalMultiPointShape<PolyMorp
     }
 
     private void infer() {
-        List<Point2D> nonOrthogonalPoints = computeNonOrthogonalPoints();
         if (!orthogonalIndexesToRecalculate.isEmpty()) {
             Point2DArray inferred = inferOrthogonalSegments(getHeadDirection(), getTailDirection(), getDefaultHeadOffset(), getDefaultTailOffset());
-            Point2DArray corrected = correctComputedPoints(inferred, nonOrthogonalPoints);
+            Point2DArray corrected = correctComputedPoints(inferred, Collections.<Point2D>emptyList());
             setPoints(corrected);
             getLayer().batch();
             orthogonalIndexesToRecalculate.clear();
         }
     }
 
-    public List<Point2D> computeNonOrthogonalPoints() {
+    private static List<Point2D> computeNonOrthogonalPoints(Point2DArray points,
+                                                            boolean isFirstSegmentOrthogonal,
+                                                            boolean isLastSegmentOrthogonal) {
         List<Point2D> nonOrthogonalPoints = new ArrayList<Point2D>();
         int size = points.size();
         if (size > 2) {
             int i = 1;
-            if (!isFirstSegmentOrthogonal()) {
+            if (!isFirstSegmentOrthogonal) {
                 nonOrthogonalPoints.add(points.get(1));
                 i = 2;
             }
-            if (!isLastSegmentOrthogonal()) {
+            if (!isLastSegmentOrthogonal) {
                 size -= 2;
                 nonOrthogonalPoints.add(points.get(size));
             }
@@ -270,6 +271,12 @@ public class PolyMorphicLine extends AbstractDirectionalMultiPointShape<PolyMorp
             }
         }
         return nonOrthogonalPoints;
+    }
+
+    public List<Point2D> computeNonOrthogonalPoints() {
+        return orthogonalIndexesToRecalculate.isEmpty() ?
+                computeNonOrthogonalPoints(points, isFirstSegmentOrthogonal(), isLastSegmentOrthogonal()) :
+                Collections.<Point2D>emptyList();
     }
 
     @Override
