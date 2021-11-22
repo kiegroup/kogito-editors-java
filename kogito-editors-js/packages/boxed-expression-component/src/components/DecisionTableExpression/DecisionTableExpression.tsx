@@ -51,6 +51,8 @@ const EMPTY_SYMBOL = "";
 const DECISION_NODE_DEFAULT_NAME = "output-1";
 
 export function DecisionTableExpression(decisionTable: PropsWithChildren<DecisionTableProps>) {
+  const globalContext = useContext(BoxedExpressionGlobalContext);
+
   const { i18n } = useBoxedExpressionEditorI18n();
 
   const getColumnPrefix = useCallback((groupType?: string) => {
@@ -159,7 +161,7 @@ export function DecisionTableExpression(decisionTable: PropsWithChildren<Decisio
     };
     const outputSection = {
       groupType: DecisionTableColumnType.OutputClause,
-      accessor: decisionTable.id,
+      accessor: globalContext.decisionNodeId,
       label: decisionTable.name ?? DECISION_NODE_DEFAULT_NAME,
       dataType: decisionTable.dataType ?? DataType.Undefined,
       cssClasses: "decision-table--output",
@@ -177,7 +179,7 @@ export function DecisionTableExpression(decisionTable: PropsWithChildren<Decisio
 
     return [inputSection, outputSection, annotationSection] as ColumnInstance[];
   }, [
-    decisionTable.id,
+    globalContext.decisionNodeId,
     decisionTable.annotations,
     decisionTable.dataType,
     decisionTable.input,
