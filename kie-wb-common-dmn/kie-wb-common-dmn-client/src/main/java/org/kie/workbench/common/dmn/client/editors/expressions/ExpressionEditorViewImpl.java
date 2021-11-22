@@ -36,7 +36,9 @@ import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.kie.workbench.common.dmn.api.definition.HasExpression;
 import org.kie.workbench.common.dmn.api.definition.HasName;
 import org.kie.workbench.common.dmn.api.definition.HasVariable;
+import org.kie.workbench.common.dmn.api.definition.model.BusinessKnowledgeModel;
 import org.kie.workbench.common.dmn.api.definition.model.Context;
+import org.kie.workbench.common.dmn.api.definition.model.Decision;
 import org.kie.workbench.common.dmn.api.definition.model.DecisionTable;
 import org.kie.workbench.common.dmn.api.definition.model.Expression;
 import org.kie.workbench.common.dmn.api.definition.model.FunctionDefinition;
@@ -338,8 +340,15 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
 
     @EventHandler("try-it")
     public void onTryIt(final ClickEvent event) {
+        String decisionNodeId = null;
+        if (hasExpression instanceof Decision) {
+            decisionNodeId = ((Decision) hasExpression).getId().getValue();
+        } else if (hasExpression.getExpression() instanceof FunctionDefinition) {
+            decisionNodeId = ((BusinessKnowledgeModel) hasExpression.getExpression().asDMNModelInstrumentedBase().getParent()).getId().getValue();
+        }
         DMNLoader.renderBoxedExpressionEditor(
                 ".kie-dmn-new-expression-editor",
+                decisionNodeId,
                 ExpressionPropsFiller.buildAndFillJsInteropProp(hasExpression.getExpression(), getExpressionName(), getTypeRef()),
                 hasExpression.isClearSupported(),
                 buildPmmlParams()
