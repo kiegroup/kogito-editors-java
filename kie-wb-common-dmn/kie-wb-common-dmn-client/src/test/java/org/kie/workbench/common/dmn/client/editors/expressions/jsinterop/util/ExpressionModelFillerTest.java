@@ -395,9 +395,9 @@ public class ExpressionModelFillerTest {
         assertThat(((Context) functionExpression.getExpression()).getContextEntry())
                 .isNotNull()
                 .hasSize(2);
-        assertThat(((Context) functionExpression.getExpression()).getContextEntry()).first().extracting(ContextEntry::getExpression).isExactlyInstanceOf(LiteralExpression.class);
+        assertThat(((Context) functionExpression.getExpression()).getContextEntry()).first().extracting(ContextEntry::getExpression).isInstanceOf(LiteralExpression.class);
         assertThat(((Context) functionExpression.getExpression()).getContextEntry()).first().extracting(contextEntry -> ((LiteralExpression) contextEntry.getExpression()).getText().getValue()).isEqualTo(documentName);
-        assertThat(((Context) functionExpression.getExpression()).getContextEntry()).last().extracting(ContextEntry::getExpression).isExactlyInstanceOf(LiteralExpression.class);
+        assertThat(((Context) functionExpression.getExpression()).getContextEntry()).last().extracting(ContextEntry::getExpression).isInstanceOf(LiteralExpression.class);
         assertThat(((Context) functionExpression.getExpression()).getContextEntry()).last().extracting(contextEntry -> ((LiteralExpression) contextEntry.getExpression()).getText().getValue()).isEqualTo(modelName);
     }
 }
