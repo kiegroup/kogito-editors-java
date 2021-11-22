@@ -73,7 +73,7 @@ public class ExpressionPropsFiller {
             return new ContextProps(expressionId, expressionName, dataType, contextEntriesConvertForContextProps(contextExpression), contextResultConvertForContextProps(contextExpression), entryInfoWidth, entryExpressionWidth);
         } else if (wrappedExpression instanceof Relation) {
             final Relation relationExpression = (Relation) wrappedExpression;
-            return new RelationProps(expressionName, dataType, columnsConvertForRelationProps(relationExpression), rowsConvertForRelationProps(relationExpression));
+            return new RelationProps(expressionId, expressionName, dataType, columnsConvertForRelationProps(relationExpression), rowsConvertForRelationProps(relationExpression));
         } else if (wrappedExpression instanceof List) {
             final List listExpression = (List) wrappedExpression;
             final Double width = listExpression.getComponentWidths().get(1);
@@ -93,7 +93,7 @@ public class ExpressionPropsFiller {
             final DecisionTable decisionTableExpression = (DecisionTable) wrappedExpression;
             final String hitPolicy = decisionTableExpression.getHitPolicy() != null ? decisionTableExpression.getHitPolicy().value() : null;
             final String aggregation = decisionTableExpression.getAggregation() != null ? decisionTableExpression.getAggregation().getCode() : "";
-            return new DecisionTableProps(expressionName, dataType, hitPolicy, aggregation,
+            return new DecisionTableProps(expressionId, expressionName, dataType, hitPolicy, aggregation,
                                           annotationsConvertForDecisionTableProps(decisionTableExpression),
                                           inputConvertForDecisionTableProps(decisionTableExpression),
                                           outputConvertForDecisionTableProps(decisionTableExpression, expressionName, dataType),

@@ -102,6 +102,7 @@ public class ExpressionModelFiller {
     }
 
     public static void fillRelationExpression(final Relation relationExpression, final RelationProps relationProps) {
+        relationExpression.setId(new Id(relationProps.id));
         relationExpression.getColumn().clear();
         relationExpression.getColumn().addAll(columnsConvertForRelationExpression(relationProps));
         final int columnsLength = relationProps.columns == null ? 0 : relationProps.columns.length;
@@ -120,6 +121,7 @@ public class ExpressionModelFiller {
 
     public static void fillInvocationExpression(final Invocation invocationExpression, final InvocationProps invocationProps) {
         final LiteralExpression invokedFunction = new LiteralExpression();
+        invocationExpression.setId(new Id(invocationProps.id));
         invocationExpression.getComponentWidths().set(1, invocationProps.entryInfoWidth);
         invocationExpression.getComponentWidths().set(2, invocationProps.entryExpressionWidth);
         invokedFunction.setText(new Text(invocationProps.invokedFunction));
@@ -131,6 +133,7 @@ public class ExpressionModelFiller {
 
     public static void fillFunctionExpression(final FunctionDefinition functionExpression, final FunctionProps functionProps) {
         final FunctionDefinition.Kind functionKind = FunctionDefinition.Kind.fromValue(functionProps.functionKind);
+        functionExpression.setId(new Id(functionProps.id));
         functionExpression.getComponentWidths().set(1, functionProps.parametersWidth);
         functionExpression.getFormalParameter().clear();
         functionExpression.getFormalParameter().addAll(formalParametersConvertForFunctionExpression(functionProps));
@@ -139,6 +142,7 @@ public class ExpressionModelFiller {
     }
 
     public static void fillDecisionTableExpression(final DecisionTable decisionTableExpression, final DecisionTableProps decisionTableProps) {
+        decisionTableExpression.setId(new Id(decisionTableProps.id));
         if (StringUtils.nonEmpty(decisionTableProps.hitPolicy)) {
             decisionTableExpression.setHitPolicy(HitPolicy.fromValue(decisionTableProps.hitPolicy));
         }
