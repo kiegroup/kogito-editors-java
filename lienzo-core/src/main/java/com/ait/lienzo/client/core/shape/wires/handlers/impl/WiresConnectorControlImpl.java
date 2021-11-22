@@ -176,7 +176,8 @@ public class WiresConnectorControlImpl implements WiresConnectorControl {
     public void execute() {
         WiresConnector.updateHeadTailForRefreshedConnector(m_connector);
         getControlPointsAcceptor().update(m_connector,
-                                        m_connector.getControlPoints().copy());
+                                          m_connector.getControlPoints().copy());
+        refreshControlPoints();
     }
 
     @Override
