@@ -62,6 +62,7 @@ export function usingTestingBoxedExpressionProviderContext(
   ctx?: Partial<BoxedExpressionProviderProps>
 ) {
   const usedCtx: BoxedExpressionProviderProps = {
+    decisionNodeId: "_00000000-0000-0000-0000-000000000000",
     expressionDefinition: {},
     pmmlParams: [
       {
@@ -79,6 +80,7 @@ export function usingTestingBoxedExpressionProviderContext(
     ctx: usedCtx,
     wrapper: (
       <BoxedExpressionProvider
+        decisionNodeId={usedCtx.decisionNodeId}
         expressionDefinition={usedCtx.expressionDefinition}
         pmmlParams={usedCtx.pmmlParams}
         isRunnerTable={false}
@@ -93,6 +95,7 @@ export function wrapComponentInContext(component: JSX.Element): JSX.Element {
   return (
     <BoxedExpressionGlobalContext.Provider
       value={{
+        decisionNodeId: "_00000000-0000-0000-0000-000000000000",
         pmmlParams: [
           {
             document: "document",

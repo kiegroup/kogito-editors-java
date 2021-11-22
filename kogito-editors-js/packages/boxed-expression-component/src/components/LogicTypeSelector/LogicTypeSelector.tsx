@@ -213,7 +213,9 @@ export const LogicTypeSelector: React.FunctionComponent<LogicTypeSelectorProps> 
 
   return (
     <div
-      className={`logic-type-selector ${isLogicTypeSelected ? "logic-type-selected" : "logic-type-not-present"}`}
+      className={`${globalContext.decisionNodeId} logic-type-selector ${
+        isLogicTypeSelected ? "logic-type-selected" : "logic-type-not-present"
+      }`}
       ref={contextMenuRef}
     >
       {isLogicTypeSelected ? renderExpression : i18n.selectExpression}
