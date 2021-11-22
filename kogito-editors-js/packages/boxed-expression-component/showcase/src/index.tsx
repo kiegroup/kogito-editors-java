@@ -125,7 +125,11 @@ export const App: React.FunctionComponent = () => {
   return (
     <div className="showcase">
       <div className="boxed-expression">
-        <BoxedExpressionEditor expressionDefinition={expressionDefinition} pmmlParams={pmmlParams} />
+        <BoxedExpressionEditor
+          decisionNodeId="_00000000-0000-0000-0000-000000000000"
+          expressionDefinition={expressionDefinition}
+          pmmlParams={pmmlParams}
+        />
       </div>
 
       <div className="updated-json">
