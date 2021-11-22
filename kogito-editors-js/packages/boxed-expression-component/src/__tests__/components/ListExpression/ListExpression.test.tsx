@@ -50,7 +50,7 @@ describe("ListExpression tests", () => {
   test("should be able to render nested expressions", () => {
     const { container } = render(
       usingTestingBoxedExpressionI18nContext(
-        <ListExpression id="id1" logicType={LogicType.List} items={[{ logicType: LogicType.List }]} />
+        <ListExpression id="id1" logicType={LogicType.List} items={[{ logicType: LogicType.List, id: "id2" }]} />
       ).wrapper
     );
 
