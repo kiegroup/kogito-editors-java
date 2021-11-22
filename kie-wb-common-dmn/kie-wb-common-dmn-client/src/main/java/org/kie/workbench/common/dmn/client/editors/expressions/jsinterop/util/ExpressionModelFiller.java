@@ -112,6 +112,7 @@ public class ExpressionModelFiller {
     }
 
     public static void fillListExpression(final List listExpression, final ListProps listProps) {
+        listExpression.setId(new Id(listProps.id));
         listExpression.getComponentWidths().set(1, listProps.width);
         listExpression.getExpression().clear();
         listExpression.getExpression().addAll(itemsConvertForListExpression(listProps, listExpression));

@@ -77,7 +77,7 @@ public class ExpressionPropsFiller {
         } else if (wrappedExpression instanceof List) {
             final List listExpression = (List) wrappedExpression;
             final Double width = listExpression.getComponentWidths().get(1);
-            return new ListProps(expressionName, dataType, itemsConvertForListProps(listExpression), width);
+            return new ListProps(expressionId, expressionName, dataType, itemsConvertForListProps(listExpression), width);
         } else if (wrappedExpression instanceof Invocation) {
             final Invocation invocationExpression = (Invocation) wrappedExpression;
             final String invokedFunction = ((LiteralExpression) Optional.ofNullable(invocationExpression.getExpression()).orElse(new LiteralExpression())).getText().getValue();

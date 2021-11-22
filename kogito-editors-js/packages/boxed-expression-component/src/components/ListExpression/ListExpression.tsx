@@ -163,7 +163,7 @@ export const ListExpression: React.FunctionComponent<ListProps> = (listExpressio
   );
 
   return (
-    <div className="list-expression">
+    <div className={`${listExpression.id} list-expression`}>
       <Table
         tableId={listExpression.id}
         headerVisibility={TableHeaderVisibility.None}
