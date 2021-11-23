@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -119,7 +120,7 @@ public class KogitoKeyEventHandlerImpl implements KeyEventHandler {
         final Integer key = callbackMap.get(shortcutCallback);
 
         for (Integer registeredKey: registeredShortcutsIds) {
-            if (registeredKey == key) {
+            if (Objects.equals(registeredKey, key)) {
                 keyboardShortcutsApi.deregister(registeredKey);
             }
         }
