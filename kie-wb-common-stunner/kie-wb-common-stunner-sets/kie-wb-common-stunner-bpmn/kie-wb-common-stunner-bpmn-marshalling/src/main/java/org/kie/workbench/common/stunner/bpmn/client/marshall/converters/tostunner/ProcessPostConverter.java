@@ -329,7 +329,7 @@ public class ProcessPostConverter {
                 magnetLocation.setY(nodeBounds.getHeight() / 2);
             } else {
                 if (magnetConnection instanceof MagnetConnection) {
-                    ((MagnetConnection) magnetConnection).setAuto(true);
+                    ((MagnetConnection) magnetConnection).setAuto(false);
                 }
             }
         }
