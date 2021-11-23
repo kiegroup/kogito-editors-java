@@ -542,7 +542,7 @@ public class DataTypeList {
 
     DataType createNewDataType(final JavaClass javaClass) {
         final DataType newDataType = dataTypeManager.fromNew().withType(dataTypeManager.structure()).get();
-        String javaClassSimpleName = javaClass.getName().substring(javaClass.getName().lastIndexOf('.') + 1);
+        final String javaClassSimpleName = javaClass.getName().substring(javaClass.getName().lastIndexOf('.') + 1);
         newDataType.setName(javaClassSimpleName);
         return newDataType;
     }
