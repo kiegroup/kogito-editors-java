@@ -73,7 +73,7 @@ public class KogitoKeyEventHandlerImpl implements KeyEventHandler {
                     kogitoShortcutCallback.getLabel(),
                     target -> runIfEnabled(shortcutCallback::onKeyShortcut),
                     target -> runIfEnabled(() -> shortcutCallback.onKeyUp(null)),
-                    kogitoShortcutCallback.getOpts()), shortcutCallback);
+                    kogitoShortcutCallback.getOpts()),shortcutCallback);
         } else if (shortcutCallback instanceof KogitoKeyPress) {
             registerShortcut(keyboardShortcutsApi.registerKeyPress(
                     asStringCodes(kogitoShortcutCallback.getKeyCombination()),
@@ -119,12 +119,12 @@ public class KogitoKeyEventHandlerImpl implements KeyEventHandler {
     public void removeKeyShortcutCallback(final KeyboardControl.KeyShortcutCallback shortcutCallback) {
         final Integer key = callbackMap.get(shortcutCallback);
 
-        for (Integer registeredKey : registeredShortcutsIds) {
-            if (Objects.equals(key, registeredKey)) {
+        for (Integer registeredKey: registeredShortcutsIds) {
+            if (Objects.equals(registeredKey, key)) {
                 keyboardShortcutsApi.deregister(registeredKey);
             }
         }
-        callbackMap.remove(shortcutCallback);
+       callbackMap.remove(shortcutCallback);
     }
 
     private String asStringCodes(final KeyboardEvent.Key[] keyCombination) {
