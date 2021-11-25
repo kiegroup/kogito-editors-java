@@ -233,7 +233,7 @@ export function DecisionTableExpression(decisionTable: PropsWithChildren<Decisio
       };
 
       if (decisionTable.isHeadless) {
-        const headlessDefinition = _.omit(updatedDefinition, ["name", "dataType", "isHeadless"]);
+        const headlessDefinition = _.omit(updatedDefinition, ["isHeadless"]);
         executeIfExpressionDefinitionChanged(
           decisionTable,
           headlessDefinition,
