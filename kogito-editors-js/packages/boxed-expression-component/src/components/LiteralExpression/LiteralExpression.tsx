@@ -95,7 +95,8 @@ export const LiteralExpression: React.FunctionComponent<LiteralExpressionProps> 
   useEffect(() => {
     /** Function executed only the first time the component is loaded */
     spreadLiteralExpressionDefinition();
-  }, [spreadLiteralExpressionDefinition]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="literal-expression">
