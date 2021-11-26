@@ -108,34 +108,34 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = (relat
 
   const convertRowsForTheTable = useMemo(
     () =>
-      _.map(rows, (row) => {
-        const updatedRow = _.reduce(
-          columns,
-          (tableRow: DataRecord, column, columnIndex) => {
-            tableRow[column.id] = row.cells[columnIndex] || "";
-            return tableRow;
-          },
-          {}
-        );
-        updatedRow.id = row.id;
-        return updatedRow;
-      }),
+      _.chain(rows)
+        .map((row) => {
+          const updatedRow = _.chain(columns)
+            .reduce((tableRow: DataRecord, column, columnIndex) => {
+              tableRow[column.id] = row.cells[columnIndex] || "";
+              return tableRow;
+            }, {})
+            .value();
+          updatedRow.id = row.id;
+          return updatedRow;
+        })
+        .value(),
     [rows, columns]
   );
 
   const onRowsUpdate = useCallback(
     (rows: DataRecord[], operation, rowIndex, columns: ReactTableColumn[]) => {
-      const newRows = _.map(rows, (tableRow: DataRecord) => {
-        const cells = _.reduce(
-          columns,
-          (row: string[], column: ColumnInstance) => {
-            row.push((tableRow[column.accessor] as string) ?? "");
-            return row;
-          },
-          []
-        );
-        return { id: tableRow.id as string, cells };
-      });
+      const newRows = _.chain(rows)
+        .map((tableRow: DataRecord) => {
+          const cells = _.chain(columns)
+            .reduce((row: string[], column: ColumnInstance) => {
+              row.push((tableRow[column.accessor] as string) ?? "");
+              return row;
+            }, [])
+            .value();
+          return { id: tableRow.id as string, cells };
+        })
+        .value();
       spreadRelationExpressionDefinition(undefined, newRows);
     },
     [spreadRelationExpressionDefinition]

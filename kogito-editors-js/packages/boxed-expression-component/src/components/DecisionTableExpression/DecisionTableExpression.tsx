@@ -108,42 +108,47 @@ export function DecisionTableExpression(decisionTable: PropsWithChildren<Decisio
   }, [i18n.editClause.input, i18n.editClause.output]);
 
   const columns = useMemo<ColumnInstance[]>(() => {
-    const inputColumns = _.map(
-      decisionTable.input ?? [{ name: "input-1", dataType: DataType.Undefined }],
-      (inputClause: Clause) =>
-        ({
-          accessor: inputClause.id ?? generateUuid(),
-          label: inputClause.name,
-          dataType: inputClause.dataType,
-          width: inputClause.width,
-          groupType: DecisionTableColumnType.InputClause,
-          cssClasses: "decision-table--input",
-        } as ColumnInstance)
-    );
-    const outputColumns = _.map(
-      decisionTable.output ?? [{ name: DECISION_NODE_DEFAULT_NAME, dataType: DataType.Undefined }],
-      (outputClause: Clause) =>
-        ({
-          accessor: outputClause.id ?? generateUuid(),
-          label: outputClause.name,
-          dataType: outputClause.dataType,
-          width: outputClause.width,
-          groupType: DecisionTableColumnType.OutputClause,
-          cssClasses: "decision-table--output",
-        } as ColumnInstance)
-    );
-    const annotationColumns = _.map(
-      decisionTable.annotations ?? [{ name: "annotation-1" }],
-      (annotation: Annotation) =>
-        ({
-          accessor: annotation.id ?? generateUuid(),
-          label: annotation.name,
-          width: annotation.width,
-          inlineEditable: true,
-          groupType: DecisionTableColumnType.Annotation,
-          cssClasses: "decision-table--annotation",
-        } as ColumnInstance)
-    );
+    const inputColumns = _.chain(decisionTable.input ?? [{ name: "input-1", dataType: DataType.Undefined }])
+      .map(
+        (inputClause: Clause) =>
+          ({
+            accessor: inputClause.id ?? generateUuid(),
+            label: inputClause.name,
+            dataType: inputClause.dataType,
+            width: inputClause.width,
+            groupType: DecisionTableColumnType.InputClause,
+            cssClasses: "decision-table--input",
+          } as ColumnInstance)
+      )
+      .value();
+    const outputColumns = _.chain(
+      decisionTable.output ?? [{ name: DECISION_NODE_DEFAULT_NAME, dataType: DataType.Undefined }]
+    )
+      .map(
+        (outputClause: Clause) =>
+          ({
+            accessor: outputClause.id ?? generateUuid(),
+            label: outputClause.name,
+            dataType: outputClause.dataType,
+            width: outputClause.width,
+            groupType: DecisionTableColumnType.OutputClause,
+            cssClasses: "decision-table--output",
+          } as ColumnInstance)
+      )
+      .value();
+    const annotationColumns = _.chain(decisionTable.annotations ?? [{ name: "annotation-1" }])
+      .map(
+        (annotation: Annotation) =>
+          ({
+            accessor: annotation.id ?? generateUuid(),
+            label: annotation.name,
+            width: annotation.width,
+            inlineEditable: true,
+            groupType: DecisionTableColumnType.Annotation,
+            cssClasses: "decision-table--annotation",
+          } as ColumnInstance)
+      )
+      .value();
 
     const inputSection = {
       groupType: DecisionTableColumnType.InputClause,
@@ -193,14 +198,12 @@ export function DecisionTableExpression(decisionTable: PropsWithChildren<Decisio
         ]
       ).map((rule) => {
         const rowArray = [...rule.inputEntries, ...rule.outputEntries, ...rule.annotationEntries];
-        const tableRow = _.reduce(
-          getColumnsAtLastLevel(columns),
-          (tableRow: DataRecord, column, columnIndex: number) => {
+        const tableRow = _.chain(getColumnsAtLastLevel(columns))
+          .reduce((tableRow: DataRecord, column, columnIndex: number) => {
             tableRow[column.accessor] = rowArray[columnIndex] || EMPTY_SYMBOL;
             return tableRow;
-          },
-          {}
-        );
+          }, {})
+          .value();
         tableRow.id = rule.id;
         return tableRow;
       }),
@@ -210,29 +213,43 @@ export function DecisionTableExpression(decisionTable: PropsWithChildren<Decisio
   const spreadDecisionTableExpressionDefinition = useCallback(
     (updatedDecisionTable?: Partial<DecisionTableProps>, updatedColumns?: any, updatedRows?: Array<object>) => {
       const groupedColumns = _.groupBy(getColumnsAtLastLevel(updatedColumns ?? columns), (column) => column.groupType);
-      const input: Clause[] = _.map(groupedColumns[DecisionTableColumnType.InputClause], (inputClause) => ({
-        id: inputClause.accessor,
-        name: inputClause.label as string,
-        dataType: inputClause.dataType,
-        width: inputClause.width,
-      }));
-      const output: Clause[] = _.map(groupedColumns[DecisionTableColumnType.OutputClause], (outputClause) => ({
-        id: outputClause.accessor,
-        name: outputClause.label as string,
-        dataType: outputClause.dataType,
-        width: outputClause.width,
-      }));
-      const annotations: Annotation[] = _.map(groupedColumns[DecisionTableColumnType.Annotation], (annotation) => ({
-        id: annotation.accessor,
-        name: annotation.label as string,
-        width: annotation.width,
-      }));
-      const rules: DecisionTableRule[] = _.map(updatedRows ?? rows, (row: DataRecord) => ({
-        id: row.id as string,
-        inputEntries: _.map(input, (inputClause) => row[inputClause.id] as string),
-        outputEntries: _.map(output, (outputClause) => row[outputClause.id] as string),
-        annotationEntries: _.map(annotations, (annotation) => row[annotation.id] as string),
-      }));
+      const input: Clause[] = _.chain(groupedColumns[DecisionTableColumnType.InputClause])
+        .map((inputClause) => ({
+          id: inputClause.accessor,
+          name: inputClause.label as string,
+          dataType: inputClause.dataType,
+          width: inputClause.width,
+        }))
+        .value();
+      const output: Clause[] = _.chain(groupedColumns[DecisionTableColumnType.OutputClause])
+        .map((outputClause) => ({
+          id: outputClause.accessor,
+          name: outputClause.label as string,
+          dataType: outputClause.dataType,
+          width: outputClause.width,
+        }))
+        .value();
+      const annotations: Annotation[] = _.chain(groupedColumns[DecisionTableColumnType.Annotation])
+        .map((annotation) => ({
+          id: annotation.accessor,
+          name: annotation.label as string,
+          width: annotation.width,
+        }))
+        .value();
+      const rules: DecisionTableRule[] = _.chain(updatedRows ?? rows)
+        .map((row: DataRecord) => ({
+          id: row.id as string,
+          inputEntries: _.chain(input)
+            .map((inputClause) => row[inputClause.id] as string)
+            .value(),
+          outputEntries: _.chain(output)
+            .map((outputClause) => row[outputClause.id] as string)
+            .value(),
+          annotationEntries: _.chain(annotations)
+            .map((annotation) => row[annotation.id] as string)
+            .value(),
+        }))
+        .value();
 
       const updatedDefinition: Partial<DecisionTableProps> = {
         uid: decisionTable.uid,
