@@ -34,9 +34,8 @@ export const ImportJavaClassesWizardFirstStep: React.FunctionComponent<ImportJav
   selectedJavaClasses,
   onSelectedJavaClassesUpdated,
 }) => {
-  const EMPTY_SEARCH_VALUE = "";
   const { i18n } = useImportJavaClassesWizardI18n();
-  const [searchValue, setSearchValue] = useState(EMPTY_SEARCH_VALUE);
+  const [searchValue, setSearchValue] = useState("");
   const [retrievedJavaClasses, setRetrievedJavaClasses] = useState<string[]>([]);
   const onSearchValueChange = useCallback((value: string) => retrieveJavaClasses(value), []);
   /* This function temporary mocks a call to the LSP service method getClasses */
