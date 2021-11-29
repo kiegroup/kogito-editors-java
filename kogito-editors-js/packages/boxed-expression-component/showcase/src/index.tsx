@@ -88,7 +88,7 @@ export const App: React.FunctionComponent = () => {
     broadcastInvocationExpressionDefinition: (definition: InvocationProps) => setExpressionDefinition(definition),
     broadcastFunctionExpressionDefinition: (definition: FunctionProps) => setExpressionDefinition(definition),
     broadcastDecisionTableExpressionDefinition: (definition: DecisionTableProps) => setExpressionDefinition(definition),
-    notifyUserAction(): void {}
+    notifyUserAction(): void {},
   };
 
   const copyToClipboard = useCallback(
