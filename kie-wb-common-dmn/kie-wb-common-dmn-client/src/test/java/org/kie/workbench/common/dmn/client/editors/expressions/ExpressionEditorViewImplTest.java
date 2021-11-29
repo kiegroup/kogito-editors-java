@@ -316,14 +316,6 @@ public class ExpressionEditorViewImplTest {
     }
 
     @Test
-    public void testBind() {
-        //ExpressionEditorViewImpl.bind(..) is called in @Before setup
-        verify(view).setupGridPanel();
-        verify(view).setupGridWidget();
-        verify(view).setupGridWidgetPanControl();
-    }
-
-    @Test
     public void testSetupGridPanel() {
         verify(viewport).setTransform(transformArgumentCaptor.capture());
         final Transform transform = transformArgumentCaptor.getValue();
