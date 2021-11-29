@@ -30,7 +30,7 @@ declare global {
 
   interface Window {
     envelopeMock: EnvelopeMock;
-    importJavaClassesAPI: ImportJavaClassesAPI;
-    importJavaClassesAPIWrapper: ImportJavaClassesAPI;
+    ImportJavaClassesAPI: ImportJavaClassesAPI;
+    ImportJavaClassesAPIWrapper: ImportJavaClassesAPI;
   }
 }

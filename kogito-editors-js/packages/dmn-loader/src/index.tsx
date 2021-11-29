@@ -121,9 +121,9 @@ const ImportJavaClassesWrapper: React.FunctionComponent<ImportJavaClassesProps> 
   buttonDisabledStatus,
   buttonTooltipMessage,
 }: ImportJavaClassesProps) => {
-  window.importJavaClassesAPI = {
+  window.ImportJavaClassesAPI = {
     importJavaClasses: (javaClasses: JavaClass[]) => {
-      window.importJavaClassesAPIWrapper?.importJavaClasses?.(javaClasses);
+      window.ImportJavaClassesAPIWrapper?.importJavaClasses?.(javaClasses);
     },
   };
   window.envelopeMock = {
