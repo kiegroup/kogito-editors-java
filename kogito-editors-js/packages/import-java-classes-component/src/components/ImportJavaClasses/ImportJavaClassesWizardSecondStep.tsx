@@ -53,7 +53,7 @@ export const ImportJavaClassesWizardSecondStep: React.FunctionComponent<ImportJa
         fields.sort((a, b) => (a.name < b.name ? -1 : 1));
         onSelectedJavaClassedFieldsLoaded(className, fields);
       })
-      .catch((reason: any) => {
+      .catch(reason => {
         console.error(reason);
       });
   };
