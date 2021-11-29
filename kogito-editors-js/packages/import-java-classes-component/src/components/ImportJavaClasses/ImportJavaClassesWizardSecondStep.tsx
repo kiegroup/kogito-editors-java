@@ -62,7 +62,7 @@ export const ImportJavaClassesWizardSecondStep: React.FunctionComponent<ImportJa
       });
   };
   const generateJavaClassField = (name: string, type: string, selectedJavaClasses: JavaClass[]) => {
-    let dmnTypeRef: string = (JAVA_TO_DMN_MAP as any)[getJavaClassSimpleName(type)] || DMNSimpleType.ANY;
+    let dmnTypeRef: string = JAVA_TO_DMN_MAP.get(getJavaClassSimpleName(type)) || DMNSimpleType.ANY;
     if (dmnTypeRef === DMNSimpleType.ANY && selectedJavaClasses.some((javaClass) => javaClass.name === type)) {
       dmnTypeRef = getJavaClassSimpleName(type);
     }
