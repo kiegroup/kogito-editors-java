@@ -34,12 +34,12 @@ export const ImportJavaClassesWizardClassListTableItems: React.FunctionComponent
     const [itemChecked, setItemChecked] = useState(selected);
     const onDataListCheckChange = useCallback(() => {
       if (!itemChecked) {
-        onAddJavaClass(fullClassName)
+        onAddJavaClass(fullClassName);
       } else {
         onRemoveJavaClass(fullClassName);
       }
       setItemChecked(!itemChecked);
-    }, [fullClassName, itemChecked, onAddJavaClass, onRemoveJavaClass ]);
+    }, [fullClassName, itemChecked, onAddJavaClass, onRemoveJavaClass]);
 
     return (
       <DataListItem name={fullClassName}>

@@ -62,7 +62,7 @@ export const ImportJavaClassesWizardFieldListTable: React.FunctionComponent<Impo
       return field.dmnTypeRef === DMNSimpleType.ANY;
     };
     const fetchButton = useCallback(
-      field => {
+      (field) => {
         return (
           <Button
             className={"fetch-button"}

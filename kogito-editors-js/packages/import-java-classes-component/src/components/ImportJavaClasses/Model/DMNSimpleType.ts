@@ -31,9 +31,9 @@ export enum DMNSimpleType {
 export const JAVA_TO_DMN_MAP = new Map([
   /** Number types */
   ["AtomicInteger", DMNSimpleType.NUMBER],
-  ["AtomicLong",  DMNSimpleType.NUMBER],
-  ["BigDecimal",  DMNSimpleType.NUMBER],
-  ["BigInteger",  DMNSimpleType.NUMBER],
+  ["AtomicLong", DMNSimpleType.NUMBER],
+  ["BigDecimal", DMNSimpleType.NUMBER],
+  ["BigInteger", DMNSimpleType.NUMBER],
   ["Byte", DMNSimpleType.NUMBER],
   ["byte", DMNSimpleType.NUMBER],
   ["Double", DMNSimpleType.NUMBER],
@@ -75,5 +75,5 @@ export const JAVA_TO_DMN_MAP = new Map([
   ["Map", DMNSimpleType.CONTEXT],
   ["LinkedHashMap", DMNSimpleType.CONTEXT],
   ["HashMap", DMNSimpleType.CONTEXT],
-  ["TreeMap",  DMNSimpleType.CONTEXT]
+  ["TreeMap", DMNSimpleType.CONTEXT],
 ]);

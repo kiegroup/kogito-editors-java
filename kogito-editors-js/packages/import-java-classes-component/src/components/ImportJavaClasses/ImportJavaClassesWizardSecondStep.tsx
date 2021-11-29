@@ -41,19 +41,19 @@ export const ImportJavaClassesWizardSecondStep: React.FunctionComponent<ImportJa
   useEffect(
     () =>
       selectedJavaClasses
-        .filter(javaClass => !javaClass.fieldsLoaded)
-        .forEach(javaClass => loadJavaFields(javaClass.name)),
+        .filter((javaClass) => !javaClass.fieldsLoaded)
+        .forEach((javaClass) => loadJavaFields(javaClass.name)),
     [selectedJavaClasses]
   );
   const loadJavaFields = (className: string) => {
     window.envelopeMock
       .lspGetClassFieldsServiceMocked(className)
-      .then(value => {
+      .then((value) => {
         const fields = Array.from(value, ([name, type]) => generateJavaClassField(name, type, selectedJavaClasses));
         fields.sort((a, b) => (a.name < b.name ? -1 : 1));
         onSelectedJavaClassedFieldsLoaded(className, fields);
       })
-      .catch(reason => {
+      .catch((reason) => {
         console.error(reason);
       });
   };
@@ -68,7 +68,7 @@ export const ImportJavaClassesWizardSecondStep: React.FunctionComponent<ImportJa
 
   return (
     <>
-      {selectedJavaClasses.some(javaClass => !javaClass.fieldsLoaded) ? (
+      {selectedJavaClasses.some((javaClass) => !javaClass.fieldsLoaded) ? (
         <Spinner isSVG={true} diameter="150px" className={"loader"} />
       ) : (
         <ImportJavaClassesWizardFieldListTable

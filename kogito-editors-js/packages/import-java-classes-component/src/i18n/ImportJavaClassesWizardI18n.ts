@@ -37,7 +37,6 @@ interface ImportJavaClassesWizardDictionary extends ReferenceDictionary {
     };
     secondStep: {
       stepName: string;
-
     };
     thirdStep: {
       stepName: string;
@@ -45,7 +44,7 @@ interface ImportJavaClassesWizardDictionary extends ReferenceDictionary {
     };
     fieldTable: {
       fetchButtonLabel: string;
-    }
+    };
   };
 }
 
