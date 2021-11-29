@@ -65,7 +65,7 @@ export const ImportJavaClassesWizardFirstStep: React.FunctionComponent<ImportJav
         placeholder={i18n.modalWizard.firstStep.input.placeholder}
         value={searchValue}
         onChange={onSearchValueChange}
-        onClear={() => onSearchValueChange(EMPTY_SEARCH_VALUE)}
+        onClear={() => onSearchValueChange("")}
         autoFocus
       />
       {retrievedJavaClasses.length > 0 || selectedJavaClasses.length > 0 ? (
