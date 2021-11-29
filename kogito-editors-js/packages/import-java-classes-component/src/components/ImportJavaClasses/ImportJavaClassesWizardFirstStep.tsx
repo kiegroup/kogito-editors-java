@@ -26,13 +26,16 @@ import { JavaClass } from "./Model/JavaClass";
 export interface ImportJavaClassesWizardFirstStepProps {
   /** List of the selected classes by user */
   selectedJavaClasses: JavaClass[];
-  /** Function to be called when selecting a Java Class */
-  onSelectedJavaClassesUpdated: (fullClassName: string, add: boolean) => void;
+  /** Function to be called when adding a Java Class */
+  onAddJavaClass: (fullClassName: string) => void;
+  /** Function to be called when removing a Java Class */
+  onRemoveJavaClass: (fullClassName: string) => void;
 }
 
 export const ImportJavaClassesWizardFirstStep: React.FunctionComponent<ImportJavaClassesWizardFirstStepProps> = ({
   selectedJavaClasses,
-  onSelectedJavaClassesUpdated,
+  onAddJavaClass,
+  onRemoveJavaClass,
 }) => {
   const { i18n } = useImportJavaClassesWizardI18n();
   const [searchValue, setSearchValue] = useState("");
@@ -73,7 +76,8 @@ export const ImportJavaClassesWizardFirstStep: React.FunctionComponent<ImportJav
         <ImportJavaClassesWizardClassListTable
           selectedJavaClasses={selectedJavaClasses}
           retrievedJavaClasses={retrievedJavaClasses}
-          onJavaClassItemSelected={onSelectedJavaClassesUpdated}
+          onAddJavaClass={onAddJavaClass}
+          onRemoveJavaClass={onRemoveJavaClass}
         />
       ) : (
         <EmptyStep />

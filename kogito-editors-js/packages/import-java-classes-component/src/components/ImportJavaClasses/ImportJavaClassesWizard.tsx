@@ -39,13 +39,6 @@ export const ImportJavaClassesWizard: React.FunctionComponent<ImportJavaClassesW
 }: ImportJavaClassesWizardProps) => {
   const { i18n } = useImportJavaClassesWizardI18n();
   const [javaClasses, setJavaClasses] = useState<JavaClass[]>([]);
-  const updateSelectedClasses = (fullClassName: string, add: boolean) => {
-    if (add) {
-      addJavaClass(fullClassName);
-    } else {
-      removeJavaClass(fullClassName);
-    }
-  };
   const addJavaClass = (fullClassName: string) => {
     if (!javaClasses.some((javaClass) => javaClass.name === fullClassName)) {
       const updatedSelectedJavaClasses: JavaClass[] = [...javaClasses, new JavaClass(fullClassName)];
@@ -96,7 +89,8 @@ export const ImportJavaClassesWizard: React.FunctionComponent<ImportJavaClassesW
       component: (
         <ImportJavaClassesWizardFirstStep
           selectedJavaClasses={javaClasses}
-          onSelectedJavaClassesUpdated={updateSelectedClasses}
+          onAddJavaClass={addJavaClass}
+          onRemoveJavaClass={removeJavaClass}
         />
       ),
       enableNext: isSecondStepActivatable(),
@@ -108,7 +102,7 @@ export const ImportJavaClassesWizard: React.FunctionComponent<ImportJavaClassesW
       component: (
         <ImportJavaClassesWizardSecondStep
           selectedJavaClasses={javaClasses}
-          onSelectedJavaClassesUpdated={updateSelectedClasses}
+          onAddJavaClass={addJavaClass}
           onSelectedJavaClassedFieldsLoaded={updateSelectedClassesFields}
         />
       ),

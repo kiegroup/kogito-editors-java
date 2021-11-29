@@ -24,15 +24,18 @@ export interface ImportJavaClassesWizardClassListTableProps {
   selectedJavaClasses: JavaClass[];
   /** Retrieved JavaClasses from external service */
   retrievedJavaClasses: string[];
-  /** Function to call when an item related checkbox is pressed by the user */
-  onJavaClassItemSelected: (fullClassName: string, add: boolean) => void;
+  /** Function to be called when adding a Java Class */
+  onAddJavaClass: (fullClassName: string) => void;
+  /** Function to be called when removing a Java Class */
+  onRemoveJavaClass: (fullClassName: string) => void;
 }
 
 export const ImportJavaClassesWizardClassListTable: React.FunctionComponent<ImportJavaClassesWizardClassListTableProps> =
   ({
     selectedJavaClasses,
     retrievedJavaClasses,
-    onJavaClassItemSelected,
+    onAddJavaClass,
+    onRemoveJavaClass,
   }: ImportJavaClassesWizardClassListTableProps) => {
     const classesSet = new Set(selectedJavaClasses.map((javaClass) => javaClass.name));
     return (
@@ -42,7 +45,8 @@ export const ImportJavaClassesWizardClassListTable: React.FunctionComponent<Impo
             key={value.name}
             fullClassName={value.name}
             selected={true}
-            onJavaClassItemSelected={onJavaClassItemSelected}
+            onAddJavaClass={onAddJavaClass}
+            onRemoveJavaClass={onRemoveJavaClass}
           />
         ))}
         {retrievedJavaClasses.map((value) => {
@@ -52,7 +56,8 @@ export const ImportJavaClassesWizardClassListTable: React.FunctionComponent<Impo
                 key={value}
                 fullClassName={value}
                 selected={false}
-                onJavaClassItemSelected={onJavaClassItemSelected}
+                onAddJavaClass={onAddJavaClass}
+                onRemoveJavaClass={onRemoveJavaClass}
               />
             );
           }

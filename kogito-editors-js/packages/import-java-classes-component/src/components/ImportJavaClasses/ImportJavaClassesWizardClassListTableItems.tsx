@@ -23,17 +23,23 @@ export interface ImportJavaClassesWizardClassListTableItemsProps {
   fullClassName: string;
   /** Item checkbox status */
   selected: boolean;
-  /** Function to call when an item related checkbox is pressed by the user */
-  onJavaClassItemSelected: (fullClassName: string, add: boolean) => void;
+  /** Function to be called when adding a Java Class */
+  onAddJavaClass: (fullClassName: string) => void;
+  /** Function to be called when removing a Java Class */
+  onRemoveJavaClass: (fullClassName: string) => void;
 }
 
 export const ImportJavaClassesWizardClassListTableItems: React.FunctionComponent<ImportJavaClassesWizardClassListTableItemsProps> =
-  ({ fullClassName, selected, onJavaClassItemSelected }: ImportJavaClassesWizardClassListTableItemsProps) => {
+  ({ fullClassName, selected, onAddJavaClass, onRemoveJavaClass }: ImportJavaClassesWizardClassListTableItemsProps) => {
     const [itemChecked, setItemChecked] = useState(selected);
     const onDataListCheckChange = useCallback(() => {
-      onJavaClassItemSelected(fullClassName, !itemChecked);
+      if (!itemChecked) {
+        onAddJavaClass(fullClassName)
+      } else {
+        onRemoveJavaClass(fullClassName);
+      }
       setItemChecked(!itemChecked);
-    }, [fullClassName, itemChecked, onJavaClassItemSelected]);
+    }, [fullClassName, itemChecked, onAddJavaClass, onRemoveJavaClass ]);
 
     return (
       <DataListItem name={fullClassName}>

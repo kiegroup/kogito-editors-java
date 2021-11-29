@@ -27,15 +27,15 @@ import { getJavaClassSimpleName } from "./Model/JavaClassUtils";
 export interface ImportJavaClassesWizardSecondStepProps {
   /** List of the selected classes by user */
   selectedJavaClasses: JavaClass[];
-  /** Function to be called to update selected Java Class, after a Fetching request */
-  onSelectedJavaClassesUpdated: (fullClassName: string, add: boolean) => void;
+  /** Function to be called when adding a Java Class */
+  onAddJavaClass: (fullClassName: string) => void;
   /** Function to be called to update a Java Class with its retrieved Fields */
   onSelectedJavaClassedFieldsLoaded: (fullClassName: string, fields: JavaField[]) => void;
 }
 
 export const ImportJavaClassesWizardSecondStep: React.FunctionComponent<ImportJavaClassesWizardSecondStepProps> = ({
   selectedJavaClasses,
-  onSelectedJavaClassesUpdated,
+  onAddJavaClass,
   onSelectedJavaClassedFieldsLoaded,
 }: ImportJavaClassesWizardSecondStepProps) => {
   useEffect(
@@ -64,7 +64,7 @@ export const ImportJavaClassesWizardSecondStep: React.FunctionComponent<ImportJa
     }
     return new JavaField(name, type, dmnTypeRef);
   };
-  const onFetchButtonClick = useCallback((fullClassName: string) => onSelectedJavaClassesUpdated(fullClassName, true), []);
+  const onFetchButtonClick = useCallback((fullClassName: string) => onAddJavaClass(fullClassName), []);
 
   return (
     <>
