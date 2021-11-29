@@ -41,29 +41,29 @@ export const ImportJavaClassesWizard: React.FunctionComponent<ImportJavaClassesW
   const [javaClasses, setJavaClasses] = useState<JavaClass[]>([]);
   const addJavaClass = (fullClassName: string) => {
     if (!javaClasses.some((javaClass) => javaClass.name === fullClassName)) {
-      const updatedSelectedJavaClasses: JavaClass[] = [...javaClasses, new JavaClass(fullClassName)];
+      const updatedSelectedJavaClasses = [...javaClasses, new JavaClass(fullClassName)];
       updatedSelectedJavaClasses.sort((a, b) => (a.name < b.name ? -1 : 1));
       updateJavaFieldsReferences(updatedSelectedJavaClasses, javaClasses);
       setJavaClasses(updatedSelectedJavaClasses);
     }
   };
   const removeJavaClass = (fullClassName: string) => {
-    const updatedSelectedJavaClasses: JavaClass[] = javaClasses.filter((javaClass) => javaClass.name !== fullClassName);
+    const updatedSelectedJavaClasses = javaClasses.filter((javaClass) => javaClass.name !== fullClassName);
     updateJavaFieldsReferences(updatedSelectedJavaClasses, javaClasses);
     setJavaClasses(updatedSelectedJavaClasses);
   };
   const updateSelectedClassesFields = (fullClassName: string, fields: JavaField[]) => {
-    const javaClassIndex: number = javaClasses.findIndex((javaClass) => javaClass.name === fullClassName);
+    const javaClassIndex = javaClasses.findIndex((javaClass) => javaClass.name === fullClassName);
     if (javaClassIndex > -1) {
       javaClasses[javaClassIndex].setFields(fields);
     }
     setJavaClasses([...javaClasses]);
   };
   const updateJavaFieldsReferences = (updatedJavaClasses: JavaClass[], previousJavaClasses: JavaClass[]) => {
-    const updatedJavaClassesNames: string[] = updatedJavaClasses.map((javaClass) => javaClass.name);
-    const previousJavaClassesNames: string[] = previousJavaClasses.map((javaClass) => javaClass.name);
-    const allFields: JavaField[] = javaClasses.map((javaClass) => javaClass.fields).flat(1);
-    allFields.forEach((field: JavaField) => {
+    const updatedJavaClassesNames = updatedJavaClasses.map((javaClass) => javaClass.name);
+    const previousJavaClassesNames = previousJavaClasses.map((javaClass) => javaClass.name);
+    const allFields = javaClasses.map((javaClass) => javaClass.fields).flat(1);
+    allFields.forEach((field) => {
       if (field.dmnTypeRef === DMNSimpleType.ANY && updatedJavaClassesNames.includes(field.type)) {
         field.dmnTypeRef = getJavaClassSimpleName(field.type);
       } else if (previousJavaClassesNames.includes(field.type) && !updatedJavaClassesNames.includes(field.type)) {
@@ -75,7 +75,7 @@ export const ImportJavaClassesWizard: React.FunctionComponent<ImportJavaClassesW
     return javaClasses.length > 0;
   };
   const isThirdStepActivatable = () => {
-    return javaClasses.length > 0 && javaClasses.every((javaClass: JavaClass) => javaClass.fieldsLoaded);
+    return javaClasses.length > 0 && javaClasses.every((javaClass) => javaClass.fieldsLoaded);
   };
   const resetJavaClassState = () => {
     setJavaClasses([]);
