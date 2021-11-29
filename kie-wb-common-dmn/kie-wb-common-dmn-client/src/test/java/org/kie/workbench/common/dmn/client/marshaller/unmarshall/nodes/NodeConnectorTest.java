@@ -271,6 +271,7 @@ public class NodeConnectorTest {
 
         NodeConnector nodeConnector = mock(NodeConnector.class);
         doCallRealMethod().when(nodeConnector).setConnectionMagnets(eq(edge), eq(viewConnector), eq(jsidmnEdge));
+        doCallRealMethod().when(nodeConnector).setConnectionControlPoints(eq(viewConnector), eq(jsidmnEdge));
 
         when(jsidmnEdge.getWaypoint()).thenReturn(waypoints);
         when(jsidmnEdge.getId()).thenReturn(AUTO_SOURCE_CONNECTION + AUTO_TARGET_CONNECTION);
