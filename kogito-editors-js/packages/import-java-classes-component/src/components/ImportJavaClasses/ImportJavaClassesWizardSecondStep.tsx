@@ -31,15 +31,12 @@ export interface ImportJavaClassesWizardSecondStepProps {
   onSelectedJavaClassesUpdated: (fullClassName: string, add: boolean) => void;
   /** Function to be called to update a Java Class with its retrieved Fields */
   onSelectedJavaClassedFieldsLoaded: (fullClassName: string, fields: JavaField[]) => void;
-  /** Fetch button label */
-  fetchButtonLabel: string;
 }
 
 export const ImportJavaClassesWizardSecondStep: React.FunctionComponent<ImportJavaClassesWizardSecondStepProps> = ({
   selectedJavaClasses,
   onSelectedJavaClassesUpdated,
   onSelectedJavaClassedFieldsLoaded,
-  fetchButtonLabel,
 }: ImportJavaClassesWizardSecondStepProps) => {
   useEffect(
     () =>
@@ -78,7 +75,6 @@ export const ImportJavaClassesWizardSecondStep: React.FunctionComponent<ImportJa
           selectedJavaClassFields={selectedJavaClasses}
           readOnly={false}
           onFetchButtonClick={(fullClassName: string) => onSelectedJavaClassesUpdated(fullClassName, true)}
-          fetchButtonLabel={fetchButtonLabel}
         />
       )}
     </>

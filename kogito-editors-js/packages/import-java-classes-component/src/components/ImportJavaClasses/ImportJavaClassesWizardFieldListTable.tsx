@@ -23,6 +23,7 @@ import { JavaField } from "./Model/JavaField";
 import { DMNSimpleType } from "./Model/DMNSimpleType";
 import { getJavaClassSimpleName } from "./Model/JavaClassUtils";
 import { useCallback } from "react";
+import { useImportJavaClassesWizardI18n } from "../../i18n";
 
 export interface ImportJavaClassesWizardFieldListTableProps {
   /** List of the selected classes by user */
@@ -33,8 +34,6 @@ export interface ImportJavaClassesWizardFieldListTableProps {
   tableClassName?: string;
   /** Function to call when an Fetch button is clicked */
   onFetchButtonClick?: (fullClassName: string) => void;
-  /** Fetch button label */
-  fetchButtonLabel?: string;
 }
 
 export const ImportJavaClassesWizardFieldListTable: React.FunctionComponent<ImportJavaClassesWizardFieldListTableProps> =
@@ -43,8 +42,8 @@ export const ImportJavaClassesWizardFieldListTable: React.FunctionComponent<Impo
     readOnly,
     tableClassName,
     onFetchButtonClick,
-    fetchButtonLabel,
   }: ImportJavaClassesWizardFieldListTableProps) => {
+    const { i18n } = useImportJavaClassesWizardI18n();
     const [expanded, setExpanded] = React.useState(
       Object.fromEntries(
         selectedJavaClassFields.map((value, index) => [index, Boolean(value.fields && value.fields.length > 0)])
@@ -71,7 +70,7 @@ export const ImportJavaClassesWizardFieldListTable: React.FunctionComponent<Impo
             variant="primary"
             isSmall
           >
-            {fetchButtonLabel + ' "' + getJavaClassSimpleName(field.type) + '" class'}
+            {i18n.modalWizard.secondStep.fetchButtonLabel + ' "' + getJavaClassSimpleName(field.type) + '" class'}
           </Button>
         );
       },
