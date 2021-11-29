@@ -74,7 +74,6 @@ export const ImportJavaClassesWizardFieldListTable: React.FunctionComponent<Impo
           </Button>
         );
       },
-      // eslint-disable-next-line
       [selectedJavaClassFields]
     );
 

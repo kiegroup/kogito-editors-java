@@ -17,7 +17,7 @@
 import * as React from "react";
 import "./ImportJavaClassesWizardSecondStep.css";
 import { Spinner } from "@patternfly/react-core";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { ImportJavaClassesWizardFieldListTable } from "./ImportJavaClassesWizardFieldListTable";
 import { JavaField } from "./Model/JavaField";
 import { JavaClass } from "./Model/JavaClass";
@@ -43,7 +43,6 @@ export const ImportJavaClassesWizardSecondStep: React.FunctionComponent<ImportJa
       selectedJavaClasses
         .filter((javaClass: JavaClass) => !javaClass.fieldsLoaded)
         .forEach((javaClass: JavaClass) => loadJavaFields(javaClass.name)),
-    // eslint-disable-next-line
     [selectedJavaClasses]
   );
   const loadJavaFields = (className: string) => {
@@ -65,6 +64,7 @@ export const ImportJavaClassesWizardSecondStep: React.FunctionComponent<ImportJa
     }
     return new JavaField(name, type, dmnTypeRef);
   };
+  const onFetchButtonClick = useCallback((fullClassName: string) => onSelectedJavaClassesUpdated(fullClassName, true), []);
 
   return (
     <>
@@ -74,7 +74,7 @@ export const ImportJavaClassesWizardSecondStep: React.FunctionComponent<ImportJa
         <ImportJavaClassesWizardFieldListTable
           selectedJavaClassFields={selectedJavaClasses}
           readOnly={false}
-          onFetchButtonClick={(fullClassName: string) => onSelectedJavaClassesUpdated(fullClassName, true)}
+          onFetchButtonClick={onFetchButtonClick}
         />
       )}
     </>
