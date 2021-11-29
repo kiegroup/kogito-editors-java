@@ -58,6 +58,7 @@ export const ImportJavaClassesWizardFirstStep: React.FunctionComponent<ImportJav
       />
     );
   };
+  const onClearSearch = useCallback(() => onSearchValueChange(""), []);
 
   return (
     <>
@@ -65,7 +66,7 @@ export const ImportJavaClassesWizardFirstStep: React.FunctionComponent<ImportJav
         placeholder={i18n.modalWizard.firstStep.input.placeholder}
         value={searchValue}
         onChange={onSearchValueChange}
-        onClear={() => onSearchValueChange("")}
+        onClear={onClearSearch}
         autoFocus
       />
       {retrievedJavaClasses.length > 0 || selectedJavaClasses.length > 0 ? (
