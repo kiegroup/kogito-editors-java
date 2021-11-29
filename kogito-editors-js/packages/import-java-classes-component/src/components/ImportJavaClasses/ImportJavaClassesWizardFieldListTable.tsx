@@ -70,7 +70,7 @@ export const ImportJavaClassesWizardFieldListTable: React.FunctionComponent<Impo
             variant="primary"
             isSmall
           >
-            {i18n.modalWizard.secondStep.fetchButtonLabel + ' "' + getJavaClassSimpleName(field.type) + '" class'}
+            {i18n.modalWizard.fieldTable.fetchButtonLabel + ' "' + getJavaClassSimpleName(field.type) + '" class'}
           </Button>
         );
       },
