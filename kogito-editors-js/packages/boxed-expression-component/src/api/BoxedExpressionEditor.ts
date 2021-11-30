@@ -81,5 +81,5 @@ export const generateUuid = () => {
 };
 
 export const getBoxedExpressionContainer = () => {
-  return document.getElementById("boxed-expression-editor")!
-}
+  return document.getElementById("boxed-expression-editor") ?? document;
+};
