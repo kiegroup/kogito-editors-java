@@ -67,7 +67,6 @@ export const ImportJavaClassesWizardSecondStep: React.FunctionComponent<ImportJa
         .forEach((javaClass) => loadJavaFields(javaClass.name)),
     [selectedJavaClasses, loadJavaFields]
   );
-  const onFetchButtonClick = useCallback((fullClassName: string) => onAddJavaClass(fullClassName), [onAddJavaClass]);
 
   return (
     <>
@@ -77,7 +76,7 @@ export const ImportJavaClassesWizardSecondStep: React.FunctionComponent<ImportJa
         <ImportJavaClassesWizardFieldListTable
           selectedJavaClassFields={selectedJavaClasses}
           readOnly={false}
-          onFetchButtonClick={onFetchButtonClick}
+          loadJavaClass={onAddJavaClass}
         />
       )}
     </>
