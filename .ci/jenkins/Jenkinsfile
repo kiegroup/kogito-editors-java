@@ -33,7 +33,7 @@ pipeline {
         }
         stage('Build Kogito Editors Java') {
             steps {
-                shell('echo "registry=https://repository.engineering.redhat.com/nexus/repository/registry.npmjs.org/" >> ./.npmrc')
+                shell('echo "registry=https://repository.engineering.redhat.com/nexus/repository/registry.npmjs.org/" >> ~/.npmrc')
                 script {
                     mvnCmd = getMavenCommand('kogito-editors-java')
                     if (isNormalPRCheck() && isSonarCloudEnabled()) {
