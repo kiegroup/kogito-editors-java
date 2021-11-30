@@ -38,14 +38,14 @@ export const ImportJavaClassesWizardSecondStep: React.FunctionComponent<ImportJa
   onAddJavaClass,
   onSelectedJavaClassedFieldsLoaded,
 }: ImportJavaClassesWizardSecondStepProps) => {
-  useEffect(
-    () =>
-      selectedJavaClasses
-        .filter((javaClass) => !javaClass.fieldsLoaded)
-        .forEach((javaClass) => loadJavaFields(javaClass.name)),
-    [selectedJavaClasses]
-  );
-  const loadJavaFields = (className: string) => {
+  const generateJavaClassField = useCallback((name: string, type: string, selectedJavaClasses: JavaClass[]) => {
+    let dmnTypeRef: string = JAVA_TO_DMN_MAP.get(getJavaClassSimpleName(type)) || DMNSimpleType.ANY;
+    if (dmnTypeRef === DMNSimpleType.ANY && selectedJavaClasses.some((javaClass) => javaClass.name === type)) {
+      dmnTypeRef = getJavaClassSimpleName(type);
+    }
+    return new JavaField(name, type, dmnTypeRef);
+  }, []);
+  const loadJavaFields = useCallback((className: string) => {
     window.envelopeMock
       .lspGetClassFieldsServiceMocked(className)
       .then((value) => {
@@ -56,15 +56,15 @@ export const ImportJavaClassesWizardSecondStep: React.FunctionComponent<ImportJa
       .catch((reason) => {
         console.error(reason);
       });
-  };
-  const generateJavaClassField = (name: string, type: string, selectedJavaClasses: JavaClass[]) => {
-    let dmnTypeRef: string = JAVA_TO_DMN_MAP.get(getJavaClassSimpleName(type)) || DMNSimpleType.ANY;
-    if (dmnTypeRef === DMNSimpleType.ANY && selectedJavaClasses.some((javaClass) => javaClass.name === type)) {
-      dmnTypeRef = getJavaClassSimpleName(type);
-    }
-    return new JavaField(name, type, dmnTypeRef);
-  };
-  const onFetchButtonClick = useCallback((fullClassName: string) => onAddJavaClass(fullClassName), []);
+  }, [generateJavaClassField, onSelectedJavaClassedFieldsLoaded, selectedJavaClasses]);
+  useEffect(
+    () =>
+      selectedJavaClasses
+        .filter((javaClass) => !javaClass.fieldsLoaded)
+        .forEach((javaClass) => loadJavaFields(javaClass.name)),
+    [selectedJavaClasses, loadJavaFields]
+  );
+  const onFetchButtonClick = useCallback((fullClassName: string) => onAddJavaClass(fullClassName), [onAddJavaClass]);
 
   return (
     <>

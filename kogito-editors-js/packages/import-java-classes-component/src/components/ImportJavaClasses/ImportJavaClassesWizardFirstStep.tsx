@@ -40,16 +40,18 @@ export const ImportJavaClassesWizardFirstStep: React.FunctionComponent<ImportJav
   const { i18n } = useImportJavaClassesWizardI18n();
   const [searchValue, setSearchValue] = useState("");
   const [retrievedJavaClasses, setRetrievedJavaClasses] = useState<string[]>([]);
-  const onSearchValueChange = useCallback((value) => retrieveJavaClasses(value), []);
-  /* This function temporary mocks a call to the LSP service method getClasses */
-  const retrieveJavaClasses = (value: string) => {
+  const retrieveJavaClasses = useCallback((value: string) => {
     setSearchValue(value);
     const retrieved = window.envelopeMock.lspGetClassServiceMocked(value);
     if (retrieved) {
       setRetrievedJavaClasses(retrieved);
     }
-  };
-
+  }, []);
+  const onSearchValueChange = useCallback((value) => retrieveJavaClasses(value), [retrieveJavaClasses]);
+  const onClearSearch = useCallback(() => {
+    setSearchValue("");
+    setRetrievedJavaClasses([]);
+  }, []);
   const EmptyStep: React.FunctionComponent = () => {
     return (
       <EmptyStateWidget
@@ -61,7 +63,6 @@ export const ImportJavaClassesWizardFirstStep: React.FunctionComponent<ImportJav
       />
     );
   };
-  const onClearSearch = useCallback(() => onSearchValueChange(""), []);
 
   return (
     <>
