@@ -22,17 +22,21 @@ import {
 } from "../../i18n";
 import { I18nDictionariesProvider } from "@kogito-tooling/i18n/dist/react-components";
 import { ImportJavaClassesWizard } from "./ImportJavaClassesWizard";
+import { JavaClass } from "./Model";
 
 export interface ImportJavaClassesProps {
   /** Button disabled status */
   buttonDisabledStatus: boolean;
   /** Button tooltip message */
   buttonTooltipMessage?: string;
+  /** Function to call to send selected Java Classes to GWT Editor */
+  sendJavaClassesToEditor: (javaClasses: JavaClass[]) => void;
 }
 
 export const ImportJavaClasses: React.FunctionComponent<ImportJavaClassesProps> = ({
   buttonDisabledStatus,
   buttonTooltipMessage,
+  sendJavaClassesToEditor,
 }: ImportJavaClassesProps) => {
   return (
     <I18nDictionariesProvider
@@ -44,6 +48,7 @@ export const ImportJavaClasses: React.FunctionComponent<ImportJavaClassesProps> 
       <ImportJavaClassesWizard
         buttonDisabledStatus={buttonDisabledStatus}
         buttonTooltipMessage={buttonTooltipMessage}
+        sendJavaClassesToEditor={sendJavaClassesToEditor}
       />
     </I18nDictionariesProvider>
   );

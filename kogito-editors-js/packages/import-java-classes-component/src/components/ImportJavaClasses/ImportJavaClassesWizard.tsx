@@ -20,7 +20,7 @@ import { useImportJavaClassesWizardI18n } from "../../i18n";
 import { ImportJavaClassesWizardFirstStep } from "./ImportJavaClassesWizardFirstStep";
 import { ImportJavaClassesWizardSecondStep } from "./ImportJavaClassesWizardSecondStep";
 import { ImportJavaClassesWizardThirdStep } from "./ImportJavaClassesWizardThirdStep";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { JavaClass } from "./Model/JavaClass";
 import { JavaField } from "./Model/JavaField";
 import { DMNSimpleType } from "./Model/DMNSimpleType";
@@ -31,11 +31,14 @@ export interface ImportJavaClassesWizardProps {
   buttonDisabledStatus: boolean;
   /** Button tooltip message */
   buttonTooltipMessage?: string;
+  /** Function to call to send selected Java Classes to GWT Editor */
+  sendJavaClassesToEditor: (javaClasses: JavaClass[]) => void;
 }
 
 export const ImportJavaClassesWizard: React.FunctionComponent<ImportJavaClassesWizardProps> = ({
   buttonDisabledStatus,
   buttonTooltipMessage,
+  sendJavaClassesToEditor,
 }: ImportJavaClassesWizardProps) => {
   const { i18n } = useImportJavaClassesWizardI18n();
   const [javaClasses, setJavaClasses] = useState<JavaClass[]>([]);
@@ -80,9 +83,9 @@ export const ImportJavaClassesWizard: React.FunctionComponent<ImportJavaClassesW
   const resetJavaClassState = () => {
     setJavaClasses([]);
   };
-  const onWizardFinishing = () => {
-    window.ImportJavaClassesAPI?.importJavaClasses?.(javaClasses);
-  };
+  const onWizardFinishing = useCallback(() => {
+    sendJavaClassesToEditor(javaClasses);
+  }, [javaClasses, sendJavaClassesToEditor]);
   const steps = [
     {
       canJumpTo: true,

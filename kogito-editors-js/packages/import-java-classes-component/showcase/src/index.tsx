@@ -18,7 +18,7 @@ import "@patternfly/react-core/dist/styles/base.css";
 import React, { useCallback, useState } from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
-import { ImportJavaClasses } from "./lib";
+import { ImportJavaClasses, JavaClass } from "./lib";
 
 const Showcase: React.FunctionComponent = () => {
   const LSP_SERVER_NOT_AVAILABLE = "Java LSP Server is not available. Please install Java Extension";
@@ -76,6 +76,15 @@ const Showcase: React.FunctionComponent = () => {
 
   const delay = () => new Promise((res) => setTimeout(res, Math.random() * (4000 - 750) + 1000));
 
+  const sendJavaClassesToEditor = (javaClasses: JavaClass[]) => {
+    window.alert(
+      "Java Classes sent to editor: \\n" +
+        javaClasses.map((value) => {
+          "- " + value.name + "\\n";
+        })
+    );
+  };
+
   window.envelopeMock = {
     lspGetClassServiceMocked: (value: string) => lspGetClassServiceMocked(value),
     lspGetClassFieldsServiceMocked: (className: string) => lspGetClassFieldsServiceMocked(className),
@@ -104,7 +113,11 @@ const Showcase: React.FunctionComponent = () => {
         <input value={buttonTooltipMessage} onChange={onInputChange} />
       </div>
       <div className="main">
-        <ImportJavaClasses buttonDisabledStatus={buttonDisableStatus} buttonTooltipMessage={buttonTooltipMessage} />
+        <ImportJavaClasses
+          buttonDisabledStatus={buttonDisableStatus}
+          buttonTooltipMessage={buttonTooltipMessage}
+          sendJavaClassesToEditor={sendJavaClassesToEditor}
+        />
       </div>
     </div>
   );
