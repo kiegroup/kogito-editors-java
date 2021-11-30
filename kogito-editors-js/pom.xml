@@ -39,6 +39,9 @@
           <nodeVersion>v16.2.0</nodeVersion>
           <npmVersion>7.15.1</npmVersion>
           <yarnVersion>v1.22.10</yarnVersion>
+          <environmentVariables>
+            <npm_config_registry>${npmRegistryURL>}</npm_config_registry>
+          </environmentVariables>
         </configuration>
         <executions>
           <execution>
