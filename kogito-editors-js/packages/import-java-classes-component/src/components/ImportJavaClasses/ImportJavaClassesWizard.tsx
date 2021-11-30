@@ -42,45 +42,54 @@ export const ImportJavaClassesWizard: React.FunctionComponent<ImportJavaClassesW
 }: ImportJavaClassesWizardProps) => {
   const { i18n } = useImportJavaClassesWizardI18n();
   const [javaClasses, setJavaClasses] = useState<JavaClass[]>([]);
-  const updateJavaFieldsReferences = useCallback((updatedJavaClasses: JavaClass[], previousJavaClasses: JavaClass[]) => {
-    const updatedJavaClassesNames = updatedJavaClasses.map((javaClass) => javaClass.name);
-    const previousJavaClassesNames = previousJavaClasses.map((javaClass) => javaClass.name);
-    const allFields = javaClasses.map((javaClass) => javaClass.fields).flat(1);
-    allFields.forEach((field) => {
-      if (field.dmnTypeRef === DMNSimpleType.ANY && updatedJavaClassesNames.includes(field.type)) {
-        field.dmnTypeRef = getJavaClassSimpleName(field.type);
-      } else if (previousJavaClassesNames.includes(field.type) && !updatedJavaClassesNames.includes(field.type)) {
-        field.dmnTypeRef = DMNSimpleType.ANY;
-      }
-    });
-  }, [javaClasses]);
-  const addJavaClass = useCallback((fullClassName: string) => {
-    setJavaClasses((prevState) => {
-      if (!prevState.some((javaClass) => javaClass.name === fullClassName)) {
-        const updatedSelectedJavaClasses = [...prevState, new JavaClass(fullClassName)];
-        updatedSelectedJavaClasses.sort((a, b) => (a.name < b.name ? -1 : 1));
+  const updateJavaFieldsReferences = useCallback(
+    (updatedJavaClasses: JavaClass[], previousJavaClasses: JavaClass[]) => {
+      const updatedJavaClassesNames = updatedJavaClasses.map((javaClass) => javaClass.name);
+      const previousJavaClassesNames = previousJavaClasses.map((javaClass) => javaClass.name);
+      const allFields = javaClasses.map((javaClass) => javaClass.fields).flat(1);
+      allFields.forEach((field) => {
+        if (field.dmnTypeRef === DMNSimpleType.ANY && updatedJavaClassesNames.includes(field.type)) {
+          field.dmnTypeRef = getJavaClassSimpleName(field.type);
+        } else if (previousJavaClassesNames.includes(field.type) && !updatedJavaClassesNames.includes(field.type)) {
+          field.dmnTypeRef = DMNSimpleType.ANY;
+        }
+      });
+    },
+    [javaClasses]
+  );
+  const addJavaClass = useCallback(
+    (fullClassName: string) => {
+      setJavaClasses((prevState) => {
+        if (!prevState.some((javaClass) => javaClass.name === fullClassName)) {
+          const updatedSelectedJavaClasses = [...prevState, new JavaClass(fullClassName)];
+          updatedSelectedJavaClasses.sort((a, b) => (a.name < b.name ? -1 : 1));
+          updateJavaFieldsReferences(updatedSelectedJavaClasses, prevState);
+          return updatedSelectedJavaClasses;
+        }
+        return prevState;
+      });
+    },
+    [updateJavaFieldsReferences]
+  );
+  const removeJavaClass = useCallback(
+    (fullClassName: string) => {
+      setJavaClasses((prevState) => {
+        const updatedSelectedJavaClasses = prevState.filter((javaClass) => javaClass.name !== fullClassName);
         updateJavaFieldsReferences(updatedSelectedJavaClasses, prevState);
         return updatedSelectedJavaClasses;
-      }
-      return prevState;
-    });
-  }, [updateJavaFieldsReferences]);
-  const removeJavaClass = useCallback((fullClassName: string) => {
-    setJavaClasses((prevState) => {
-      const updatedSelectedJavaClasses = prevState.filter((javaClass) => javaClass.name !== fullClassName);
-      updateJavaFieldsReferences(updatedSelectedJavaClasses, prevState);
-      return updatedSelectedJavaClasses;
-    });
-  }, [updateJavaFieldsReferences]);
+      });
+    },
+    [updateJavaFieldsReferences]
+  );
   const updateSelectedClassesFields = useCallback((fullClassName: string, fields: JavaField[]) => {
-    setJavaClasses(prevState => {
+    setJavaClasses((prevState) => {
       const updatedJavaClasses = [...prevState];
       const javaClassIndex = updatedJavaClasses.findIndex((javaClass) => javaClass.name === fullClassName);
       if (javaClassIndex > -1) {
         updatedJavaClasses[javaClassIndex].setFields(fields);
       }
       return updatedJavaClasses;
-    })
+    });
   }, []);
   const isSecondStepActivatable = useCallback(() => {
     return javaClasses.length > 0;

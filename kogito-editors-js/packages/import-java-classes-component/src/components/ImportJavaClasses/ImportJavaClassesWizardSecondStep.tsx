@@ -45,18 +45,21 @@ export const ImportJavaClassesWizardSecondStep: React.FunctionComponent<ImportJa
     }
     return new JavaField(name, type, dmnTypeRef);
   }, []);
-  const loadJavaFields = useCallback((className: string) => {
-    window.envelopeMock
-      .lspGetClassFieldsServiceMocked(className)
-      .then((value) => {
-        const fields = Array.from(value, ([name, type]) => generateJavaClassField(name, type, selectedJavaClasses));
-        fields.sort((a, b) => (a.name < b.name ? -1 : 1));
-        onSelectedJavaClassedFieldsLoaded(className, fields);
-      })
-      .catch((reason) => {
-        console.error(reason);
-      });
-  }, [generateJavaClassField, onSelectedJavaClassedFieldsLoaded, selectedJavaClasses]);
+  const loadJavaFields = useCallback(
+    (className: string) => {
+      window.envelopeMock
+        .lspGetClassFieldsServiceMocked(className)
+        .then((value) => {
+          const fields = Array.from(value, ([name, type]) => generateJavaClassField(name, type, selectedJavaClasses));
+          fields.sort((a, b) => (a.name < b.name ? -1 : 1));
+          onSelectedJavaClassedFieldsLoaded(className, fields);
+        })
+        .catch((reason) => {
+          console.error(reason);
+        });
+    },
+    [generateJavaClassField, onSelectedJavaClassedFieldsLoaded, selectedJavaClasses]
+  );
   useEffect(
     () =>
       selectedJavaClasses

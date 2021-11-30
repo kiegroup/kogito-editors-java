@@ -183,11 +183,16 @@ const ImportJavaClassesWrapper: React.FunctionComponent<ImportJavaClassesProps> 
   /** END TEMPORARY MOCK CODE TO TEST COMPONENT INSIDE THE EDITOR - TO BE REMOVED */
 
   const sendJavaClassesToEditor = (javaClasses: JavaClass[]) => {
-    window.ImportJavaClassesAPI?.importJavaClasses?.(javaClasses)
+    window.ImportJavaClassesAPI?.importJavaClasses?.(javaClasses);
   };
 
-  return <ImportJavaClasses buttonDisabledStatus={buttonDisabledStatus} buttonTooltipMessage={buttonTooltipMessage}
-                            sendJavaClassesToEditor={sendJavaClassesToEditor} />;
+  return (
+    <ImportJavaClasses
+      buttonDisabledStatus={buttonDisabledStatus}
+      buttonTooltipMessage={buttonTooltipMessage}
+      sendJavaClassesToEditor={sendJavaClassesToEditor}
+    />
+  );
 };
 
 const renderImportJavaClasses = (selector: string, buttonDisabledStatus: boolean, buttonTooltipMessage: string) => {
