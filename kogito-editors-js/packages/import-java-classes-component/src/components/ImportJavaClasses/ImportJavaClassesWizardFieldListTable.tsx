@@ -22,7 +22,7 @@ import { Button } from "@patternfly/react-core";
 import { JavaField } from "./Model/JavaField";
 import { DMNSimpleType } from "./Model/DMNSimpleType";
 import { getJavaClassSimpleName } from "./Model/JavaClassUtils";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { useImportJavaClassesWizardI18n } from "../../i18n";
 
 export interface ImportJavaClassesWizardFieldListTableProps {
@@ -44,7 +44,7 @@ export const ImportJavaClassesWizardFieldListTable: React.FunctionComponent<Impo
     onFetchButtonClick,
   }: ImportJavaClassesWizardFieldListTableProps) => {
     const { i18n } = useImportJavaClassesWizardI18n();
-    const [expanded, setExpanded] = React.useState(
+    const [expanded, setExpanded] = useState(
       Object.fromEntries(
         selectedJavaClassFields.map((value, index) => [index, Boolean(value.fields && value.fields.length > 0)])
       )
