@@ -32,7 +32,7 @@ exports[`ImportJavaClasses component tests Should move to second step 1`] = `
     <button
       aria-disabled="false"
       class="pf-c-button pf-m-secondary"
-      data-ouia-component-id="OUIA-Generated-Button-secondary-20"
+      data-ouia-component-id="OUIA-Generated-Button-secondary-21"
       data-ouia-component-type="PF4/Button"
       data-ouia-safe="true"
       data-testid="modal-wizard-button"
@@ -399,7 +399,7 @@ exports[`ImportJavaClasses component tests Should move to second step 1`] = `
                                 <button
                                   aria-disabled="false"
                                   class="pf-c-button pf-m-primary pf-m-small fetch-button"
-                                  data-ouia-component-id="OUIA-Generated-Button-primary-6"
+                                  data-ouia-component-id="OUIA-Generated-Button-primary-9"
                                   data-ouia-component-type="PF4/Button"
                                   data-ouia-safe="true"
                                   type="button"
@@ -524,7 +524,7 @@ exports[`ImportJavaClasses component tests Should move to second step and fetch 
     <button
       aria-disabled="false"
       class="pf-c-button pf-m-secondary"
-      data-ouia-component-id="OUIA-Generated-Button-secondary-29"
+      data-ouia-component-id="OUIA-Generated-Button-secondary-31"
       data-ouia-component-type="PF4/Button"
       data-ouia-safe="true"
       data-testid="modal-wizard-button"
@@ -984,7 +984,7 @@ exports[`ImportJavaClasses component tests Should move to second step and fetch 
                 <button
                   aria-disabled="false"
                   class="pf-c-button pf-m-primary"
-                  data-ouia-component-id="OUIA-Generated-Button-primary-7"
+                  data-ouia-component-id="OUIA-Generated-Button-primary-10"
                   data-ouia-component-type="PF4/Button"
                   data-ouia-safe="true"
                   type="submit"
@@ -994,7 +994,7 @@ exports[`ImportJavaClasses component tests Should move to second step and fetch 
                 <button
                   aria-disabled="false"
                   class="pf-c-button pf-m-secondary"
-                  data-ouia-component-id="OUIA-Generated-Button-secondary-25"
+                  data-ouia-component-id="OUIA-Generated-Button-secondary-26"
                   data-ouia-component-type="PF4/Button"
                   data-ouia-safe="true"
                   type="button"
@@ -1035,7 +1035,7 @@ exports[`ImportJavaClasses component tests Should move to third step 1`] = `
     <button
       aria-disabled="false"
       class="pf-c-button pf-m-secondary"
-      data-ouia-component-id="OUIA-Generated-Button-secondary-47"
+      data-ouia-component-id="OUIA-Generated-Button-secondary-51"
       data-ouia-component-type="PF4/Button"
       data-ouia-safe="true"
       data-testid="modal-wizard-button"
@@ -1468,7 +1468,7 @@ exports[`ImportJavaClasses component tests Should move to third step 1`] = `
                 <button
                   aria-disabled="false"
                   class="pf-c-button pf-m-primary"
-                  data-ouia-component-id="OUIA-Generated-Button-primary-12"
+                  data-ouia-component-id="OUIA-Generated-Button-primary-21"
                   data-ouia-component-type="PF4/Button"
                   data-ouia-safe="true"
                   type="submit"
@@ -1478,7 +1478,7 @@ exports[`ImportJavaClasses component tests Should move to third step 1`] = `
                 <button
                   aria-disabled="false"
                   class="pf-c-button pf-m-secondary"
-                  data-ouia-component-id="OUIA-Generated-Button-secondary-45"
+                  data-ouia-component-id="OUIA-Generated-Button-secondary-48"
                   data-ouia-component-type="PF4/Button"
                   data-ouia-safe="true"
                   type="button"
