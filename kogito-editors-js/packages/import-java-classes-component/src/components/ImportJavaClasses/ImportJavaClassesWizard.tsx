@@ -74,15 +74,15 @@ export const ImportJavaClassesWizard: React.FunctionComponent<ImportJavaClassesW
       }
     });
   };
-  const isSecondStepActivatable = () => {
+  const isSecondStepActivatable = useCallback(() => {
     return javaClasses.length > 0;
-  };
-  const isThirdStepActivatable = () => {
+  }, [javaClasses]);
+  const isThirdStepActivatable = useCallback(() => {
     return javaClasses.length > 0 && javaClasses.every((javaClass) => javaClass.fieldsLoaded);
-  };
-  const resetJavaClassState = () => {
+  }, [javaClasses]);
+  const resetJavaClassState = useCallback(() => {
     setJavaClasses([]);
-  };
+  }, []);
   const onWizardFinishing = useCallback(() => {
     sendJavaClassesToEditor(javaClasses);
   }, [javaClasses, sendJavaClassesToEditor]);
