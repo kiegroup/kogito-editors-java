@@ -183,7 +183,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
       if (DEFAULT_ON_ROW_ADDING !== rowFactory && !isLockedTable) {
         const pastedRows = pasteOnTable(pasteValue, rows, rowFactory, x, y);
         tableRows.current = pastedRows;
-        onRowsUpdate?.(pastedRows);
+        onRowsUpdate?.(pastedRows, undefined, undefined, columns);
       }
     }
 
@@ -191,7 +191,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
     return () => {
       document.removeEventListener(tableEventUUID, listener);
     };
-  }, [tableEventUUID, tableRows, onRowsUpdate, onColumnsUpdate, onRowAddingCallback]);
+  }, [tableEventUUID, tableRows, onRowsUpdate, onColumnsUpdate, onRowAddingCallback, columns]);
 
   const onColumnsUpdateCallback = useCallback(
     (columns: Column[], operation?: TableOperation, columnIndex?: number) => {
