@@ -171,7 +171,7 @@ export const CellSelectionBox: React.FunctionComponent = () => {
           onDragMove={disableHighlightedCells}
           onDragStop={enableSelection}
         />
-        <textarea ref={textarea} onBlur={disableSelection} onChange={setCellsValue}></textarea>
+        <textarea ref={textarea} onBlur={disableSelection} onChange={setCellsValue} />
       </div>
     ),
     [enableSelection, disableSelection, disableHighlightedCells, ignoredElements, setCellsValue]

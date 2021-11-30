@@ -44,7 +44,6 @@ export interface SelectionRect extends SelectionStart {
 
 type SelectionStartState = SelectionStart | null;
 type SelectionRectState = SelectionRect | null;
-type SelectionStyleState = React.CSSProperties | null;
 
 export const SelectionBox: React.FunctionComponent<SelectionBoxProps> = ({
   ignoredElements,
@@ -52,23 +51,22 @@ export const SelectionBox: React.FunctionComponent<SelectionBoxProps> = ({
   onDragMove,
   onDragStop,
 }: SelectionBoxProps) => {
-  const [selectionBoxStyle, setSelectionBoxStyle] = useState<SelectionStyleState>(null);
   const [selectionStart, setSelectionStart] = useState<SelectionStartState>(null);
   const [selectionRect, setSelectionRect] = useState<SelectionRectState>(null);
 
-  useEffect(() => {
-    const pxValue = (value: number) => `${value}px`;
-    let style = {};
+  const pxValue = useCallback((value: number) => `${value}px`, []);
+
+  const selectionBoxStyle: React.CSSProperties = useMemo(() => {
     if (selectionRect) {
-      style = {
+      return {
         width: pxValue(selectionRect.width),
         height: pxValue(selectionRect.height),
         top: pxValue(selectionRect.y),
         left: pxValue(selectionRect.x),
       };
     }
-    setSelectionBoxStyle(style);
-  }, [selectionRect]);
+    return {};
+  }, [pxValue, selectionRect]);
 
   const getCoordinate = useCallback((event: MouseEvent | TouchEvent): SelectionStart => {
     if ("touches" in event) {
@@ -150,7 +148,5 @@ export const SelectionBox: React.FunctionComponent<SelectionBoxProps> = ({
     };
   }, [moveHandler, downHandler, upHandler]);
 
-  return useMemo(() => {
-    return <div style={{ ...selectionBoxStyle }} className="kie-selection-box"></div>;
-  }, [selectionBoxStyle]);
+  return <div style={{ ...selectionBoxStyle }} className="kie-selection-box" />;
 };
