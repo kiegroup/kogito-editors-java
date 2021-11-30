@@ -120,7 +120,13 @@ const renderHelloWorld = (selector: string) => {
 const ImportJavaClassesWrapper: React.FunctionComponent<{
   buttonDisabledStatus: boolean;
   buttonTooltipMessage: string;
-}> = ({ buttonDisabledStatus, buttonTooltipMessage }: { buttonDisabledStatus; buttonTooltipMessage }) => {
+}> = ({
+  buttonDisabledStatus,
+  buttonTooltipMessage,
+}: {
+  buttonDisabledStatus: boolean;
+  buttonTooltipMessage: string;
+}) => {
   window.ImportJavaClassesAPI = {
     importJavaClasses: (javaClasses: JavaClass[]) => {
       window.ImportJavaClassesAPIWrapper?.importJavaClasses?.(javaClasses);
