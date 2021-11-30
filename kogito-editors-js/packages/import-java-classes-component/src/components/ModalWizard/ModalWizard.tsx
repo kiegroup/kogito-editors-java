@@ -57,19 +57,19 @@ export const ModalWizard: React.FunctionComponent<ModalWizardProps> = ({
   onWizardSave,
 }: ModalWizardProps) => {
   const [isOpen, setOpen] = useState(false);
-  const changeWizardState = useCallback(() => setOpen(!isOpen), [isOpen]);
-  const onClose = () => {
+  const changeWizardState = useCallback(() => setOpen((prevState) => !prevState), []);
+  const onClose = useCallback(() => {
     changeWizardState();
     if (onWizardClose) {
       onWizardClose();
     }
-  };
-  const onSave = () => {
+  }, [changeWizardState, onWizardClose]);
+  const onSave = useCallback(() => {
     onClose();
     if (onWizardSave) {
       onWizardSave();
     }
-  };
+  }, [onClose, onWizardSave]);
   const WizardButton: React.FunctionComponent = () => {
     return (
       <Button
