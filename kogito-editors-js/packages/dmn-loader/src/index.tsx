@@ -117,10 +117,10 @@ const renderHelloWorld = (selector: string) => {
   ReactDOM.render(<HelloWorld />, document.querySelector(selector));
 };
 
-const ImportJavaClassesWrapper: React.FunctionComponent<{ buttonDisabledStatus: boolean, buttonTooltipMessage: string }> = ({
-  buttonDisabledStatus,
-  buttonTooltipMessage,
-}: {buttonDisabledStatus, buttonTooltipMessage}) => {
+const ImportJavaClassesWrapper: React.FunctionComponent<{
+  buttonDisabledStatus: boolean;
+  buttonTooltipMessage: string;
+}> = ({ buttonDisabledStatus, buttonTooltipMessage }: { buttonDisabledStatus; buttonTooltipMessage }) => {
   window.ImportJavaClassesAPI = {
     importJavaClasses: (javaClasses: JavaClass[]) => {
       window.ImportJavaClassesAPIWrapper?.importJavaClasses?.(javaClasses);
