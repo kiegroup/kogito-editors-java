@@ -29,7 +29,13 @@ import {
 } from "react-table";
 import { TableComposable } from "@patternfly/react-table";
 import { v4 as uuid } from "uuid";
-import { generateUuid, TableHeaderVisibility, TableOperation, TableProps } from "../../api";
+import {
+  generateUuid,
+  getBoxedExpressionContainer,
+  TableHeaderVisibility,
+  TableOperation,
+  TableProps,
+} from "../../api";
 import { BoxedExpressionGlobalContext } from "../../context";
 import { PASTE_OPERATION, pasteOnTable } from "./common";
 import { EditableCell } from "./EditableCell";
@@ -187,9 +193,9 @@ export const Table: React.FunctionComponent<TableProps> = ({
       }
     }
 
-    document.addEventListener(tableEventUUID, listener);
+    getBoxedExpressionContainer().addEventListener(tableEventUUID, listener);
     return () => {
-      document.removeEventListener(tableEventUUID, listener);
+      getBoxedExpressionContainer().removeEventListener(tableEventUUID, listener);
     };
   }, [tableEventUUID, tableRows, onRowsUpdate, onColumnsUpdate, onRowAddingCallback, columns]);
 

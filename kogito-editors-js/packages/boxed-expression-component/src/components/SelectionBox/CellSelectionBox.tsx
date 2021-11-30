@@ -21,6 +21,7 @@ import { SelectionBox, SelectionRect } from ".";
 import { CELL_CSS_SELECTOR } from "../Resizer";
 import { paste } from "../Table/common";
 import "./CellSelectionBox.css";
+import { getBoxedExpressionContainer } from "../../api";
 
 const SELECTED_CELL = "cell--selected";
 
@@ -31,7 +32,7 @@ export const CellSelectionBox: React.FunctionComponent = () => {
 
   const allEditableCells = useCallback((): Element[] => {
     const hasEditableCell = (cell: Element) => !!cell.querySelector(`.${EDITABLE_CELL}`);
-    const allCells = document.querySelectorAll(CELL_CSS_SELECTOR);
+    const allCells = getBoxedExpressionContainer().querySelectorAll(CELL_CSS_SELECTOR);
 
     return [].slice.call(allCells).filter(hasEditableCell);
   }, []);
@@ -69,7 +70,9 @@ export const CellSelectionBox: React.FunctionComponent = () => {
   );
 
   const lowlightCells = useCallback(() => {
-    document.querySelectorAll(`.${SELECTED_CELL}`).forEach((c) => c.classList.remove(SELECTED_CELL));
+    getBoxedExpressionContainer()
+      .querySelectorAll(`.${SELECTED_CELL}`)
+      .forEach((c) => c.classList.remove(SELECTED_CELL));
   }, []);
 
   const highlightCells = useCallback(
@@ -132,7 +135,7 @@ export const CellSelectionBox: React.FunctionComponent = () => {
 
   const disableHighlightedCells = useCallback(() => {
     const selectedCellClassName = "editable-cell--selected";
-    const selectedCell = document.querySelector(`.${selectedCellClassName}`);
+    const selectedCell = getBoxedExpressionContainer().querySelector(`.${selectedCellClassName}`);
     selectedCell?.classList.remove(selectedCellClassName);
   }, []);
 
@@ -151,7 +154,7 @@ export const CellSelectionBox: React.FunctionComponent = () => {
   const setCellsValue = useCallback(
     (event) => {
       const pasteValue = event.target.value;
-      const selectedCell = document.querySelector(`.${SELECTED_CELL}`);
+      const selectedCell = getBoxedExpressionContainer().querySelector(`.${SELECTED_CELL}`);
 
       if (!selectedCell) {
         return;

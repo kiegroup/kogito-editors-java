@@ -17,6 +17,7 @@
 import * as React from "react";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from "react";
 import "./SelectionBox.css";
+import { getBoxedExpressionContainer } from "../../api";
 
 export interface SelectionBoxProps {
   /** CSS classes of elements that must not trigger the selection box */
@@ -132,19 +133,19 @@ export const SelectionBox: React.FunctionComponent<SelectionBoxProps> = ({
     const touchStartType = "touchstart";
     const touchEndType = "touchend";
 
-    document.addEventListener(mouseMoveType, moveHandler);
-    document.addEventListener(mouseDownType, downHandler);
-    document.addEventListener(mouseUpType, upHandler);
-    document.addEventListener(touchMoveType, moveHandler);
-    document.addEventListener(touchStartType, downHandler);
-    document.addEventListener(touchEndType, upHandler);
+    getBoxedExpressionContainer().addEventListener(mouseMoveType, moveHandler);
+    getBoxedExpressionContainer().addEventListener(mouseDownType, downHandler);
+    getBoxedExpressionContainer().addEventListener(mouseUpType, upHandler);
+    getBoxedExpressionContainer().addEventListener(touchMoveType, moveHandler);
+    getBoxedExpressionContainer().addEventListener(touchStartType, downHandler);
+    getBoxedExpressionContainer().addEventListener(touchEndType, upHandler);
     return () => {
-      document.removeEventListener(mouseMoveType, moveHandler);
-      document.removeEventListener(mouseDownType, downHandler);
-      document.removeEventListener(mouseUpType, upHandler);
-      document.removeEventListener(touchMoveType, moveHandler);
-      document.removeEventListener(touchStartType, downHandler);
-      document.removeEventListener(touchEndType, upHandler);
+      getBoxedExpressionContainer().removeEventListener(mouseMoveType, moveHandler);
+      getBoxedExpressionContainer().removeEventListener(mouseDownType, downHandler);
+      getBoxedExpressionContainer().removeEventListener(mouseUpType, upHandler);
+      getBoxedExpressionContainer().removeEventListener(touchMoveType, moveHandler);
+      getBoxedExpressionContainer().removeEventListener(touchStartType, downHandler);
+      getBoxedExpressionContainer().removeEventListener(touchEndType, upHandler);
     };
   }, [moveHandler, downHandler, upHandler]);
 

@@ -76,6 +76,7 @@ export const Resizer: React.FunctionComponent<ResizerProps> = ({
       onHorizontalResizeStop?.(width);
     }
 
+    // TODO: Remove global listener
     document.addEventListener(id, listener);
     return () => {
       document.removeEventListener(id, listener);

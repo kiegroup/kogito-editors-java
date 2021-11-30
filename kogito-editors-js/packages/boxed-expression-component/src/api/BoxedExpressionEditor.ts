@@ -79,3 +79,7 @@ export const executeIfExpressionDefinitionChanged = (
 export const generateUuid = () => {
   return `_${uuid()}`.toLocaleUpperCase();
 };
+
+export const getBoxedExpressionContainer = () => {
+  return document.getElementById("boxed-expression-editor")!
+}

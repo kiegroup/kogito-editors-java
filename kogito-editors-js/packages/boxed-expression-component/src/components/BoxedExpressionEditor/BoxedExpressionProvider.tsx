@@ -46,23 +46,24 @@ export function BoxedExpressionProvider(props: BoxedExpressionProviderProps) {
   }, [props.expressionDefinition]);
 
   return (
-    <BoxedExpressionGlobalContext.Provider
-      value={{
-        decisionNodeId: props.decisionNodeId,
-        pmmlParams: props.pmmlParams,
-        supervisorHash,
-        setSupervisorHash,
-        boxedExpressionEditorRef,
-        currentlyOpenedHandlerCallback,
-        setCurrentlyOpenedHandlerCallback,
-      }}
-    >
-      <ResizerSupervisor isRunnerTable={props.isRunnerTable}>
-        <div className="boxed-expression-editor" ref={boxedExpressionEditorRef}>
-          {props.children}
-        </div>
-      </ResizerSupervisor>
-      {props.isRunnerTable === false && <CellSelectionBox />}
-    </BoxedExpressionGlobalContext.Provider>
+    <div id={"boxed-expression-editor"}>
+      <BoxedExpressionGlobalContext.Provider
+        value={{
+          decisionNodeId: props.decisionNodeId,pmmlParams: props.pmmlParams,
+          supervisorHash,
+          setSupervisorHash,
+          boxedExpressionEditorRef,
+          currentlyOpenedHandlerCallback,
+          setCurrentlyOpenedHandlerCallback,
+        }}
+      >
+        <ResizerSupervisor isRunnerTable={props.isRunnerTable}>
+          <div className="boxed-expression-provider" ref={boxedExpressionEditorRef}>
+            {props.children}
+          </div>
+        </ResizerSupervisor>
+        {props.isRunnerTable === false && <CellSelectionBox />}
+      </BoxedExpressionGlobalContext.Provider>
+    </div>
   );
 }
