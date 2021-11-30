@@ -85,15 +85,14 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = (context
         ...contextExpressionUpdated,
       };
 
-      const expression = _.omit(updatedDefinition, ["name", "dataType"]);
       executeIfExpressionDefinitionChanged(
         contextExpression,
         updatedDefinition,
         () => {
           if (contextExpression.isHeadless) {
-            contextExpression.onUpdatingRecursiveExpression?.(expression);
+            contextExpression.onUpdatingRecursiveExpression?.(updatedDefinition);
           } else {
-            setSupervisorHash(hashfy(expression));
+            setSupervisorHash(hashfy(updatedDefinition));
             window.beeApi?.broadcastContextExpressionDefinition?.(updatedDefinition as ContextProps);
           }
         },
