@@ -36,9 +36,10 @@ pipeline {
                 shell('echo "registry=https://repository.engineering.redhat.com/nexus/repository/registry.npmjs.org/" >> ~/.npmrc')
                 script {
                     mvnCmd = getMavenCommand('kogito-editors-java')
-                    if (isNormalPRCheck() && isSonarCloudEnabled()) {
-                        mvnCmd.withProfiles(['run-code-coverage'])
-                    }
+//                     if (isNormalPRCheck() && isSonarCloudEnabled()) {
+//                         mvnCmd.withProfiles(['run-code-coverage', 'jenkins-build'])
+//                     }
+                    mvnCmd.withProfiles(['jenkins-build'])
                     mvnCmd.run('clean install')
                 }
             }
