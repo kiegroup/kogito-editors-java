@@ -35,6 +35,12 @@ public class StringUtils {
     public static final String ALPHA_NUM_UNDERSCORE_DOT_GT_LT_REGEXP = "^[a-zA-Z0-9<>,\\_\\.]*$";
     public static final String ALPHA_NUM_SPACE_REGEXP = "^[a-zA-Z0-9\\-\\_\\ ]*$";
     public static final RegExp EXPRESSION = RegExp.compile(Patterns.EXPRESSION);
+    public static final String REPEATING_DOTS_MSG = "Repeating .";
+    public static final String REPEATING_DOTS = "..";
+    public static final String EMPTY_GENERICS_MSG = "Empty Generics <>";
+    public static final String EMPTY_GENERICS = "<>";
+    public static final String MALFORMED_GENERICS_MSG = "Malformed Generics ><";
+    public static final String MALFORMED_GENERICS = "><";
 
     private static URL url = new URL();
 

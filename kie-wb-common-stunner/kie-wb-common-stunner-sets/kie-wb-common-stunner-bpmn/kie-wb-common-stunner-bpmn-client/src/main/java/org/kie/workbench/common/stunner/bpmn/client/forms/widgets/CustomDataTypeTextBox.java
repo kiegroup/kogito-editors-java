@@ -45,8 +45,22 @@ public class CustomDataTypeTextBox extends AbstractValidatingTextBox {
                                final boolean isOnFocusLost) {
         if (regExp != null) {
             boolean isValid = this.regExp.test(value);
-            if (!isValid) {
+            boolean repeatingDots = value.contains(StringUtils.REPEATING_DOTS);
+            boolean emptyGenerics = value.contains(StringUtils.EMPTY_GENERICS);
+            boolean malformedGenerics = value.contains(StringUtils.MALFORMED_GENERICS);
+            if (!isValid || repeatingDots || emptyGenerics || malformedGenerics) {
                 String invalidChars = getInvalidCharsInName(regExp, value);
+                if (repeatingDots) {
+                    invalidChars = StringUtils.REPEATING_DOTS_MSG;
+                }
+
+                if (emptyGenerics) {
+                    invalidChars = StringUtils.EMPTY_GENERICS_MSG;
+                }
+
+                if (malformedGenerics) {
+                    invalidChars = StringUtils.MALFORMED_GENERICS_MSG;
+                }
                 return (isOnFocusLost ? invalidCharactersInNameErrorMessage : invalidCharacterTypedMessage)
                         + ": " + invalidChars;
             }
