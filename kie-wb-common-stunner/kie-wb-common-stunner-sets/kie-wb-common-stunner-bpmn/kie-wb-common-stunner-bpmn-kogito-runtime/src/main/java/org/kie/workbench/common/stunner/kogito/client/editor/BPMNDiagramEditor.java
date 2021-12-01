@@ -239,17 +239,17 @@ public class BPMNDiagramEditor {
                 Shape shape = stunnerEditor.getCanvasHandler().getCanvas().getShape(UUID);
                 if (shape != null) {
                     ShapeState shapeState = null;
-                    switch (state) {
-                        case "None":
+                    switch (state.toLowerCase()) {
+                        case "none":
                             shapeState = ShapeState.NONE;
                             break;
-                        case "Selected":
+                        case "selected":
                             shapeState = ShapeState.SELECTED;
                             break;
-                        case "Highlight":
+                        case "highlight":
                             shapeState = ShapeState.HIGHLIGHT;
                             break;
-                        case "Invalid":
+                        case "invalid":
                             shapeState = ShapeState.INVALID;
                             break;
                     }
