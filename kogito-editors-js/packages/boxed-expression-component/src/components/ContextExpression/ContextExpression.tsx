@@ -53,7 +53,7 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = (context
 
   const rows = useMemo(
     () =>
-      contextExpression.contextEntries || [
+      contextExpression.contextEntries ?? [
         {
           entryInfo: {
             id: generateUuid(),
@@ -87,15 +87,14 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = (context
         ...contextExpressionUpdated,
       };
 
-      const expression = _.omit(updatedDefinition, ["name", "dataType"]);
       executeIfExpressionDefinitionChanged(
         contextExpression,
         updatedDefinition,
         () => {
           if (contextExpression.isHeadless) {
-            contextExpression.onUpdatingRecursiveExpression?.(expression);
+            contextExpression.onUpdatingRecursiveExpression?.(updatedDefinition);
           } else {
-            setSupervisorHash(hashfy(expression));
+            setSupervisorHash(hashfy(updatedDefinition));
             window.beeApi?.broadcastContextExpressionDefinition?.(updatedDefinition as ContextProps);
           }
         },
@@ -232,8 +231,11 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = (context
     return getEntryKey(row);
   }, []);
 
-  const resetRowCustomFunction = useCallback((row: DataRecord) => {
-    return resetEntry(row);
+  const resetRowCustomFunction = useCallback((row: ContextEntryRecord) => {
+    const updatedRow = resetEntry(row);
+    updatedRow.entryExpression.name = updatedRow.entryInfo.name ?? DEFAULT_CONTEXT_ENTRY_NAME;
+    updatedRow.entryExpression.dataType = updatedRow.entryInfo.dataType ?? DEFAULT_CONTEXT_ENTRY_DATA_TYPE;
+    return updatedRow;
   }, []);
 
   const onHorizontalResizeStop = useCallback(
