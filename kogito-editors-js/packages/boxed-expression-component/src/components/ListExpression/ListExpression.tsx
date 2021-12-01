@@ -25,10 +25,10 @@ import {
   generateUuid,
   ListProps,
   LiteralExpressionProps,
-  LogicType,
+  LogicType, RowsUpdateArgs,
   TableHandlerConfiguration,
   TableHeaderVisibility,
-  TableOperation,
+  TableOperation
 } from "../../api";
 import { ContextEntryExpressionCell } from "../ContextExpression";
 import { Table } from "../Table";
@@ -140,7 +140,7 @@ export const ListExpression: React.FunctionComponent<ListProps> = (listExpressio
   );
 
   const onRowsUpdate = useCallback(
-    (newItems: any[]) => {
+    ({ rows: newItems }: RowsUpdateArgs) => {
       const newEntryExpressions = newItems.map((newItem) => {
         return { entryExpression: newItem.entryExpression };
       });

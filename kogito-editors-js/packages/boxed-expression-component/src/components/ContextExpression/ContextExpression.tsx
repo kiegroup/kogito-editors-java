@@ -32,7 +32,7 @@ import {
   getHandlerConfiguration,
   LogicType,
   resetEntry,
-  TableHeaderVisibility,
+  TableHeaderVisibility
 } from "../../api";
 import { Table } from "../Table";
 import { useBoxedExpressionEditorI18n } from "../../i18n";

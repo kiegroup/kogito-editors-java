@@ -32,7 +32,8 @@ import {
   InvocationProps,
   LogicType,
   resetEntry,
-  TableHeaderVisibility,
+  RowsUpdateArgs,
+  TableHeaderVisibility
 } from "../../api";
 import { Table } from "../Table";
 import { useBoxedExpressionEditorI18n } from "../../i18n";
@@ -215,9 +216,9 @@ export const InvocationExpression: React.FunctionComponent<InvocationProps> = (i
     [invocationProps.isHeadless]
   );
 
-  const setRowsCallback = useCallback(
-    (entries) => {
-      spreadInvocationExpressionDefinition({ bindingEntries: [...entries] });
+  const onRowsUpdate = useCallback(
+    ({ rows: entries }: RowsUpdateArgs) => {
+      spreadInvocationExpressionDefinition({ bindingEntries: [...entries] as ContextEntryRecord[] });
     },
     [spreadInvocationExpressionDefinition]
   );
@@ -249,7 +250,7 @@ export const InvocationExpression: React.FunctionComponent<InvocationProps> = (i
         rows={(rows ?? []) as DataRecord[]}
         onColumnsUpdate={onColumnsUpdate}
         onRowAdding={onRowAdding}
-        onRowsUpdate={setRowsCallback}
+        onRowsUpdate={onRowsUpdate}
         handlerConfiguration={handlerConfiguration}
         getRowKey={getRowKeyCallback}
         resetRowCustomFunction={resetEntryCallback}

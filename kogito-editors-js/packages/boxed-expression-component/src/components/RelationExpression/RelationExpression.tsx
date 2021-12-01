@@ -26,6 +26,7 @@ import {
   generateUuid,
   RelationProps,
   Row,
+  RowsUpdateArgs,
   TableOperation,
 } from "../../api";
 import { Table } from "../Table";
@@ -124,7 +125,7 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = (relat
   );
 
   const onRowsUpdate = useCallback(
-    (rows: DataRecord[], operation, rowIndex, columns: ReactTableColumn[]) => {
+    ({ rows, columns }: RowsUpdateArgs) => {
       const newRows = _.chain(rows)
         .map((tableRow: DataRecord) => {
           const cells = _.chain(columns)

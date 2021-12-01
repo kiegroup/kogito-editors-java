@@ -18,6 +18,7 @@ import "./FunctionExpression.css";
 import * as React from "react";
 import { PropsWithChildren, useCallback, useContext, useMemo } from "react";
 import {
+  ContextEntryRecord,
   ContextProps,
   DataType,
   DEFAULT_ENTRY_EXPRESSION_MIN_WIDTH,
@@ -33,6 +34,7 @@ import {
   PmmlFunctionProps,
   PMMLLiteralExpressionProps,
   resetEntry,
+  RowsUpdateArgs,
   TableHeaderVisibility,
   TableOperation,
 } from "../../api";
@@ -447,24 +449,28 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (
   const defaultCell = useMemo(() => ({ parameters: ContextEntryExpressionCell }), []);
 
   const onRowsUpdate = useCallback(
-    ([entries]) => {
+    ({ rows: [row] }: RowsUpdateArgs<ContextEntryRecord<ContextProps>>) => {
       switch (functionExpression.functionKind) {
         case FunctionKind.Feel:
-          spreadFunctionExpressionDefinition({ expression: entries.entryExpression });
+          spreadFunctionExpressionDefinition({ expression: row.entryExpression });
           break;
         case FunctionKind.Java:
-          if (entries.entryExpression.contextEntries) {
+          if (row.entryExpression.contextEntries) {
             spreadFunctionExpressionDefinition({
-              className: entries.entryExpression.contextEntries[0]?.entryExpression.content ?? "",
-              methodName: entries.entryExpression.contextEntries[1]?.entryExpression.content ?? "",
+              className:
+                (row.entryExpression.contextEntries[0]?.entryExpression as LiteralExpressionProps).content ?? "",
+              methodName:
+                (row.entryExpression.contextEntries[1]?.entryExpression as LiteralExpressionProps).content ?? "",
             });
           }
           break;
         case FunctionKind.Pmml:
-          if (entries.entryExpression.contextEntries) {
+          if (row.entryExpression.contextEntries) {
             spreadFunctionExpressionDefinition({
-              document: entries.entryExpression.contextEntries[0]?.entryExpression.selected ?? "",
-              model: entries.entryExpression.contextEntries[1]?.entryExpression.selected ?? "",
+              document:
+                (row.entryExpression.contextEntries[0]?.entryExpression as PMMLLiteralExpressionProps).selected ?? "",
+              model:
+                (row.entryExpression.contextEntries[1]?.entryExpression as PMMLLiteralExpressionProps).selected ?? "",
             });
           }
           break;

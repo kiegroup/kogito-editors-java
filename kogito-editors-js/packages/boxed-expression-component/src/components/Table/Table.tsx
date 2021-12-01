@@ -189,7 +189,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
       if (DEFAULT_ON_ROW_ADDING !== rowFactory && !isLockedTable) {
         const pastedRows = pasteOnTable(pasteValue, rows, rowFactory, x, y);
         tableRows.current = pastedRows;
-        onRowsUpdate?.(pastedRows, undefined, undefined, columns);
+        onRowsUpdate?.({ rows: pastedRows, columns });
       }
     }
 
@@ -210,7 +210,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
   const onRowsUpdateCallback = useCallback(
     (rows: DataRecord[], operation?: TableOperation, rowIndex?: number) => {
       tableRows.current = rows;
-      onRowsUpdate?.([...rows], operation, rowIndex, columns);
+      onRowsUpdate?.({ rows: [...rows], operation, rowIndex, columns });
     },
     [onRowsUpdate, columns]
   );
