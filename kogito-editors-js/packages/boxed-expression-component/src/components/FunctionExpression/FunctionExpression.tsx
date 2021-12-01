@@ -231,9 +231,9 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (
           const contextProps = rows(currentFunctionKind).entryExpression as ContextProps;
           const firstEntry = _.nth(contextProps.contextEntries, 0)?.entryExpression as LiteralExpressionProps;
           const secondEntry = _.nth(contextProps.contextEntries, 1)?.entryExpression as LiteralExpressionProps;
-          const className = firstEntry?.content || "";
+          const className = firstEntry?.content ?? "";
           const classFieldId = firstEntry?.id;
-          const methodName = secondEntry?.content || "";
+          const methodName = secondEntry?.content ?? "";
           const methodFieldId = secondEntry?.id;
           return _.extend(definition, { className, methodName, classFieldId, methodFieldId });
         }
@@ -241,7 +241,7 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (
           const contextProps = rows(currentFunctionKind).entryExpression as ContextProps;
           const firstEntry = _.nth(contextProps.contextEntries, 0)?.entryExpression as PMMLLiteralExpressionProps;
           const secondEntry = _.nth(contextProps.contextEntries, 1)?.entryExpression as PMMLLiteralExpressionProps;
-          const documentValue = firstEntry?.selected || "";
+          const documentValue = firstEntry?.selected ?? "";
           const documentFieldId = firstEntry?.id;
           const modelValue = retrieveModelValue(documentValue, contextProps);
           const modelFieldId = secondEntry?.id;
