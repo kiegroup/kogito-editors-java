@@ -426,6 +426,7 @@ describe("FunctionExpression tests", () => {
     // noinspection JSVoidFunctionReturnValueUsed
     window.beeApi = _.extend(window.beeApi || {}, {
       broadcastFunctionExpressionDefinition: (definition: FunctionProps) => mockedBroadcastDefinition(definition),
+      notifyUserAction: () => {},
     });
   }
 

@@ -129,6 +129,7 @@ public class ExpressionContainerGrid extends BaseGrid<Expression> {
         this.expressionGridCache = expressionGridCache;
         this.onHasExpressionChanged = onHasExpressionChanged;
         this.onHasNameChanged = onHasNameChanged;
+        this.onUndoClear = Optional.empty();
 
         this.uiModelMapper = new ExpressionContainerUIModelMapper(parent,
                                                                   this::getModel,
@@ -307,12 +308,12 @@ public class ExpressionContainerGrid extends BaseGrid<Expression> {
                                                                      () -> {
                                                                          expressionColumn.setWidthInternal(getExistingEditorWidth());
                                                                          selectExpressionEditorFirstCell();
-                                                                         getOnUndoClear().ifPresent(c-> c.accept(this));
+                                                                         getOnUndoClear().ifPresent(c -> c.accept(this));
                                                                      },
                                                                      () -> {
                                                                          expressionColumn.setWidthInternal(getExistingEditorWidth());
                                                                          selectExpressionEditorFirstCell();
-                                                                         getOnUndoClear().ifPresent(c-> c.accept(this));
+                                                                         getOnUndoClear().ifPresent(c -> c.accept(this));
                                                                      }));
     }
 
