@@ -29,14 +29,8 @@ import {
 } from "react-table";
 import { TableComposable } from "@patternfly/react-table";
 import { v4 as uuid } from "uuid";
-import {
-  generateUuid,
-  getBoxedExpressionContainer,
-  TableHeaderVisibility,
-  TableOperation,
-  TableProps,
-} from "../../api";
-import { BoxedExpressionGlobalContext } from "../../context";
+import { generateUuid, TableHeaderVisibility, TableOperation, TableProps } from "../../api";
+import { BoxedExpressionGlobalContext, useBoxedExpression } from "../../context";
 import { PASTE_OPERATION, pasteOnTable } from "./common";
 import { EditableCell } from "./EditableCell";
 import "./Table.css";
@@ -94,6 +88,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
 }: TableProps) => {
   const tableRef = useRef<HTMLTableElement>(null);
   const tableEventUUID = useMemo(() => `table-event-${uuid()}`, []);
+  const boxedExpression = useBoxedExpression();
 
   const onRowAddingCallback = useCallback(() => {
     return onRowAdding ? onRowAdding() : {};
@@ -193,11 +188,19 @@ export const Table: React.FunctionComponent<TableProps> = ({
       }
     }
 
-    getBoxedExpressionContainer().addEventListener(tableEventUUID, listener);
+    // TODO: Remove document
+    document.addEventListener(tableEventUUID, listener);
     return () => {
-      getBoxedExpressionContainer().removeEventListener(tableEventUUID, listener);
+      document.removeEventListener(tableEventUUID, listener);
     };
-  }, [tableEventUUID, tableRows, onRowsUpdate, onColumnsUpdate, onRowAddingCallback, columns]);
+  }, [
+    tableEventUUID,
+    tableRows,
+    onRowsUpdate,
+    onColumnsUpdate,
+    onRowAddingCallback,
+    columns,
+  ]);
 
   const onColumnsUpdateCallback = useCallback(
     (columns: Column[], operation?: TableOperation, columnIndex?: number) => {

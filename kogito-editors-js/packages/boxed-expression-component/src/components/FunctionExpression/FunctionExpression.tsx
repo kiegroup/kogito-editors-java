@@ -16,7 +16,7 @@
 
 import "./FunctionExpression.css";
 import * as React from "react";
-import { PropsWithChildren, useCallback, useContext, useMemo } from "react";
+import { PropsWithChildren, useCallback, useMemo } from "react";
 import {
   ContextEntryRecord,
   ContextProps,
@@ -44,7 +44,7 @@ import { ContextEntryExpressionCell } from "../ContextExpression";
 import { useBoxedExpressionEditorI18n } from "../../i18n";
 import { PopoverMenu } from "../PopoverMenu";
 import * as _ from "lodash";
-import { BoxedExpressionGlobalContext } from "../../context";
+import { useBoxedExpression } from "../../context";
 import { FunctionKindSelector } from "./FunctionKindSelector";
 import { EditParameters } from "./EditParameters";
 import { hashfy } from "../Resizer";
@@ -57,7 +57,7 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (
   const FIRST_ENTRY_ID = "0";
   const SECOND_ENTRY_ID = "1";
   const { i18n } = useBoxedExpressionEditorI18n();
-  const { boxedExpressionEditorRef, setSupervisorHash, pmmlParams } = useContext(BoxedExpressionGlobalContext);
+  const { editorRef, setSupervisorHash, pmmlParams } = useBoxedExpression();
   const pmmlDocument = useMemo(
     () => (functionExpression as PmmlFunctionProps).document,
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -344,8 +344,8 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (
   );
 
   const editParametersPopoverAppendTo = useCallback(() => {
-    return () => boxedExpressionEditorRef.current!;
-  }, [boxedExpressionEditorRef]);
+    return () => editorRef.current!;
+  }, [editorRef]);
 
   const setParameters = useCallback(
     (newParameter) => {

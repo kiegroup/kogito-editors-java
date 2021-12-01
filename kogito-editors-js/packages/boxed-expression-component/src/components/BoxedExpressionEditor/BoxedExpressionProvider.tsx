@@ -38,32 +38,30 @@ export interface BoxedExpressionProviderProps {
 
 export function BoxedExpressionProvider(props: BoxedExpressionProviderProps) {
   const [currentlyOpenedHandlerCallback, setCurrentlyOpenedHandlerCallback] = useState(() => _.identity);
-  const boxedExpressionEditorRef = useRef<HTMLDivElement>(null);
   const [supervisorHash, setSupervisorHash] = useState(hashfy(props.expressionDefinition));
+  const editorRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setSupervisorHash(hashfy(props.expressionDefinition));
   }, [props.expressionDefinition]);
 
   return (
-    <div id={"boxed-expression-editor"}>
-      <BoxedExpressionGlobalContext.Provider
-        value={{
-          decisionNodeId: props.decisionNodeId,pmmlParams: props.pmmlParams,
-          supervisorHash,
-          setSupervisorHash,
-          boxedExpressionEditorRef,
-          currentlyOpenedHandlerCallback,
-          setCurrentlyOpenedHandlerCallback,
-        }}
-      >
-        <ResizerSupervisor isRunnerTable={props.isRunnerTable}>
-          <div className="boxed-expression-provider" ref={boxedExpressionEditorRef}>
-            {props.children}
-          </div>
-        </ResizerSupervisor>
-        {props.isRunnerTable === false && <CellSelectionBox />}
-      </BoxedExpressionGlobalContext.Provider>
-    </div>
+    <BoxedExpressionGlobalContext.Provider
+      value={{
+        decisionNodeId: props.decisionNodeId,pmmlParams: props.pmmlParams,
+        supervisorHash,
+        setSupervisorHash,
+        editorRef,
+        currentlyOpenedHandlerCallback,
+        setCurrentlyOpenedHandlerCallback,
+      }}
+    >
+      <ResizerSupervisor isRunnerTable={props.isRunnerTable}>
+        <div className="boxed-expression-provider" ref={editorRef}>
+          {props.children}
+        </div>
+      </ResizerSupervisor>
+      {props.isRunnerTable === false && <CellSelectionBox />}
+    </BoxedExpressionGlobalContext.Provider>
   );
 }

@@ -17,7 +17,7 @@
 import * as React from "react";
 import { useCallback, useLayoutEffect, useMemo, useState } from "react";
 import "./SelectionBox.css";
-import { getBoxedExpressionContainer } from "../../api";
+import { useBoxedExpression } from "../../context";
 
 export interface SelectionBoxProps {
   /** CSS classes of elements that must not trigger the selection box */
@@ -54,6 +54,7 @@ export const SelectionBox: React.FunctionComponent<SelectionBoxProps> = ({
 }: SelectionBoxProps) => {
   const [selectionStart, setSelectionStart] = useState<SelectionStartState>(null);
   const [selectionRect, setSelectionRect] = useState<SelectionRectState>(null);
+  const boxedExpression = useBoxedExpression();
 
   const pxValue = useCallback((value: number) => `${value}px`, []);
 
@@ -133,21 +134,21 @@ export const SelectionBox: React.FunctionComponent<SelectionBoxProps> = ({
     const touchStartType = "touchstart";
     const touchEndType = "touchend";
 
-    getBoxedExpressionContainer().addEventListener(mouseMoveType, moveHandler);
-    getBoxedExpressionContainer().addEventListener(mouseDownType, downHandler);
-    getBoxedExpressionContainer().addEventListener(mouseUpType, upHandler);
-    getBoxedExpressionContainer().addEventListener(touchMoveType, moveHandler);
-    getBoxedExpressionContainer().addEventListener(touchStartType, downHandler);
-    getBoxedExpressionContainer().addEventListener(touchEndType, upHandler);
+    boxedExpression.editorRef.current?.addEventListener(mouseMoveType, moveHandler);
+    boxedExpression.editorRef.current?.addEventListener(mouseDownType, downHandler);
+    boxedExpression.editorRef.current?.addEventListener(mouseUpType, upHandler);
+    boxedExpression.editorRef.current?.addEventListener(touchMoveType, moveHandler);
+    boxedExpression.editorRef.current?.addEventListener(touchStartType, downHandler);
+    boxedExpression.editorRef.current?.addEventListener(touchEndType, upHandler);
     return () => {
-      getBoxedExpressionContainer().removeEventListener(mouseMoveType, moveHandler);
-      getBoxedExpressionContainer().removeEventListener(mouseDownType, downHandler);
-      getBoxedExpressionContainer().removeEventListener(mouseUpType, upHandler);
-      getBoxedExpressionContainer().removeEventListener(touchMoveType, moveHandler);
-      getBoxedExpressionContainer().removeEventListener(touchStartType, downHandler);
-      getBoxedExpressionContainer().removeEventListener(touchEndType, upHandler);
+      boxedExpression.editorRef.current?.removeEventListener(mouseMoveType, moveHandler);
+      boxedExpression.editorRef.current?.removeEventListener(mouseDownType, downHandler);
+      boxedExpression.editorRef.current?.removeEventListener(mouseUpType, upHandler);
+      boxedExpression.editorRef.current?.removeEventListener(touchMoveType, moveHandler);
+      boxedExpression.editorRef.current?.removeEventListener(touchStartType, downHandler);
+      boxedExpression.editorRef.current?.removeEventListener(touchEndType, upHandler);
     };
-  }, [moveHandler, downHandler, upHandler]);
+  }, [moveHandler, downHandler, upHandler, boxedExpression.editorRef]);
 
   return <div style={{ ...selectionBoxStyle }} className="kie-selection-box" />;
 };
