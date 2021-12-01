@@ -271,7 +271,7 @@ public class JsCanvas implements JsCanvasNodeLister {
         centerNode(UUID);
     }
 
-    protected void centerNode(String UUID) {
+    public void centerNode(String UUID) {
         NFastArrayList<Double> absoluteLocation = getAbsoluteLocation(UUID);
 
         if (absoluteLocation != null) {
