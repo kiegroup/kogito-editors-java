@@ -321,8 +321,8 @@ export function DecisionTableExpression(decisionTable: PropsWithChildren<Decisio
   );
 
   const onColumnsUpdate = useCallback(
-    (updatedColumns) => {
-      const decisionNodeColumn = _.find(updatedColumns, { groupType: DecisionTableColumnType.OutputClause });
+    ({ columns }) => {
+      const decisionNodeColumn = _.find(columns, { groupType: DecisionTableColumnType.OutputClause });
       if (!decisionTable.isHeadless) {
         synchronizeDecisionNodeDataTypeWithSingleOutputColumnDataType(decisionNodeColumn);
       }
@@ -331,7 +331,7 @@ export function DecisionTableExpression(decisionTable: PropsWithChildren<Decisio
           name: decisionNodeColumn.label,
           dataType: decisionNodeColumn.dataType,
         },
-        updatedColumns: [...updatedColumns],
+        updatedColumns: [...columns],
       });
       decisionTable.onUpdatingNameAndDataType?.(decisionNodeColumn.label, decisionNodeColumn.dataType);
     },

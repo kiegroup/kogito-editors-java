@@ -18,6 +18,7 @@ import "./FunctionExpression.css";
 import * as React from "react";
 import { PropsWithChildren, useCallback, useMemo } from "react";
 import {
+  ColumnsUpdateArgs,
   ContextEntryRecord,
   ContextProps,
   DataType,
@@ -415,12 +416,12 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (
   );
 
   const onColumnsUpdate = useCallback(
-    ([expressionColumn]: ColumnInstance[]) => {
-      functionExpression.onUpdatingNameAndDataType?.(expressionColumn.label as string, expressionColumn.dataType);
+    ({ columns: [column] }: ColumnsUpdateArgs<ColumnInstance>) => {
+      functionExpression.onUpdatingNameAndDataType?.(column.label as string, column.dataType);
       spreadFunctionExpressionDefinition({
-        name: expressionColumn.label as string,
-        dataType: expressionColumn.dataType,
-        parametersWidth: expressionColumn.width as number,
+        name: column.label as string,
+        dataType: column.dataType,
+        parametersWidth: column.width as number,
       });
     },
     [functionExpression, spreadFunctionExpressionDefinition]

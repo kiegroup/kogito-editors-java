@@ -143,7 +143,7 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = (relat
   );
 
   const onColumnsUpdate = useCallback(
-    (columns, operation, columnIndex) => {
+    ({ columns, operation, columnIndex }) => {
       const newColumns = columns.map((columnInstance: ColumnInstance) => ({
         id: columnInstance.accessor,
         name: columnInstance.label as string,

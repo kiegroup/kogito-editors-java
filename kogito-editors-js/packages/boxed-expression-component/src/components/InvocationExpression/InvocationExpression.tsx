@@ -18,6 +18,7 @@ import "./InvocationExpression.css";
 import * as React from "react";
 import { useCallback, useContext, useMemo } from "react";
 import {
+  ColumnsUpdateArgs,
   ContextEntries,
   ContextEntryRecord,
   DataType,
@@ -33,7 +34,7 @@ import {
   LogicType,
   resetEntry,
   RowsUpdateArgs,
-  TableHeaderVisibility
+  TableHeaderVisibility,
 } from "../../api";
 import { Table } from "../Table";
 import { useBoxedExpressionEditorI18n } from "../../i18n";
@@ -181,12 +182,12 @@ export const InvocationExpression: React.FunctionComponent<InvocationProps> = (i
   );
 
   const onColumnsUpdate = useCallback(
-    ([expressionColumn]: [ColumnInstance]) => {
-      invocationProps.onUpdatingNameAndDataType?.(expressionColumn.label as string, expressionColumn.dataType);
+    ({ columns: [column] }: ColumnsUpdateArgs<ColumnInstance>) => {
+      invocationProps.onUpdatingNameAndDataType?.(column.label as string, column.dataType);
 
       spreadInvocationExpressionDefinition({
-        name: expressionColumn.label as string,
-        dataType: expressionColumn.dataType,
+        name: column.label as string,
+        dataType: column.dataType,
       });
     },
     [invocationProps, spreadInvocationExpressionDefinition]

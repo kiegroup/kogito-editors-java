@@ -205,7 +205,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
   const onColumnsUpdateCallback = useCallback(
     (columns: Column[], operation?: TableOperation, columnIndex?: number) => {
       //Removing "# of rows" column
-      onColumnsUpdate?.(columns.slice(1), operation, (columnIndex ?? 1) - 1);
+      onColumnsUpdate?.({ columns: columns.slice(1), operation, columnIndex: (columnIndex ?? 1) - 1 });
     },
     [onColumnsUpdate]
   );
