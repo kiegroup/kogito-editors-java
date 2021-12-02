@@ -30,7 +30,7 @@ export class Cell {
     public element: HTMLElement,
     public children: Cell[],
     public depth: number,
-    private container: HTMLElement
+    private editorElement: HTMLElement
   ) {}
 
   getId(): string {
@@ -56,7 +56,7 @@ export class Cell {
 
   setWidth(width: number): void {
     const cellWidth = widthValue(width);
-    notifyCell(this.getId(), cellWidth, this.container);
+    notifyCell(this.getId(), cellWidth, this.editorElement);
     this.element.style.width = cellWidth + "px";
   }
 

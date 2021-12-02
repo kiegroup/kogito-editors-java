@@ -46,8 +46,8 @@ export const hashfy = (obj = {}): string => {
 /*
  * Propagate Cell width from DOM to React state.
  */
-export const notifyCell = (id: string, width: number = DEFAULT_MIN_WIDTH, container: HTMLElement): void => {
-  container.dispatchEvent(
+export const notifyCell = (id: string, width: number = DEFAULT_MIN_WIDTH, editorElement: HTMLElement): void => {
+  editorElement.dispatchEvent(
     new CustomEvent(id, {
       detail: { width },
     })

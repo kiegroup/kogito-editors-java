@@ -35,8 +35,8 @@ export const applyDOMSupervisor = (isRunnerTable: boolean, container: HTMLElemen
 class SupervisorExecution {
   domSession: DOMSession;
 
-  constructor(private readonly isRunnerTable: boolean, private readonly container: HTMLElement) {
-    this.domSession = new DOMSession(container);
+  constructor(private readonly isRunnerTable: boolean, private readonly editorElement: HTMLElement) {
+    this.domSession = new DOMSession(editorElement);
   }
 
   execute() {
