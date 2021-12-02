@@ -49,9 +49,9 @@ export const hashfy = (obj = {}): string => {
 export const notifyCell = (
   id: string,
   width: number = DEFAULT_MIN_WIDTH,
-  container?: HTMLElement
+  container: HTMLElement
 ): void => {
-  (container ?? document).dispatchEvent(
+  container.dispatchEvent(
     new CustomEvent(id, {
       detail: { width },
     })

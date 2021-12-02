@@ -151,7 +151,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
 
   const tableRows = useRef<DataRecord[]>(evaluateRows(rows));
   const [showTableHandler, setShowTableHandler] = useState(false);
-  const [tableHandlerTarget, setTableHandlerTarget] = useState(document.body);
+  const [tableHandlerTarget, setTableHandlerTarget] = useState<HTMLElement>(boxedExpression.editorRef.current!);
   const [tableHandlerAllowedOperations, setTableHandlerAllowedOperations] = useState(
     _.values(TableOperation).map((operation) => parseInt(operation.toString()))
   );
