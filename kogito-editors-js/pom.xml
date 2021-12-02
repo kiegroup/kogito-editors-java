@@ -61,7 +61,7 @@
               <goal>npx</goal>
             </goals>
             <configuration>
-              <arguments>lock-treatment-tool --</arguments>
+              <arguments>@kie/lock-treatment-tool --</arguments>
             </configuration>
           </execution>
           <execution>
