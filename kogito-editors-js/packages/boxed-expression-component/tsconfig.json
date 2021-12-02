@@ -1,6 +1,6 @@
 {
   "extends": "../../tsconfig.json",
-  "exclude": ["./**/node_modules", "./**/test-setup", "showcase"],
+  "exclude": ["./**/node_modules", "./**/test-setup"],
   "include": ["src"],
   "compilerOptions": {
     "outDir": "dist",
