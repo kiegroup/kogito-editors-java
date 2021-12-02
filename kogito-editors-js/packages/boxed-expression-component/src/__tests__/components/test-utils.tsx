@@ -106,7 +106,7 @@ export function wrapComponentInContext(component: JSX.Element): JSX.Element {
         ],
         supervisorHash: "",
         setSupervisorHash: jest.fn,
-        boxedExpressionEditorRef: { current: document.body as HTMLDivElement },
+        editorRef: { current: document.body as HTMLDivElement },
         currentlyOpenedHandlerCallback: jest.fn,
         setCurrentlyOpenedHandlerCallback: jest.fn,
       }}

@@ -20,7 +20,7 @@ import * as React from "react";
 import { act } from "react-dom/test-utils";
 import { Column, ColumnInstance, DataRecord } from "react-table";
 import { PASTE_OPERATION } from "../../../components/Table/common";
-import { DataType, TableHandlerConfiguration, TableOperation } from "../../../api";
+import { DataType, RowsUpdateArgs, TableHandlerConfiguration, TableOperation } from "../../../api";
 import { Table } from "../../../components";
 import {
   activateNameAndDataTypePopover,
@@ -29,6 +29,7 @@ import {
   flushPromises,
   updateElementViaPopover,
   usingTestingBoxedExpressionI18nContext,
+  usingTestingBoxedExpressionProviderContext,
 } from "../test-utils";
 import { DEFAULT_MIN_WIDTH } from "../../../components/Resizer";
 
@@ -72,13 +73,15 @@ describe("Table tests", () => {
     test("should show a table element", () => {
       const { container } = render(
         usingTestingBoxedExpressionI18nContext(
-          <Table
-            columns={[]}
-            rows={[]}
-            onColumnsUpdate={_.identity}
-            onRowsUpdate={_.identity}
-            handlerConfiguration={handlerConfiguration}
-          />
+          usingTestingBoxedExpressionProviderContext(
+            <Table
+              columns={[]}
+              rows={[]}
+              onColumnsUpdate={_.identity}
+              onRowsUpdate={_.identity}
+              handlerConfiguration={handlerConfiguration}
+            />
+          ).wrapper
         ).wrapper
       );
 
@@ -88,13 +91,15 @@ describe("Table tests", () => {
     test("should show a table head with only one default column (#)", () => {
       const { container } = render(
         usingTestingBoxedExpressionI18nContext(
-          <Table
-            columns={[]}
-            rows={[]}
-            onColumnsUpdate={_.identity}
-            onRowsUpdate={_.identity}
-            handlerConfiguration={handlerConfiguration}
-          />
+          usingTestingBoxedExpressionProviderContext(
+            <Table
+              columns={[]}
+              rows={[]}
+              onColumnsUpdate={_.identity}
+              onRowsUpdate={_.identity}
+              handlerConfiguration={handlerConfiguration}
+            />
+          ).wrapper
         ).wrapper
       );
 
@@ -104,13 +109,15 @@ describe("Table tests", () => {
     test("should show a table head with one configured column, rendering its label", () => {
       const { container } = render(
         usingTestingBoxedExpressionI18nContext(
-          <Table
-            columns={[{ accessor: columnName, label: columnName, dataType: DataType.Undefined } as ColumnInstance]}
-            rows={[]}
-            onColumnsUpdate={_.identity}
-            onRowsUpdate={_.identity}
-            handlerConfiguration={handlerConfiguration}
-          />
+          usingTestingBoxedExpressionProviderContext(
+            <Table
+              columns={[{ accessor: columnName, label: columnName, dataType: DataType.Undefined } as ColumnInstance]}
+              rows={[]}
+              onColumnsUpdate={_.identity}
+              onRowsUpdate={_.identity}
+              handlerConfiguration={handlerConfiguration}
+            />
+          ).wrapper
         ).wrapper
       );
 
@@ -123,19 +130,21 @@ describe("Table tests", () => {
 
       const { container } = render(
         usingTestingBoxedExpressionI18nContext(
-          <Table
-            columns={[
-              {
-                accessor: columnName,
-                headerCellElement,
-                dataType: DataType.Undefined,
-              } as ColumnInstance,
-            ]}
-            rows={[]}
-            onColumnsUpdate={_.identity}
-            onRowsUpdate={_.identity}
-            handlerConfiguration={handlerConfiguration}
-          />
+          usingTestingBoxedExpressionProviderContext(
+            <Table
+              columns={[
+                {
+                  accessor: columnName,
+                  headerCellElement,
+                  dataType: DataType.Undefined,
+                } as ColumnInstance,
+              ]}
+              rows={[]}
+              onColumnsUpdate={_.identity}
+              onRowsUpdate={_.identity}
+              handlerConfiguration={handlerConfiguration}
+            />
+          ).wrapper
         ).wrapper
       );
 
@@ -145,13 +154,15 @@ describe("Table tests", () => {
     test("should show a table body with no rows", () => {
       const { container } = render(
         usingTestingBoxedExpressionI18nContext(
-          <Table
-            columns={[]}
-            rows={[]}
-            onColumnsUpdate={_.identity}
-            onRowsUpdate={_.identity}
-            handlerConfiguration={handlerConfiguration}
-          />
+          usingTestingBoxedExpressionProviderContext(
+            <Table
+              columns={[]}
+              rows={[]}
+              onColumnsUpdate={_.identity}
+              onRowsUpdate={_.identity}
+              handlerConfiguration={handlerConfiguration}
+            />
+          ).wrapper
         ).wrapper
       );
 
@@ -167,13 +178,15 @@ describe("Table tests", () => {
 
       const { container } = render(
         usingTestingBoxedExpressionI18nContext(
-          <Table
-            columns={[{ accessor: columnName, dataType: DataType.Undefined } as ColumnInstance]}
-            rows={rows}
-            onColumnsUpdate={_.identity}
-            onRowsUpdate={_.identity}
-            handlerConfiguration={handlerConfiguration}
-          />
+          usingTestingBoxedExpressionProviderContext(
+            <Table
+              columns={[{ accessor: columnName, dataType: DataType.Undefined } as ColumnInstance]}
+              rows={rows}
+              onColumnsUpdate={_.identity}
+              onRowsUpdate={_.identity}
+              handlerConfiguration={handlerConfiguration}
+            />
+          ).wrapper
         ).wrapper
       );
 
@@ -190,14 +203,16 @@ describe("Table tests", () => {
       const editRelationLabel = "Edit Relation";
       const { container, baseElement } = render(
         usingTestingBoxedExpressionI18nContext(
-          <Table
-            editColumnLabel={editRelationLabel}
-            columns={[{ label: columnName, accessor: columnName, dataType: DataType.Boolean } as ColumnInstance]}
-            rows={[]}
-            onColumnsUpdate={_.identity}
-            onRowsUpdate={_.identity}
-            handlerConfiguration={handlerConfiguration}
-          />
+          usingTestingBoxedExpressionProviderContext(
+            <Table
+              editColumnLabel={editRelationLabel}
+              columns={[{ label: columnName, accessor: columnName, dataType: DataType.Boolean } as ColumnInstance]}
+              rows={[]}
+              onColumnsUpdate={_.identity}
+              onRowsUpdate={_.identity}
+              handlerConfiguration={handlerConfiguration}
+            />
+          ).wrapper
         ).wrapper
       );
 
@@ -221,13 +236,15 @@ describe("Table tests", () => {
 
       const { container, baseElement } = render(
         usingTestingBoxedExpressionI18nContext(
-          <Table
-            columns={[{ label: columnName, accessor: columnId, dataType: DataType.Boolean } as ColumnInstance]}
-            rows={[]}
-            onColumnsUpdate={mockedOnColumnUpdate}
-            onRowsUpdate={_.identity}
-            handlerConfiguration={handlerConfiguration}
-          />
+          usingTestingBoxedExpressionProviderContext(
+            <Table
+              columns={[{ label: columnName, accessor: columnId, dataType: DataType.Boolean } as ColumnInstance]}
+              rows={[]}
+              onColumnsUpdate={mockedOnColumnUpdate}
+              onRowsUpdate={_.identity}
+              handlerConfiguration={handlerConfiguration}
+            />
+          ).wrapper
         ).wrapper
       );
       await updateElementViaPopover(
@@ -257,20 +274,22 @@ describe("Table tests", () => {
       const columns = [{ label: columnName, accessor: columnName, dataType: DataType.Boolean } as ColumnInstance];
 
       row[columnName] = "value";
-      const orRowsUpdate = (rows: DataRecord[]) => {
+      const orRowsUpdate = ({ rows }: RowsUpdateArgs) => {
         _.identity(rows);
       };
       const mockedOnRowsUpdate = jest.fn(orRowsUpdate);
 
       const { container } = render(
         usingTestingBoxedExpressionI18nContext(
-          <Table
-            columns={columns}
-            rows={[row]}
-            onColumnsUpdate={_.identity}
-            onRowsUpdate={mockedOnRowsUpdate}
-            handlerConfiguration={handlerConfiguration}
-          />
+          usingTestingBoxedExpressionProviderContext(
+            <Table
+              columns={columns}
+              rows={[row]}
+              onColumnsUpdate={_.identity}
+              onRowsUpdate={mockedOnRowsUpdate}
+              handlerConfiguration={handlerConfiguration}
+            />
+          ).wrapper
         ).wrapper
       );
 
@@ -280,18 +299,20 @@ describe("Table tests", () => {
       // onblur is triggered by Monaco (mock), and the new value relies on Monaco implementation
 
       expect(mockedOnRowsUpdate).toHaveBeenCalled();
-      expect(mockedOnRowsUpdate).toHaveBeenCalledWith([expect.objectContaining(newRow)], undefined, undefined, columns);
+      expect(mockedOnRowsUpdate).toHaveBeenCalledWith({
+        rows: [expect.objectContaining(newRow)],
+        columns,
+      });
     });
   });
 
   describe("when users paste a value", () => {
-    const orRowsUpdate = (rows: DataRecord[]) => {
-      _.identity(rows);
-    };
-    const mockedOnRowsUpdate = jest.fn(orRowsUpdate);
-    let container: HTMLElement;
+    test("should trigger onRowsUpdate", async () => {
+      const orRowsUpdate = ({ rows }: RowsUpdateArgs) => {
+        _.identity(rows);
+      };
+      const mockedOnRowsUpdate = jest.fn(orRowsUpdate);
 
-    beforeEach(() => {
       const row: DataRecord = {};
       const newRow: DataRecord = {};
       const rowValue = "value";
@@ -301,23 +322,22 @@ describe("Table tests", () => {
 
       row[columnName] = "value";
 
-      container = render(
+      const { container } = render(
         usingTestingBoxedExpressionI18nContext(
-          <Table
-            columns={[{ label: columnName, accessor: columnName, dataType: DataType.Boolean } as ColumnInstance]}
-            rows={[row]}
-            onColumnsUpdate={_.identity}
-            onRowAdding={() => ({})}
-            onRowsUpdate={mockedOnRowsUpdate}
-            handlerConfiguration={handlerConfiguration}
-          />
+          usingTestingBoxedExpressionProviderContext(
+            <Table
+              columns={[{ label: columnName, accessor: columnName, dataType: DataType.Boolean } as ColumnInstance]}
+              rows={[row]}
+              onColumnsUpdate={_.identity}
+              onRowAdding={() => ({})}
+              onRowsUpdate={mockedOnRowsUpdate}
+              handlerConfiguration={handlerConfiguration}
+            />
+          ).wrapper
         ).wrapper
-      ).container;
+      );
 
-      document.dispatchEvent(customEvent(container));
-    });
-
-    test("should trigger onRowsUpdate", async () => {
+      container.querySelector(".boxed-expression-provider")?.dispatchEvent(customEvent(container));
       expect(mockedOnRowsUpdate).toHaveBeenCalled();
     });
   });
@@ -342,18 +362,20 @@ describe("Table tests", () => {
 
       const { container, baseElement } = render(
         usingTestingBoxedExpressionI18nContext(
-          <Table
-            columns={[firstColumn]}
-            rows={[]}
-            onColumnsUpdate={mockedOnColumnUpdate}
-            onRowsUpdate={_.identity}
-            handlerConfiguration={[
-              {
-                group: "COLUMNS",
-                items: [{ name: "Insert Column Left", type: TableOperation.ColumnInsertLeft }],
-              },
-            ]}
-          />
+          usingTestingBoxedExpressionProviderContext(
+            <Table
+              columns={[firstColumn]}
+              rows={[]}
+              onColumnsUpdate={mockedOnColumnUpdate}
+              onRowsUpdate={_.identity}
+              handlerConfiguration={[
+                {
+                  group: "COLUMNS",
+                  items: [{ name: "Insert Column Left", type: TableOperation.ColumnInsertLeft }],
+                },
+              ]}
+            />
+          ).wrapper
         ).wrapper
       );
       await openContextMenu(container.querySelectorAll(EXPRESSION_COLUMN_HEADER)[1]);
@@ -385,18 +407,20 @@ describe("Table tests", () => {
 
       const { container, baseElement } = render(
         usingTestingBoxedExpressionI18nContext(
-          <Table
-            columns={[firstColumn]}
-            rows={[]}
-            onColumnsUpdate={mockedOnColumnUpdate}
-            onRowsUpdate={_.identity}
-            handlerConfiguration={[
-              {
-                group: "COLUMNS",
-                items: [{ name: "Insert Column right", type: TableOperation.ColumnInsertRight }],
-              },
-            ]}
-          />
+          usingTestingBoxedExpressionProviderContext(
+            <Table
+              columns={[firstColumn]}
+              rows={[]}
+              onColumnsUpdate={mockedOnColumnUpdate}
+              onRowsUpdate={_.identity}
+              handlerConfiguration={[
+                {
+                  group: "COLUMNS",
+                  items: [{ name: "Insert Column right", type: TableOperation.ColumnInsertRight }],
+                },
+              ]}
+            />
+          ).wrapper
         ).wrapper
       );
       await openContextMenu(container.querySelectorAll(EXPRESSION_COLUMN_HEADER)[1]);
@@ -419,18 +443,20 @@ describe("Table tests", () => {
 
       const { container, baseElement } = render(
         usingTestingBoxedExpressionI18nContext(
-          <Table
-            columns={[firstColumn, secondColumn]}
-            rows={[]}
-            onColumnsUpdate={mockedOnColumnUpdate}
-            onRowsUpdate={_.identity}
-            handlerConfiguration={[
-              {
-                group: "COLUMNS",
-                items: [{ name: "Delete", type: TableOperation.ColumnDelete }],
-              },
-            ]}
-          />
+          usingTestingBoxedExpressionProviderContext(
+            <Table
+              columns={[firstColumn, secondColumn]}
+              rows={[]}
+              onColumnsUpdate={mockedOnColumnUpdate}
+              onRowsUpdate={_.identity}
+              handlerConfiguration={[
+                {
+                  group: "COLUMNS",
+                  items: [{ name: "Delete", type: TableOperation.ColumnDelete }],
+                },
+              ]}
+            />
+          ).wrapper
         ).wrapper
       );
       await openContextMenu(container.querySelectorAll(EXPRESSION_COLUMN_HEADER)[1]);
@@ -453,18 +479,20 @@ describe("Table tests", () => {
 
       const { container, baseElement } = render(
         usingTestingBoxedExpressionI18nContext(
-          <Table
-            columns={[firstColumn, secondColumn]}
-            rows={[row]}
-            onColumnsUpdate={mockedOnColumnUpdate}
-            onRowsUpdate={_.identity}
-            handlerConfiguration={[
-              {
-                group: "COLUMNS",
-                items: [{ name: "Delete", type: TableOperation.ColumnDelete }],
-              },
-            ]}
-          />
+          usingTestingBoxedExpressionProviderContext(
+            <Table
+              columns={[firstColumn, secondColumn]}
+              rows={[row]}
+              onColumnsUpdate={mockedOnColumnUpdate}
+              onRowsUpdate={_.identity}
+              handlerConfiguration={[
+                {
+                  group: "COLUMNS",
+                  items: [{ name: "Delete", type: TableOperation.ColumnDelete }],
+                },
+              ]}
+            />
+          ).wrapper
         ).wrapper
       );
       await openContextMenu(container.querySelector(expressionCell(0, 0))!);
@@ -477,42 +505,45 @@ describe("Table tests", () => {
       const row: DataRecord = {};
       row[columnName] = "value";
       const columns = [{ label: columnName, accessor: columnName, dataType: DataType.Undefined } as ColumnInstance];
-      const onRowsUpdate = (rows: DataRecord[]) => {
+      const onRowsUpdate = ({ rows }: RowsUpdateArgs) => {
         _.identity(rows);
       };
       const mockedOnRowsUpdate = jest.fn(onRowsUpdate);
 
       const { container, baseElement } = render(
         usingTestingBoxedExpressionI18nContext(
-          <Table
-            columns={columns}
-            rows={[row]}
-            onColumnsUpdate={_.identity}
-            onRowsUpdate={mockedOnRowsUpdate}
-            handlerConfiguration={[
-              {
-                group: "ROWS",
-                items: [{ name: "Insert row above", type: TableOperation.RowInsertAbove }],
-              },
-            ]}
-          />
+          usingTestingBoxedExpressionProviderContext(
+            <Table
+              columns={columns}
+              rows={[row]}
+              onColumnsUpdate={_.identity}
+              onRowsUpdate={mockedOnRowsUpdate}
+              handlerConfiguration={[
+                {
+                  group: "ROWS",
+                  items: [{ name: "Insert row above", type: TableOperation.RowInsertAbove }],
+                },
+              ]}
+            />
+          ).wrapper
         ).wrapper
       );
+
       await openContextMenu(container.querySelector(expressionCell(0, 1))!);
       await selectMenuEntryIfNotDisabled(baseElement, "Insert row above");
 
-      expect(mockedOnRowsUpdate).toHaveBeenCalledWith(
-        [expect.objectContaining({ width: DEFAULT_MIN_WIDTH }), expect.objectContaining(row)],
-        TableOperation.RowInsertAbove,
-        0,
-        columns
-      );
+      expect(mockedOnRowsUpdate).toHaveBeenCalledWith({
+        rows: [expect.objectContaining({ width: DEFAULT_MIN_WIDTH }), expect.objectContaining(row)],
+        operation: TableOperation.RowInsertAbove,
+        rowIndex: 0,
+        columns,
+      });
     });
 
     test("should trigger onRowsUpdate, when inserting a new row below", async () => {
       const row: DataRecord = {};
       row[columnName] = "value";
-      const onRowsUpdate = (rows: DataRecord[]) => {
+      const onRowsUpdate = ({ rows }: RowsUpdateArgs) => {
         _.identity(rows);
       };
       const mockedOnRowsUpdate = jest.fn(onRowsUpdate);
@@ -520,29 +551,31 @@ describe("Table tests", () => {
 
       const { container, baseElement } = render(
         usingTestingBoxedExpressionI18nContext(
-          <Table
-            columns={columns}
-            rows={[row]}
-            onColumnsUpdate={_.identity}
-            onRowsUpdate={mockedOnRowsUpdate}
-            handlerConfiguration={[
-              {
-                group: "ROWS",
-                items: [{ name: "Insert row below", type: TableOperation.RowInsertBelow }],
-              },
-            ]}
-          />
+          usingTestingBoxedExpressionProviderContext(
+            <Table
+              columns={columns}
+              rows={[row]}
+              onColumnsUpdate={_.identity}
+              onRowsUpdate={mockedOnRowsUpdate}
+              handlerConfiguration={[
+                {
+                  group: "ROWS",
+                  items: [{ name: "Insert row below", type: TableOperation.RowInsertBelow }],
+                },
+              ]}
+            />
+          ).wrapper
         ).wrapper
       );
       await openContextMenu(container.querySelector(expressionCell(0, 1))!);
       await selectMenuEntryIfNotDisabled(baseElement, "Insert row below");
 
-      expect(mockedOnRowsUpdate).toHaveBeenCalledWith(
-        [expect.objectContaining(row), expect.objectContaining({ width: DEFAULT_MIN_WIDTH })],
-        TableOperation.RowInsertBelow,
-        0,
-        columns
-      );
+      expect(mockedOnRowsUpdate).toHaveBeenCalledWith({
+        rows: [expect.objectContaining(row), expect.objectContaining({ width: DEFAULT_MIN_WIDTH })],
+        operation: TableOperation.RowInsertBelow,
+        rowIndex: 0,
+        columns,
+      });
     });
 
     test("should trigger onRowsUpdate, when deleting a row", async () => {
@@ -550,7 +583,7 @@ describe("Table tests", () => {
       const secondRow: DataRecord = {};
       firstRow[columnName] = "value";
       secondRow[columnName] = "another value";
-      const onRowsUpdate = (rows: DataRecord[]) => {
+      const onRowsUpdate = ({ rows }: RowsUpdateArgs) => {
         _.identity(rows);
       };
       const mockedOnRowsUpdate = jest.fn(onRowsUpdate);
@@ -558,24 +591,31 @@ describe("Table tests", () => {
 
       const { container, baseElement } = render(
         usingTestingBoxedExpressionI18nContext(
-          <Table
-            columns={columns}
-            rows={[firstRow, secondRow]}
-            onColumnsUpdate={_.identity}
-            onRowsUpdate={mockedOnRowsUpdate}
-            handlerConfiguration={[
-              {
-                group: "ROWS",
-                items: [{ name: "Delete", type: TableOperation.RowDelete }],
-              },
-            ]}
-          />
+          usingTestingBoxedExpressionProviderContext(
+            <Table
+              columns={columns}
+              rows={[firstRow, secondRow]}
+              onColumnsUpdate={_.identity}
+              onRowsUpdate={mockedOnRowsUpdate}
+              handlerConfiguration={[
+                {
+                  group: "ROWS",
+                  items: [{ name: "Delete", type: TableOperation.RowDelete }],
+                },
+              ]}
+            />
+          ).wrapper
         ).wrapper
       );
       await openContextMenu(container.querySelector(expressionCell(0, 1))!);
       await selectMenuEntryIfNotDisabled(baseElement, "Delete");
 
-      expect(mockedOnRowsUpdate).toHaveBeenCalledWith([secondRow], TableOperation.RowDelete, 0, columns);
+      expect(mockedOnRowsUpdate).toHaveBeenCalledWith({
+        rows: [secondRow],
+        operation: TableOperation.RowDelete,
+        rowIndex: 0,
+        columns,
+      });
     });
   });
 });
@@ -597,7 +637,7 @@ async function selectMenuEntryIfNotDisabled(baseElement: Element, menuEntry: str
 export async function openContextMenu(element: Element): Promise<void> {
   await act(async () => {
     fireEvent.contextMenu(element);
-    await flushPromises();
+    // await flushPromises();
     jest.runAllTimers();
   });
 }
