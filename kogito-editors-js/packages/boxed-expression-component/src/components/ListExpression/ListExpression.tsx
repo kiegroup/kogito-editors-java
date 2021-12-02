@@ -140,9 +140,9 @@ export const ListExpression: React.FunctionComponent<ListProps> = (listExpressio
   );
 
   const onRowsUpdate = useCallback(
-    ({ rows: newItems }: RowsUpdateArgs) => {
-      const newEntryExpressions = newItems.map((newItem) => {
-        return { entryExpression: newItem.entryExpression };
+    ({ rows }: RowsUpdateArgs) => {
+      const newEntryExpressions = rows.map((row) => {
+        return { entryExpression: row.entryExpression };
       });
       spreadListExpressionDefinition({
         items: newEntryExpressions as ExpressionProps[],

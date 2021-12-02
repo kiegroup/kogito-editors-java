@@ -217,8 +217,8 @@ export const InvocationExpression: React.FunctionComponent<InvocationProps> = (i
   );
 
   const onRowsUpdate = useCallback(
-    ({ rows: entries }: RowsUpdateArgs) => {
-      spreadInvocationExpressionDefinition({ bindingEntries: [...entries] as ContextEntryRecord[] });
+    ({ rows }: RowsUpdateArgs<ContextEntryRecord>) => {
+      spreadInvocationExpressionDefinition({ bindingEntries: [...rows] });
     },
     [spreadInvocationExpressionDefinition]
   );

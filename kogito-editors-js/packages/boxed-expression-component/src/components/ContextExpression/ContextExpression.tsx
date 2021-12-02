@@ -31,7 +31,7 @@ import {
   getEntryKey,
   getHandlerConfiguration,
   LogicType,
-  resetEntry,
+  resetEntry, RowsUpdateArgs,
   TableHeaderVisibility
 } from "../../api";
 import { Table } from "../Table";
@@ -196,8 +196,8 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = (context
   }, [i18n.editContextEntry, rows]);
 
   const onRowsUpdate = useCallback(
-    (entries) => {
-      spreadContextExpressionDefinition({ contextEntries: [...entries] });
+    ({ rows }: RowsUpdateArgs<ContextEntryRecord>) => {
+      spreadContextExpressionDefinition({ contextEntries: [...rows] });
     },
     [spreadContextExpressionDefinition]
   );

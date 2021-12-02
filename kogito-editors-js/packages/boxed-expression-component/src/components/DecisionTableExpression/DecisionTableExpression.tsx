@@ -29,9 +29,9 @@ import {
   generateUuid,
   GroupOperations,
   HitPolicy,
-  LogicType,
+  LogicType, RowsUpdateArgs,
   TableHeaderVisibility,
-  TableOperation,
+  TableOperation
 } from "../../api";
 import { BoxedExpressionGlobalContext } from "../../context";
 import { useBoxedExpressionEditorI18n } from "../../i18n";
@@ -355,8 +355,8 @@ export function DecisionTableExpression(decisionTable: PropsWithChildren<Decisio
   );
 
   const onRowsUpdate = useCallback(
-    (updatedRows) => {
-      spreadDecisionTableExpressionDefinition(undefined, undefined, fillMissingCellValues(updatedRows));
+    ({ rows }: RowsUpdateArgs) => {
+      spreadDecisionTableExpressionDefinition(undefined, undefined, fillMissingCellValues(rows));
     },
     [fillMissingCellValues, spreadDecisionTableExpressionDefinition]
   );
