@@ -30,6 +30,7 @@ import {
   updateElementViaPopover,
   usingTestingBoxedExpressionI18nContext,
   usingTestingBoxedExpressionProviderContext,
+  wrapComponentInContext,
 } from "../test-utils";
 import { DEFAULT_MIN_WIDTH } from "../../../components/Resizer";
 
@@ -443,7 +444,7 @@ describe("Table tests", () => {
 
       const { container, baseElement } = render(
         usingTestingBoxedExpressionI18nContext(
-          usingTestingBoxedExpressionProviderContext(
+          wrapComponentInContext(
             <Table
               columns={[firstColumn, secondColumn]}
               rows={[]}
@@ -456,7 +457,7 @@ describe("Table tests", () => {
                 },
               ]}
             />
-          ).wrapper
+          )
         ).wrapper
       );
       await openContextMenu(container.querySelectorAll(EXPRESSION_COLUMN_HEADER)[1]);
@@ -479,7 +480,7 @@ describe("Table tests", () => {
 
       const { container, baseElement } = render(
         usingTestingBoxedExpressionI18nContext(
-          usingTestingBoxedExpressionProviderContext(
+          wrapComponentInContext(
             <Table
               columns={[firstColumn, secondColumn]}
               rows={[row]}
@@ -492,7 +493,7 @@ describe("Table tests", () => {
                 },
               ]}
             />
-          ).wrapper
+          )
         ).wrapper
       );
       await openContextMenu(container.querySelector(expressionCell(0, 0))!);
@@ -637,7 +638,7 @@ async function selectMenuEntryIfNotDisabled(baseElement: Element, menuEntry: str
 export async function openContextMenu(element: Element): Promise<void> {
   await act(async () => {
     fireEvent.contextMenu(element);
-    // await flushPromises();
+    await flushPromises();
     jest.runAllTimers();
   });
 }
