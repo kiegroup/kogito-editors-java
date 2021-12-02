@@ -35,5 +35,5 @@ export const BoxedExpressionGlobalContext = React.createContext<BoxedExpressionG
 );
 
 export function useBoxedExpression() {
-  return useContext(BoxedExpressionGlobalContext)
+  return useContext(BoxedExpressionGlobalContext);
 }

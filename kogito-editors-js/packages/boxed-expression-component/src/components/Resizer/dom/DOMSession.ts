@@ -50,7 +50,7 @@ export class DOMSession {
         .map((child) => this.buildCell(child, cells, depthLevel + 1))
         .filter((c) => c.depth == depthLevel + 1),
       depthLevel,
-      this.container,
+      this.container
     );
 
     cells.push(cell);

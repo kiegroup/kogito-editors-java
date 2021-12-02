@@ -19,7 +19,8 @@ import { fireEvent, render } from "@testing-library/react";
 import {
   flushPromises,
   usingTestingBoxedExpressionI18nContext,
-  usingTestingBoxedExpressionProviderContext, wrapComponentInContext
+  usingTestingBoxedExpressionProviderContext,
+  wrapComponentInContext,
 } from "../test-utils";
 import * as React from "react";
 import { DecisionTableExpression } from "../../../components/DecisionTableExpression";
@@ -158,9 +159,7 @@ describe("DecisionTableExpression tests", () => {
     mockBroadcastDefinition(mockedBroadcastDefinition);
     const { container, baseElement } = render(
       usingTestingBoxedExpressionI18nContext(
-        wrapComponentInContext(
-          <DecisionTableExpression id="decision-node-id" logicType={LogicType.DecisionTable} />
-        )
+        wrapComponentInContext(<DecisionTableExpression id="decision-node-id" logicType={LogicType.DecisionTable} />)
       ).wrapper
     );
 

@@ -25,10 +25,11 @@ import {
   generateUuid,
   ListProps,
   LiteralExpressionProps,
-  LogicType, RowsUpdateArgs,
+  LogicType,
+  RowsUpdateArgs,
   TableHandlerConfiguration,
   TableHeaderVisibility,
-  TableOperation
+  TableOperation,
 } from "../../api";
 import { ContextEntryExpressionCell } from "../ContextExpression";
 import { Table } from "../Table";
