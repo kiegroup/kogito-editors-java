@@ -188,10 +188,9 @@ export const Table: React.FunctionComponent<TableProps> = ({
       }
     }
 
-    // TODO: Remove document
-    document.addEventListener(tableEventUUID, listener);
+    boxedExpression.editorRef.current?.addEventListener(tableEventUUID, listener);
     return () => {
-      document.removeEventListener(tableEventUUID, listener);
+      boxedExpression.editorRef.current?.removeEventListener(tableEventUUID, listener);
     };
   }, [
     tableEventUUID,
@@ -200,6 +199,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
     onColumnsUpdate,
     onRowAddingCallback,
     columns,
+    boxedExpression.editorRef,
   ]);
 
   const onColumnsUpdateCallback = useCallback(

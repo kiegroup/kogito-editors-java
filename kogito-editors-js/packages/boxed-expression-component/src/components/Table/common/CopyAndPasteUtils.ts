@@ -42,8 +42,9 @@ export const PASTE_OPERATION = "PASTE_OPERATION";
  * +-----+-----+-----+
  * @param pasteValue   - value being pasted
  * @param reference    - reference element
+ * @param container    - container where the event will be dispatched
  */
-export const paste = (pasteValue: string, reference: Element) => {
+export const paste = (pasteValue: string, reference: Element, container?: HTMLElement) => {
   const cell = reference.closest("td");
   const coordinates = getCellCoordinates(cell);
   const detail = {
@@ -54,7 +55,7 @@ export const paste = (pasteValue: string, reference: Element) => {
 
   const eventId = getCellTableId(cell);
 
-  document.dispatchEvent(new CustomEvent(eventId, { detail }));
+  (container ?? document).dispatchEvent(new CustomEvent(eventId, { detail }));
 };
 
 /**

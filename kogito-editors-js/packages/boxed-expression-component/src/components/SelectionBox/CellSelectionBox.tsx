@@ -161,7 +161,7 @@ export const CellSelectionBox: React.FunctionComponent = () => {
         return;
       }
 
-      paste(pasteValue, selectedCell);
+      paste(pasteValue, selectedCell, boxedExpression.editorRef.current!);
       disableSelection();
     },
     [disableSelection, boxedExpression.editorRef]
