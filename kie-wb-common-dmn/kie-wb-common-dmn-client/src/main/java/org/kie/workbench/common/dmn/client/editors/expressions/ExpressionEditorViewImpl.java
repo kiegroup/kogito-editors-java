@@ -48,6 +48,7 @@ import org.kie.workbench.common.dmn.api.definition.model.List;
 import org.kie.workbench.common.dmn.api.definition.model.LiteralExpression;
 import org.kie.workbench.common.dmn.api.definition.model.Relation;
 import org.kie.workbench.common.dmn.api.editors.types.BuiltInTypeUtils;
+import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.api.property.dmn.QName;
 import org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType;
@@ -101,8 +102,6 @@ import org.uberfire.ext.wires.core.grids.client.widget.grid.impl.KeyboardOperati
 import org.uberfire.ext.wires.core.grids.client.widget.grid.impl.KeyboardOperationMoveUp;
 import org.uberfire.ext.wires.core.grids.client.widget.layer.pinning.TransformMediator;
 import org.uberfire.ext.wires.core.grids.client.widget.layer.pinning.impl.RestrictedMousePanMediator;
-
-import static org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionType.UNDEFINED;
 
 @Templated
 @Dependent
@@ -531,7 +530,7 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
         return modelName -> {
             final EntryInfo[] parametersFromModel = pmmlDocumentMetadataProvider.getPMMLDocumentModelParameterNames(documentName, modelName)
                     .stream()
-                    .map(parameter -> new EntryInfo(parameter, parameter, UNDEFINED.getText()))
+                    .map(parameter -> new EntryInfo(new Id().getValue(), parameter, BuiltInType.ANY.getName()))
                     .toArray(EntryInfo[]::new);
             return new ModelsFromDocument(modelName, parametersFromModel);
         };
