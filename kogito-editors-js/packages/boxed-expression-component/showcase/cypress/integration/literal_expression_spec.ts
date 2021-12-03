@@ -14,7 +14,7 @@ describe("Literal Expression Tests", () => {
 
     // Change return type to boolean
     cy.get(".literal-expression-header").click();
-    
+
     cy.ouiaId("edit-expression-data-type").within(($container) => {
       cy.get("input").click({ force: true });
     });
