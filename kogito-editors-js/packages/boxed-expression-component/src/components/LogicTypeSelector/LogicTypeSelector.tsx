@@ -211,22 +211,22 @@ export const LogicTypeSelector: React.FunctionComponent<LogicTypeSelectorProps> 
     return !selectedExpression.noClearAction && contextMenuVisibility && clickedOnAllowedTableSection;
   }, [contextMenuVisibility, selectedExpression.noClearAction, targetElement]);
 
-  const getCssClasses = useMemo(() => {
-    const cssClasses = [];
+  const cssClasses = useMemo(() => {
+    const classes = [];
     if (!isHeadless) {
-      cssClasses.push(`${globalContext.decisionNodeId}`);
+      classes.push(`${globalContext.decisionNodeId}`);
     }
-    cssClasses.push("logic-type-selector");
+    classes.push("logic-type-selector");
     if (isLogicTypeSelected) {
-      cssClasses.push("logic-type-selected");
+      classes.push("logic-type-selected");
     } else {
-      cssClasses.push("logic-type-not-present");
+      classes.push("logic-type-not-present");
     }
-    return cssClasses.join(" ");
+    return classes.join(" ");
   }, [globalContext.decisionNodeId, isHeadless, isLogicTypeSelected]);
 
   return (
-    <div className={getCssClasses} ref={contextMenuRef}>
+    <div className={cssClasses} ref={contextMenuRef}>
       {isLogicTypeSelected ? renderExpression : i18n.selectExpression}
       {!isLogicTypeSelected && buildLogicSelectorMenu}
       {shouldClearContextMenuBeOpened && buildContextMenu}
