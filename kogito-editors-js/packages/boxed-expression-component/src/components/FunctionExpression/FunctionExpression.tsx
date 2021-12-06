@@ -52,6 +52,8 @@ export const DEFAULT_FIRST_PARAM_NAME = "p-1";
 export const FunctionExpression: React.FunctionComponent<FunctionProps> = (
   functionExpression: PropsWithChildren<FunctionProps>
 ) => {
+  const FIRST_ENTRY_ID = "0";
+  const SECOND_ENTRY_ID = "1";
   const { i18n } = useBoxedExpressionEditorI18n();
   const { boxedExpressionEditorRef, setSupervisorHash, pmmlParams } = useContext(BoxedExpressionGlobalContext);
   const pmmlDocument = useMemo(
@@ -103,7 +105,7 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (
   const extractContextEntriesFromJavaProps = useMemo(() => {
     return [
       {
-        entryInfo: { id: "0", name: i18n.class, dataType: DataType.String },
+        entryInfo: { id: FIRST_ENTRY_ID, name: i18n.class, dataType: DataType.String },
         entryExpression: {
           id: javaClassFieldId,
           noClearAction: true,
@@ -112,7 +114,7 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (
         } as LiteralExpressionProps,
       },
       {
-        entryInfo: { id: "1", name: i18n.methodSignature, dataType: DataType.String },
+        entryInfo: { id: SECOND_ENTRY_ID, name: i18n.methodSignature, dataType: DataType.String },
         entryExpression: {
           id: javaMethodFieldId,
           noClearAction: true,
@@ -126,7 +128,7 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (
   const extractContextEntriesFromPmmlProps = useMemo(() => {
     return [
       {
-        entryInfo: { id: "0", name: i18n.document, dataType: DataType.String },
+        entryInfo: { id: FIRST_ENTRY_ID, name: i18n.document, dataType: DataType.String },
         entryExpression: {
           id: pmmlDocumentFieldId,
           noClearAction: true,
@@ -138,7 +140,7 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (
         } as PMMLLiteralExpressionProps,
       },
       {
-        entryInfo: { id: "1", name: i18n.model, dataType: DataType.String },
+        entryInfo: { id: SECOND_ENTRY_ID, name: i18n.model, dataType: DataType.String },
         entryExpression: {
           id: pmmlModelFieldId,
           noClearAction: true,
@@ -176,7 +178,7 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (
       switch (functionKind) {
         case FunctionKind.Java: {
           return {
-            id: "0",
+            id: FIRST_ENTRY_ID,
             entryExpression: {
               logicType: LogicType.Context,
               noClearAction: true,
@@ -188,7 +190,7 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (
         }
         case FunctionKind.Pmml: {
           return {
-            id: "0",
+            id: FIRST_ENTRY_ID,
             entryExpression: {
               logicType: LogicType.Context,
               noClearAction: true,
@@ -201,7 +203,7 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (
         case FunctionKind.Feel:
         default: {
           return {
-            id: "0",
+            id: FIRST_ENTRY_ID,
             entryExpression: feelExpression || { logicType: LogicType.LiteralExpression },
           } as DataRecord;
         }
