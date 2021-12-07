@@ -51,7 +51,7 @@ pipeline {
         }
         stage('Analyze Kogito Editors Java by SonarCloud') {
             when {
-                expression { isNormalPRCheck() && isSonarCloudEnabled() }
+                expression { isNormalPRCheck() }
             }
             steps {
                 script {
@@ -132,10 +132,6 @@ String getUpstreamTriggerProject() {
 
 boolean isNormalPRCheck() {
     return !isDownstreamJob()
-}
-
-boolean isSonarCloudEnabled() {
-    return env['ENABLE_SONARCLOUD'] && env['ENABLE_SONARCLOUD'].toBoolean()
 }
 
 Integer getTimeoutValue() {
