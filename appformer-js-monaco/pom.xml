@@ -47,17 +47,7 @@
               <goal>npm</goal>
             </goals>
             <configuration>
-              <arguments>exec @kie/lock-treatment-tool</arguments>
-            </configuration>
-          </execution>
-          <execution>
-            <id>lock-treatment-tool execution</id>
-            <phase>initialize</phase>
-            <goals>
-              <goal>npm</goal>
-            </goals>
-            <configuration>
-              <arguments>exec @kie/lock-treatment-tool --no-install --</arguments>
+              <arguments>exec @kie/lock-treatment-tool --</arguments>
             </configuration>
           </execution>
           <execution>
