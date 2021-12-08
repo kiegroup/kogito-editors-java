@@ -84,6 +84,7 @@ export const HitPolicySelector: React.FunctionComponent<HitPolicySelectorProps> 
 
   const builtInAggregatorSelectionCallback = useCallback(
     (event: React.MouseEvent<Element, MouseEvent>, itemId: string) => {
+      window.beeApi?.notifyUserAction();
       onBuiltInAggregatorSelect(itemId as BuiltinAggregation);
       setBuiltInAggregatorSelectOpen(false);
     },

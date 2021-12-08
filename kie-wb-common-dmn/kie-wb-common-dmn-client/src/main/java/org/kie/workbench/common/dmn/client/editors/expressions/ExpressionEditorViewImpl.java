@@ -530,6 +530,17 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
     @Override
     public void reloadEditor() {
         loadNewBoxedExpressionEditor();
+
+        // This should be removed when the older editor is removed.
+        syncExpressionWithOlderEditor();
+    }
+
+    void syncExpressionWithOlderEditor() {
+        getExpressionGridCacheSupplier().get().removeExpressionGrid(getNodeUUID());
+        expressionContainerGrid.setExpression(getNodeUUID(),
+                                              getHasExpression(),
+                                              getHasName(),
+                                              isOnlyVisualChangeAllowed);
     }
 
     void reloadIfIsNewEditor() {
