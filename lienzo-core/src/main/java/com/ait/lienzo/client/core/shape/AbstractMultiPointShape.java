@@ -31,6 +31,8 @@ import com.ait.lienzo.client.core.event.NodeDragMoveEvent;
 import com.ait.lienzo.client.core.event.NodeDragMoveHandler;
 import com.ait.lienzo.client.core.event.NodeDragStartEvent;
 import com.ait.lienzo.client.core.event.NodeDragStartHandler;
+import com.ait.lienzo.client.core.event.NodeMouseClickEvent;
+import com.ait.lienzo.client.core.event.NodeMouseClickHandler;
 import com.ait.lienzo.client.core.event.NodeMouseEnterEvent;
 import com.ait.lienzo.client.core.event.NodeMouseEnterHandler;
 import com.ait.lienzo.client.core.event.NodeMouseExitEvent;
@@ -258,6 +260,9 @@ public abstract class AbstractMultiPointShape<T extends AbstractMultiPointShape<
             private final AbstractMultiPointShape<?> shape;
             private SegmentXorYChanged handle;
 
+            //handrey
+            private HandleSegmentClick handleClick;
+
             public static SegmentHandle build(int index, AbstractMultiPointShape<?> shape) {
                 SegmentHandle handle = new SegmentHandle(index, shape);
                 Point2D p0 = handle.getP0();
@@ -277,10 +282,18 @@ public abstract class AbstractMultiPointShape<T extends AbstractMultiPointShape<
                 Point2D p0 = getP0();
                 Point2D p1 = getP1();
                 handle = new SegmentXorYChanged(this, shape, p0, p1);
+
+                handleClick = new HandleSegmentClick(shape, p0, p1);
+
                 final Arrow prim = (Arrow) handle.getPrimitive();
                 register(prim.addNodeDragMoveHandler(handle));
                 register(prim.addNodeDragStartHandler(handle));
                 register(prim.addNodeDragEndHandler(handle));
+
+                //handrey
+                //register(prim.addNodeMouseClickHandler(onClickHandler));//TODO handrey create a handler here
+                register(prim.addNodeMouseClickHandler(handleClick));
+
                 prim.setDragConstraints(handle);
                 final boolean horizontal = handle.isVertical();
                 register(prim.addNodeMouseEnterHandler(new NodeMouseEnterHandler() {
@@ -333,10 +346,33 @@ public abstract class AbstractMultiPointShape<T extends AbstractMultiPointShape<
             }
         }
 
-        public static class SegmentXorYChanged extends HandleXorYChanged implements DragConstraintEnforcer {
+        //handrey
+        public static class HandleSegmentClick implements NodeMouseClickHandler {
+
             private final Point2D p0;
             private final Point2D p1;
-            private static final double RADIUS= 10;
+            private final AbstractMultiPointShape<?> shape;
+
+            public HandleSegmentClick(AbstractMultiPointShape<?> shape, Point2D p0, Point2D p1) {
+                this.p0 = p0;
+                this.p1 = p1;
+                this.shape = shape;
+            }
+
+            @Override
+            public void onNodeMouseClick(NodeMouseClickEvent event) {
+                // Add / remove inferred points on segment handle click
+                if (shape instanceof PolyMorphicLine) {
+                    ((PolyMorphicLine) shape).handleInferredPoints(p0, p1);
+                }
+            }
+        }
+
+        public static class SegmentXorYChanged extends HandleXorYChanged implements DragConstraintEnforcer {
+
+            private final Point2D p0;
+            private final Point2D p1;
+            private static final double RADIUS = 10;
 
             public SegmentXorYChanged(IControlHandle m_handle, AbstractMultiPointShape<?> shape, Point2D p0, Point2D p1) {
                 super(m_handle, shape);
@@ -366,8 +402,8 @@ public abstract class AbstractMultiPointShape<T extends AbstractMultiPointShape<
             }
 
             private static Point2D getArrowEndPoint(Point2D location,
-                                                      boolean horizontal,
-                                                      double radius) {
+                                                    boolean horizontal,
+                                                    double radius) {
                 Point2D end = new Point2D(horizontal ? location.getX() + radius : location.getX(),
                                           horizontal ? location.getY() : location.getY() + radius);
                 return end;
@@ -391,7 +427,6 @@ public abstract class AbstractMultiPointShape<T extends AbstractMultiPointShape<
                 Arrow arrow = new Arrow(start, end, baseWidth, headWidth, 45, 45, ArrowType.AT_BOTH_ENDS);
                 return arrow;
             }
-
 
             @Override
             public void onMove() {
@@ -446,7 +481,7 @@ public abstract class AbstractMultiPointShape<T extends AbstractMultiPointShape<
                         dxy.setY(deltamax);
                     }
                     delta = dxy;
-                } else if (isVertical())  {
+                } else if (isVertical()) {
                     dxy.setY(0);
                     if (deltamin <= 0 && dxy.getX() <= deltamin) {
                         dxy.setX(deltamin);
@@ -570,7 +605,6 @@ public abstract class AbstractMultiPointShape<T extends AbstractMultiPointShape<
             Point2D getPoint() {
                 return headNorTail ? m_shape.getPoints().get(0) : m_shape.getPoints().get(m_shape.getPoints().size() - 1);
             }
-
         }
 
         private static ControlHandleShape buildOrthogonalControlPointShape() {
@@ -627,7 +661,6 @@ public abstract class AbstractMultiPointShape<T extends AbstractMultiPointShape<
                         .M(-fontSize4 / 2, fontSize4)
                         .L(fontSize4 / 2, fontSize4);
             }
-
         }
 
         private static class ControlHandleShape extends Circle {
@@ -713,12 +746,11 @@ public abstract class AbstractMultiPointShape<T extends AbstractMultiPointShape<
                     context.restore();
                 }
             }
-
         }
 
         public static abstract class HandleXorYChanged implements NodeDragStartHandler,
-                                                         NodeDragMoveHandler,
-                                                         NodeDragEndHandler {
+                                                                  NodeDragMoveHandler,
+                                                                  NodeDragEndHandler {
 
             protected IControlHandle m_handle;
             protected AbstractMultiPointShape<?> m_shape;
@@ -773,7 +805,7 @@ public abstract class AbstractMultiPointShape<T extends AbstractMultiPointShape<
                 move(x, y);
             }
 
-            public  void move(double x, double y) {
+            public void move(double x, double y) {
                 Point2D point = getPoint();
                 m_shape.updatePoint(point, x, y);
             }
@@ -789,7 +821,6 @@ public abstract class AbstractMultiPointShape<T extends AbstractMultiPointShape<
             public Layer getLayer() {
                 return m_shape.getLayer();
             }
-
         }
 
         private IControlHandleList getPointHandles() {
@@ -924,9 +955,9 @@ public abstract class AbstractMultiPointShape<T extends AbstractMultiPointShape<
     }
 
     public static class ControlPointChanged implements NodeDragStartHandler,
-                                                      NodeDragMoveHandler,
-                                                      NodeDragEndHandler,
-                                                       DragConstraintEnforcer{
+                                                       NodeDragMoveHandler,
+                                                       NodeDragEndHandler,
+                                                       DragConstraintEnforcer {
 
         private DefaultMultiPointShapeHandleFactory.ControlHandleShape m_prim;
 
@@ -943,7 +974,6 @@ public abstract class AbstractMultiPointShape<T extends AbstractMultiPointShape<
         private int m_index;
 
         private Layer m_layer;
-
 
         public ControlPointChanged(IControlHandleList handleList, AbstractMultiPointShape<?> shape, int index, Point2D point, DefaultMultiPointShapeHandleFactory.ControlHandleShape prim, AbstractPointControlHandle handle, Layer layer) {
             m_handleList = handleList;
@@ -1075,9 +1105,7 @@ public abstract class AbstractMultiPointShape<T extends AbstractMultiPointShape<
             } else if (Math.abs(yDiffAfter) <= SEGMENT_SNAP_DISTANCE) {
                 target.setY(target.getY() - yDiffAfter);
             }
-
         }
-
     }
 
     private static PolyLine buildShadow(AbstractMultiPointShape<?> m_shape) {
