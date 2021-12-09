@@ -99,7 +99,7 @@ export const EditParameters: React.FunctionComponent<EditParametersProps> = ({ p
               <Button
                 variant="danger"
                 className="delete-parameter"
-                icon={<OutlinedTrashAltIcon/>}
+                icon={<OutlinedTrashAltIcon />}
                 iconPosition="left"
                 onClick={onParameterRemove(index)}
               >

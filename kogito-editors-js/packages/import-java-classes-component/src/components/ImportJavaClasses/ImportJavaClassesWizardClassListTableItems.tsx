@@ -27,22 +27,23 @@ export interface ImportJavaClassesWizardClassListTableItemsProps {
   onJavaClassItemSelected: (fullClassName: string, add: boolean) => void;
 }
 
-export const ImportJavaClassesWizardClassListTableItems: React.FunctionComponent<ImportJavaClassesWizardClassListTableItemsProps> =
-  ({ fullClassName, selected, onJavaClassItemSelected }: ImportJavaClassesWizardClassListTableItemsProps) => {
-    const [itemChecked, setItemChecked] = useState(selected);
-    const onDataListCheckChange = useCallback(() => {
-      onJavaClassItemSelected(fullClassName, !itemChecked);
-      setItemChecked(!itemChecked);
-    }, [fullClassName, itemChecked, onJavaClassItemSelected]);
+export const ImportJavaClassesWizardClassListTableItems: React.FunctionComponent<
+  ImportJavaClassesWizardClassListTableItemsProps
+> = ({ fullClassName, selected, onJavaClassItemSelected }: ImportJavaClassesWizardClassListTableItemsProps) => {
+  const [itemChecked, setItemChecked] = useState(selected);
+  const onDataListCheckChange = useCallback(() => {
+    onJavaClassItemSelected(fullClassName, !itemChecked);
+    setItemChecked(!itemChecked);
+  }, [fullClassName, itemChecked, onJavaClassItemSelected]);
 
-    return (
-      <DataListItem name={fullClassName}>
-        <DataListItemRow>
-          <DataListCheck aria-labelledby={fullClassName} checked={itemChecked} onChange={onDataListCheckChange} />
-          <DataListCell>
-            <span id={fullClassName}>{fullClassName}</span>
-          </DataListCell>
-        </DataListItemRow>
-      </DataListItem>
-    );
-  };
+  return (
+    <DataListItem name={fullClassName}>
+      <DataListItemRow>
+        <DataListCheck aria-labelledby={fullClassName} checked={itemChecked} onChange={onDataListCheckChange} />
+        <DataListCell>
+          <span id={fullClassName}>{fullClassName}</span>
+        </DataListCell>
+      </DataListItemRow>
+    </DataListItem>
+  );
+};

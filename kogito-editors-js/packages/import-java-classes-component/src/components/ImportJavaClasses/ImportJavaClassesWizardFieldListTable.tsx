@@ -37,102 +37,103 @@ export interface ImportJavaClassesWizardFieldListTableProps {
   fetchButtonLabel?: string;
 }
 
-export const ImportJavaClassesWizardFieldListTable: React.FunctionComponent<ImportJavaClassesWizardFieldListTableProps> =
-  ({
-    selectedJavaClassFields,
-    readOnly,
-    tableClassName,
-    onFetchButtonClick,
-    fetchButtonLabel,
-  }: ImportJavaClassesWizardFieldListTableProps) => {
-    const [expanded, setExpanded] = React.useState(
-      Object.fromEntries(
-        selectedJavaClassFields.map((value, index) => [index, Boolean(value.fields && value.fields.length > 0)])
-      )
-    );
-    const handleExpansionToggle = (event: React.MouseEvent, pairIndex: number) => {
-      setExpanded({
-        ...expanded,
-        [pairIndex]: !expanded[pairIndex],
-      });
-    };
-    const decorateWithRoundBrackets = (typeName: string) => {
-      return "(" + typeName + ")";
-    };
-    const isFetchable = (field: JavaField) => {
-      return field.dmnTypeRef === DMNSimpleType.ANY;
-    };
-    const fetchButton = useCallback(
-      (field: JavaField) => {
-        return (
-          <Button
-            className={"fetch-button"}
-            onClick={onFetchButtonClick ? () => onFetchButtonClick(field.type) : undefined}
-            variant="primary"
-            isSmall
-          >
-            {fetchButtonLabel + ' "' + getJavaClassSimpleName(field.type) + '" class'}
-          </Button>
-        );
-      },
-      // eslint-disable-next-line
-      [selectedJavaClassFields]
-    );
-
-    let rowIndex = -1;
-    return (
-      <div className={tableClassName}>
-        <TableComposable aria-label="field-table">
-          {selectedJavaClassFields.map((javaClass, index) => {
-            rowIndex += 1;
-            const parentRow = (
-              <Tr key={rowIndex}>
-                <Td
-                  key={`${rowIndex}_0`}
-                  expand={
-                    javaClass.fields && javaClass.fields.length > 0
-                      ? {
-                          rowIndex: index,
-                          isExpanded: expanded[index],
-                          onToggle: handleExpansionToggle,
-                        }
-                      : undefined
-                  }
-                />
-                <Td key={`${rowIndex}_${javaClass.name}`}>
-                  <span>
-                    <strong>{getJavaClassSimpleName(javaClass.name)}</strong>
-                  </span>
-                  <span className={"dmn-type-name"}>(Structure)</span>
-                </Td>
-              </Tr>
-            );
-            const childRow =
-              javaClass.fields && javaClass.fields.length > 0
-                ? javaClass.fields.map((field) => {
-                    rowIndex += 1;
-                    return (
-                      <Tr key={rowIndex} isExpanded={expanded[index] === true}>
-                        <Td key={`${rowIndex}_0`} />
-                        <Td key={`${rowIndex}_${field.name}`}>
-                          <ExpandableRowContent>
-                            <span>{field.name}</span>
-                            <span className={"dmn-type-name"}>{decorateWithRoundBrackets(field.dmnTypeRef)}</span>
-                            {!readOnly && isFetchable(field) ? fetchButton(field) : null}
-                          </ExpandableRowContent>
-                        </Td>
-                      </Tr>
-                    );
-                  })
-                : undefined;
-            return (
-              <Tbody key={index} isExpanded={expanded[index] === true}>
-                {parentRow}
-                {childRow}
-              </Tbody>
-            );
-          })}
-        </TableComposable>
-      </div>
-    );
+export const ImportJavaClassesWizardFieldListTable: React.FunctionComponent<
+  ImportJavaClassesWizardFieldListTableProps
+> = ({
+  selectedJavaClassFields,
+  readOnly,
+  tableClassName,
+  onFetchButtonClick,
+  fetchButtonLabel,
+}: ImportJavaClassesWizardFieldListTableProps) => {
+  const [expanded, setExpanded] = React.useState(
+    Object.fromEntries(
+      selectedJavaClassFields.map((value, index) => [index, Boolean(value.fields && value.fields.length > 0)])
+    )
+  );
+  const handleExpansionToggle = (event: React.MouseEvent, pairIndex: number) => {
+    setExpanded({
+      ...expanded,
+      [pairIndex]: !expanded[pairIndex],
+    });
   };
+  const decorateWithRoundBrackets = (typeName: string) => {
+    return "(" + typeName + ")";
+  };
+  const isFetchable = (field: JavaField) => {
+    return field.dmnTypeRef === DMNSimpleType.ANY;
+  };
+  const fetchButton = useCallback(
+    (field: JavaField) => {
+      return (
+        <Button
+          className={"fetch-button"}
+          onClick={onFetchButtonClick ? () => onFetchButtonClick(field.type) : undefined}
+          variant="primary"
+          isSmall
+        >
+          {fetchButtonLabel + ' "' + getJavaClassSimpleName(field.type) + '" class'}
+        </Button>
+      );
+    },
+    // eslint-disable-next-line
+    [selectedJavaClassFields]
+  );
+
+  let rowIndex = -1;
+  return (
+    <div className={tableClassName}>
+      <TableComposable aria-label="field-table">
+        {selectedJavaClassFields.map((javaClass, index) => {
+          rowIndex += 1;
+          const parentRow = (
+            <Tr key={rowIndex}>
+              <Td
+                key={`${rowIndex}_0`}
+                expand={
+                  javaClass.fields && javaClass.fields.length > 0
+                    ? {
+                        rowIndex: index,
+                        isExpanded: expanded[index],
+                        onToggle: handleExpansionToggle,
+                      }
+                    : undefined
+                }
+              />
+              <Td key={`${rowIndex}_${javaClass.name}`}>
+                <span>
+                  <strong>{getJavaClassSimpleName(javaClass.name)}</strong>
+                </span>
+                <span className={"dmn-type-name"}>(Structure)</span>
+              </Td>
+            </Tr>
+          );
+          const childRow =
+            javaClass.fields && javaClass.fields.length > 0
+              ? javaClass.fields.map((field) => {
+                  rowIndex += 1;
+                  return (
+                    <Tr key={rowIndex} isExpanded={expanded[index] === true}>
+                      <Td key={`${rowIndex}_0`} />
+                      <Td key={`${rowIndex}_${field.name}`}>
+                        <ExpandableRowContent>
+                          <span>{field.name}</span>
+                          <span className={"dmn-type-name"}>{decorateWithRoundBrackets(field.dmnTypeRef)}</span>
+                          {!readOnly && isFetchable(field) ? fetchButton(field) : null}
+                        </ExpandableRowContent>
+                      </Td>
+                    </Tr>
+                  );
+                })
+              : undefined;
+          return (
+            <Tbody key={index} isExpanded={expanded[index] === true}>
+              {parentRow}
+              {childRow}
+            </Tbody>
+          );
+        })}
+      </TableComposable>
+    </div>
+  );
+};

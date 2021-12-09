@@ -79,7 +79,8 @@ public class FillExpressionCommandTest {
     public void setup() {
 
         String logicType = "logic type";
-        expressionProps = new ExpressionProps(name,
+        expressionProps = new ExpressionProps("id",
+                                              name,
                                               dataType,
                                               logicType);
 
