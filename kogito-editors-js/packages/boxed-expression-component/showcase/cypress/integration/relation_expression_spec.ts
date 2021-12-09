@@ -81,7 +81,6 @@ describe("Relation Expression Tests", () => {
     // Define new expression as Relation
     cy.ouiaId("expression-popover-menu").contains("Relation").click({ force: true });
 
-    // Define 50x50 Relation
     cy.ouiaId("edit-expression-json").click();
 
     cy.ouiaId("typed-expression-json").clear();
@@ -98,6 +97,46 @@ describe("Relation Expression Tests", () => {
       cy.ouiaId("expression-column-0").should("have.text", "3");
       cy.ouiaId("expression-column-1").should("have.text", "");
       cy.ouiaId("expression-column-2").should("have.text", "");
+      cy.ouiaId("expression-column-3").should("have.text", "");
+    });
+  });
+
+  it("copy and paste", () => {
+    // Entry point for each new expression
+    cy.ouiaId("expression-container").click();
+
+    // Define new expression as Relation
+    cy.ouiaId("expression-popover-menu").contains("Relation").click({ force: true });
+
+    cy.ouiaId("edit-expression-json").click();
+
+    cy.ouiaId("typed-expression-json").clear();
+    cy.ouiaId("typed-expression-json")
+      .invoke("val", JSON.stringify(relation(3, 1)))
+      .type(" ");
+
+    cy.ouiaId("confirm-expression-json").click();
+
+    cy.ouiaId("expression-grid-table").contains("row 0 column 0").rightclick();
+    cy.ouiaId("expression-table-handler-menu").contains("Insert below").click({ force: true });
+
+    cy.ouiaId("expression-grid-table")
+      .contains("row 0 column 0")
+      .trigger("mousedown", "topLeft", { which: 1 })
+      .trigger("mousemove", { clientX: 300, clientY: 10 })
+      .trigger("mouseup", { force: true });
+
+    // copy
+    cy.realPress(["ControlLeft", "C"]);
+
+    // paste
+    cy.ouiaId("expression-row-1").ouiaId("expression-column-1").click();
+    cy.realPress(["ControlLeft", "V"]);
+
+    cy.ouiaId("expression-row-1").within(($row) => {
+      cy.ouiaId("expression-column-0").should("have.text", "2");
+      cy.ouiaId("expression-column-1").should("contain.text", "row 0 column 0");
+      cy.ouiaId("expression-column-2").should("contain.text", "row 0 column 1");
       cy.ouiaId("expression-column-3").should("have.text", "");
     });
   });
