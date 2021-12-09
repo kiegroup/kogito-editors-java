@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import "./Resizer.css";
 import * as React from "react";
 import { useContext, useEffect } from "react";
 import { applyDOMSupervisor } from "./dom";
