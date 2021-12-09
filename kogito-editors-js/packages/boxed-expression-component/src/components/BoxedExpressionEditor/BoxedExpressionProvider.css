@@ -23,6 +23,7 @@
   text-align: left;
   user-select: none;
   touch-action: none;
+  height: 100%;
 }
 
 .boxed-expression-provider *,

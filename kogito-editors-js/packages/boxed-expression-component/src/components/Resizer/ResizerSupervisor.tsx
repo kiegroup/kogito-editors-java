@@ -19,6 +19,7 @@ import * as React from "react";
 import { useContext, useEffect } from "react";
 import { applyDOMSupervisor } from "./dom";
 import { BoxedExpressionGlobalContext, useBoxedExpression } from "../../context";
+import "./ResizerSupervisor.css";
 
 export interface ResizerSupervisorProps {
   children?: React.ReactElement;
@@ -38,5 +39,5 @@ export const ResizerSupervisor: React.FunctionComponent<ResizerSupervisorProps> 
     return () => clearTimeout(id);
   }, [isRunnerTable, supervisorHash, boxedExpression.editorRef]);
 
-  return <div>{children}</div>;
+  return <div className={"react-resizable-supervisor"}>{children}</div>;
 };

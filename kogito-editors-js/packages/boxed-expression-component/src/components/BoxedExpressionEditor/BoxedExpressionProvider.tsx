@@ -48,7 +48,8 @@ export function BoxedExpressionProvider(props: BoxedExpressionProviderProps) {
   return (
     <BoxedExpressionGlobalContext.Provider
       value={{
-        decisionNodeId: props.decisionNodeId,pmmlParams: props.pmmlParams,
+        decisionNodeId: props.decisionNodeId,
+        pmmlParams: props.pmmlParams,
         supervisorHash,
         setSupervisorHash,
         editorRef,
