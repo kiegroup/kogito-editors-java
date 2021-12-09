@@ -2,7 +2,9 @@
 
 exports[`BoxedExpressionEditor tests should render BoxedExpressionEditor component 1`] = `
 <div>
-  <div>
+  <div
+    class="react-resizable-supervisor"
+  >
     <div
       class="boxed-expression-provider"
     >
