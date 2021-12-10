@@ -54,22 +54,25 @@ describe("Relation Expression Tests", () => {
     };
   };
 
-  it("Define 50x50 Relation expression", () => {
-    // Entry point for each new expression
-    cy.ouiaId("expression-container").click();
-
+  function defineRelationExpression(columnSize: number, rowsSize: number) {
     // Define new expression as Relation
     cy.ouiaId("expression-popover-menu").contains("Relation").click({ force: true });
 
-    // Define 50x50 Relation
     cy.ouiaId("edit-expression-json").click();
 
     cy.ouiaId("typed-expression-json").clear();
     cy.ouiaId("typed-expression-json")
-      .invoke("val", JSON.stringify(relation(50, 50)))
+      .invoke("val", JSON.stringify(relation(columnSize, rowsSize)))
       .type(" ");
 
     cy.ouiaId("confirm-expression-json").click();
+  }
+
+  it("Define 50x50 Relation expression", () => {
+    // Entry point for each new expression
+    cy.ouiaId("expression-container").click();
+
+    defineRelationExpression(50, 50);
 
     cy.ouiaId("expression-grid-table").should("contain.text", "row 49 column 49");
   });
@@ -78,17 +81,7 @@ describe("Relation Expression Tests", () => {
     // Entry point for each new expression
     cy.ouiaId("expression-container").click();
 
-    // Define new expression as Relation
-    cy.ouiaId("expression-popover-menu").contains("Relation").click({ force: true });
-
-    cy.ouiaId("edit-expression-json").click();
-
-    cy.ouiaId("typed-expression-json").clear();
-    cy.ouiaId("typed-expression-json")
-      .invoke("val", JSON.stringify(relation(3, 3)))
-      .type(" ");
-
-    cy.ouiaId("confirm-expression-json").click();
+    defineRelationExpression(3, 3);
 
     cy.ouiaId("expression-grid-table").contains("row 1 column 1").rightclick();
     cy.ouiaId("expression-table-handler-menu").contains("Insert below").click({ force: true });
@@ -105,17 +98,7 @@ describe("Relation Expression Tests", () => {
     // Entry point for each new expression
     cy.ouiaId("expression-container").click();
 
-    // Define new expression as Relation
-    cy.ouiaId("expression-popover-menu").contains("Relation").click({ force: true });
-
-    cy.ouiaId("edit-expression-json").click();
-
-    cy.ouiaId("typed-expression-json").clear();
-    cy.ouiaId("typed-expression-json")
-      .invoke("val", JSON.stringify(relation(3, 1)))
-      .type(" ");
-
-    cy.ouiaId("confirm-expression-json").click();
+    defineRelationExpression(3, 1);
 
     cy.ouiaId("expression-grid-table").contains("row 0 column 0").rightclick();
     cy.ouiaId("expression-table-handler-menu").contains("Insert below").click({ force: true });
