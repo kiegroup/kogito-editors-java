@@ -25,11 +25,13 @@ Map getMultijobPRConfig() {
             jobs : [
                     [
                             id: 'kogito-tooling-editors-java',
-                            primary: true
+                            primary: true,
+                            env : [
+                                // Sonarcloud analysis only on main branch
+                                // As we have only Community edition
+                                ENABLE_SONARCLOUD: Utils.isMainBranch(this),
+                            ]
                     ]
-            ],
-            extraEnv : [
-                    ENABLE_SONARCLOUD: Utils.isMainBranch(this)
             ]
     ]
 }

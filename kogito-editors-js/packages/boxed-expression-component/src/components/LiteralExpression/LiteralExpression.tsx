@@ -16,7 +16,7 @@
 
 import "./LiteralExpression.css";
 import * as React from "react";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import {
   DataType,
   executeIfExpressionDefinitionChanged,
@@ -36,7 +36,7 @@ export const LiteralExpression: React.FunctionComponent<LiteralExpressionProps> 
   const spreadLiteralExpressionDefinition = useCallback(
     (literalExpressionUpdate?: Partial<LiteralExpressionProps>) => {
       const expressionDefinition: LiteralExpressionProps = {
-        uid: literalExpression.uid,
+        id: literalExpression.id,
         name: literalExpression.name ?? EXPRESSION_NAME,
         dataType: literalExpression.dataType ?? DataType.Undefined,
         logicType: LogicType.LiteralExpression,
@@ -92,6 +92,12 @@ export const LiteralExpression: React.FunctionComponent<LiteralExpressionProps> 
     [spreadLiteralExpressionDefinition]
   );
 
+  // TODO: https://issues.redhat.com/browse/KOGITO-6341
+  useEffect(() => {
+    spreadLiteralExpressionDefinition();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <div className="literal-expression">
       {!literalExpression.isHeadless && (
@@ -116,11 +122,11 @@ export const LiteralExpression: React.FunctionComponent<LiteralExpressionProps> 
           </Resizer>
         </div>
       )}
-      <div className="literal-expression-body">
+      <div className={`${literalExpression.id} literal-expression-body`}>
         <EditableCell
           value={literalExpression.content ?? ""}
           rowIndex={0}
-          columnId={literalExpression.uid ?? "-"}
+          columnId={literalExpression.id ?? "-"}
           onCellUpdate={onCellUpdate}
         />
       </div>
