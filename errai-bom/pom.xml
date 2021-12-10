@@ -291,11 +291,6 @@
         <version>${version.de.benediktmeurer.gwt-slf4j}</version>
       </dependency>
       <dependency>
-        <groupId>io.netty</groupId>
-        <artifactId>netty</artifactId>
-        <version>${version.io.netty}</version>
-      </dependency>
-      <dependency>
         <groupId>javax.enterprise</groupId>
         <artifactId>cdi-api</artifactId>
         <version>${version.javax.enterprise}</version>
