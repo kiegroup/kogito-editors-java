@@ -24,8 +24,12 @@ export interface ImportJavaClassesWizardThirdStepProps {
   selectedJavaClasses: JavaClass[];
 }
 
-export const ImportJavaClassesWizardThirdStep: React.FunctionComponent<ImportJavaClassesWizardThirdStepProps> = ({
-  selectedJavaClasses,
-}: ImportJavaClassesWizardThirdStepProps) => {
-  return <ImportJavaClassesWizardFieldListTable selectedJavaClassFields={selectedJavaClasses} />;
+export const ImportJavaClassesWizardThirdStep = ({ selectedJavaClasses }: ImportJavaClassesWizardThirdStepProps) => {
+  return (
+    <>
+      <div className={"fields-table"}>
+        <ImportJavaClassesWizardFieldListTable selectedJavaClassFields={selectedJavaClasses} />
+      </div>
+    </>
+  );
 };
