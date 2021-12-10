@@ -201,15 +201,11 @@ public class DMNMarshallerImportsClientHelper implements DMNMarshallerImportsHel
                                 .then(fileContent -> promises.create((success, failed) -> dmnImportsService.getWbDefinitions(fileContent, new ServiceCallback<Definitions>() {
                                     @Override
                                     public void onSuccess(final Definitions definitions) {
-                                        LOGGER.warning("Entered");
-                                        final String modelPackage = ""; // Forse qui?
+                                        final String modelPackage = "";
                                         final String namespace = definitions.getNamespace().getValue();
-                                        LOGGER.warning("Namespace " + namespace);
                                         final String importType = DMNImportTypes.DMN.getDefaultNamespace();
                                         final int drgElementCount = definitions.getDrgElement().size();
-                                        LOGGER.warning("drgElementCount " + drgElementCount);
                                         final int itemDefinitionCount = definitions.getItemDefinition().size();
-                                        LOGGER.warning("itemDefinitionCount " + itemDefinitionCount);
                                         models.add(new DMNIncludedModel(fileName,
                                                                         modelPackage,
                                                                         fileName,
@@ -222,7 +218,7 @@ public class DMNMarshallerImportsClientHelper implements DMNMarshallerImportsHel
 
                                     @Override
                                     public void onError(final ClientRuntimeError error) {
-                                        LOGGER.severe(error::getMessage);
+                                        LOGGER.warning(error::getMessage);
                                         //Swallow. Since it must try to load other paths.
                                         success.onInvoke(promises.resolve());
                                     }
