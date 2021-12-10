@@ -198,7 +198,7 @@ const ImportJavaClassesWrapper: React.FunctionComponent<ImportJavaClassesWrapper
       buttonDisabledStatus={buttonDisabledStatus}
       buttonTooltipMessage={buttonTooltipMessage}
       sendJavaClassesToEditor={sendJavaClassesToEditor} // TODO 1 object scope talk with gwt layer
-                                                        // TODO 1 object scope talk with LSP ext.
+      // TODO 1 object scope talk with LSP ext.
     />
   );
 };

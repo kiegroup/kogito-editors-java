@@ -28,33 +28,42 @@ import { useImportJavaClassesWizardI18n } from "../../i18n";
 export type ImportJavaClassesWizardFieldListTableProps = {
   /** List of the selected classes by user */
   selectedJavaClassFields: JavaClass[];
-} & (
-  | {
-      /** In ready only mode, fetch classes mechanism is not enabled */
-      isReadOnly: false;
-      /** Function to call when an Fetch button is clicked */
-      loadJavaClass: (fullClassName: string) => void;
-    }
-  | {
-      /** In ready only mode, fetch classes mechanism is not enabled */
-      isReadOnly: true;
-    }
-);
+  /** Function to call when a Fetch button is clicked */
+  loadJavaClass?: (fullClassName: string) => void;
+};
 
 export const ImportJavaClassesWizardFieldListTable = (props: ImportJavaClassesWizardFieldListTableProps) => {
-
   return (
     <TableComposable aria-label="field-table">
       {props.selectedJavaClassFields.map((javaClass, index) => {
-        return <ComponentToRename javaClass={javaClass} index={index} />
+        return (
+          <TableJavaClassItem
+            key={javaClass.name}
+            javaClass={javaClass}
+            index={index}
+            loadJavaClass={props.loadJavaClass}
+          />
+        );
       })}
     </TableComposable>
   );
 };
 
-const ComponentToRename = ({javaClass, index}: {javaClass: JavaClass, index: number}) => {
+const TableJavaClassItem = ({
+  javaClass,
+  index,
+  loadJavaClass,
+}: {
+  javaClass: JavaClass;
+  index: number;
+  loadJavaClass?: (fullClassName: string) => void;
+}) => {
   const { i18n } = useImportJavaClassesWizardI18n();
   const [isExpanded, setExpanded] = useState(false);
+
+  const isFetchable = useCallback((field: JavaField) => {
+    return field.dmnTypeRef === DMNSimpleType.ANY;
+  }, []);
 
   const parentRow = (
     <Tr key={`${javaClass.name}_tr`}>
@@ -63,51 +72,48 @@ const ComponentToRename = ({javaClass, index}: {javaClass: JavaClass, index: num
         expand={
           javaClass.fields && javaClass.fields.length > 0
             ? {
-              rowIndex: index,
-              isExpanded: isExpanded,
-              onToggle: () => setExpanded(prevState => !prevState),
-            }
+                rowIndex: index,
+                isExpanded: isExpanded,
+                onToggle: () => setExpanded((prevState) => !prevState),
+              }
             : undefined
         }
       />
       <Td key={`${javaClass.name}_td1`}>
-              <span>
-                <strong>{getJavaClassSimpleName(javaClass.name)}</strong>
-              </span>
+        <span>
+          <strong>{getJavaClassSimpleName(javaClass.name)}</strong>
+        </span>
         <span className={"dmn-type-name"}>(Structure)</span>
       </Td>
     </Tr>
   );
+
   const childRow =
     javaClass.fields && javaClass.fields.length > 0
       ? javaClass.fields.map((field) => {
-        return (
-          <Tr key={`${field.name}_tr`} isExpanded={isExpanded}>
-            <Td key={`${field.name}_td0`} />
-            <Td key={`${field.name}_td1`}>
-              <ExpandableRowContent>
-                <span>{field.name}</span>
-                <span className={"dmn-type-name"}>{`(${field.dmnTypeRef})`}</span>
-                {!props.isReadOnly && isFetchable(field) && (
-                  <Button
-                    className={"fetch-button"}
-                    onClick={() => props.loadJavaClass(field.type)}
-                    variant="primary"
-                    isSmall
-                  >
-                    {`${i18n.modalWizard.fieldTable.fetchButtonLabel} "${getJavaClassSimpleName(field.type)}" class`}
-                  </Button>
-                )}
-              </ExpandableRowContent>
-            </Td>
-          </Tr>
-        );
-      })
+          return (
+            <Tr key={`${field.name}_tr`} isExpanded={isExpanded}>
+              <Td key={`${field.name}_td0`} />
+              <Td key={`${field.name}_td1`}>
+                <ExpandableRowContent>
+                  <span>{field.name}</span>
+                  <span className={"dmn-type-name"}>{`(${field.dmnTypeRef})`}</span>
+                  {loadJavaClass && isFetchable(field) && (
+                    <Button
+                      className={"fetch-button"}
+                      onClick={() => loadJavaClass(field.type)}
+                      variant="primary"
+                      isSmall
+                    >
+                      {`${i18n.modalWizard.fieldTable.fetchButtonLabel} "${getJavaClassSimpleName(field.type)}" class`}
+                    </Button>
+                  )}
+                </ExpandableRowContent>
+              </Td>
+            </Tr>
+          );
+        })
       : undefined;
-
-  const isFetchable = useCallback((field: JavaField) => {
-    return field.dmnTypeRef === DMNSimpleType.ANY;
-  }, []);
 
   return (
     <Tbody key={index} isExpanded={isExpanded}>
@@ -115,4 +121,4 @@ const ComponentToRename = ({javaClass, index}: {javaClass: JavaClass, index: num
       {childRow}
     </Tbody>
   );
-}
+};

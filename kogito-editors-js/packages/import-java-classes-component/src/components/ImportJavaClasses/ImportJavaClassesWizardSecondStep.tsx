@@ -76,7 +76,6 @@ export const ImportJavaClassesWizardSecondStep: React.FunctionComponent<ImportJa
       ) : (
         <ImportJavaClassesWizardFieldListTable
           selectedJavaClassFields={selectedJavaClasses}
-          isReadOnly={false}
           loadJavaClass={onAddJavaClass}
         />
       )}

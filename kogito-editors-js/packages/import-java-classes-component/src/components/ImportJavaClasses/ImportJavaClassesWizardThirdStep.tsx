@@ -28,11 +28,7 @@ export const ImportJavaClassesWizardThirdStep: React.FunctionComponent<ImportJav
 }: ImportJavaClassesWizardThirdStepProps) => {
   return (
     <>
-      <ImportJavaClassesWizardFieldListTable
-        selectedJavaClassFields={selectedJavaClasses}
-        isReadOnly={true}
-        tableClassName={"fields-table"}
-      />
+      <ImportJavaClassesWizardFieldListTable selectedJavaClassFields={selectedJavaClasses} />
     </>
   );
 };
