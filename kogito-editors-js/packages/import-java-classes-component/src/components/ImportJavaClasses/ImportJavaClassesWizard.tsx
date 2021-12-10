@@ -25,20 +25,21 @@ import { JavaClass } from "./Model/JavaClass";
 import { JavaField } from "./Model/JavaField";
 import { DMNSimpleType } from "./Model/DMNSimpleType";
 import { getJavaClassSimpleName } from "./Model/JavaClassUtils";
+import { ImportJavaClassGWTService } from "./Model";
 
 export interface ImportJavaClassesWizardProps {
   /** Button disabled status */
   buttonDisabledStatus: boolean;
   /** Button tooltip message */
   buttonTooltipMessage?: string;
-  /** Function to call to send selected Java Classes to GWT Editor */
-  sendJavaClassesToEditor: (javaClasses: JavaClass[]) => void;
+  /** Service class which contains all API method to dialog with GWT layer */
+  importJavaClassesGWTService: ImportJavaClassGWTService;
 }
 
 export const ImportJavaClassesWizard = ({
   buttonDisabledStatus,
   buttonTooltipMessage,
-  sendJavaClassesToEditor,
+  importJavaClassesGWTService,
 }: ImportJavaClassesWizardProps) => {
   const { i18n } = useImportJavaClassesWizardI18n();
   const [javaClasses, setJavaClasses] = useState<JavaClass[]>([]);
@@ -109,8 +110,8 @@ export const ImportJavaClassesWizard = ({
   }, []);
 
   const handleWizardSave = useCallback(() => {
-    sendJavaClassesToEditor(javaClasses);
-  }, [javaClasses, sendJavaClassesToEditor]);
+    importJavaClassesGWTService.handleOnWizardImportButtonClick(javaClasses);
+  }, [javaClasses, importJavaClassesGWTService]);
 
   const steps = [
     {

@@ -29,7 +29,7 @@ import {
   RelationProps,
 } from "boxed-expression-component";
 import { HelloWorld } from "hello-world-component";
-import { ImportJavaClasses, JavaClass } from "import-java-classes-component";
+import { ImportJavaClasses, ImportJavaClassGWTService, JavaClass } from "import-java-classes-component";
 import * as React from "react";
 import { useEffect, useState } from "react";
 import * as ReactDOM from "react-dom";
@@ -193,16 +193,15 @@ const ImportJavaClassesWrapper: React.FunctionComponent<ImportJavaClassesWrapper
   const delay = () => new Promise((res) => setTimeout(res, Math.random() * (4000 - 750) + 1000));
   /** END TEMPORARY MOCK CODE TO TEST COMPONENT INSIDE THE EDITOR - TO BE REMOVED */
 
-  const sendJavaClassesToEditor = (javaClasses: JavaClass[]) => {
-    window.ImportJavaClassesAPI?.importJavaClasses?.(javaClasses);
+  const importJavaClassesGWTService: ImportJavaClassGWTService = {
+    handleOnWizardImportButtonClick: (javaClasses) => window.ImportJavaClassesAPI?.importJavaClasses?.(javaClasses),
   };
 
   return (
     <ImportJavaClasses
       buttonDisabledStatus={buttonDisabledStatus}
       buttonTooltipMessage={buttonTooltipMessage}
-      sendJavaClassesToEditor={sendJavaClassesToEditor} // TODO 1 object scope talk with gwt layer
-      // TODO 1 object scope talk with LSP ext.
+      importJavaClassesGWTService={importJavaClassesGWTService}
     />
   );
 };
