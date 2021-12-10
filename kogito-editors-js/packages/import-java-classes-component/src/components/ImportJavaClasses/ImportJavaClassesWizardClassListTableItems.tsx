@@ -36,6 +36,7 @@ export const ImportJavaClassesWizardClassListTableItems = ({
   onRemoveJavaClass,
 }: ImportJavaClassesWizardClassListTableItemsProps) => {
   const [itemChecked, setItemChecked] = useState(selected);
+
   const onDataListCheckChange = useCallback(() => {
     setItemChecked((prevState) => {
       if (!prevState) {

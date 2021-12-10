@@ -44,6 +44,7 @@ export const ImportJavaClassesWizardSecondStep = ({
     }
     return new JavaField(name, type, dmnTypeRef);
   }, []);
+
   const loadJavaFields = useCallback(
     (className: string) => {
       window.envelopeMock
@@ -59,6 +60,7 @@ export const ImportJavaClassesWizardSecondStep = ({
     },
     [generateJavaClassField, onSelectedJavaClassedFieldsLoaded, selectedJavaClasses]
   );
+
   useEffect(
     () =>
       selectedJavaClasses

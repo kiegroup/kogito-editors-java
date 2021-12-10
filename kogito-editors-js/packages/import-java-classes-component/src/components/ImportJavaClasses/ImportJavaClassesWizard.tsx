@@ -42,6 +42,7 @@ export const ImportJavaClassesWizard = ({
 }: ImportJavaClassesWizardProps) => {
   const { i18n } = useImportJavaClassesWizardI18n();
   const [javaClasses, setJavaClasses] = useState<JavaClass[]>([]);
+
   const updateJavaFieldsReferences = useCallback(
     (updatedJavaClasses: JavaClass[], previousJavaClasses: JavaClass[]) => {
       const updatedJavaClassesNames = updatedJavaClasses.map((javaClass) => javaClass.name);
@@ -57,6 +58,7 @@ export const ImportJavaClassesWizard = ({
     },
     [javaClasses]
   );
+
   const addJavaClass = useCallback(
     (fullClassName: string) => {
       setJavaClasses((prevState) => {
@@ -71,6 +73,7 @@ export const ImportJavaClassesWizard = ({
     },
     [updateJavaFieldsReferences]
   );
+
   const removeJavaClass = useCallback(
     (fullClassName: string) => {
       setJavaClasses((prevState) => {
@@ -81,6 +84,7 @@ export const ImportJavaClassesWizard = ({
     },
     [updateJavaFieldsReferences]
   );
+
   const updateSelectedClassesFields = useCallback((fullClassName: string, fields: JavaField[]) => {
     setJavaClasses((prevState) => {
       const updatedJavaClasses = [...prevState];
@@ -91,18 +95,23 @@ export const ImportJavaClassesWizard = ({
       return updatedJavaClasses;
     });
   }, []);
+
   const isSecondStepActivatable = useCallback(() => {
     return javaClasses.length > 0;
   }, [javaClasses]);
+
   const isThirdStepActivatable = useCallback(() => {
     return javaClasses.length > 0 && javaClasses.every((javaClass) => javaClass.fieldsLoaded);
   }, [javaClasses]);
+
   const resetJavaClassState = useCallback(() => {
     setJavaClasses([]);
   }, []);
+
   const onWizardFinishing = useCallback(() => {
     sendJavaClassesToEditor(javaClasses);
   }, [javaClasses, sendJavaClassesToEditor]);
+
   const steps = [
     {
       canJumpTo: true,

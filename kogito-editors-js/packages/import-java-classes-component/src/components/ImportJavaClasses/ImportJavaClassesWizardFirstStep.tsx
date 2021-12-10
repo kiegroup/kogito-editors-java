@@ -40,6 +40,7 @@ export const ImportJavaClassesWizardFirstStep = ({
   const { i18n } = useImportJavaClassesWizardI18n();
   const [searchValue, setSearchValue] = useState("");
   const [retrievedJavaClasses, setRetrievedJavaClasses] = useState<string[]>([]);
+
   const retrieveJavaClasses = useCallback((value: string) => {
     setSearchValue(value);
     const retrieved = window.envelopeMock.lspGetClassServiceMocked(value);
@@ -47,11 +48,14 @@ export const ImportJavaClassesWizardFirstStep = ({
       setRetrievedJavaClasses(retrieved);
     }
   }, []);
+
   const onSearchValueChange = useCallback((value) => retrieveJavaClasses(value), [retrieveJavaClasses]);
+
   const onClearSearch = useCallback(() => {
     setSearchValue("");
     setRetrievedJavaClasses([]);
   }, []);
+
   const EmptyStep = () => {
     return (
       <EmptyStateWidget
