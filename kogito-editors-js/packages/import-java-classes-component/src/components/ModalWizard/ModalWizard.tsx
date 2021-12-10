@@ -74,39 +74,26 @@ export const ModalWizard = ({
     }
   }, [handleWizardClose, onWizardSave]);
 
-  const WizardButton = () => {
-    return (
-      <Button
-        variant={buttonStyle}
-        icon={buttonIcon}
-        onClick={handleButtonClick}
-        isDisabled={buttonDisabledStatus}
-        data-testid={"modal-wizard-button"}
-      >
-        {buttonText}
-      </Button>
-    );
-  };
-
-  const WizardButtonWithTooltip = () => {
-    return (
-      <Tooltip content={buttonTooltipMessage}>
-        <Button
-          variant={buttonStyle}
-          icon={buttonIcon}
-          onClick={handleButtonClick}
-          isAriaDisabled={buttonDisabledStatus}
-          data-testid={"modal-wizard-button"}
-        >
-          {buttonText}
-        </Button>
-      </Tooltip>
-    );
-  };
-
   return (
     <>
-      {buttonTooltipMessage ? <WizardButtonWithTooltip /> : <WizardButton />}
+      {buttonTooltipMessage ? (
+        <WizardButtonWithTooltip
+          buttonDisabledStatus={buttonDisabledStatus}
+          buttonIcon={buttonIcon}
+          buttonStyle={buttonStyle}
+          buttonText={buttonText}
+          buttonTooltipMessage={buttonTooltipMessage}
+          onButtonClick={handleButtonClick}
+        />
+      ) : (
+        <WizardButton
+          buttonDisabledStatus={buttonDisabledStatus}
+          buttonIcon={buttonIcon}
+          buttonStyle={buttonStyle}
+          buttonText={buttonText}
+          onButtonClick={handleButtonClick}
+        />
+      )}
       {isOpen ? (
         <Wizard
           className={className}
@@ -119,5 +106,61 @@ export const ModalWizard = ({
         />
       ) : null}
     </>
+  );
+};
+
+const WizardButton = ({
+  buttonDisabledStatus,
+  buttonIcon,
+  buttonStyle,
+  buttonText,
+  onButtonClick,
+}: {
+  buttonDisabledStatus: boolean;
+  buttonIcon?: React.ReactNode;
+  buttonStyle: "primary" | "secondary" | "tertiary" | "danger" | "warning" | "link" | "plain" | "control";
+  buttonText: string;
+  onButtonClick: () => void;
+}) => {
+  return (
+    <Button
+      data-testid={"modal-wizard-button"}
+      icon={buttonIcon}
+      isDisabled={buttonDisabledStatus}
+      onClick={onButtonClick}
+      variant={buttonStyle}
+    >
+      {buttonText}
+    </Button>
+  );
+};
+
+const WizardButtonWithTooltip = ({
+  buttonDisabledStatus,
+  buttonTooltipMessage,
+  buttonIcon,
+  buttonStyle,
+  buttonText,
+  onButtonClick,
+}: {
+  buttonDisabledStatus: boolean;
+  buttonTooltipMessage: string;
+  buttonIcon?: React.ReactNode;
+  buttonStyle: "primary" | "secondary" | "tertiary" | "danger" | "warning" | "link" | "plain" | "control";
+  buttonText: string;
+  onButtonClick: () => void;
+}) => {
+  return (
+    <Tooltip content={buttonTooltipMessage}>
+      <Button
+        variant={buttonStyle}
+        icon={buttonIcon}
+        onClick={onButtonClick}
+        isAriaDisabled={buttonDisabledStatus}
+        data-testid={"modal-wizard-button"}
+      >
+        {buttonText}
+      </Button>
+    </Tooltip>
   );
 };

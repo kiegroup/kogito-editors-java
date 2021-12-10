@@ -56,18 +56,6 @@ export const ImportJavaClassesWizardFirstStep = ({
     setRetrievedJavaClasses([]);
   }, []);
 
-  const EmptyStep = () => {
-    return (
-      <EmptyStateWidget
-        emptyStateIcon={CubesIcon}
-        emptyStateTitleHeading={"h6"}
-        emptyStateTitleSize={"md"}
-        emptyStateTitleText={i18n.modalWizard.firstStep.emptyState.title}
-        emptyStateBodyText={i18n.modalWizard.firstStep.emptyState.body}
-      />
-    );
-  };
-
   return (
     <>
       <SearchInput
@@ -85,8 +73,29 @@ export const ImportJavaClassesWizardFirstStep = ({
           onRemoveJavaClass={onRemoveJavaClass}
         />
       ) : (
-        <EmptyStep />
+        <EmptyStep
+          emptyStateBodyText={i18n.modalWizard.firstStep.emptyState.body}
+          emptyStateTitleText={i18n.modalWizard.firstStep.emptyState.title}
+        />
       )}
     </>
+  );
+};
+
+const EmptyStep = ({
+  emptyStateBodyText,
+  emptyStateTitleText,
+}: {
+  emptyStateBodyText: string;
+  emptyStateTitleText: string;
+}) => {
+  return (
+    <EmptyStateWidget
+      emptyStateBodyText={emptyStateBodyText}
+      emptyStateIcon={CubesIcon}
+      emptyStateTitleHeading={"h6"}
+      emptyStateTitleSize={"md"}
+      emptyStateTitleText={emptyStateTitleText}
+    />
   );
 };
