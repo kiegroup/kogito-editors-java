@@ -35,7 +35,7 @@ export interface ImportJavaClassesWizardProps {
   sendJavaClassesToEditor: (javaClasses: JavaClass[]) => void;
 }
 
-export const ImportJavaClassesWizard: React.FunctionComponent<ImportJavaClassesWizardProps> = ({
+export const ImportJavaClassesWizard = ({
   buttonDisabledStatus,
   buttonTooltipMessage,
   sendJavaClassesToEditor,

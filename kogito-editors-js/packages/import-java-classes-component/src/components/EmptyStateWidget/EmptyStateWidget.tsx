@@ -30,7 +30,7 @@ export interface EmptyStateWidgetProps {
   emptyStateBodyText: string;
 }
 
-export const EmptyStateWidget: React.FunctionComponent<EmptyStateWidgetProps> = ({
+export const EmptyStateWidget = ({
   emptyStateIcon,
   emptyStateTitleHeading,
   emptyStateTitleSize,

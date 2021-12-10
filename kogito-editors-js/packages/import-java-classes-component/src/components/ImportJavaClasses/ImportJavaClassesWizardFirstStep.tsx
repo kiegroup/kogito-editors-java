@@ -32,11 +32,11 @@ export interface ImportJavaClassesWizardFirstStepProps {
   onRemoveJavaClass: (fullClassName: string) => void;
 }
 
-export const ImportJavaClassesWizardFirstStep: React.FunctionComponent<ImportJavaClassesWizardFirstStepProps> = ({
+export const ImportJavaClassesWizardFirstStep = ({
   selectedJavaClasses,
   onAddJavaClass,
   onRemoveJavaClass,
-}) => {
+}: ImportJavaClassesWizardFirstStepProps) => {
   const { i18n } = useImportJavaClassesWizardI18n();
   const [searchValue, setSearchValue] = useState("");
   const [retrievedJavaClasses, setRetrievedJavaClasses] = useState<string[]>([]);

@@ -33,7 +33,7 @@ export interface ImportJavaClassesProps {
   sendJavaClassesToEditor: (javaClasses: JavaClass[]) => void;
 }
 
-export const ImportJavaClasses: React.FunctionComponent<ImportJavaClassesProps> = ({
+export const ImportJavaClasses = ({
   buttonDisabledStatus,
   buttonTooltipMessage,
   sendJavaClassesToEditor,

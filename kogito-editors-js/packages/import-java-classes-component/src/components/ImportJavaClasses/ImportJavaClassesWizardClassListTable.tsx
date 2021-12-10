@@ -30,38 +30,37 @@ export interface ImportJavaClassesWizardClassListTableProps {
   onRemoveJavaClass: (fullClassName: string) => void;
 }
 
-export const ImportJavaClassesWizardClassListTable: React.FunctionComponent<ImportJavaClassesWizardClassListTableProps> =
-  ({
-    selectedJavaClasses,
-    retrievedJavaClasses,
-    onAddJavaClass,
-    onRemoveJavaClass,
-  }: ImportJavaClassesWizardClassListTableProps) => {
-    const classesSet = new Set(selectedJavaClasses.map((javaClass) => javaClass.name));
-    return (
-      <DataList aria-label={"class-data-list"}>
-        {selectedJavaClasses.map((value) => (
-          <ImportJavaClassesWizardClassListTableItems
-            key={value.name}
-            fullClassName={value.name}
-            selected={true}
-            onAddJavaClass={onAddJavaClass}
-            onRemoveJavaClass={onRemoveJavaClass}
-          />
-        ))}
-        {retrievedJavaClasses.map((value) => {
-          if (!classesSet.has(value)) {
-            return (
-              <ImportJavaClassesWizardClassListTableItems
-                key={value}
-                fullClassName={value}
-                selected={false}
-                onAddJavaClass={onAddJavaClass}
-                onRemoveJavaClass={onRemoveJavaClass}
-              />
-            );
-          }
-        })}
-      </DataList>
-    );
-  };
+export const ImportJavaClassesWizardClassListTable = ({
+  selectedJavaClasses,
+  retrievedJavaClasses,
+  onAddJavaClass,
+  onRemoveJavaClass,
+}: ImportJavaClassesWizardClassListTableProps) => {
+  const classesSet = new Set(selectedJavaClasses.map((javaClass) => javaClass.name));
+  return (
+    <DataList aria-label={"class-data-list"}>
+      {selectedJavaClasses.map((value) => (
+        <ImportJavaClassesWizardClassListTableItems
+          key={value.name}
+          fullClassName={value.name}
+          selected={true}
+          onAddJavaClass={onAddJavaClass}
+          onRemoveJavaClass={onRemoveJavaClass}
+        />
+      ))}
+      {retrievedJavaClasses.map((value) => {
+        if (!classesSet.has(value)) {
+          return (
+            <ImportJavaClassesWizardClassListTableItems
+              key={value}
+              fullClassName={value}
+              selected={false}
+              onAddJavaClass={onAddJavaClass}
+              onRemoveJavaClass={onRemoveJavaClass}
+            />
+          );
+        }
+      })}
+    </DataList>
+  );
+};

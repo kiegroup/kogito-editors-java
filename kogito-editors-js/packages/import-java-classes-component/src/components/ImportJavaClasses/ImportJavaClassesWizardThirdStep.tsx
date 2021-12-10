@@ -18,6 +18,7 @@ import * as React from "react";
 import "./ImportJavaClassesWizardThirdStep.css";
 import { ImportJavaClassesWizardFieldListTable } from "./ImportJavaClassesWizardFieldListTable";
 import { JavaClass } from "./Model/JavaClass";
+
 export interface ImportJavaClassesWizardThirdStepProps {
   /** List of the selected classes by user */
   selectedJavaClasses: JavaClass[];
@@ -26,9 +27,5 @@ export interface ImportJavaClassesWizardThirdStepProps {
 export const ImportJavaClassesWizardThirdStep: React.FunctionComponent<ImportJavaClassesWizardThirdStepProps> = ({
   selectedJavaClasses,
 }: ImportJavaClassesWizardThirdStepProps) => {
-  return (
-    <>
-      <ImportJavaClassesWizardFieldListTable selectedJavaClassFields={selectedJavaClasses} />
-    </>
-  );
+  return <ImportJavaClassesWizardFieldListTable selectedJavaClassFields={selectedJavaClasses} />;
 };

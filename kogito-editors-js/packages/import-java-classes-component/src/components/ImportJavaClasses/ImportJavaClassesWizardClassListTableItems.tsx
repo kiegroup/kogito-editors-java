@@ -29,28 +29,32 @@ export interface ImportJavaClassesWizardClassListTableItemsProps {
   onRemoveJavaClass: (fullClassName: string) => void;
 }
 
-export const ImportJavaClassesWizardClassListTableItems: React.FunctionComponent<ImportJavaClassesWizardClassListTableItemsProps> =
-  ({ fullClassName, selected, onAddJavaClass, onRemoveJavaClass }: ImportJavaClassesWizardClassListTableItemsProps) => {
-    const [itemChecked, setItemChecked] = useState(selected);
-    const onDataListCheckChange = useCallback(() => {
-      setItemChecked((prevState) => {
-        if (!prevState) {
-          onAddJavaClass(fullClassName);
-        } else {
-          onRemoveJavaClass(fullClassName);
-        }
-        return !prevState;
-      });
-    }, [fullClassName, onAddJavaClass, onRemoveJavaClass]);
+export const ImportJavaClassesWizardClassListTableItems = ({
+  fullClassName,
+  selected,
+  onAddJavaClass,
+  onRemoveJavaClass,
+}: ImportJavaClassesWizardClassListTableItemsProps) => {
+  const [itemChecked, setItemChecked] = useState(selected);
+  const onDataListCheckChange = useCallback(() => {
+    setItemChecked((prevState) => {
+      if (!prevState) {
+        onAddJavaClass(fullClassName);
+      } else {
+        onRemoveJavaClass(fullClassName);
+      }
+      return !prevState;
+    });
+  }, [fullClassName, onAddJavaClass, onRemoveJavaClass]);
 
-    return (
-      <DataListItem name={fullClassName}>
-        <DataListItemRow>
-          <DataListCheck aria-labelledby={fullClassName} checked={itemChecked} onChange={onDataListCheckChange} />
-          <DataListCell>
-            <span id={fullClassName}>{fullClassName}</span>
-          </DataListCell>
-        </DataListItemRow>
-      </DataListItem>
-    );
-  };
+  return (
+    <DataListItem name={fullClassName}>
+      <DataListItemRow>
+        <DataListCheck aria-labelledby={fullClassName} checked={itemChecked} onChange={onDataListCheckChange} />
+        <DataListCell>
+          <span id={fullClassName}>{fullClassName}</span>
+        </DataListCell>
+      </DataListItemRow>
+    </DataListItem>
+  );
+};

@@ -43,7 +43,7 @@ export interface ModalWizardProps {
   onWizardSave?: () => void;
 }
 
-export const ModalWizard: React.FunctionComponent<ModalWizardProps> = ({
+export const ModalWizard = ({
   buttonText,
   buttonStyle,
   buttonIcon,
@@ -70,7 +70,7 @@ export const ModalWizard: React.FunctionComponent<ModalWizardProps> = ({
       onWizardSave();
     }
   }, [onClose, onWizardSave]);
-  const WizardButton: React.FunctionComponent = () => {
+  const WizardButton = () => {
     return (
       <Button
         variant={buttonStyle}
@@ -83,7 +83,7 @@ export const ModalWizard: React.FunctionComponent<ModalWizardProps> = ({
       </Button>
     );
   };
-  const WizardButtonWithTooltip: React.FunctionComponent = () => {
+  const WizardButtonWithTooltip = () => {
     return (
       <Tooltip content={buttonTooltipMessage}>
         <Button

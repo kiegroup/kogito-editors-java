@@ -32,7 +32,7 @@ export interface ImportJavaClassesWizardSecondStepProps {
   onSelectedJavaClassedFieldsLoaded: (fullClassName: string, fields: JavaField[]) => void;
 }
 
-export const ImportJavaClassesWizardSecondStep: React.FunctionComponent<ImportJavaClassesWizardSecondStepProps> = ({
+export const ImportJavaClassesWizardSecondStep = ({
   selectedJavaClasses,
   onAddJavaClass,
   onSelectedJavaClassedFieldsLoaded,
