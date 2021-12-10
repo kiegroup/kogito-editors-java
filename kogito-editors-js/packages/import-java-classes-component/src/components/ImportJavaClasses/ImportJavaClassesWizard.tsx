@@ -104,11 +104,11 @@ export const ImportJavaClassesWizard = ({
     return javaClasses.length > 0 && javaClasses.every((javaClass) => javaClass.fieldsLoaded);
   }, [javaClasses]);
 
-  const resetJavaClassState = useCallback(() => {
+  const handleWizardClose = useCallback(() => {
     setJavaClasses([]);
   }, []);
 
-  const onWizardFinishing = useCallback(() => {
+  const handleWizardSave = useCallback(() => {
     sendJavaClassesToEditor(javaClasses);
   }, [javaClasses, sendJavaClassesToEditor]);
 
@@ -153,8 +153,8 @@ export const ImportJavaClassesWizard = ({
       buttonDisabledStatus={buttonDisabledStatus}
       buttonTooltipMessage={buttonTooltipMessage}
       className={"import-java-classes"}
-      onWizardClose={resetJavaClassState}
-      onWizardSave={onWizardFinishing}
+      onWizardClose={handleWizardClose}
+      onWizardSave={handleWizardSave}
       wizardDescription={i18n.modalWizard.description}
       wizardSteps={steps}
       wizardTitle={i18n.modalWizard.title}

@@ -65,6 +65,10 @@ const TableJavaClassItem = ({
     return field.dmnTypeRef === DMNSimpleType.ANY;
   }, []);
 
+  const handleToggle = useCallback(() => {
+    return () => setExpanded((prevState) => !prevState);
+  }, []);
+
   const parentRow = (
     <Tr key={`${javaClass.name}_tr`}>
       <Td
@@ -74,7 +78,7 @@ const TableJavaClassItem = ({
             ? {
                 rowIndex: index,
                 isExpanded: isExpanded,
-                onToggle: () => setExpanded((prevState) => !prevState),
+                onToggle: handleToggle,
               }
             : undefined
         }

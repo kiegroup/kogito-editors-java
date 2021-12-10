@@ -49,9 +49,9 @@ export const ImportJavaClassesWizardFirstStep = ({
     }
   }, []);
 
-  const onSearchValueChange = useCallback((value) => retrieveJavaClasses(value), [retrieveJavaClasses]);
+  const handleSearchValueChange = useCallback((value) => retrieveJavaClasses(value), [retrieveJavaClasses]);
 
-  const onClearSearch = useCallback(() => {
+  const handleClearSearch = useCallback(() => {
     setSearchValue("");
     setRetrievedJavaClasses([]);
   }, []);
@@ -73,8 +73,8 @@ export const ImportJavaClassesWizardFirstStep = ({
       <SearchInput
         placeholder={i18n.modalWizard.firstStep.input.placeholder}
         value={searchValue}
-        onChange={onSearchValueChange}
-        onClear={onClearSearch}
+        onChange={handleSearchValueChange}
+        onClear={handleClearSearch}
         autoFocus
       />
       {retrievedJavaClasses.length > 0 || selectedJavaClasses.length > 0 ? (

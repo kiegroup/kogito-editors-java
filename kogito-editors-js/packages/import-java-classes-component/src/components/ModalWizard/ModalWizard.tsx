@@ -57,25 +57,29 @@ export const ModalWizard = ({
   onWizardSave,
 }: ModalWizardProps) => {
   const [isOpen, setOpen] = useState(false);
-  const changeWizardState = useCallback(() => setOpen((prevState) => !prevState), []);
-  const onClose = useCallback(() => {
-    changeWizardState();
+
+  const handleButtonClick = useCallback(() => setOpen((prevState) => !prevState), []);
+
+  const handleWizardClose = useCallback(() => {
+    handleButtonClick();
     if (onWizardClose) {
       onWizardClose();
     }
-  }, [changeWizardState, onWizardClose]);
-  const onSave = useCallback(() => {
-    onClose();
+  }, [handleButtonClick, onWizardClose]);
+
+  const handleWizardSave = useCallback(() => {
+    handleWizardClose();
     if (onWizardSave) {
       onWizardSave();
     }
-  }, [onClose, onWizardSave]);
+  }, [handleWizardClose, onWizardSave]);
+
   const WizardButton = () => {
     return (
       <Button
         variant={buttonStyle}
         icon={buttonIcon}
-        onClick={changeWizardState}
+        onClick={handleButtonClick}
         isDisabled={buttonDisabledStatus}
         data-testid={"modal-wizard-button"}
       >
@@ -83,13 +87,14 @@ export const ModalWizard = ({
       </Button>
     );
   };
+
   const WizardButtonWithTooltip = () => {
     return (
       <Tooltip content={buttonTooltipMessage}>
         <Button
           variant={buttonStyle}
           icon={buttonIcon}
-          onClick={changeWizardState}
+          onClick={handleButtonClick}
           isAriaDisabled={buttonDisabledStatus}
           data-testid={"modal-wizard-button"}
         >
@@ -107,8 +112,8 @@ export const ModalWizard = ({
           className={className}
           description={wizardDescription}
           isOpen={isOpen}
-          onClose={onClose}
-          onSave={onSave}
+          onClose={handleWizardClose}
+          onSave={handleWizardSave}
           steps={wizardSteps}
           title={wizardTitle}
         />
