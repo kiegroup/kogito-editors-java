@@ -15,8 +15,7 @@
  */
 
 import * as React from "react";
-import "./ImportJavaClassesWizardSecondStep.css";
-import { Spinner } from "@patternfly/react-core";
+import { Bullseye, Spinner } from "@patternfly/react-core";
 import { useCallback, useEffect } from "react";
 import { ImportJavaClassesWizardFieldListTable } from "./ImportJavaClassesWizardFieldListTable";
 import { JavaField } from "./Model/JavaField";
@@ -38,9 +37,9 @@ export const ImportJavaClassesWizardSecondStep: React.FunctionComponent<ImportJa
   onAddJavaClass,
   onSelectedJavaClassedFieldsLoaded,
 }: ImportJavaClassesWizardSecondStepProps) => {
-  const generateJavaClassField = useCallback((name: string, type: string, selectedJavaClasses: JavaClass[]) => {
+  const generateJavaClassField = useCallback((name: string, type: string, javaClasses: JavaClass[]) => {
     let dmnTypeRef: string = JAVA_TO_DMN_MAP.get(getJavaClassSimpleName(type)) || DMNSimpleType.ANY;
-    if (dmnTypeRef === DMNSimpleType.ANY && selectedJavaClasses.some((javaClass) => javaClass.name === type)) {
+    if (dmnTypeRef === DMNSimpleType.ANY && javaClasses.some((javaClass) => javaClass.name === type)) {
       dmnTypeRef = getJavaClassSimpleName(type);
     }
     return new JavaField(name, type, dmnTypeRef);
@@ -71,11 +70,13 @@ export const ImportJavaClassesWizardSecondStep: React.FunctionComponent<ImportJa
   return (
     <>
       {selectedJavaClasses.some((javaClass) => !javaClass.fieldsLoaded) ? (
-        <Spinner isSVG={true} diameter="150px" className={"loader"} />
+        <Bullseye>
+          <Spinner isSVG={true} />
+        </Bullseye>
       ) : (
         <ImportJavaClassesWizardFieldListTable
           selectedJavaClassFields={selectedJavaClasses}
-          readOnly={false}
+          isReadOnly={false}
           loadJavaClass={onAddJavaClass}
         />
       )}

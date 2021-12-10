@@ -29,7 +29,7 @@ import {
   RelationProps,
 } from "boxed-expression-component";
 import { HelloWorld } from "hello-world-component";
-import { ImportJavaClasses, ImportJavaClassesProps, JavaClass } from "import-java-classes-component";
+import { ImportJavaClasses, JavaClass } from "import-java-classes-component";
 import * as React from "react";
 import { useEffect, useState } from "react";
 import * as ReactDOM from "react-dom";
@@ -197,7 +197,8 @@ const ImportJavaClassesWrapper: React.FunctionComponent<ImportJavaClassesWrapper
     <ImportJavaClasses
       buttonDisabledStatus={buttonDisabledStatus}
       buttonTooltipMessage={buttonTooltipMessage}
-      sendJavaClassesToEditor={sendJavaClassesToEditor}
+      sendJavaClassesToEditor={sendJavaClassesToEditor} // TODO 1 object scope talk with gwt layer
+                                                        // TODO 1 object scope talk with LSP ext.
     />
   );
 };

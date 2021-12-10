@@ -30,7 +30,7 @@ export const ImportJavaClassesWizardThirdStep: React.FunctionComponent<ImportJav
     <>
       <ImportJavaClassesWizardFieldListTable
         selectedJavaClassFields={selectedJavaClasses}
-        readOnly={true}
+        isReadOnly={true}
         tableClassName={"fields-table"}
       />
     </>

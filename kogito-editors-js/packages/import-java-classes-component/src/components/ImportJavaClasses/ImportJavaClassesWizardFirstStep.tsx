@@ -52,7 +52,7 @@ export const ImportJavaClassesWizardFirstStep: React.FunctionComponent<ImportJav
     setSearchValue("");
     setRetrievedJavaClasses([]);
   }, []);
-  const EmptyStep: React.FunctionComponent = () => {
+  const EmptyStep = () => {
     return (
       <EmptyStateWidget
         emptyStateIcon={CubesIcon}
