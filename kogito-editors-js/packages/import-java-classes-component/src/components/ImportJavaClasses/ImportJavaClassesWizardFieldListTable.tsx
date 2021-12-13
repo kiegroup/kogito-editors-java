@@ -59,7 +59,7 @@ const TableJavaClassItem = ({
   loadJavaClass?: (fullClassName: string) => void;
 }) => {
   const { i18n } = useImportJavaClassesWizardI18n();
-  const [isExpanded, setExpanded] = useState(false);
+  const [isExpanded, setExpanded] = useState(true);
 
   const isFetchable = useCallback((field: JavaField) => {
     return field.dmnTypeRef === DMNSimpleType.ANY;
