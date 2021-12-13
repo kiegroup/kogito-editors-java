@@ -23,7 +23,7 @@ import jsinterop.annotations.JsPackage;
 import jsinterop.annotations.JsType;
 import org.kie.workbench.common.dmn.client.editors.types.listview.DataTypeListView;
 
-@JsType(namespace = JsPackage.GLOBAL, name = "importJavaClassesAPIWrapper")
+@JsType(namespace = JsPackage.GLOBAL, name = "ImportJavaClassesAPIWrapper")
 public class ImportJavaClassesService {
 
     private static DataTypeListView dataTypeListView;
