@@ -128,10 +128,7 @@ export interface ImportJavaClassesWrapperProps {
   buttonTooltipMessage?: string;
 }
 
-const ImportJavaClassesWrapper = ({
-  buttonDisabledStatus,
-  buttonTooltipMessage,
-}: ImportJavaClassesWrapperProps) => {
+const ImportJavaClassesWrapper = ({ buttonDisabledStatus, buttonTooltipMessage }: ImportJavaClassesWrapperProps) => {
   window.ImportJavaClassesAPI = {
     importJavaClasses: (javaClasses: JavaClass[]) => {
       window.ImportJavaClassesAPIWrapper?.importJavaClasses?.(javaClasses);
