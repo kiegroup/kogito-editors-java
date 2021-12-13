@@ -32,7 +32,7 @@ export interface ImportJavaClassesWizardProps {
   buttonDisabledStatus: boolean;
   /** Button tooltip message */
   buttonTooltipMessage?: string;
-  /** Service class which contains all API method to dialog with GWT layer */
+  /** Service class which contains all API methods to dialog with GWT layer */
   importJavaClassesGWTService: ImportJavaClassGWTService;
 }
 

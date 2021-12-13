@@ -128,7 +128,7 @@ export interface ImportJavaClassesWrapperProps {
   buttonTooltipMessage?: string;
 }
 
-const ImportJavaClassesWrapper: React.FunctionComponent<ImportJavaClassesWrapperProps> = ({
+const ImportJavaClassesWrapper = ({
   buttonDisabledStatus,
   buttonTooltipMessage,
 }: ImportJavaClassesWrapperProps) => {
@@ -137,12 +137,12 @@ const ImportJavaClassesWrapper: React.FunctionComponent<ImportJavaClassesWrapper
       window.ImportJavaClassesAPIWrapper?.importJavaClasses?.(javaClasses);
     },
   };
+  /** BEGIN - TEMPORARY MOCK CODE TO TEST COMPONENT INSIDE THE EDITOR - TO BE REMOVED */
   window.envelopeMock = {
     lspGetClassServiceMocked: (value: string) => lspGetClassServiceMocked(value),
     lspGetClassFieldsServiceMocked: (className: string) => lspGetClassFieldsServiceMocked(className),
   };
 
-  /** BEGIN - TEMPORARY MOCK CODE TO TEST COMPONENT INSIDE THE EDITOR - TO BE REMOVED */
   const lspGetClassServiceMocked = (value: string) => {
     /* Mocked data retrieved from LSP Service */
     const booClassesList = ["org.kie.test.kogito.Book", "org.kie.test.kogito.Boom"];
