@@ -10,7 +10,7 @@ exports[`ModalWizard component tests ModalWizard Button component tests Should c
     <button
       aria-disabled="false"
       class="pf-c-button pf-m-primary"
-      data-ouia-component-id="OUIA-Generated-Button-primary-11"
+      data-ouia-component-id="OUIA-Generated-Button-primary-7"
       data-ouia-component-type="PF4/Button"
       data-ouia-safe="true"
       data-testid="modal-wizard-button"
@@ -32,7 +32,7 @@ exports[`ModalWizard component tests ModalWizard Button component tests Should s
     <button
       aria-disabled="false"
       class="pf-c-button pf-m-primary"
-      data-ouia-component-id="OUIA-Generated-Button-primary-6"
+      data-ouia-component-id="OUIA-Generated-Button-primary-5"
       data-ouia-component-type="PF4/Button"
       data-ouia-safe="true"
       data-testid="modal-wizard-button"
@@ -187,7 +187,7 @@ exports[`ModalWizard component tests ModalWizard Button component tests Should s
                 <button
                   aria-disabled="true"
                   class="pf-c-button pf-m-primary pf-m-disabled"
-                  data-ouia-component-id="OUIA-Generated-Button-primary-7"
+                  data-ouia-component-id="OUIA-Generated-Button-primary-6"
                   data-ouia-component-type="PF4/Button"
                   data-ouia-safe="true"
                   disabled=""
