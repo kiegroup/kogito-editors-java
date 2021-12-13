@@ -18,11 +18,21 @@ import * as React from "react";
 import { useState, useCallback } from "react";
 import { Button, Tooltip, Wizard, WizardStep } from "@patternfly/react-core";
 
+type ModalWizardButtonStyle =
+  | "primary"
+  | "secondary"
+  | "tertiary"
+  | "danger"
+  | "warning"
+  | "link"
+  | "plain"
+  | "control";
+
 export interface ModalWizardProps {
   /** Text to apply to the Modal button */
   buttonText: string;
   /** Style to apply to the Modal button */
-  buttonStyle: "primary" | "secondary" | "tertiary" | "danger" | "warning" | "link" | "plain" | "control";
+  buttonStyle: ModalWizardButtonStyle;
   /** Icon to apply to the Modal button */
   buttonIcon?: React.ReactNode;
   /** Button disabled status */
@@ -118,7 +128,7 @@ const WizardButton = ({
 }: {
   buttonDisabledStatus: boolean;
   buttonIcon?: React.ReactNode;
-  buttonStyle: "primary" | "secondary" | "tertiary" | "danger" | "warning" | "link" | "plain" | "control";
+  buttonStyle: ModalWizardButtonStyle;
   buttonText: string;
   onButtonClick: () => void;
 }) => {
