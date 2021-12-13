@@ -291,9 +291,11 @@ public class JsCanvas implements JsCanvasNodeLister {
             double translatedX = -absoluteLocation.get(0) + (width / 2) - (nodeWidth / 2);
             double translatedY = -absoluteLocation.get(1) + (height / 2) - (nodeHeight / 2);
 
-            layer.getViewport().getTransform().translate(-layer.getViewport().getTransform().getTranslateX(), -layer.getViewport().getTransform().getTranslateY());
-            layer.getViewport().getTransform().translate(translatedX, translatedY);
-            ((ScrollablePanel) panel).refresh();
+            if (translatedX <= 0 && translatedY <= 0) { // prevent moving (0,0) Dotten Line right/below
+                layer.getViewport().getTransform().translate(-layer.getViewport().getTransform().getTranslateX(), -layer.getViewport().getTransform().getTranslateY());
+                layer.getViewport().getTransform().translate(translatedX, translatedY);
+                ((ScrollablePanel) panel).refresh();
+            }
         }
     }
 
