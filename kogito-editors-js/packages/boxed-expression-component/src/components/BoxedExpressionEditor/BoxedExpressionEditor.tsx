@@ -17,7 +17,7 @@
 import { I18nDictionariesProvider } from "@kogito-tooling/i18n/dist/react-components";
 import * as React from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { ExpressionProps, PMMLParams } from "../../api";
+import { DataTypeProps, ExpressionProps, PMMLParams } from "../../api";
 import {
   boxedExpressionEditorDictionaries,
   BoxedExpressionEditorI18nContext,
@@ -33,6 +33,8 @@ export interface BoxedExpressionEditorProps {
   decisionNodeId: string;
   /** All expression properties used to define it */
   expressionDefinition: ExpressionProps;
+  /** The data type elements that can be used in the editor */
+  dataTypeProps: DataTypeProps[];
   /**
    * A boolean used for making (or not) the clear button available on the root expression
    * Note that this parameter will be used only for the root expression.
@@ -54,6 +56,8 @@ export function BoxedExpressionEditor(props: BoxedExpressionEditorProps) {
     ...props.expressionDefinition,
     noClearAction: props.clearSupportedOnRootExpression === false,
   });
+
+  console.log(props.dataTypeProps);
 
   useEffect(() => {
     setExpressionDefinition({

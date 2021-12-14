@@ -72,6 +72,20 @@ export const App: React.FunctionComponent = () => {
     },
   ];
 
+  const dataTypeProps = [
+    { typeRef: "Undefined", name: "<Undefined>", isCustom: false },
+    { typeRef: "Any", name: "Any", isCustom: false },
+    { typeRef: "Boolean", name: "boolean", isCustom: false },
+    { typeRef: "Context", name: "context", isCustom: false },
+    { typeRef: "Date", name: "date", isCustom: false },
+    { typeRef: "DateTime", name: "date and time", isCustom: false },
+    { typeRef: "DateTimeDuration", name: "days and time duration", isCustom: false },
+    { typeRef: "Number", name: "number", isCustom: false },
+    { typeRef: "String", name: "string", isCustom: false },
+    { typeRef: "Time", name: "time", isCustom: false },
+    { typeRef: "YearsMonthsDuration", name: "years and months duration", isCustom: false },
+  ];
+
   const [expressionDefinition, setExpressionDefinition] = useState(selectedExpression);
 
   const [typedExpressionDefinition, setTypedExpressionDefinition] = useState(JSON.stringify(selectedExpression));
@@ -129,6 +143,7 @@ export const App: React.FunctionComponent = () => {
         <BoxedExpressionEditor
           decisionNodeId="_00000000-0000-0000-0000-000000000000"
           expressionDefinition={expressionDefinition}
+          dataTypeProps={dataTypeProps}
           pmmlParams={pmmlParams}
         />
       </div>
