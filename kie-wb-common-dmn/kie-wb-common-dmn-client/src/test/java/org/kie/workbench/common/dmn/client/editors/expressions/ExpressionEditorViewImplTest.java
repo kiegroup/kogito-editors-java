@@ -683,14 +683,27 @@ public class ExpressionEditorViewImplTest {
     @Test
     public void testNotifyUserAction() {
 
+        final ArgumentCaptor<SaveCurrentStateCommand> captor = ArgumentCaptor.forClass(SaveCurrentStateCommand.class);
+
         final CompositeCommand.Builder commandBuilder = mock(CompositeCommand.Builder.class);
-        final CompositeCommand compositeCommand = mock(CompositeCommand.class);
+        doReturn(commandBuilder).when(view).createCommandBuilder();
 
-        when(commandBuilder.build()).thenReturn(compositeCommand);
+        doNothing().when(view).addExpressionCommand(any(), eq(commandBuilder));
+        doNothing().when(view).addUpdatePropertyNameCommand(commandBuilder);
+        doNothing().when(view).execute(commandBuilder);
 
-        view.execute(commandBuilder);
+        view.notifyUserAction();
 
-        verify(sessionCommandManager).execute(canvasHandler, compositeCommand);
+        verify(view).addExpressionCommand(captor.capture(), eq(commandBuilder));
+        verify(view).addUpdatePropertyNameCommand(commandBuilder);
+        verify(view).execute(commandBuilder);
+
+        final SaveCurrentStateCommand command = captor.getValue();
+
+        assertEquals(hasExpression, command.getHasExpression());
+        assertEquals(editorSelectedEvent, command.getEditorSelectedEvent());
+        assertEquals(view, command.getView());
+        assertEquals(NODE_UUID, command.getNodeUUID());
     }
 
     @Test
@@ -725,11 +738,66 @@ public class ExpressionEditorViewImplTest {
     @Test
     public void testAddExpressionCommand() {
 
-        final SaveCurrentStatusCommand expressionCommand = mock(SaveCurrentStatusCommand.class);
+        final SaveCurrentStateCommand expressionCommand = mock(SaveCurrentStateCommand.class);
         final CompositeCommand.Builder builder = mock(CompositeCommand.Builder.class);
 
         view.addExpressionCommand(expressionCommand, builder);
 
         verify(builder).addCommand(expressionCommand);
+    }
+
+    @Test
+    public void testReloadEditor() {
+        doNothing().when(view).loadNewBoxedExpressionEditor();
+        doNothing().when(view).syncExpressionWithOlderEditor();
+
+        view.reloadEditor();
+
+        verify(view).loadNewBoxedExpressionEditor();
+        verify(view).syncExpressionWithOlderEditor();
+    }
+
+    @Test
+    public void testSyncExpressionWithOlderEditor() {
+
+        final Supplier cache = mock(Supplier.class);
+        final ExpressionGridCache gridCache = mock(ExpressionGridCache.class);
+        final ExpressionContainerGrid expressionContainerGrid = mock(ExpressionContainerGrid.class);
+        final Optional hasName = Optional.empty();
+
+        when(cache.get()).thenReturn(gridCache);
+        doReturn(cache).when(view).getExpressionGridCacheSupplier();
+        doReturn(expressionContainerGrid).when(view).getExpressionContainerGrid();
+        doReturn(hasName).when(view).getHasName();
+
+        view.syncExpressionWithOlderEditor();
+
+        verify(gridCache).removeExpressionGrid(NODE_UUID);
+        verify(expressionContainerGrid).setExpression(NODE_UUID,
+                                                      hasExpression,
+                                                      hasName,
+                                                      false);
+    }
+
+    @Test
+    public void testReloadIfIsNewEditor_WhenItIs() {
+
+        doReturn(true).when(view).isNewEditorEnabled();
+        doNothing().when(view).reloadEditor();
+
+        view.reloadIfIsNewEditor();
+
+        verify(view).reloadEditor();
+    }
+
+    @Test
+    public void testReloadIfIsNewEditor_WhenItIsNot() {
+
+        doReturn(false).when(view).isNewEditorEnabled();
+        doNothing().when(view).reloadEditor();
+
+        view.reloadIfIsNewEditor();
+
+        verify(view, never()).reloadEditor();
     }
 }

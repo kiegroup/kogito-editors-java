@@ -537,10 +537,10 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
 
     void syncExpressionWithOlderEditor() {
         getExpressionGridCacheSupplier().get().removeExpressionGrid(getNodeUUID());
-        expressionContainerGrid.setExpression(getNodeUUID(),
-                                              getHasExpression(),
-                                              getHasName(),
-                                              isOnlyVisualChangeAllowed);
+        getExpressionContainerGrid().setExpression(getNodeUUID(),
+                                                   getHasExpression(),
+                                                   getHasName(),
+                                                   isOnlyVisualChangeAllowed);
     }
 
     void reloadIfIsNewEditor() {
@@ -568,10 +568,10 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
 
     public void notifyUserAction() {
         final CompositeCommand.Builder<AbstractCanvasHandler, CanvasViolation> commandBuilder = createCommandBuilder();
-        final SaveCurrentStatusCommand expressionCommand = new SaveCurrentStatusCommand(getHasExpression(),
-                                                                                        getEditorSelectedEvent(),
-                                                                                        this,
-                                                                                        getNodeUUID());
+        final SaveCurrentStateCommand expressionCommand = new SaveCurrentStateCommand(getHasExpression(),
+                                                                                      getEditorSelectedEvent(),
+                                                                                      this,
+                                                                                      getNodeUUID());
         addExpressionCommand(expressionCommand, commandBuilder);
         addUpdatePropertyNameCommand(commandBuilder);
 
@@ -583,7 +583,7 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
                                       commandBuilder.build());
     }
 
-    void addExpressionCommand(final SaveCurrentStatusCommand expressionCommand,
+    void addExpressionCommand(final SaveCurrentStateCommand expressionCommand,
                               final CompositeCommand.Builder<AbstractCanvasHandler, CanvasViolation> commandBuilder) {
         commandBuilder.addCommand(expressionCommand);
     }

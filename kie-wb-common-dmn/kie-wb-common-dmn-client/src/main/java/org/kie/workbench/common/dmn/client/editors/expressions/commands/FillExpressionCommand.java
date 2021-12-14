@@ -16,21 +16,18 @@
 
 package org.kie.workbench.common.dmn.client.editors.expressions.commands;
 
-import java.util.Objects;
-
 import javax.enterprise.event.Event;
 
 import org.kie.workbench.common.dmn.api.definition.HasExpression;
-import org.kie.workbench.common.dmn.api.definition.HasName;
 import org.kie.workbench.common.dmn.api.definition.HasVariable;
 import org.kie.workbench.common.dmn.api.definition.model.Expression;
 import org.kie.workbench.common.dmn.api.definition.model.InformationItemPrimary;
 import org.kie.workbench.common.dmn.api.editors.types.BuiltInTypeUtils;
-import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.api.property.dmn.QName;
 import org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType;
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorView;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.ExpressionProps;
+import org.kie.workbench.common.dmn.client.editors.expressions.util.HasExpressionUtils;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.ExpressionEditorChanged;
 
 public abstract class FillExpressionCommand<E extends ExpressionProps> {
@@ -112,15 +109,6 @@ public abstract class FillExpressionCommand<E extends ExpressionProps> {
     }
 
     void setExpressionName(final String expressionName) {
-        if (getHasExpression() instanceof HasName) {
-            final HasName hasName = (HasName) getHasExpression();
-            final Name name;
-            if (Objects.isNull(hasName.getName())) {
-                name = new Name();
-            } else {
-                name = hasName.getName();
-            }
-            name.setValue(expressionName);
-        }
+        HasExpressionUtils.setExpressionName(getHasExpression(), expressionName);
     }
 }

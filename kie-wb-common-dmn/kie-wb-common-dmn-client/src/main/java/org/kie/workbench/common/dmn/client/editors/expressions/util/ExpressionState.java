@@ -26,13 +26,12 @@ import org.kie.workbench.common.dmn.api.definition.HasName;
 import org.kie.workbench.common.dmn.api.definition.HasVariable;
 import org.kie.workbench.common.dmn.api.definition.model.Expression;
 import org.kie.workbench.common.dmn.api.definition.model.InformationItemPrimary;
-import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.api.property.dmn.QName;
 import org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType;
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorView;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.ExpressionEditorChanged;
 
-public class SavedStatus {
+public class ExpressionState {
 
     private final HasExpression hasExpression;
     private final Event<ExpressionEditorChanged> editorSelectedEvent;
@@ -42,31 +41,18 @@ public class SavedStatus {
     private String savedExpressionName;
     private QName savedTypeRef;
 
-    public SavedStatus(final HasExpression hasExpression,
-                       final Event<ExpressionEditorChanged> editorSelectedEvent,
-                       final ExpressionEditorView view,
-                       final String nodeUUID) {
+    public ExpressionState(final HasExpression hasExpression,
+                           final Event<ExpressionEditorChanged> editorSelectedEvent,
+                           final ExpressionEditorView view,
+                           final String nodeUUID) {
         this.hasExpression = hasExpression;
         this.editorSelectedEvent = editorSelectedEvent;
         this.view = view;
         this.nodeUUID = nodeUUID;
-        saveCurrentState();
     }
 
-    public Event<ExpressionEditorChanged> getEditorSelectedEvent() {
-        return editorSelectedEvent;
-    }
-
-    public void apply() {
-        restoreExpression();
-        restoreTypeRef();
-        restoreExpressionName();
-        fireEditorSelectedEvent();
-        view.reloadEditor();
-    }
-
-    void fireEditorSelectedEvent() {
-        getEditorSelectedEvent().fire(new ExpressionEditorChanged(getNodeUUID()));
+    public ExpressionEditorView getView() {
+        return view;
     }
 
     public String getNodeUUID() {
@@ -77,49 +63,56 @@ public class SavedStatus {
         return savedExpressionName;
     }
 
-    void restoreExpressionName() {
-        setExpressionName(getSavedExpressionName());
+    public void setSavedExpressionName(final String savedExpressionName) {
+        this.savedExpressionName = savedExpressionName;
     }
 
-    void setExpressionName(final String expressionName) {
-        if (getHasExpression() instanceof HasName) {
-            final HasName hasName = (HasName) getHasExpression();
-            final Name name;
-            if (Objects.isNull(hasName.getName())) {
-                name = new Name();
-            } else {
-                name = hasName.getName();
-            }
-            name.setValue(expressionName);
-        }
-    }
-
-    public Optional<Expression> getSavedExpression() {
-        return savedExpression;
-    }
-
-    void restoreExpression() {
-        getHasExpression().setExpression(getSavedExpression().orElse(null));
+    public Event<ExpressionEditorChanged> getEditorSelectedEvent() {
+        return editorSelectedEvent;
     }
 
     public HasExpression getHasExpression() {
         return hasExpression;
     }
 
-    public QName getSavedTypeRef() {
-        return savedTypeRef;
+    public Optional<Expression> getSavedExpression() {
+        return savedExpression;
     }
 
     public void setSavedExpression(final Optional<Expression> savedExpression) {
         this.savedExpression = savedExpression;
     }
 
-    public void setSavedExpressionName(final String savedExpressionName) {
-        this.savedExpressionName = savedExpressionName;
+    public QName getSavedTypeRef() {
+        return savedTypeRef;
     }
 
     public void setSavedTypeRef(final QName savedTypeRef) {
         this.savedTypeRef = savedTypeRef;
+    }
+
+    public void apply() {
+        restoreExpression();
+        restoreTypeRef();
+        restoreExpressionName();
+        fireEditorSelectedEvent();
+        getView().reloadEditor();
+    }
+
+    void fireEditorSelectedEvent() {
+        getEditorSelectedEvent().fire(new ExpressionEditorChanged(getNodeUUID()));
+    }
+
+    void restoreExpressionName() {
+        setExpressionName(getSavedExpressionName());
+    }
+
+    void setExpressionName(final String expressionName) {
+        HasExpressionUtils.setExpressionName(getHasExpression(), expressionName);
+    }
+
+    void restoreExpression() {
+        getHasExpression().setExpression(getSavedExpression().orElse(null));
     }
 
     void restoreTypeRef() {
@@ -129,7 +122,7 @@ public class SavedStatus {
         }
     }
 
-    void saveCurrentState() {
+    public void saveCurrentState() {
         saveCurrentExpressionName();
         saveCurrentTypeRef();
         saveCurrentExpression();
