@@ -15,11 +15,21 @@
  */
 
 import * as React from "react";
-import { EmptyState, EmptyStateBody, EmptyStateIcon, SearchInput, Title } from "@patternfly/react-core";
+import {
+  DataList,
+  DataListCell,
+  DataListCheck,
+  DataListItem,
+  DataListItemRow,
+  EmptyState,
+  EmptyStateBody,
+  EmptyStateIcon,
+  SearchInput,
+  Title,
+} from "@patternfly/react-core";
 import CubesIcon from "@patternfly/react-icons/dist/js/icons/cubes-icon";
 import { useImportJavaClassesWizardI18n } from "../../i18n";
 import { useCallback, useState } from "react";
-import { ImportJavaClassesWizardClassListTable } from "./ImportJavaClassesWizardClassListTable";
 import { JavaClass } from "./Model/JavaClass";
 
 export interface ImportJavaClassesWizardFirstStepProps {
@@ -38,13 +48,13 @@ export const ImportJavaClassesWizardFirstStep = ({
 }: ImportJavaClassesWizardFirstStepProps) => {
   const { i18n } = useImportJavaClassesWizardI18n();
   const [searchValue, setSearchValue] = useState("");
-  const [retrievedJavaClasses, setRetrievedJavaClasses] = useState<string[]>([]);
+  const [retrievedJavaClassesNames, setRetrievedJavaClassesNames] = useState<string[]>([]);
 
   const retrieveJavaClasses = useCallback((value: string) => {
     setSearchValue(value);
     const retrieved = window.envelopeMock.lspGetClassServiceMocked(value);
     if (retrieved) {
-      setRetrievedJavaClasses(retrieved);
+      setRetrievedJavaClassesNames(retrieved);
     }
   }, []);
 
@@ -52,8 +62,34 @@ export const ImportJavaClassesWizardFirstStep = ({
 
   const handleClearSearch = useCallback(() => {
     setSearchValue("");
-    setRetrievedJavaClasses([]);
+    setRetrievedJavaClassesNames([]);
   }, []);
+
+  const handleDataListCheckChange = useCallback(
+    (fullClassName: string) => {
+      if (!selectedJavaClasses.map((javaClass) => javaClass.name).includes(fullClassName)) {
+        onAddJavaClass(fullClassName);
+      } else {
+        onRemoveJavaClass(fullClassName);
+      }
+    },
+    [selectedJavaClasses, onAddJavaClass, onRemoveJavaClass]
+  );
+
+  const isDataListChecked = useCallback(
+    (fullClassName: string) => {
+      if (selectedJavaClasses.map((javaClass) => javaClass.name).includes(fullClassName)) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+    [selectedJavaClasses]
+  );
+
+  const dataListClassesSet = [
+    ...new Set(selectedJavaClasses.map((value) => value.name).concat(retrievedJavaClassesNames)),
+  ];
 
   return (
     <>
@@ -64,13 +100,23 @@ export const ImportJavaClassesWizardFirstStep = ({
         onClear={handleClearSearch}
         autoFocus
       />
-      {retrievedJavaClasses.length > 0 || selectedJavaClasses.length > 0 ? (
-        <ImportJavaClassesWizardClassListTable
-          selectedJavaClasses={selectedJavaClasses}
-          retrievedJavaClasses={retrievedJavaClasses}
-          onAddJavaClass={onAddJavaClass}
-          onRemoveJavaClass={onRemoveJavaClass}
-        />
+      {retrievedJavaClassesNames.length > 0 || selectedJavaClasses.length > 0 ? (
+        <DataList aria-label={"class-data-list"}>
+          {dataListClassesSet.map((value) => (
+            <DataListItem key={value} name={value}>
+              <DataListItemRow>
+                <DataListCheck
+                  aria-labelledby={value}
+                  checked={isDataListChecked(value)}
+                  onChange={() => handleDataListCheckChange(value)}
+                />
+                <DataListCell>
+                  <span id={value}>{value}</span>
+                </DataListCell>
+              </DataListItemRow>
+            </DataListItem>
+          ))}
+        </DataList>
       ) : (
         <EmptyStep
           emptyStateBodyText={i18n.modalWizard.firstStep.emptyState.body}

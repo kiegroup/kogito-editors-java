@@ -1770,7 +1770,6 @@ exports[`ImportJavaClasses component tests Should search box with results works 
                               <input
                                 aria-invalid="false"
                                 aria-labelledby="com.Book"
-                                checked=""
                                 rowid=""
                                 type="checkbox"
                               />
