@@ -17,6 +17,7 @@
 import * as React from "react";
 import { useCallback, useState } from "react";
 import * as ReactDOM from "react-dom";
+import "@patternfly/react-core/dist/styles/base.css";
 import "./index.css";
 // noinspection ES6PreferShortImport
 import {
@@ -34,7 +35,6 @@ import {
 } from "./lib";
 import { Button, Modal } from "@patternfly/react-core";
 import { CopyIcon, PenIcon } from "@patternfly/react-icons";
-import "./lib/components/BoxedExpressionEditor/base-no-reset-wrapped.css";
 import ReactJson from "react-json-view";
 
 export const App: React.FunctionComponent = () => {

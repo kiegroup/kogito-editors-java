@@ -25,8 +25,8 @@ import {
 } from "../../i18n";
 import { BoxedExpressionProvider } from "./BoxedExpressionProvider";
 import { ExpressionContainer } from "../ExpressionContainer";
+import "./pf-base-no-reset-wrapped.scss";
 import "@patternfly/react-styles/css/components/Drawer/drawer.css";
-import "./base-no-reset-wrapped.css";
 
 export interface BoxedExpressionEditorProps {
   /** Identifier of the decision node, where the expression will be hold */

@@ -70,6 +70,10 @@ const commonConfig = (name, devMode, options = {}) => {
           use: [devMode ? "style-loader" : MiniCssExtractPlugin.loader, "css-loader"],
         },
         {
+          test: /\.s[ac]ss$/i,
+          use: ["style-loader", "css-loader", "sass-loader"],
+        },
+        {
           test: /\.(woff(2)?|ttf|eot)(\?v=\d+\.\d+\.\d+)?$/,
           use: [
             {
