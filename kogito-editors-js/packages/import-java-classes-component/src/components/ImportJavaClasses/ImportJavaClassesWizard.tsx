@@ -15,7 +15,6 @@
  */
 
 import * as React from "react";
-import { ModalWizard } from "../ModalWizard";
 import { useImportJavaClassesWizardI18n } from "../../i18n";
 import { ImportJavaClassesWizardFirstStep } from "./ImportJavaClassesWizardFirstStep";
 import { ImportJavaClassesWizardSecondStep } from "./ImportJavaClassesWizardSecondStep";
@@ -26,6 +25,7 @@ import { JavaField } from "./Model/JavaField";
 import { DMNSimpleType } from "./Model/DMNSimpleType";
 import { getJavaClassSimpleName } from "./Model/JavaClassUtils";
 import { ImportJavaClassGWTService } from "./Model";
+import { Button, Modal, ModalVariant, Tooltip, Wizard } from "@patternfly/react-core";
 
 export interface ImportJavaClassesWizardProps {
   /** Button disabled status */
@@ -43,6 +43,7 @@ export const ImportJavaClassesWizard = ({
 }: ImportJavaClassesWizardProps) => {
   const { i18n } = useImportJavaClassesWizardI18n();
   const [javaClasses, setJavaClasses] = useState<JavaClass[]>([]);
+  const [isOpen, setOpen] = useState(false);
 
   const updateJavaFieldsReferences = useCallback(
     (updatedJavaClasses: JavaClass[], previousJavaClasses: JavaClass[]) => {
@@ -105,13 +106,17 @@ export const ImportJavaClassesWizard = ({
     return javaClasses.length > 0 && javaClasses.every((javaClass) => javaClass.fieldsLoaded);
   }, [javaClasses]);
 
+  const handleButtonClick = useCallback(() => setOpen((prevState) => !prevState), []);
+
   const handleWizardClose = useCallback(() => {
+    handleButtonClick();
     setJavaClasses([]);
-  }, []);
+  }, [handleButtonClick]);
 
   const handleWizardSave = useCallback(() => {
+    handleWizardClose();
     importJavaClassesGWTService.handleOnWizardImportButtonClick(javaClasses);
-  }, [javaClasses, importJavaClassesGWTService]);
+  }, [javaClasses, handleWizardClose, importJavaClassesGWTService]);
 
   const steps = [
     {
@@ -148,17 +153,45 @@ export const ImportJavaClassesWizard = ({
   ];
 
   return (
-    <ModalWizard
-      buttonStyle="secondary"
-      buttonText={i18n.modalButton.text}
-      buttonDisabledStatus={buttonDisabledStatus}
-      buttonTooltipMessage={buttonTooltipMessage}
-      className={"import-java-classes"}
-      onWizardClose={handleWizardClose}
-      onWizardSave={handleWizardSave}
-      wizardDescription={i18n.modalWizard.description}
-      wizardSteps={steps}
-      wizardTitle={i18n.modalWizard.title}
-    />
+    <>
+      {buttonTooltipMessage ? (
+        <Tooltip content={buttonTooltipMessage}>
+          <Button
+            variant={"secondary"}
+            onClick={handleButtonClick}
+            isAriaDisabled={buttonDisabledStatus}
+            data-testid={"modal-wizard-button"}
+          >
+            {i18n.modalButton.text}
+          </Button>
+        </Tooltip>
+      ) : (
+        <Button
+          variant={"secondary"}
+          onClick={handleButtonClick}
+          isAriaDisabled={buttonDisabledStatus}
+          data-testid={"modal-wizard-button"}
+        >
+          {i18n.modalButton.text}
+        </Button>
+      )}
+      {isOpen ? (
+        <Modal
+          description={i18n.modalWizard.description}
+          isOpen={isOpen}
+          onClose={handleWizardClose}
+          title={i18n.modalWizard.title}
+          variant={ModalVariant.large}
+        >
+          <Wizard
+            className={"import-java-classes"}
+            height={600}
+            onClose={handleWizardClose}
+            onSave={handleWizardSave}
+            steps={steps}
+          />
+        </Modal>
+      ) : null}
+    </>
   );
 };
