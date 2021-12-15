@@ -30,7 +30,7 @@ export interface ImportJavaClassesWizardFieldListTableProps {
   selectedJavaClassFields: JavaClass[];
   /** Function to call when the Fetch button is clicked */
   loadJavaClass?: (fullClassName: string) => void;
-};
+}
 
 export const ImportJavaClassesWizardFieldListTable = (props: ImportJavaClassesWizardFieldListTableProps) => {
   return (
