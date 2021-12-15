@@ -16,10 +16,11 @@
 
 import { Select, SelectOption, SelectVariant } from "@patternfly/react-core";
 import * as React from "react";
-import { useCallback, useState } from "react";
+import { useCallback, useContext, useState } from "react";
 import { useBoxedExpressionEditorI18n } from "../../i18n";
 import * as _ from "lodash";
 import { DataType } from "../../api";
+import { BoxedExpressionGlobalContext } from "../../context";
 
 export interface DataTypeSelectorProps {
   /** The pre-selected data type */
@@ -37,6 +38,8 @@ export const DataTypeSelector: React.FunctionComponent<DataTypeSelectorProps> = 
 }) => {
   const { i18n } = useBoxedExpressionEditorI18n();
 
+  const { dataTypeProps } = useContext(BoxedExpressionGlobalContext);
+
   const [dataTypeSelectOpen, setDataTypeSelectOpen] = useState(false);
 
   const onDataTypeSelect = useCallback(
@@ -48,12 +51,14 @@ export const DataTypeSelector: React.FunctionComponent<DataTypeSelectorProps> = 
   );
 
   const getDataTypes = useCallback(() => {
-    return _.map(Object.values(DataType), (key) => (
-      <SelectOption key={key} value={key} data-ouia-component-id={key}>
-        {key}
-      </SelectOption>
-    ));
-  }, []);
+    return _.chain(dataTypeProps)
+      .map(({ name }) => (
+        <SelectOption key={name} value={name} data-ouia-component-id={name}>
+          {name}
+        </SelectOption>
+      ))
+      .value();
+  }, [dataTypeProps]);
 
   const onDataTypeFilter = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
