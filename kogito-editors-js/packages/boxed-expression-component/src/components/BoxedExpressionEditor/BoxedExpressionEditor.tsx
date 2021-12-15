@@ -57,8 +57,6 @@ export function BoxedExpressionEditor(props: BoxedExpressionEditorProps) {
     noClearAction: props.clearSupportedOnRootExpression === false,
   });
 
-  console.log(props.dataTypeProps);
-
   useEffect(() => {
     setExpressionDefinition({
       ...props.expressionDefinition,
@@ -82,6 +80,7 @@ export function BoxedExpressionEditor(props: BoxedExpressionEditorProps) {
       <BoxedExpressionProvider
         decisionNodeId={props.decisionNodeId}
         expressionDefinition={expressionDefinition}
+        dataTypeProps={props.dataTypeProps}
         pmmlParams={props.pmmlParams}
         isRunnerTable={false}
       >
