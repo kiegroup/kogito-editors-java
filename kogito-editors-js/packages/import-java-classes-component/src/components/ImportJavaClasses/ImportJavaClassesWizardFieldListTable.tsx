@@ -25,10 +25,10 @@ import { getJavaClassSimpleName } from "./Model/JavaClassUtils";
 import { useCallback, useState } from "react";
 import { useImportJavaClassesWizardI18n } from "../../i18n";
 
-export type ImportJavaClassesWizardFieldListTableProps = {
+export interface ImportJavaClassesWizardFieldListTableProps {
   /** List of the selected classes by user */
   selectedJavaClassFields: JavaClass[];
-  /** Function to call when a Fetch button is clicked */
+  /** Function to call when the Fetch button is clicked */
   loadJavaClass?: (fullClassName: string) => void;
 };
 
