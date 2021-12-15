@@ -36,6 +36,7 @@ import { Button, Modal } from "@patternfly/react-core";
 import { CopyIcon, PenIcon } from "@patternfly/react-icons";
 import "./lib/components/BoxedExpressionEditor/base-no-reset-wrapped.css";
 import ReactJson from "react-json-view";
+import { dataTypeProps, pmmlParams } from "./lib/__tests__/__mocks__";
 
 export const App: React.FunctionComponent = () => {
   //This definition comes directly from the decision node
@@ -43,48 +44,6 @@ export const App: React.FunctionComponent = () => {
     name: "Expression Name",
     dataType: DataType.Undefined,
   };
-
-  const pmmlParams = [
-    {
-      document: "mining pmml",
-      modelsFromDocument: [
-        {
-          model: "MiningModelSum",
-          parametersFromModel: [
-            { id: "i1", name: "input1", dataType: DataType.Any },
-            { id: "i2", name: "input2", dataType: DataType.Any },
-            { id: "i3", name: "input3", dataType: DataType.Any },
-          ],
-        },
-      ],
-    },
-    {
-      document: "regression pmml",
-      modelsFromDocument: [
-        {
-          model: "RegressionLinear",
-          parametersFromModel: [
-            { id: "i1", name: "i1", dataType: DataType.Number },
-            { id: "i2", name: "i2", dataType: DataType.Number },
-          ],
-        },
-      ],
-    },
-  ];
-
-  const dataTypeProps = [
-    { typeRef: "Undefined", name: "<Undefined>", isCustom: false },
-    { typeRef: "Any", name: "Any", isCustom: false },
-    { typeRef: "Boolean", name: "boolean", isCustom: false },
-    { typeRef: "Context", name: "context", isCustom: false },
-    { typeRef: "Date", name: "date", isCustom: false },
-    { typeRef: "DateTime", name: "date and time", isCustom: false },
-    { typeRef: "DateTimeDuration", name: "days and time duration", isCustom: false },
-    { typeRef: "Number", name: "number", isCustom: false },
-    { typeRef: "String", name: "string", isCustom: false },
-    { typeRef: "Time", name: "time", isCustom: false },
-    { typeRef: "YearsMonthsDuration", name: "years and months duration", isCustom: false },
-  ];
 
   const [expressionDefinition, setExpressionDefinition] = useState(selectedExpression);
 
