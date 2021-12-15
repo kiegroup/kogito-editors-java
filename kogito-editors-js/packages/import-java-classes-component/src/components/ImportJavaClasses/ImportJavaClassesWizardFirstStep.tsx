@@ -15,11 +15,10 @@
  */
 
 import * as React from "react";
-import { SearchInput } from "@patternfly/react-core";
+import { EmptyState, EmptyStateBody, EmptyStateIcon, SearchInput, Title } from "@patternfly/react-core";
 import CubesIcon from "@patternfly/react-icons/dist/js/icons/cubes-icon";
 import { useImportJavaClassesWizardI18n } from "../../i18n";
 import { useCallback, useState } from "react";
-import { EmptyStateWidget } from "../EmptyStateWidget";
 import { ImportJavaClassesWizardClassListTable } from "./ImportJavaClassesWizardClassListTable";
 import { JavaClass } from "./Model/JavaClass";
 
@@ -90,12 +89,12 @@ const EmptyStep = ({
   emptyStateTitleText: string;
 }) => {
   return (
-    <EmptyStateWidget
-      emptyStateBodyText={emptyStateBodyText}
-      emptyStateIcon={CubesIcon}
-      emptyStateTitleHeading={"h6"}
-      emptyStateTitleSize={"md"}
-      emptyStateTitleText={emptyStateTitleText}
-    />
+    <EmptyState>
+      <EmptyStateIcon icon={CubesIcon} />
+      <Title headingLevel={"h6"} size={"md"}>
+        {emptyStateTitleText}
+      </Title>
+      <EmptyStateBody>{emptyStateBodyText}</EmptyStateBody>
+    </EmptyState>
   );
 };
