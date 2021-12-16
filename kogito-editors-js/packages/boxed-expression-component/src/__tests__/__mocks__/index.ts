@@ -32,6 +32,7 @@ export const dataTypeProps = [
   { typeRef: "String", name: "string", isCustom: false },
   { typeRef: "Time", name: "time", isCustom: false },
   { typeRef: "YearsMonthsDuration", name: "years and months duration", isCustom: false },
+  { typeRef: "tPerson", name: "tPerson", isCustom: true },
 ];
 
 /**

@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { Select, SelectOption, SelectVariant } from "@patternfly/react-core";
+import { Divider, Select, SelectGroup, SelectOption, SelectVariant } from "@patternfly/react-core";
 import * as React from "react";
 import { useCallback, useContext, useState } from "react";
 import { useBoxedExpressionEditorI18n } from "../../i18n";
 import * as _ from "lodash";
-import { DataType } from "../../api";
+import { DataType, DataTypeProps } from "../../api";
 import { BoxedExpressionGlobalContext } from "../../context";
 
 export interface DataTypeSelectorProps {
@@ -50,25 +50,47 @@ export const DataTypeSelector: React.FunctionComponent<DataTypeSelectorProps> = 
     [onDataTypeChange]
   );
 
-  const getDataTypes = useCallback(() => {
-    return _.chain(dataTypeProps)
-      .map(({ name }) => (
-        <SelectOption key={name} value={name} data-ouia-component-id={name}>
-          {name}
-        </SelectOption>
-      ))
-      .value();
-  }, [dataTypeProps]);
+  const buildOptionsByGroup = useCallback(
+    (key: "default" | "custom", options: DataTypeProps[]) => {
+      return (
+        <SelectGroup label={i18n.dataTypeDropDown[key]} key={key}>
+          {_.chain(options)
+            .map(({ name }) => <SelectOption key={name} value={name} data-ouia-component-id={name} />)
+            .value()}
+        </SelectGroup>
+      );
+    },
+    [i18n.dataTypeDropDown]
+  );
 
-  const onDataTypeFilter = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      let input: RegExp;
-      try {
-        input = new RegExp(e.target.value, "i");
-      } catch (exception) {
+  const getDataTypes = useCallback(() => {
+    const [customDataTypes, defaultDataTypes] = _.chain(dataTypeProps).partition("isCustom").value();
+    const defaultDataTypeOptions = buildOptionsByGroup("default", defaultDataTypes);
+    const dataTypeGroups = [defaultDataTypeOptions];
+    const customDataTypeOptions = buildOptionsByGroup("custom", customDataTypes);
+    if (!_.isEmpty(customDataTypes)) {
+      dataTypeGroups.push(<Divider key="divider" />);
+      dataTypeGroups.push(customDataTypeOptions);
+    }
+    return dataTypeGroups;
+  }, [buildOptionsByGroup, dataTypeProps]);
+
+  const onFilteringDataTypes = useCallback(
+    (_, textInput: string) => {
+      if (textInput === "") {
         return getDataTypes();
+      } else {
+        return getDataTypes()
+          .map((group) => {
+            const filteredGroup = React.cloneElement(group, {
+              children: group?.props?.children?.filter((item: React.ReactElement) => {
+                return item.props.value.toLowerCase().includes(textInput.toLowerCase());
+              }),
+            });
+            if (filteredGroup?.props?.children?.length > 0) return filteredGroup;
+          })
+          .filter(Boolean) as JSX.Element[];
       }
-      return e.target.value !== "" ? getDataTypes().filter((child) => input.test(child.props.value)) : getDataTypes();
     },
     [getDataTypes]
   );
@@ -83,9 +105,10 @@ export const DataTypeSelector: React.FunctionComponent<DataTypeSelectorProps> = 
       typeAheadAriaLabel={i18n.choose}
       onToggle={onDataTypeSelectToggle}
       onSelect={onDataTypeSelect}
-      onFilter={onDataTypeFilter}
+      onFilter={onFilteringDataTypes}
       isOpen={dataTypeSelectOpen}
       selections={selectedDataType}
+      isGrouped
       hasInlineFilter
       inlineFilterPlaceholderText={i18n.choose}
     >
