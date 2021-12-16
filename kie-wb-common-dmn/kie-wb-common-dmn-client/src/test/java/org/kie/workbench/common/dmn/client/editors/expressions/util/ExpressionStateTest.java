@@ -16,8 +16,6 @@
 
 package org.kie.workbench.common.dmn.client.editors.expressions.util;
 
-import java.util.Optional;
-
 import com.ait.lienzo.test.LienzoMockitoTestRunner;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,7 +36,6 @@ import org.mockito.Mock;
 import org.uberfire.mocks.EventSourceMock;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.inOrder;
@@ -121,9 +118,7 @@ public class ExpressionStateTest {
 
         final Expression savedExpression = mock(Expression.class);
 
-        final Optional<Expression> optionalSavedExpression = Optional.of(savedExpression);
-
-        expressionState.setSavedExpression(optionalSavedExpression);
+        expressionState.setSavedExpression(savedExpression);
 
         expressionState.restoreExpression();
 
@@ -133,9 +128,7 @@ public class ExpressionStateTest {
     @Test
     public void testRestoreExpression_WhenThereIsNot() {
 
-        final Optional<Expression> optionalSavedExpression = Optional.empty();
-
-        expressionState.setSavedExpression(optionalSavedExpression);
+        expressionState.setSavedExpression(null);
 
         expressionState.restoreExpression();
 
@@ -229,7 +222,7 @@ public class ExpressionStateTest {
 
         expressionState.saveCurrentExpression();
 
-        verify(expressionState).setSavedExpression(Optional.empty());
+        verify(expressionState).setSavedExpression(null);
     }
 
     @Test
@@ -243,9 +236,8 @@ public class ExpressionStateTest {
 
         expressionState.saveCurrentExpression();
 
-        final Optional<Expression> saved = expressionState.getSavedExpression();
+        final Expression saved = expressionState.getSavedExpression();
 
-        assertTrue(saved.isPresent());
-        assertEquals(expressionCopy, saved.get());
+        assertEquals(expressionCopy, saved);
     }
 }

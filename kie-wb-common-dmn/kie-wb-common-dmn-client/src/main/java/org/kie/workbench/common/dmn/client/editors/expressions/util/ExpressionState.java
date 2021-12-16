@@ -17,7 +17,6 @@
 package org.kie.workbench.common.dmn.client.editors.expressions.util;
 
 import java.util.Objects;
-import java.util.Optional;
 
 import javax.enterprise.event.Event;
 
@@ -37,7 +36,7 @@ public class ExpressionState {
     private final Event<ExpressionEditorChanged> editorSelectedEvent;
     private final ExpressionEditorView view;
     private final String nodeUUID;
-    private Optional<Expression> savedExpression;
+    private Expression savedExpression;
     private String savedExpressionName;
     private QName savedTypeRef;
 
@@ -75,11 +74,11 @@ public class ExpressionState {
         return hasExpression;
     }
 
-    public Optional<Expression> getSavedExpression() {
+    public Expression getSavedExpression() {
         return savedExpression;
     }
 
-    public void setSavedExpression(final Optional<Expression> savedExpression) {
+    public void setSavedExpression(final Expression savedExpression) {
         this.savedExpression = savedExpression;
     }
 
@@ -112,7 +111,7 @@ public class ExpressionState {
     }
 
     void restoreExpression() {
-        getHasExpression().setExpression(getSavedExpression().orElse(null));
+        getHasExpression().setExpression(getSavedExpression());
     }
 
     void restoreTypeRef() {
@@ -149,9 +148,9 @@ public class ExpressionState {
 
     void saveCurrentExpression() {
         if (Objects.isNull(getHasExpression().getExpression())) {
-            setSavedExpression(Optional.empty());
+            setSavedExpression(null);
         } else {
-            setSavedExpression(Optional.of(getHasExpression().getExpression().copy()));
+            setSavedExpression(getHasExpression().getExpression().copy());
         }
     }
 }
