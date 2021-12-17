@@ -32,6 +32,7 @@ import org.kie.workbench.common.dmn.api.property.dmn.QName;
 import org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType;
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorView;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.ExpressionProps;
+import org.kie.workbench.common.dmn.client.editors.types.common.ItemDefinitionUtils;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.ExpressionEditorChanged;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
@@ -66,6 +67,9 @@ public class FillExpressionCommandTest {
 
     @Mock
     private Expression existingExpression;
+
+    @Mock
+    private ItemDefinitionUtils itemDefinitionUtils;
 
     private final String nodeUUID = "uuid";
 
@@ -183,7 +187,7 @@ public class FillExpressionCommandTest {
                                          final Event<ExpressionEditorChanged> editorSelectedEvent,
                                          final String nodeUUID,
                                          final ExpressionEditorView view) {
-            super(hasExpression, expressionProps, editorSelectedEvent, nodeUUID, view);
+            super(hasExpression, expressionProps, editorSelectedEvent, nodeUUID, view, itemDefinitionUtils);
         }
 
         @Override
