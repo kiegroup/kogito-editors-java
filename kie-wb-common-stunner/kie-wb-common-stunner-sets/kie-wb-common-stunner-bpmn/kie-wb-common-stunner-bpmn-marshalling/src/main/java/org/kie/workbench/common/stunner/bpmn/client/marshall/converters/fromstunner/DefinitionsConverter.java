@@ -16,11 +16,16 @@
 
 package org.kie.workbench.common.stunner.bpmn.client.marshall.converters.fromstunner;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.eclipse.bpmn2.CorrelationKey;
 import org.eclipse.bpmn2.Definitions;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.fromstunner.processes.RootProcessConverter;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.fromstunner.properties.DefinitionsPropertyWriter;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.fromstunner.properties.ProcessPropertyWriter;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.fromstunner.properties.PropertyWriterFactory;
+import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.fromstunner.properties.util.PropertyWriterUtils;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagram;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.BaseDiagramSet;
 import org.kie.workbench.common.stunner.core.graph.Graph;
@@ -66,6 +71,12 @@ public class DefinitionsConverter {
         p.addAllRootElements(pp.getItemDefinitions());
         p.addAllRootElements(pp.getRootElements());
         p.addAllRootElements(pp.getInterfaces());
+
+        List<CorrelationKey> correlationKeys = definition.getCollaborationSet().getCorrelations().getValue().getCorrelations().stream()
+                .map(PropertyWriterUtils::createCorrelationKey)
+                .collect(Collectors.toList());
+        p.setCorrelations(correlationKeys, pp.getProcess());
+        pp.setCorrelations(correlationKeys);
 
         return definitions;
     }

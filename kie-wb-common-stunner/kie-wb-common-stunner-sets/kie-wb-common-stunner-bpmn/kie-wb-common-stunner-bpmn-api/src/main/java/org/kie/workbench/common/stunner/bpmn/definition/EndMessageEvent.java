@@ -28,6 +28,7 @@ import org.kie.workbench.common.forms.adf.definitions.annotations.FormDefinition
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormField;
 import org.kie.workbench.common.forms.adf.definitions.settings.FieldPolicy;
 import org.kie.workbench.common.stunner.bpmn.definition.property.background.BackgroundSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.collaboration.events.CorrelationSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.CircleDimensionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.Radius;
@@ -63,6 +64,11 @@ public class EndMessageEvent extends BaseEndEvent {
     @FormField(afterElement = "executionSet")
     protected DataIOSet dataIOSet;
 
+    @Property
+    @FormField(afterElement = "dataIOset")
+    @Valid
+    protected CorrelationSet correlationSet;
+
     public EndMessageEvent() {
         this(new BPMNGeneralSet(""),
              new BackgroundSet(),
@@ -70,7 +76,8 @@ public class EndMessageEvent extends BaseEndEvent {
              new CircleDimensionSet(new Radius()),
              new AdvancedData(),
              new MessageEventExecutionSet(),
-             new DataIOSet());
+             new DataIOSet(),
+             new CorrelationSet());
     }
 
     public EndMessageEvent(final @MapsTo("general") BPMNGeneralSet general,
@@ -79,7 +86,8 @@ public class EndMessageEvent extends BaseEndEvent {
                            final @MapsTo("dimensionsSet") CircleDimensionSet dimensionsSet,
                            final @MapsTo("advancedData") AdvancedData advancedData,
                            final @MapsTo("executionSet") MessageEventExecutionSet executionSet,
-                           final @MapsTo("dataIOSet") DataIOSet dataIOSet) {
+                           final @MapsTo("dataIOSet") DataIOSet dataIOSet,
+                           final @MapsTo("correlationSet") CorrelationSet correlationSet) {
         super(general,
               backgroundSet,
               fontSet,
@@ -87,6 +95,7 @@ public class EndMessageEvent extends BaseEndEvent {
               advancedData);
         this.executionSet = executionSet;
         this.dataIOSet = dataIOSet;
+        this.correlationSet = correlationSet;
     }
 
     @Override
@@ -121,11 +130,20 @@ public class EndMessageEvent extends BaseEndEvent {
         this.dataIOSet = dataIOSet;
     }
 
+    public CorrelationSet getCorrelationSet() {
+        return correlationSet;
+    }
+
+    public void setCorrelationSet(CorrelationSet correlationSet) {
+        this.correlationSet = correlationSet;
+    }
+
     @Override
     public int hashCode() {
         return HashUtil.combineHashCodes(super.hashCode(),
                                          executionSet.hashCode(),
                                          dataIOSet.hashCode(),
+                                         correlationSet.hashCode(),
                                          labels.hashCode());
     }
 
@@ -136,6 +154,7 @@ public class EndMessageEvent extends BaseEndEvent {
             return super.equals(other) &&
                     Objects.equals(executionSet, other.executionSet) &&
                     Objects.equals(dataIOSet, other.dataIOSet) &&
+                    Objects.equals(correlationSet, other.correlationSet) &&
                     Objects.equals(labels, other.labels);
         }
         return false;

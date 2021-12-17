@@ -36,6 +36,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.IntermediateLinkEventThr
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateMessageEventThrowing;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateSignalEventThrowing;
 import org.kie.workbench.common.stunner.bpmn.definition.property.background.BackgroundSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.collaboration.events.CorrelationSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.CircleDimensionSet;
@@ -84,6 +85,7 @@ public class IntermediateThrowEventConverterTest {
     private BPMNGeneralSet generalSet;
     private AssignmentsInfo assignmentsInfo;
     private DataIOSet dataIOSet;
+    private CorrelationSet correlationSet;
     private AdvancedData advancedData;
 
     private SignalRef signalRef;
@@ -109,6 +111,7 @@ public class IntermediateThrowEventConverterTest {
 
         assignmentsInfo = new AssignmentsInfo(ASSIGNMENTS_INFO);
         dataIOSet = new DataIOSet(assignmentsInfo);
+        correlationSet = new CorrelationSet();
         advancedData = new AdvancedData();
 
         signalRef = mock(SignalRef.class);
@@ -221,6 +224,7 @@ public class IntermediateThrowEventConverterTest {
                                                     mock(CircleDimensionSet.class),
                                                     dataIOSet,
                                                     advancedData,
+                                                    correlationSet,
                                                     executionSet);
         Node dockNode = mockNode();
         Node node = mockDockedNode(dockNode, eventThrowing);
@@ -256,6 +260,7 @@ public class IntermediateThrowEventConverterTest {
                                                      mock(CircleDimensionSet.class),
                                                      dataIOSet,
                                                      advancedData,
+                                                     correlationSet,
                                                      executionSet);
         Node dockNode = mockNode();
         Node node = mockDockedNode(dockNode, eventThrowing);

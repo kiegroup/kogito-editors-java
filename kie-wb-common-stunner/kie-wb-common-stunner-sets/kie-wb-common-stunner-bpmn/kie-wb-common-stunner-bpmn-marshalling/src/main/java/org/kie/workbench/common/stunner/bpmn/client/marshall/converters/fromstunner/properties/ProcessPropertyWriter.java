@@ -28,6 +28,8 @@ import bpsim.BpsimPackage;
 import bpsim.ElementParameters;
 import bpsim.Scenario;
 import bpsim.ScenarioParameters;
+import org.eclipse.bpmn2.CorrelationKey;
+import org.eclipse.bpmn2.CorrelationSubscription;
 import org.eclipse.bpmn2.ExtensionAttributeValue;
 import org.eclipse.bpmn2.LaneSet;
 import org.eclipse.bpmn2.Process;
@@ -39,6 +41,7 @@ import org.eclipse.bpmn2.di.BPMNEdge;
 import org.eclipse.bpmn2.di.BPMNPlane;
 import org.eclipse.bpmn2.di.BPMNShape;
 import org.eclipse.dd.di.DiagramElement;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.impl.EStructuralFeatureImpl;
 import org.eclipse.emf.ecore.util.FeatureMap;
@@ -46,6 +49,7 @@ import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.custompr
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.customproperties.CustomElement;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.customproperties.DeclarationList;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.fromstunner.ElementContainer;
+import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.fromstunner.properties.util.PropertyWriterUtils;
 import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseFileVariables;
 import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseIdPrefix;
 import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseRoles;
@@ -238,6 +242,17 @@ public class ProcessPropertyWriter extends BasePropertyWriter implements Element
 
     public void setDefaultImports(List<DefaultImport> imports) {
         CustomElement.defaultImports.of(process).set(imports);
+    }
+
+    public void setCorrelations(List<CorrelationKey> correlationKeys) {
+        if (!correlationKeys.isEmpty()) {
+            correlationKeys.stream()
+                    .map(PropertyWriterUtils::createSubscription)
+                    .forEach(cor -> {
+                        EList<CorrelationSubscription> sub = process.getCorrelationSubscriptions();
+                        sub.add(cor);
+                    });
+        }
     }
 
     public void addLaneSet(Collection<LanePropertyWriter> lanes) {

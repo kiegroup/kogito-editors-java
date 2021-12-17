@@ -28,6 +28,7 @@ import org.kie.workbench.common.forms.adf.definitions.annotations.FormDefinition
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormField;
 import org.kie.workbench.common.forms.adf.definitions.settings.FieldPolicy;
 import org.kie.workbench.common.stunner.bpmn.definition.property.background.BackgroundSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.collaboration.events.CorrelationSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.CircleDimensionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.Radius;
@@ -59,6 +60,11 @@ public class IntermediateMessageEventCatching extends BaseCatchingIntermediateEv
     @Valid
     protected CancellingMessageEventExecutionSet executionSet;
 
+    @Property
+    @FormField(afterElement = "advancedData")
+    @Valid
+    protected CorrelationSet correlationSet;
+
     public IntermediateMessageEventCatching() {
         this(new BPMNGeneralSet(""),
              new BackgroundSet(),
@@ -66,6 +72,7 @@ public class IntermediateMessageEventCatching extends BaseCatchingIntermediateEv
              new CircleDimensionSet(new Radius()),
              new DataIOSet(),
              new AdvancedData(),
+             new CorrelationSet(),
              new CancellingMessageEventExecutionSet());
     }
 
@@ -75,6 +82,7 @@ public class IntermediateMessageEventCatching extends BaseCatchingIntermediateEv
                                             final @MapsTo("dimensionsSet") CircleDimensionSet dimensionsSet,
                                             final @MapsTo("dataIOSet") DataIOSet dataIOSet,
                                             final @MapsTo("advancedData") AdvancedData advancedData,
+                                            final @MapsTo("correlationSet") CorrelationSet correlationSet,
                                             final @MapsTo("executionSet") CancellingMessageEventExecutionSet executionSet) {
         super(general,
               backgroundSet,
@@ -82,6 +90,7 @@ public class IntermediateMessageEventCatching extends BaseCatchingIntermediateEv
               dimensionsSet,
               dataIOSet,
               advancedData);
+        this.correlationSet = correlationSet;
         this.executionSet = executionSet;
     }
 
@@ -91,6 +100,14 @@ public class IntermediateMessageEventCatching extends BaseCatchingIntermediateEv
 
     public void setExecutionSet(CancellingMessageEventExecutionSet executionSet) {
         this.executionSet = executionSet;
+    }
+
+    public CorrelationSet getCorrelationSet() {
+        return correlationSet;
+    }
+
+    public void setCorrelationSet(CorrelationSet correlationSet) {
+        this.correlationSet = correlationSet;
     }
 
     @Override
@@ -103,7 +120,8 @@ public class IntermediateMessageEventCatching extends BaseCatchingIntermediateEv
     @Override
     public int hashCode() {
         return HashUtil.combineHashCodes(super.hashCode(),
-                                         executionSet.hashCode());
+                                         executionSet.hashCode(),
+                                         correlationSet.hashCode());
     }
 
     @Override
@@ -111,7 +129,8 @@ public class IntermediateMessageEventCatching extends BaseCatchingIntermediateEv
         if (o instanceof IntermediateMessageEventCatching) {
             IntermediateMessageEventCatching other = (IntermediateMessageEventCatching) o;
             return super.equals(other) &&
-                    Objects.equals(executionSet, other.executionSet);
+                    Objects.equals(executionSet, other.executionSet) &&
+                    Objects.equals(correlationSet, other.correlationSet);
         }
         return false;
     }

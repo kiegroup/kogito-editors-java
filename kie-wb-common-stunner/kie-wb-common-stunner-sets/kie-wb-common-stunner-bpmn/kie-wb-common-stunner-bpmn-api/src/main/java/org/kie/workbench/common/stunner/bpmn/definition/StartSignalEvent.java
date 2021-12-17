@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.stunner.bpmn.definition;
 
+import java.util.Objects;
+
 import javax.validation.Valid;
 
 import org.jboss.errai.common.client.api.annotations.MapsTo;
@@ -26,6 +28,7 @@ import org.kie.workbench.common.forms.adf.definitions.annotations.FormDefinition
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormField;
 import org.kie.workbench.common.forms.adf.definitions.settings.FieldPolicy;
 import org.kie.workbench.common.stunner.bpmn.definition.property.background.BackgroundSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.collaboration.events.CorrelationSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.CircleDimensionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.Radius;
@@ -63,6 +66,11 @@ public class StartSignalEvent extends BaseStartEvent {
     @Valid
     protected DataIOSet dataIOSet;
 
+    @Property
+    @FormField(afterElement = "dataIOset")
+    @Valid
+    protected CorrelationSet correlationSet;
+
     public StartSignalEvent() {
         this(new BPMNGeneralSet(""),
              new BackgroundSet(),
@@ -71,6 +79,7 @@ public class StartSignalEvent extends BaseStartEvent {
              new SimulationAttributeSet(),
              new AdvancedData(),
              new DataIOSet(),
+             new CorrelationSet(),
              new InterruptingSignalEventExecutionSet());
     }
 
@@ -81,6 +90,7 @@ public class StartSignalEvent extends BaseStartEvent {
                             final @MapsTo("simulationSet") SimulationAttributeSet simulationSet,
                             final @MapsTo("advancedData") AdvancedData advancedData,
                             final @MapsTo("dataIOSet") DataIOSet dataIOSet,
+                            final @MapsTo("correlationSet") CorrelationSet correlationSet,
                             final @MapsTo("executionSet") InterruptingSignalEventExecutionSet executionSet) {
         super(general,
               backgroundSet,
@@ -89,6 +99,7 @@ public class StartSignalEvent extends BaseStartEvent {
               simulationSet,
               advancedData);
         this.dataIOSet = dataIOSet;
+        this.correlationSet = correlationSet;
         this.executionSet = executionSet;
     }
 
@@ -108,6 +119,14 @@ public class StartSignalEvent extends BaseStartEvent {
         this.dataIOSet = dataIOSet;
     }
 
+    public CorrelationSet getCorrelationSet() {
+        return correlationSet;
+    }
+
+    public void setCorrelationSet(CorrelationSet correlationSet) {
+        this.correlationSet = correlationSet;
+    }
+
     @Override
     public boolean hasOutputVars() {
         return true;
@@ -122,6 +141,7 @@ public class StartSignalEvent extends BaseStartEvent {
     public int hashCode() {
         return HashUtil.combineHashCodes(super.hashCode(),
                                          dataIOSet.hashCode(),
+                                         correlationSet.hashCode(),
                                          executionSet.hashCode());
     }
 
@@ -130,8 +150,9 @@ public class StartSignalEvent extends BaseStartEvent {
         if (o instanceof StartSignalEvent) {
             StartSignalEvent other = (StartSignalEvent) o;
             return super.equals(other) &&
-                    dataIOSet.equals(other.dataIOSet) &&
-                    executionSet.equals(other.executionSet);
+                    Objects.equals(dataIOSet, other.dataIOSet) &&
+                    Objects.equals(correlationSet, other.correlationSet) &&
+                    Objects.equals(executionSet, other.executionSet);
         }
         return false;
     }

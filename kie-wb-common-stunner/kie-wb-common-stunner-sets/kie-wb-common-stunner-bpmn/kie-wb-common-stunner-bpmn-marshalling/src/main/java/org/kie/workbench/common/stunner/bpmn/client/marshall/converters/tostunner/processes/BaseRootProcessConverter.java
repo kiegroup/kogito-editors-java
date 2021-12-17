@@ -35,6 +35,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseFileVari
 import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseIdPrefix;
 import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseManagementSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseRoles;
+import org.kie.workbench.common.stunner.bpmn.definition.property.collaboration.diagram.BaseCollaborationSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.BaseDiagramSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.BaseProcessData;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.BaseRootProcessAdvancedData;
@@ -45,8 +46,8 @@ import org.kie.workbench.common.stunner.core.graph.content.view.View;
 /**
  * Convert the root Process with all its children to a BPMNDiagram
  */
-public abstract class BaseRootProcessConverter<D extends BPMNDiagram<S, P, F>,
-        S extends BaseDiagramSet, P extends BaseProcessData, F extends BaseRootProcessAdvancedData> {
+public abstract class BaseRootProcessConverter<D extends BPMNDiagram<S, P, F, C>,
+        S extends BaseDiagramSet, P extends BaseProcessData, F extends BaseRootProcessAdvancedData, C extends BaseCollaborationSet> {
 
     final ProcessConverterDelegate delegate;
 
@@ -96,6 +97,7 @@ public abstract class BaseRootProcessConverter<D extends BPMNDiagram<S, P, F>,
 
         definition.setProcessData(createProcessData(e.getProcessVariables()));
         definition.setAdvancedData(createAdvancedData(e.getGlobalVariables(), e.getMetaDataAttributes()));
+        definition.setCollaborationSet(createCorrelations(process, e, d));
 
         diagramNode.getContent().setBounds(e.getBounds());
 
@@ -112,4 +114,6 @@ public abstract class BaseRootProcessConverter<D extends BPMNDiagram<S, P, F>,
     protected abstract P createProcessData(String processVariables);
 
     protected abstract F createAdvancedData(String globalVariables, String metaDataAttributes);
+
+    protected abstract C createCorrelations(Process process, ProcessPropertyReader e, DefinitionsPropertyReader d);
 }

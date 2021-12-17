@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.properties;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,6 +24,7 @@ import org.eclipse.bpmn2.Definitions;
 import org.eclipse.bpmn2.di.BPMNDiagram;
 import org.eclipse.bpmn2.di.BPMNShape;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.properties.util.PropertyReaderUtils;
+import org.kie.workbench.common.stunner.bpmn.definition.property.collaboration.Correlation;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.imports.WSDLImport;
 
 public class DefinitionsPropertyReader extends BasePropertyReader {
@@ -38,5 +40,9 @@ public class DefinitionsPropertyReader extends BasePropertyReader {
         return definitions.getImports().stream()
                 .map(PropertyReaderUtils::toWSDLImports)
                 .collect(Collectors.toList());
+    }
+
+    public List<Correlation> getCorrelations() {
+        return new ArrayList<>();
     }
 }

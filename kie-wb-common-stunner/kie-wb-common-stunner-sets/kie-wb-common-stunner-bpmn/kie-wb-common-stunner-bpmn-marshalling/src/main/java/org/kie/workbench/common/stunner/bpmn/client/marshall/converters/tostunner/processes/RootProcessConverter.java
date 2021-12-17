@@ -23,6 +23,7 @@ import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunne
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.properties.ProcessPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagramImpl;
+import org.kie.workbench.common.stunner.bpmn.definition.property.collaboration.diagram.CollaborationSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.AdHoc;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.DiagramSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Executable;
@@ -45,7 +46,7 @@ import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
-public class RootProcessConverter extends BaseRootProcessConverter<BPMNDiagramImpl, DiagramSet, ProcessData, RootProcessAdvancedData> {
+public class RootProcessConverter extends BaseRootProcessConverter<BPMNDiagramImpl, DiagramSet, ProcessData, RootProcessAdvancedData, CollaborationSet> {
 
     public RootProcessConverter(TypedFactoryManager typedFactoryManager,
                                 PropertyReaderFactory propertyReaderFactory,
@@ -82,5 +83,10 @@ public class RootProcessConverter extends BaseRootProcessConverter<BPMNDiagramIm
     @Override
     public RootProcessAdvancedData createAdvancedData(String globalVariables, String metaDataAttributes) {
         return new RootProcessAdvancedData(new GlobalVariables(globalVariables), new MetaDataAttributes(metaDataAttributes));
+    }
+
+    @Override
+    protected CollaborationSet createCorrelations(Process process, ProcessPropertyReader e, DefinitionsPropertyReader d) {
+        return new CollaborationSet();
     }
 }

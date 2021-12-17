@@ -19,6 +19,7 @@ package org.kie.workbench.common.stunner.bpmn.definition;
 import org.junit.Before;
 import org.junit.Test;
 import org.kie.workbench.common.stunner.bpmn.definition.property.background.BackgroundSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.collaboration.events.CorrelationSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.CircleDimensionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.ScopedSignalEventExecutionSet;
@@ -39,6 +40,7 @@ public class IntermediateSignalEventThrowingTest {
     private FontSet fontSet;
     private CircleDimensionSet dimensionSet;
     private DataIOSet dataIOSet;
+    private CorrelationSet correlationSet;
     private AdvancedData advancedData;
     private ScopedSignalEventExecutionSet scopedSignalEventExecutionSet;
 
@@ -51,6 +53,7 @@ public class IntermediateSignalEventThrowingTest {
         fontSet = mock(FontSet.class);
         dimensionSet = mock(CircleDimensionSet.class);
         dataIOSet = mock(DataIOSet.class);
+        correlationSet = mock(CorrelationSet.class);
         scopedSignalEventExecutionSet = mock(ScopedSignalEventExecutionSet.class);
 
         tested = new IntermediateSignalEventThrowing(general,
@@ -59,6 +62,7 @@ public class IntermediateSignalEventThrowingTest {
                                                      dimensionSet,
                                                      dataIOSet,
                                                      advancedData,
+                                                     correlationSet,
                                                      scopedSignalEventExecutionSet);
     }
 
@@ -83,6 +87,7 @@ public class IntermediateSignalEventThrowingTest {
                                                     dimensionSet,
                                                     dataIOSet,
                                                     advancedData,
+                                                    correlationSet,
                                                     scopedSignalEventExecutionSet);
         assertEquals(compare.hashCode(), tested.hashCode());
     }
@@ -96,6 +101,7 @@ public class IntermediateSignalEventThrowingTest {
                                                                                        dimensionSet,
                                                                                        dataIOSet,
                                                                                        advancedData,
+                                                                                       correlationSet,
                                                                                        null);
         ScopedSignalEventExecutionSet executionSet = new ScopedSignalEventExecutionSet();
         executionSet.setSignalRef(new SignalRef("SignalRef"));
@@ -106,6 +112,7 @@ public class IntermediateSignalEventThrowingTest {
                                                     dimensionSet,
                                                     dataIOSet,
                                                     advancedData,
+                                                    correlationSet,
                                                     executionSet);
         IntermediateSignalEventThrowing compare4 =
                 new IntermediateSignalEventThrowing(general,
@@ -114,6 +121,7 @@ public class IntermediateSignalEventThrowingTest {
                                                     dimensionSet,
                                                     dataIOSet,
                                                     advancedData,
+                                                    correlationSet,
                                                     scopedSignalEventExecutionSet);
 
         assertFalse(tested.equals(compare1));

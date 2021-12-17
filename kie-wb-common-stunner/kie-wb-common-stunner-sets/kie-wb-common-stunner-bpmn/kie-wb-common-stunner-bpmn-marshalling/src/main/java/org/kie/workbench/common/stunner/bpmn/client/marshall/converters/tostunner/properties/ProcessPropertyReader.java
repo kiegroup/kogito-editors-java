@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.properties;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -27,6 +28,7 @@ import org.eclipse.bpmn2.di.BPMNDiagram;
 import org.eclipse.bpmn2.di.BPMNShape;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.customproperties.CustomAttribute;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.customproperties.CustomElement;
+import org.kie.workbench.common.stunner.bpmn.definition.property.collaboration.Correlation;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.imports.DefaultImport;
 import org.kie.workbench.common.stunner.core.graph.content.Bounds;
 
@@ -86,6 +88,10 @@ public class ProcessPropertyReader extends BasePropertyReader {
 
     public String getGlobalVariables() {
         return CustomElement.globalVariables.of(process).get();
+    }
+
+    public List<Correlation> getCorrelations() {
+        return new ArrayList<>();
     }
 
     public List<DefaultImport> getDefaultImports() {

@@ -19,7 +19,10 @@ package org.kie.workbench.common.stunner.bpmn.client.marshall.converters.fromstu
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.bpmn2.Collaboration;
+import org.eclipse.bpmn2.CorrelationKey;
 import org.eclipse.bpmn2.Definitions;
+import org.eclipse.bpmn2.Participant;
 import org.eclipse.bpmn2.Process;
 import org.eclipse.bpmn2.Relationship;
 import org.eclipse.bpmn2.RootElement;
@@ -83,6 +86,16 @@ public class DefinitionsPropertyWriter {
         wsdlImports.stream()
                 .map(PropertyWriterUtils::toImport)
                 .forEach(definitions.getImports()::add);
+    }
+
+    public void setCorrelations(List<CorrelationKey> correlationKeys, Process process) {
+        if (!correlationKeys.isEmpty()) {
+            Participant participant = PropertyWriterUtils.createParticipant(process);
+            Collaboration collaboration = PropertyWriterUtils.createCollaboration(participant);
+            correlationKeys.stream()
+                    .forEach(collaboration.getCorrelationKeys()::add);
+            definitions.getRootElements().add(collaboration);
+        }
     }
 
     public void addAllRootElements(Collection<? extends RootElement> rootElements) {

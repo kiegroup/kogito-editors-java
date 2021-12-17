@@ -20,12 +20,18 @@ import java.util.List;
 import java.util.Optional;
 
 import org.eclipse.bpmn2.Bpmn2Factory;
+import org.eclipse.bpmn2.Collaboration;
+import org.eclipse.bpmn2.CorrelationKey;
+import org.eclipse.bpmn2.CorrelationSubscription;
 import org.eclipse.bpmn2.Import;
+import org.eclipse.bpmn2.Participant;
+import org.eclipse.bpmn2.Process;
 import org.eclipse.bpmn2.di.BPMNEdge;
 import org.eclipse.dd.dc.Bounds;
 import org.eclipse.dd.dc.Point;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.fromstunner.Ids;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.fromstunner.properties.BasePropertyWriter;
+import org.kie.workbench.common.stunner.bpmn.definition.property.collaboration.Correlation;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.imports.WSDLImport;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
@@ -34,6 +40,7 @@ import org.kie.workbench.common.stunner.core.graph.content.view.Connection;
 import org.kie.workbench.common.stunner.core.graph.content.view.ControlPoint;
 import org.kie.workbench.common.stunner.core.graph.content.view.Point2D;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
+import org.kie.workbench.common.stunner.core.util.UUID;
 
 import static org.kie.workbench.common.stunner.bpmn.client.marshall.converters.fromstunner.Factories.dc;
 import static org.kie.workbench.common.stunner.bpmn.client.marshall.converters.fromstunner.Factories.di;
@@ -130,5 +137,36 @@ public class PropertyWriterUtils {
         imp.setLocation(wsdlImport.getLocation());
         imp.setNamespace(wsdlImport.getNamespace());
         return imp;
+    }
+
+    public static Collaboration createCollaboration(Participant participant) {
+        Collaboration collaboration = Bpmn2Factory.eINSTANCE.createCollaboration();
+        collaboration.setId(UUID.uuid());
+        collaboration.setName("Default Collaboration");
+        collaboration.getParticipants().add(participant);
+
+        return collaboration;
+    }
+
+    public static CorrelationSubscription createSubscription(CorrelationKey correlationKey) {
+        CorrelationSubscription correlationSubscription = Bpmn2Factory.eINSTANCE.createCorrelationSubscription();
+        correlationSubscription.setId(UUID.uuid());
+        correlationSubscription.setCorrelationKeyRef(correlationKey);
+        return correlationSubscription;
+    }
+
+    public static Participant createParticipant(Process process) {
+        Participant participant = Bpmn2Factory.eINSTANCE.createParticipant();
+        participant.setId(UUID.uuid());
+        participant.setName("Pool Participant");
+        participant.setProcessRef(process);
+        return participant;
+    }
+
+    public static CorrelationKey createCorrelationKey(Correlation correlation) {
+        CorrelationKey correlationKey = Bpmn2Factory.eINSTANCE.createCorrelationKey();
+        correlationKey.setId(correlation.getId());
+        correlationKey.setName(correlation.getName());
+        return correlationKey;
     }
 }
