@@ -17,7 +17,8 @@
 import { DataType } from "../../api";
 
 /**
- * The constant below contains all built-in types currently supported by the Boxed Expression Editor
+ * The constant below contains all built-in types currently supported by the Boxed Expression Editor,
+ * Plus a custom defined data-type.
  * These values are used for testing purpose, and by the showcase
  */
 export const dataTypeProps = [
