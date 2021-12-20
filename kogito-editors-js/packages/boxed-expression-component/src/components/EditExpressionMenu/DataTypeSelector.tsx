@@ -111,7 +111,7 @@ export const DataTypeSelector: React.FunctionComponent<DataTypeSelectorProps> = 
       isGrouped
       hasInlineFilter
       inlineFilterPlaceholderText={i18n.choose}
-      maxHeight={350}
+      maxHeight={500}
     >
       {getDataTypes()}
     </Select>
