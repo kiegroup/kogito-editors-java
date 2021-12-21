@@ -78,16 +78,17 @@ export const DataTypeSelector: React.FunctionComponent<DataTypeSelectorProps> = 
       if (textInput === "") {
         return getDataTypes();
       } else {
-        return getDataTypes()
-          .map((group) => {
-            const filteredGroup = React.cloneElement(group, {
-              children: group?.props?.children?.filter((item: React.ReactElement) => {
-                return item.props.value.toLowerCase().includes(textInput.toLowerCase());
-              }),
-            });
-            if (filteredGroup?.props?.children?.length > 0) return filteredGroup;
-          })
-          .filter(Boolean) as JSX.Element[];
+        return getDataTypes().reduce((groups: JSX.Element[], group: JSX.Element) => {
+          const filteredGroup = React.cloneElement(group, {
+            children: group.props?.children?.filter((item: React.ReactElement) => {
+              return item.props.value.toLowerCase().includes(textInput.toLowerCase());
+            }),
+          });
+          if (filteredGroup && filteredGroup.props?.children?.length > 0) {
+            groups.push(filteredGroup);
+          }
+          return groups;
+        }, []);
       }
     },
     [getDataTypes]
