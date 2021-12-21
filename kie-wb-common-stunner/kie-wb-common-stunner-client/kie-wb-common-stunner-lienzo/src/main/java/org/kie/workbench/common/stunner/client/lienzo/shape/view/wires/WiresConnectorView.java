@@ -25,6 +25,7 @@ import java.util.stream.StreamSupport;
 import com.ait.lienzo.client.core.shape.AbstractDirectionalMultiPointShape;
 import com.ait.lienzo.client.core.shape.AbstractOffsetMultiPointShape;
 import com.ait.lienzo.client.core.shape.MultiPathDecorator;
+import com.ait.lienzo.client.core.shape.PolyMorphicLine;
 import com.ait.lienzo.client.core.shape.Shape;
 import com.ait.lienzo.client.core.shape.wires.IControlHandle;
 import com.ait.lienzo.client.core.shape.wires.MagnetManager;
@@ -127,12 +128,25 @@ public class WiresConnectorView<T> extends WiresConnector
         addControlPoint(controlPoint.getLocation().getX(),
                         controlPoint.getLocation().getY()
                 , index + 1);
+
+        if (getLine() instanceof PolyMorphicLine) {
+            PolyMorphicLine orthogonalLine = (PolyMorphicLine) getLine();
+            orthogonalLine.addManagedPoint(controlPoint.getLocation().getX(),
+                                           controlPoint.getLocation().getY(),
+                                           controlPoint.isInferred());
+        }
+
         refreshControlPoints();
         return cast();
     }
 
     @Override
     public T updateControlPoints(final ControlPoint[] controlPoints) {
+        PolyMorphicLine orthogonalLine = null;
+        if (getLine() instanceof PolyMorphicLine) {
+            orthogonalLine = (PolyMorphicLine) getLine();
+        }
+
         Point2DArray actual = getControlPoints();
         Point2DArray array = new Point2DArray();
         array.push(actual.get(0));
@@ -142,6 +156,10 @@ public class WiresConnectorView<T> extends WiresConnector
                     new com.ait.lienzo.client.core.types.Point2D(location.getX(),
                                                                  location.getY());
             array.push(lienzoPoint);
+
+            if (null != orthogonalLine) {
+                controlPoints[i].setInferred(orthogonalLine.isInferred(lienzoPoint));
+            }
         }
         array.push(actual.get(actual.size() - 1));
         setPoints(array);
