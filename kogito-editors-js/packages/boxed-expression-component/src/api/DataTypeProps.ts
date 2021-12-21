@@ -15,7 +15,7 @@
  */
 
 export interface DataTypeProps {
-  /** Identifier of the data type, e.g. UNDEFINED */
+  /** Type reference of the data type, e.g. UNDEFINED */
   typeRef: string;
   /** Label used for the data type, e.g. <Undefined> */
   name: string;
