@@ -16,11 +16,11 @@
 
 import { Divider, Select, SelectGroup, SelectOption, SelectVariant } from "@patternfly/react-core";
 import * as React from "react";
-import { useCallback, useContext, useState } from "react";
+import { useCallback, useState } from "react";
 import { useBoxedExpressionEditorI18n } from "../../i18n";
 import * as _ from "lodash";
 import { DataType, DataTypeProps } from "../../api";
-import { BoxedExpressionGlobalContext } from "../../context";
+import { useBoxedExpression } from "../../context";
 
 export interface DataTypeSelectorProps {
   /** The pre-selected data type */
@@ -38,7 +38,7 @@ export const DataTypeSelector: React.FunctionComponent<DataTypeSelectorProps> = 
 }) => {
   const { i18n } = useBoxedExpressionEditorI18n();
 
-  const { dataTypes } = useContext(BoxedExpressionGlobalContext);
+  const { dataTypes } = useBoxedExpression();
 
   const [dataTypeSelectOpen, setDataTypeSelectOpen] = useState(false);
 
