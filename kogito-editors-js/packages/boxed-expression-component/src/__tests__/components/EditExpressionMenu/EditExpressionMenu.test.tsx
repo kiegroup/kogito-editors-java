@@ -120,7 +120,7 @@ describe("EditExpressionMenu tests", () => {
     await activatePopover(container as HTMLElement);
 
     expect(container.querySelector("[id^='pf-select-toggle-id-']")).toBeTruthy();
-    expect((container.querySelector("[id^='pf-select-toggle-id-']")! as HTMLInputElement).value).toBe(
+    expect((container.querySelector("[id^='pf-select-toggle-id-'] span")! as HTMLSpanElement).textContent).toBe(
       LogicType.Undefined
     );
   });
@@ -147,7 +147,9 @@ describe("EditExpressionMenu tests", () => {
     await activatePopover(container as HTMLElement);
 
     expect(container.querySelector("[id^='pf-select-toggle-id-']")).toBeTruthy();
-    expect((container.querySelector("[id^='pf-select-toggle-id-']")! as HTMLInputElement).value).toBe(selectedDataType);
+    expect((container.querySelector("[id^='pf-select-toggle-id-'] span")! as HTMLSpanElement).textContent).toBe(
+      selectedDataType
+    );
   });
 
   test("should render passed expression name, when it is pre-selected", async () => {

@@ -18,7 +18,7 @@ import { fireEvent, render } from "@testing-library/react";
 import * as _ from "lodash";
 import * as React from "react";
 import { act } from "react-dom/test-utils";
-import { Column, ColumnInstance, DataRecord } from "react-table";
+import { ColumnInstance, DataRecord } from "react-table";
 import { PASTE_OPERATION } from "../../../components/Table/common";
 import { ColumnsUpdateArgs, DataType, RowsUpdateArgs, TableHandlerConfiguration, TableOperation } from "../../../api";
 import { Table } from "../../../components";
@@ -224,7 +224,9 @@ describe("Table tests", () => {
       expect(baseElement.querySelector(EXPRESSION_POPOVER_MENU)).toBeTruthy();
       expect(baseElement.querySelector(EXPRESSION_POPOVER_MENU_TITLE)?.innerHTML).toBe(editRelationLabel);
       expect((baseElement.querySelector(EDIT_EXPRESSION_NAME)! as HTMLInputElement).value).toBe(columnName);
-      expect((baseElement.querySelector(EDIT_EXPRESSION_DATA_TYPE)! as HTMLInputElement).value).toBe(DataType.Boolean);
+      expect((baseElement.querySelector(EDIT_EXPRESSION_DATA_TYPE)! as HTMLSpanElement).textContent).toBe(
+        DataType.Boolean
+      );
     });
 
     test("should trigger onColumnUpdate, when changing column name via popover", async () => {

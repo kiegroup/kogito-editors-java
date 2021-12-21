@@ -100,7 +100,7 @@ export const DataTypeSelector: React.FunctionComponent<DataTypeSelectorProps> = 
     <Select
       menuAppendTo={menuAppendTo}
       ouiaId="edit-expression-data-type"
-      variant={SelectVariant.typeahead}
+      variant={SelectVariant.single}
       typeAheadAriaLabel={i18n.choose}
       onToggle={onDataTypeSelectToggle}
       onSelect={onDataTypeSelect}
