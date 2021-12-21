@@ -75,10 +75,9 @@ public class PolyMorphicLine extends AbstractDirectionalMultiPointShape<PolyMorp
         setCornerRadius(corner);
     }
 
-    //-----------------------------------------------------------------------------
     private List<Point2D> getUserDefinedPoints() {
         List<Point2D> userPoints = new ArrayList<>();
-        for (int i = 0; i < points.size(); i++) {
+        for (int i = 1; i < points.size() - 1; i++) {
             if (!inferredPoints.contains(points.get(i))) {
                 userPoints.add(points.get(i));
             }
@@ -95,6 +94,9 @@ public class PolyMorphicLine extends AbstractDirectionalMultiPointShape<PolyMorp
                 inferredPoints.add(points.get(i));
             }
         }
+
+        inferredPoints.removeAll(userDefinedPoints);
+        cleanInferredPoints();
     }
 
     //clear points that do not exist anymore
@@ -108,6 +110,18 @@ public class PolyMorphicLine extends AbstractDirectionalMultiPointShape<PolyMorp
             }
         }
         inferredPoints.removeAll(pointsToRemove);
+        cleanUserPoints();
+    }
+
+    private void cleanUserPoints() {
+        List<Point2D> pointsToRemove = new ArrayList<>();
+        for (int i = 0; i < userDefinedPoints.size(); i++) {
+            Point2D p = userDefinedPoints.get(i);
+            if (!contains(p)) {
+                pointsToRemove.add(p);
+            }
+        }
+        userDefinedPoints.removeAll(pointsToRemove);
     }
 
     private boolean contains(Point2D p) {
@@ -120,48 +134,88 @@ public class PolyMorphicLine extends AbstractDirectionalMultiPointShape<PolyMorp
         return false;
     }
 
+    // Handle point states coming from outside of lienzo
+    public void addManagedPoint(final Double x, final Double y, boolean isInferred) {
+        Point2D managedPoint = new Point2D(x, y);
+        for (int i = 0; i < points.size(); i++) {
+            if (managedPoint.equals(points.get(i))) {
+                if (isInferred) {
+                    if (!inferredPoints.contains(points.get(i))) {
+                        inferredPoints.add(points.get(i));
+                    }
+                } else if (!userDefinedPoints.contains(points.get(i))) {
+                    inferredPoints.remove(points.get(i));
+                }
+            }
+        }
+    }
+
     public List<Point2D> handleInferredPoints(final Point2D p0, final Point2D p1) {
-        //TODO refactor this logic only for testing
-        if (p0 != null && p1 != null) {
-            final boolean isP0UserPoint = !inferredPoints.contains(p0);
-            final boolean isP1UserPoint = !inferredPoints.contains(p1);
+        if (null != p0 && null != p1) {
+            final boolean isP0UserPoint = userDefinedPoints.contains(p0);
+            final boolean isP1UserPoint = userDefinedPoints.contains(p1);
 
             if (!isP0UserPoint && !isP1UserPoint) {
                 inferredPoints.remove(p0);
                 inferredPoints.remove(p1);
-            } else if (isP0UserPoint && isP1UserPoint) {
-                inferredPoints.add(p0);
-                inferredPoints.add(p1);
-            } else if (!isP0UserPoint && isP1UserPoint) {
-                inferredPoints.remove(p0);
-            } else if (isP0UserPoint && !isP1UserPoint) {
-                inferredPoints.remove(p1);
-            }
-        // Add / remove single points
-        } else if (p0 != null && p1 == null) {
-            if (inferredPoints.contains(p0)) {
-                inferredPoints.remove(p0);
             } else {
-                inferredPoints.add(p0);
+                if (isP0UserPoint && isP1UserPoint) {
+                    if (!isPartOfOtherUserSegment(p0, true)) {
+                        inferredPoints.add(p0);
+                    }
+                    if (!isPartOfOtherUserSegment(p1, false)) {
+                        inferredPoints.add(p1);
+                    }
+                } else if (!isP0UserPoint && isP1UserPoint) {
+                    inferredPoints.remove(p0);
+                } else if (isP0UserPoint && !isP1UserPoint) {
+                    inferredPoints.remove(p1);
+                }
             }
         }
 
-        userDefinedPoints = getUserDefinedPoints();
-
-        DomGlobal.console.log("After handleInferredPoints -> Inferred Points:" + inferredPoints);
-        DomGlobal.console.log("After handleInferredPoints -> user Points:" + userDefinedPoints);
-        DomGlobal.console.log("After handleInferredPoints -> Points:" + this.points);
+        userDefinedPoints.clear();
+        userDefinedPoints.addAll(getUserDefinedPoints());
 
         return inferredPoints;
     }
 
-    //-----------------------------------------------------------------------------
+    private boolean isPartOfOtherUserSegment(final Point2D point, final boolean before) {
+        int i = 0;
+        for (; i < points.size() - 1; i++) {
+            if (points.get(i).equals(point)) {
+                break;
+            }
+        }
+
+        if (i > 0 && i < points.size() - 1) {
+            if (before) {
+                return userDefinedPoints.contains(points.get(i - 1));
+            }
+
+            return userDefinedPoints.contains(points.get(i + 1));
+        }
+
+        return false;
+    }
+
+    public boolean isInferred(final Point2D point) {
+        for (int i = 0; i < inferredPoints.size(); i++) {
+            if (inferredPoints.get(i).equals(point)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     @Override
     public boolean parse() {
         if (0 == points.size()) {
             return false;
         }
+
+        userDefinedPoints.clear();
+        userDefinedPoints.addAll(getUserDefinedPoints());
 
         infer();
 
@@ -302,7 +356,6 @@ public class PolyMorphicLine extends AbstractDirectionalMultiPointShape<PolyMorp
 
         this.points = correctComputedPoints(headPoints, nonOrthogonalPoints, userDefinedPoints);
         addInferredPoints(headPoints);
-
     }
 
     private void resetTailDirectionPoints(List<Point2D> nonOrthogonalPoints) {
@@ -319,7 +372,7 @@ public class PolyMorphicLine extends AbstractDirectionalMultiPointShape<PolyMorp
         }
 
         Point2DArray staticPoints = new Point2DArray();
-        for (int j = 0; j <= i ; j++) {
+        for (int j = 0; j <= i; j++) {
             staticPoints.push(points.get(j));
         }
 
@@ -331,7 +384,6 @@ public class PolyMorphicLine extends AbstractDirectionalMultiPointShape<PolyMorp
         }
 
         this.points = correctComputedPoints(staticPoints, nonOrthogonalPoints, userDefinedPoints);
-
         addInferredPoints(tailPoints);
     }
 
@@ -387,7 +439,7 @@ public class PolyMorphicLine extends AbstractDirectionalMultiPointShape<PolyMorp
             Point2D nonOrthogonalP0 = nonOrthogonalPoints.isEmpty() ? null : nonOrthogonalPoints.get(nonOrthogonalPoints.size() - 1);
             Point2D userP0 = userDefinedPoints.isEmpty() ? null : userDefinedPoints.get(userDefinedPoints.size() - 1);
 
-            for (int i = 0 ; i < points.getLength(); i++) {
+            for (int i = 0; i < points.getLength(); i++) {
                 if ((nonOrthogonalP0 != null && points.get(i).equals(nonOrthogonalP0)) ||
                         (userP0 != null && points.get(i).equals(userP0))) {
                     return indexOfPoint(points.get(i));
@@ -402,7 +454,7 @@ public class PolyMorphicLine extends AbstractDirectionalMultiPointShape<PolyMorp
     public int getTailReferencePointIndex() {
         List<Point2D> nonOrthogonalPoints = computeNonOrthogonalPoints();
 
-        if (!nonOrthogonalPoints.isEmpty() || !userDefinedPoints.isEmpty()){
+        if (!nonOrthogonalPoints.isEmpty() || !userDefinedPoints.isEmpty()) {
             Point2D nonOrthogonalP0 = nonOrthogonalPoints.isEmpty() ? null : nonOrthogonalPoints.get(0);
             Point2D userP0 = userDefinedPoints.isEmpty() ? null : userDefinedPoints.get(0);
 
@@ -468,8 +520,9 @@ public class PolyMorphicLine extends AbstractDirectionalMultiPointShape<PolyMorp
         }
 
         boolean isNonOrthogonal = nonOrthogonalPoints.contains(other);
-        boolean isNonUserDefined = inferredPoints.contains(other); // handrey
-        if (isNonOrthogonal && isNonUserDefined) { //handrey
+        boolean isNonUserDefined = !userDefinedPoints.contains(other);
+        boolean isNonInferred = !inferredPoints.contains(other);
+        if (isNonOrthogonal && isNonUserDefined && isNonInferred) {
             if (isVertical(point, other)) {
                 // It was NON orthogonal but now, after drag the point, it results vertical
                 // TODO: The operator can be +/-, also check the hardcoded offset (2)
@@ -516,16 +569,12 @@ public class PolyMorphicLine extends AbstractDirectionalMultiPointShape<PolyMorp
             }
 
             final double offset = getDefaultHeadOffset() + getDefaultTailOffset();
-            //handrey
-            if (isHorizontal && !userDefinedPoints.contains(next)) {
-            //if (isHorizontal) {
+            if (isHorizontal) {
                 px = propagateOrthogonalSegmentUp(candidate.getX(), next.getX(), dx, segmentMin, null != last ? last.getX() - offset : null);
                 py = dy;
                 dx = isNextLast && px != 0 ? 0 : dx;
                 dy = !isNextLast ? dy : 0;
-                //handrey
-            } else if (isVertical && !userDefinedPoints.contains(next)) {
-            //} else if (isVertical) {
+            } else if (isVertical) {
                 dx = !isNextLast ? dx : 0;
                 px = dx;
                 py = propagateOrthogonalSegmentUp(candidate.getY(), next.getY(), dy, segmentMin, null != last ? last.getY() - offset : null);
@@ -628,16 +677,12 @@ public class PolyMorphicLine extends AbstractDirectionalMultiPointShape<PolyMorp
             }
 
             final double offset = getDefaultHeadOffset() + getDefaultTailOffset();
-            //handrey
-            if (isHorizontal && !userDefinedPoints.contains(next)) {
-//                if (isHorizontal) {
+            if (isHorizontal) {
                 px = propagateOrthogonalSegmentDown(candidate.getX(), next.getX(), dx, segmentMin, null != first ? first.getX() + offset : null);
                 py = dy;
                 dx = isNextFirst && px != 0 ? 0 : dx;
                 dy = !isNextFirst ? dy : 0;
-                //handrey
-            } else if (isVertical && !userDefinedPoints.contains(next)) {
-//            } else if (isVertical) {
+            } else if (isVertical) {
                 dx = !isNextFirst ? dx : 0;
                 px = dx;
                 py = propagateOrthogonalSegmentDown(candidate.getY(), next.getY(), dy, segmentMin, null != first ? first.getY() + offset : null);
@@ -818,7 +863,6 @@ public class PolyMorphicLine extends AbstractDirectionalMultiPointShape<PolyMorp
 
                 boolean write = true;
 
-                //handrey
                 if (!nonOrthogonalPoints.contains(p0) && !userDefinedPoints.contains(p0)) { //check for non user defined points
                     if (ref.getX() == p0.getX() && p0.getX() == p1.getX()) {
                         write = false;
@@ -914,12 +958,14 @@ public class PolyMorphicLine extends AbstractDirectionalMultiPointShape<PolyMorp
     @Override
     public PolyMorphicLine setControlPoints(Point2DArray points) {
         this.points = points;
+        addInferredPoints(points);
         return this;
     }
 
     @Override
     public PolyMorphicLine setPoints(Point2DArray points) {
         this.points = points;
+        addInferredPoints(points);
         return this;
     }
 

@@ -259,8 +259,6 @@ public abstract class AbstractMultiPointShape<T extends AbstractMultiPointShape<
             private final int index;
             private final AbstractMultiPointShape<?> shape;
             private SegmentXorYChanged handle;
-
-            //handrey
             private HandleSegmentClick handleClick;
 
             public static SegmentHandle build(int index, AbstractMultiPointShape<?> shape) {
@@ -289,9 +287,6 @@ public abstract class AbstractMultiPointShape<T extends AbstractMultiPointShape<
                 register(prim.addNodeDragMoveHandler(handle));
                 register(prim.addNodeDragStartHandler(handle));
                 register(prim.addNodeDragEndHandler(handle));
-
-                //handrey
-                //register(prim.addNodeMouseClickHandler(onClickHandler));//TODO handrey create a handler here
                 register(prim.addNodeMouseClickHandler(handleClick));
 
                 prim.setDragConstraints(handle);
@@ -346,7 +341,6 @@ public abstract class AbstractMultiPointShape<T extends AbstractMultiPointShape<
             }
         }
 
-        //handrey
         public static class HandleSegmentClick implements NodeMouseClickHandler {
 
             private final Point2D p0;
@@ -382,6 +376,7 @@ public abstract class AbstractMultiPointShape<T extends AbstractMultiPointShape<
             }
 
             @Override
+                //TODO handrey Change color of the handle here
             Shape<?> buildPrimitive() {
                 double px = isHorizontal() ? p0.getX() + (p1.getX() - p0.getX()) / 2 : p1.getX();
                 double py = isVertical() ? p0.getY() + (p1.getY() - p0.getY()) / 2 : p1.getY();

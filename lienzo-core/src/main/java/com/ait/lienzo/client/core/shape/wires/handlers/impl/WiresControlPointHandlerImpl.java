@@ -16,15 +16,12 @@
 
 package com.ait.lienzo.client.core.shape.wires.handlers.impl;
 
-import java.util.List;
-
 import com.ait.lienzo.client.core.event.NodeDragEndEvent;
 import com.ait.lienzo.client.core.event.NodeDragMoveEvent;
 import com.ait.lienzo.client.core.event.NodeDragStartEvent;
 import com.ait.lienzo.client.core.event.NodeMouseClickEvent;
 import com.ait.lienzo.client.core.event.NodeMouseDoubleClickEvent;
 import com.ait.lienzo.client.core.shape.IPrimitive;
-import com.ait.lienzo.client.core.shape.PolyMorphicLine;
 import com.ait.lienzo.client.core.shape.wires.WiresConnector;
 import com.ait.lienzo.client.core.shape.wires.WiresManager;
 import com.ait.lienzo.client.core.shape.wires.handlers.WiresConnectorControl;
@@ -55,18 +52,6 @@ public class WiresControlPointHandlerImpl implements WiresControlPointHandler {
     @Override
     public void onNodeMouseClick(NodeMouseClickEvent event) {
         // If no click handler present, it does not receives the double click event.
-
-        // TODO check if we need a CP click, otherwise remove it
-        if (m_connector.getLine() instanceof PolyMorphicLine) {
-            final List<Point2D> nonOrthogonalPoints = ((PolyMorphicLine) m_connector.getLine()).computeNonOrthogonalPoints();
-
-            if (nonOrthogonalPoints.isEmpty()) {
-                final IPrimitive<?> cp = (IPrimitive<?>) event.getSource();
-                Point2D userPoint = new Point2D(cp.getX(), cp.getY());
-                //Add and remove userPoints on click
-                ((PolyMorphicLine) m_connector.getLine()).handleInferredPoints(userPoint, null);
-            }
-        }
     }
 
     @Override
