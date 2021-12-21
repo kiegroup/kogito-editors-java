@@ -40,7 +40,7 @@ setupWire();
 const BoxedExpressionWrapper: React.FunctionComponent<BoxedExpressionEditorProps> = ({
   decisionNodeId,
   expressionDefinition,
-  dataTypeProps,
+  dataTypes,
   clearSupportedOnRootExpression,
   pmmlParams,
 }: BoxedExpressionEditorProps) => {
@@ -97,7 +97,7 @@ const BoxedExpressionWrapper: React.FunctionComponent<BoxedExpressionEditorProps
     <BoxedExpressionEditor
       decisionNodeId={decisionNodeId}
       expressionDefinition={updatedDefinition}
-      dataTypeProps={dataTypeProps}
+      dataTypes={dataTypes}
       clearSupportedOnRootExpression={clearSupportedOnRootExpression}
       pmmlParams={pmmlParams}
     />
@@ -108,7 +108,7 @@ const renderBoxedExpressionEditor = (
   selector: string,
   decisionNodeId: string,
   expressionDefinition: ExpressionProps,
-  dataTypeProps: DataTypeProps[],
+  dataTypes: DataTypeProps[],
   clearSupportedOnRootExpression: boolean,
   pmmlParams: PMMLParams
 ) => {
@@ -116,7 +116,7 @@ const renderBoxedExpressionEditor = (
     <BoxedExpressionWrapper
       decisionNodeId={decisionNodeId}
       expressionDefinition={expressionDefinition}
-      dataTypeProps={dataTypeProps}
+      dataTypes={dataTypes}
       clearSupportedOnRootExpression={clearSupportedOnRootExpression}
       pmmlParams={pmmlParams}
     />,

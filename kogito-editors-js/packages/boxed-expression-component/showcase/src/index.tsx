@@ -36,7 +36,7 @@ import { Button, Modal } from "@patternfly/react-core";
 import { CopyIcon, PenIcon } from "@patternfly/react-icons";
 import "./lib/components/BoxedExpressionEditor/base-no-reset-wrapped.css";
 import ReactJson from "react-json-view";
-import { dataTypeProps, pmmlParams } from "./lib/__tests__/__mocks__";
+import { dataTypes, pmmlParams } from "./lib/__tests__/__mocks__";
 
 export const App: React.FunctionComponent = () => {
   //This definition comes directly from the decision node
@@ -102,7 +102,7 @@ export const App: React.FunctionComponent = () => {
         <BoxedExpressionEditor
           decisionNodeId="_00000000-0000-0000-0000-000000000000"
           expressionDefinition={expressionDefinition}
-          dataTypeProps={dataTypeProps}
+          dataTypes={dataTypes}
           pmmlParams={pmmlParams}
         />
       </div>

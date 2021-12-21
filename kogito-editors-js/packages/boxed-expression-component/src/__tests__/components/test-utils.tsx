@@ -26,7 +26,7 @@ import { act } from "react-dom/test-utils";
 import { fireEvent } from "@testing-library/react";
 import { BoxedExpressionGlobalContext } from "../../context";
 import { BoxedExpressionProvider, BoxedExpressionProviderProps } from "../../components";
-import { dataTypeProps, pmmlParams } from "../__mocks__";
+import { dataTypes, pmmlParams } from "../__mocks__";
 
 global.console = { ...global.console, warn: jest.fn() };
 
@@ -64,7 +64,7 @@ export function usingTestingBoxedExpressionProviderContext(
   const usedCtx: BoxedExpressionProviderProps = {
     decisionNodeId: "_00000000-0000-0000-0000-000000000000",
     expressionDefinition: {},
-    dataTypeProps,
+    dataTypes,
     pmmlParams,
     isRunnerTable: false,
     children,
@@ -76,7 +76,7 @@ export function usingTestingBoxedExpressionProviderContext(
       <BoxedExpressionProvider
         decisionNodeId={usedCtx.decisionNodeId}
         expressionDefinition={usedCtx.expressionDefinition}
-        dataTypeProps={usedCtx.dataTypeProps}
+        dataTypes={usedCtx.dataTypes}
         pmmlParams={usedCtx.pmmlParams}
         isRunnerTable={false}
       >
@@ -91,7 +91,7 @@ export function wrapComponentInContext(component: JSX.Element): JSX.Element {
     <BoxedExpressionGlobalContext.Provider
       value={{
         decisionNodeId: "_00000000-0000-0000-0000-000000000000",
-        dataTypeProps,
+        dataTypes: dataTypes,
         pmmlParams,
         supervisorHash: "",
         setSupervisorHash: jest.fn,

@@ -37,5 +37,5 @@ public class DMNLoader {
      * @param pmmlParams PMML parameters
      */
     @JsMethod(namespace = "__KIE__DMN_LOADER__")
-    public static native void renderBoxedExpressionEditor(final String selector, final String decisionNodeId, final ExpressionProps expressionProps, final DataTypeProps[] dataTypeProps, final Boolean clearSupportedOnRootExpression, final PMMLParam[] pmmlParams);
+    public static native void renderBoxedExpressionEditor(final String selector, final String decisionNodeId, final ExpressionProps expressionProps, final DataTypeProps[] dataTypes, final Boolean clearSupportedOnRootExpression, final PMMLParam[] pmmlParams);
 }

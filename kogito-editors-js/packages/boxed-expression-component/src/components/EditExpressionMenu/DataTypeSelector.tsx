@@ -38,7 +38,7 @@ export const DataTypeSelector: React.FunctionComponent<DataTypeSelectorProps> = 
 }) => {
   const { i18n } = useBoxedExpressionEditorI18n();
 
-  const { dataTypeProps } = useContext(BoxedExpressionGlobalContext);
+  const { dataTypes } = useContext(BoxedExpressionGlobalContext);
 
   const [dataTypeSelectOpen, setDataTypeSelectOpen] = useState(false);
 
@@ -64,7 +64,7 @@ export const DataTypeSelector: React.FunctionComponent<DataTypeSelectorProps> = 
   );
 
   const getDataTypes = useCallback(() => {
-    const [customDataTypes, defaultDataTypes] = _.chain(dataTypeProps).partition("isCustom").value();
+    const [customDataTypes, defaultDataTypes] = _.chain(dataTypes).partition("isCustom").value();
     const defaultDataTypeOptions = buildOptionsByGroup("default", defaultDataTypes);
     const dataTypeGroups = [defaultDataTypeOptions];
     const customDataTypeOptions = buildOptionsByGroup("custom", customDataTypes);
@@ -73,7 +73,7 @@ export const DataTypeSelector: React.FunctionComponent<DataTypeSelectorProps> = 
       dataTypeGroups.push(customDataTypeOptions);
     }
     return dataTypeGroups;
-  }, [buildOptionsByGroup, dataTypeProps]);
+  }, [buildOptionsByGroup, dataTypes]);
 
   const onFilteringDataTypes = useCallback(
     (_, textInput: string) => {

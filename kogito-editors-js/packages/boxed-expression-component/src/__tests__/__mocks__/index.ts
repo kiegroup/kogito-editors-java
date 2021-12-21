@@ -21,7 +21,7 @@ import { DataType } from "../../api";
  * Plus a custom defined data-type.
  * These values are used for testing purpose, and by the showcase
  */
-export const dataTypeProps = [
+export const dataTypes = [
   { typeRef: "Undefined", name: "<Undefined>", isCustom: false },
   { typeRef: "Any", name: "Any", isCustom: false },
   { typeRef: "Boolean", name: "boolean", isCustom: false },
