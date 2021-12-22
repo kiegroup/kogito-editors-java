@@ -99,6 +99,12 @@ const commonConfig = (name, devMode, options = {}) => {
       extensions: [".tsx", ".ts", ".js", ".jsx"],
       modules: [path.resolve("../../node_modules"), path.resolve("../node_modules"), path.resolve("./src")],
     },
+    // A workaround for https://issues.redhat.com/browse/KOGITO-6465
+    performance: {
+      hints: false,
+      maxEntrypointSize: 512000,
+      maxAssetSize: 512000,
+    },
 
     ...options,
   };
