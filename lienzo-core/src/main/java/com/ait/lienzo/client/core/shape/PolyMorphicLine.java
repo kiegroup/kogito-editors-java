@@ -439,7 +439,7 @@ public class PolyMorphicLine extends AbstractDirectionalMultiPointShape<PolyMorp
             Point2D nonOrthogonalP0 = nonOrthogonalPoints.isEmpty() ? null : nonOrthogonalPoints.get(nonOrthogonalPoints.size() - 1);
             Point2D userP0 = userDefinedPoints.isEmpty() ? null : userDefinedPoints.get(userDefinedPoints.size() - 1);
 
-            for (int i = 0; i < points.getLength(); i++) {
+            for (int i = points.size() - 1; i >= 0; i--) {
                 if ((nonOrthogonalP0 != null && points.get(i).equals(nonOrthogonalP0)) ||
                         (userP0 != null && points.get(i).equals(userP0))) {
                     return indexOfPoint(points.get(i));
@@ -459,7 +459,8 @@ public class PolyMorphicLine extends AbstractDirectionalMultiPointShape<PolyMorp
             Point2D userP0 = userDefinedPoints.isEmpty() ? null : userDefinedPoints.get(0);
 
             for (int i = 0; i < points.size(); i++) {
-                if ((nonOrthogonalP0 != null && points.get(i).equals(nonOrthogonalP0)) || (userP0 != null && points.get(i).equals(userP0))) {
+                if ((nonOrthogonalP0 != null && points.get(i).equals(nonOrthogonalP0)) ||
+                        (userP0 != null && points.get(i).equals(userP0))) {
                     return indexOfPoint(points.get(i));
                 }
             }

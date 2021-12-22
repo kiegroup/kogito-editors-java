@@ -329,6 +329,12 @@ public class WiresConnectorControlImpl implements WiresConnectorControl {
                         showControlPoints();
                     }
                 }));
+                manager.register(shape.addNodeMouseClickHandler(new NodeMouseClickHandler() {
+                    @Override
+                    public void onNodeMouseClick(NodeMouseClickEvent event) {
+                        updateControlPoints(m_connector.getControlPoints());
+                    }
+                }));
                 shape.moveToTop();
             }
         }
