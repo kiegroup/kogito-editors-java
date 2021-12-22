@@ -292,7 +292,7 @@ public class MagnetConnection extends DiscreteConnection {
         private static MagnetConnection atLocation(final Element<? extends View<?>> element,
                                                    final int magnet,
                                                    final Function<Bounds, Point2D> atResolver) {
-            return atLocation(element, magnet, atResolver, false);
+            return atLocation(element, magnet, atResolver, true);
         }
 
         private static MagnetConnection atLocation(final Element<? extends View<?>> element,

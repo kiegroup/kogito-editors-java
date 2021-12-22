@@ -118,7 +118,7 @@ public class NodeProxy implements ShapeProxy {
                                                              getShapeSetId()))
                               .deferCommand(() -> commandFactory.addConnector(sourceNode,
                                                                               edge,
-                                                                              MagnetConnection.Builder.atRight(sourceNode).setAuto(false),
+                                                                              MagnetConnection.Builder.atRight(sourceNode).setAuto(true),
                                                                               getShapeSetId()))
                               .deferCommand(() -> commandFactory.setTargetNode(targetNode,
                                                                                edge,
