@@ -65,12 +65,11 @@ export const DataTypeSelector: React.FunctionComponent<DataTypeSelectorProps> = 
 
   const getDataTypes = useCallback(() => {
     const [customDataTypes, defaultDataTypes] = _.chain(dataTypes).partition("isCustom").value();
-    const dataTypeGroups = [];
+    const dataTypeGroups = [buildOptionsByGroup("default", defaultDataTypes)];
     if (!_.isEmpty(customDataTypes)) {
-      dataTypeGroups.push(buildOptionsByGroup("custom", customDataTypes));
       dataTypeGroups.push(<Divider key="divider" />);
+      dataTypeGroups.push(buildOptionsByGroup("custom", customDataTypes));
     }
-    dataTypeGroups.push(buildOptionsByGroup("default", defaultDataTypes));
     return dataTypeGroups;
   }, [buildOptionsByGroup, dataTypes]);
 
