@@ -28,7 +28,7 @@ export interface BoxedExpressionGlobalContextProps {
   currentlyOpenedHandlerCallback: React.Dispatch<React.SetStateAction<boolean>>;
   setCurrentlyOpenedHandlerCallback: React.Dispatch<
     React.SetStateAction<React.Dispatch<React.SetStateAction<boolean>>>
-    >;
+  >;
 }
 
 export const BoxedExpressionGlobalContext = React.createContext<BoxedExpressionGlobalContextProps>(
