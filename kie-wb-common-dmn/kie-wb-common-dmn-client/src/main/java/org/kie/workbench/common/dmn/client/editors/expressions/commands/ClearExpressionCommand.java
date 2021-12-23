@@ -16,9 +16,12 @@
 
 package org.kie.workbench.common.dmn.client.editors.expressions.commands;
 
+import java.util.Optional;
+
 import javax.enterprise.event.Event;
 
 import org.kie.workbench.common.dmn.api.definition.HasExpression;
+import org.kie.workbench.common.dmn.api.definition.HasName;
 import org.kie.workbench.common.dmn.api.definition.model.Expression;
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorView;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.ExpressionProps;
@@ -30,8 +33,9 @@ public class ClearExpressionCommand extends FillExpressionCommand<ExpressionProp
                                   final ExpressionProps expressionProps,
                                   final Event<ExpressionEditorChanged> editorSelectedEvent,
                                   final String nodeUUID,
-                                  final ExpressionEditorView view) {
-        super(hasExpression, expressionProps, editorSelectedEvent, nodeUUID, view);
+                                  final ExpressionEditorView view,
+                                  final Optional<HasName> hasName) {
+        super(hasExpression, expressionProps, editorSelectedEvent, nodeUUID, view, hasName);
     }
 
     @Override
@@ -48,5 +52,4 @@ public class ClearExpressionCommand extends FillExpressionCommand<ExpressionProp
     protected Expression getNewExpression() {
         return null;
     }
-
 }

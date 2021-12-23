@@ -16,11 +16,14 @@
 
 package org.kie.workbench.common.dmn.client.editors.expressions.commands;
 
+import java.util.Optional;
+
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.definition.HasExpression;
+import org.kie.workbench.common.dmn.api.definition.HasName;
 import org.kie.workbench.common.dmn.api.definition.model.Expression;
 import org.kie.workbench.common.dmn.api.definition.model.Relation;
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorView;
@@ -56,6 +59,8 @@ public class FillRelationExpressionCommandTest {
     @Mock
     private Relation existingExpression;
 
+    private Optional<HasName> hasName = Optional.empty();
+
     private final String nodeUUID = "nodeUUID";
 
     @Before
@@ -67,7 +72,8 @@ public class FillRelationExpressionCommandTest {
                                                         expressionProps,
                                                         editorSelectedEvent,
                                                         nodeUUID,
-                                                        view));
+                                                        view,
+                                                        hasName));
         doNothing().when(command).fill(any(), any());
     }
 

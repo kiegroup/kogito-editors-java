@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.dmn.client.editors.expressions.util;
 
+import java.util.Optional;
+
 import com.ait.lienzo.test.LienzoMockitoTestRunner;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,6 +31,7 @@ import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.api.property.dmn.QName;
 import org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType;
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorView;
+import org.kie.workbench.common.dmn.client.editors.expressions.commands.UpdateCanvasNodeNameCommand;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.ExpressionEditorChanged;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
@@ -56,16 +59,24 @@ public class ExpressionStateTest {
     @Mock
     private ExpressionEditorView view;
 
+    @Mock
+    private UpdateCanvasNodeNameCommand updateCanvasNodeCommand;
+
+    private Optional<HasName> hasName = Optional.empty();
+
     private static final String NODE_UUID = "uuid";
 
     private ExpressionState expressionState;
 
     @Before
     public void setup() {
+
         expressionState = spy(new ExpressionState(hasExpression,
                                                   editorSelectedEvent,
                                                   view,
-                                                  NODE_UUID));
+                                                  NODE_UUID,
+                                                  hasName,
+                                                  updateCanvasNodeCommand));
     }
 
     @Test
@@ -239,5 +250,35 @@ public class ExpressionStateTest {
         final Expression saved = expressionState.getSavedExpression();
 
         assertEquals(expressionCopy, saved);
+    }
+
+    @Test
+    public void testSetExpressionName() {
+
+        final String expressionName = "expression name";
+
+        expressionState.setExpressionName(expressionName);
+
+        verify(updateCanvasNodeCommand).execute(NODE_UUID,
+                                                hasName);
+    }
+
+    @Test
+    public void testGetFallbackHasName_WhenHasExpressionIsNotHasName() {
+
+        final HasExpression hasExpressionNotHasName = mock(HasExpression.class);
+        doReturn(hasExpressionNotHasName).when(expressionState).getHasExpression();
+
+        final HasName hasNameFallback = expressionState.getFallbackHasName();
+
+        assertEquals(HasName.NOP, hasNameFallback);
+    }
+
+    @Test
+    public void testGetFallbackHasName_WhenHasExpressionIsHasName() {
+
+        final HasName hasNameFallback = expressionState.getFallbackHasName();
+
+        assertEquals(hasExpression, hasNameFallback);
     }
 }

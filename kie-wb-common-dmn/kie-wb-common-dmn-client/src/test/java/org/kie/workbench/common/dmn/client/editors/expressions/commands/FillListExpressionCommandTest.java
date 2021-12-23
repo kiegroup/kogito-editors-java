@@ -16,12 +16,15 @@
 
 package org.kie.workbench.common.dmn.client.editors.expressions.commands;
 
+import java.util.Optional;
+
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.definition.HasExpression;
+import org.kie.workbench.common.dmn.api.definition.HasName;
 import org.kie.workbench.common.dmn.api.definition.model.Expression;
 import org.kie.workbench.common.dmn.api.definition.model.List;
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorView;
@@ -56,6 +59,8 @@ public class FillListExpressionCommandTest extends TestCase {
     @Mock
     private List existingExpression;
 
+    private Optional<HasName> hasName = Optional.empty();
+
     @Before
     public void setup() {
 
@@ -65,7 +70,8 @@ public class FillListExpressionCommandTest extends TestCase {
                                                     expressionProps,
                                                     editorSelectedEvent,
                                                     "nodeUUID",
-                                                    view));
+                                                    view,
+                                                    hasName));
         doNothing().when(command).fill(any(), any());
     }
 

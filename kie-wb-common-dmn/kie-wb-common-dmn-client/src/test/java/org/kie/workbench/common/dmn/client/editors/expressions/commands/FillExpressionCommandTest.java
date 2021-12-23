@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.dmn.client.editors.expressions.commands;
 
+import java.util.Optional;
+
 import javax.enterprise.event.Event;
 
 import com.google.gwtmockito.GwtMockitoTestRunner;
@@ -67,6 +69,8 @@ public class FillExpressionCommandTest {
     @Mock
     private Expression existingExpression;
 
+    private Optional<HasName> hasName = Optional.empty();
+
     private final String nodeUUID = "uuid";
 
     private final String name = "name";
@@ -90,7 +94,8 @@ public class FillExpressionCommandTest {
                                                     expressionProps,
                                                     editorSelectedEvent,
                                                     nodeUUID,
-                                                    view));
+                                                    view,
+                                                    hasName));
     }
 
     @Test
@@ -182,8 +187,9 @@ public class FillExpressionCommandTest {
                                          final ExpressionProps expressionProps,
                                          final Event<ExpressionEditorChanged> editorSelectedEvent,
                                          final String nodeUUID,
-                                         final ExpressionEditorView view) {
-            super(hasExpression, expressionProps, editorSelectedEvent, nodeUUID, view);
+                                         final ExpressionEditorView view,
+                                         final Optional<HasName> hasName) {
+            super(hasExpression, expressionProps, editorSelectedEvent, nodeUUID, view, hasName);
         }
 
         @Override

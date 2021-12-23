@@ -16,11 +16,14 @@
 
 package org.kie.workbench.common.dmn.client.editors.expressions.commands;
 
+import java.util.Optional;
+
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.definition.HasExpression;
+import org.kie.workbench.common.dmn.api.definition.HasName;
 import org.kie.workbench.common.dmn.api.definition.model.DecisionTable;
 import org.kie.workbench.common.dmn.api.definition.model.Expression;
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorView;
@@ -56,6 +59,8 @@ public class FillDecisionTableExpressionCommandTest {
     @Mock
     private DecisionTable existingExpression;
 
+    private Optional<HasName> hasName = Optional.empty();
+
     @Before
     public void setup() {
 
@@ -65,7 +70,8 @@ public class FillDecisionTableExpressionCommandTest {
                                                              expressionProps,
                                                              editorSelectedEvent,
                                                              "nodeUUID",
-                                                             view));
+                                                             view,
+                                                             hasName));
         doNothing().when(command).fill(any(), any());
     }
 

@@ -17,6 +17,7 @@
 package org.kie.workbench.common.dmn.client.editors.expressions.commands;
 
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.enterprise.event.Event;
 
@@ -25,6 +26,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.definition.HasExpression;
+import org.kie.workbench.common.dmn.api.definition.HasName;
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorView;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.ExpressionProps;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.ExpressionEditorChanged;
@@ -48,6 +50,8 @@ public class ClearExpressionCommandTest {
     @Mock
     private ExpressionEditorView view;
 
+    private Optional<HasName> hasName = Optional.empty();
+
     private ClearExpressionCommand expressionCommand;
 
     private final String nodeUUID = "node uuid";
@@ -58,7 +62,8 @@ public class ClearExpressionCommandTest {
                                                             expressionProps,
                                                             editorSelectedEvent,
                                                             nodeUUID,
-                                                            view);
+                                                            view,
+                                                            hasName);
     }
 
     @Test
