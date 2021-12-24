@@ -44,7 +44,6 @@ import com.ait.lienzo.client.core.shape.wires.IControlHandle.ControlHandleStanda
 import com.ait.lienzo.client.core.shape.wires.IControlHandle.ControlHandleType;
 import com.ait.lienzo.client.core.shape.wires.IControlHandleFactory;
 import com.ait.lienzo.client.core.shape.wires.IControlHandleList;
-import com.ait.lienzo.client.core.shape.wires.decorator.PointHandleDecorator;
 import com.ait.lienzo.client.core.types.BoundingBox;
 import com.ait.lienzo.client.core.types.PathPartList;
 import com.ait.lienzo.client.core.types.Point2D;
@@ -244,6 +243,7 @@ public abstract class AbstractMultiPointShape<T extends AbstractMultiPointShape<
         }
 
         public static final String HANDLE_FILL_COLOR = "#0088CE";
+        public static final String USER_HANDLE_FILL_COLOR = "#F0601F";
 
         private static <T extends Shape<?>> T applyDefaultControlHandleAttributes(T control) {
             control.setFillColor(HANDLE_FILL_COLOR)
@@ -366,12 +366,14 @@ public abstract class AbstractMultiPointShape<T extends AbstractMultiPointShape<
 
             private final Point2D p0;
             private final Point2D p1;
+            private final AbstractMultiPointShape<?> shape;
             private static final double RADIUS = 10;
 
             public SegmentXorYChanged(IControlHandle m_handle, AbstractMultiPointShape<?> shape, Point2D p0, Point2D p1) {
                 super(m_handle, shape);
                 this.p0 = p0;
                 this.p1 = p1;
+                this.shape = shape;
                 init();
             }
 
@@ -385,7 +387,16 @@ public abstract class AbstractMultiPointShape<T extends AbstractMultiPointShape<
                         .setY(m_shape.getY() + py)
                         .setDraggable(true)
                         .setDragMode(DragMode.SAME_LAYER)
-                        .setFillColor(PointHandleDecorator.MAIN_COLOR);
+                        .setFillColor(getSegmentColor());
+            }
+
+            private String getSegmentColor() {
+                if (shape instanceof PolyMorphicLine) {
+                    if (!((PolyMorphicLine) shape).isInferred(p0) && !((PolyMorphicLine) shape).isInferred(p1)) {
+                        return DefaultMultiPointShapeHandleFactory.USER_HANDLE_FILL_COLOR;
+                    }
+                }
+                return DefaultMultiPointShapeHandleFactory.HANDLE_FILL_COLOR;
             }
 
             private static Point2D getArrowStartPoint(Point2D location,
@@ -762,7 +773,6 @@ public abstract class AbstractMultiPointShape<T extends AbstractMultiPointShape<
                 m_prim.setSelectionStrokeOffset(SELECTION_OFFSET);
                 m_prim.setSelectionBoundsOffset(SELECTION_OFFSET);
                 m_prim.setFillBoundsForSelection(true);
-                applyDefaultControlHandleAttributes(m_prim);
             }
 
             abstract Shape<?> buildPrimitive();
