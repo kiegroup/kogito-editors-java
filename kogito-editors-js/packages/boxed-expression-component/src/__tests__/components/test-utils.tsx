@@ -25,13 +25,13 @@ import {
 import { act } from "react-dom/test-utils";
 import { fireEvent } from "@testing-library/react";
 import { BoxedExpressionGlobalContext } from "../../context";
-import { DataType } from "../../api";
 import { BoxedExpressionProvider, BoxedExpressionProviderProps } from "../../components";
+import { dataTypes, pmmlParams } from "../__mocks__";
 
 global.console = { ...global.console, warn: jest.fn() };
 
 export const EDIT_EXPRESSION_NAME = "[data-ouia-component-id='edit-expression-name']";
-export const EDIT_EXPRESSION_DATA_TYPE = "[data-ouia-component-id='edit-expression-data-type'] input";
+export const EDIT_EXPRESSION_DATA_TYPE = "[data-ouia-component-id='edit-expression-data-type'] span";
 
 export const flushPromises: () => Promise<unknown> = () => new Promise((resolve) => process.nextTick(resolve));
 
@@ -64,14 +64,8 @@ export function usingTestingBoxedExpressionProviderContext(
   const usedCtx: BoxedExpressionProviderProps = {
     decisionNodeId: "_00000000-0000-0000-0000-000000000000",
     expressionDefinition: {},
-    pmmlParams: [
-      {
-        document: "document",
-        modelsFromDocument: [
-          { model: "model", parametersFromModel: [{ id: "p1", name: "p-1", dataType: DataType.Number }] },
-        ],
-      },
-    ],
+    dataTypes,
+    pmmlParams,
     isRunnerTable: false,
     children,
     ...ctx,
@@ -82,6 +76,7 @@ export function usingTestingBoxedExpressionProviderContext(
       <BoxedExpressionProvider
         decisionNodeId={usedCtx.decisionNodeId}
         expressionDefinition={usedCtx.expressionDefinition}
+        dataTypes={usedCtx.dataTypes}
         pmmlParams={usedCtx.pmmlParams}
         isRunnerTable={false}
       >
@@ -96,14 +91,8 @@ export function wrapComponentInContext(component: JSX.Element): JSX.Element {
     <BoxedExpressionGlobalContext.Provider
       value={{
         decisionNodeId: "_00000000-0000-0000-0000-000000000000",
-        pmmlParams: [
-          {
-            document: "document",
-            modelsFromDocument: [
-              { model: "model", parametersFromModel: [{ id: "p1", name: "p-1", dataType: DataType.Number }] },
-            ],
-          },
-        ],
+        dataTypes: dataTypes,
+        pmmlParams,
         supervisorHash: "",
         setSupervisorHash: jest.fn,
         editorRef: { current: document.body as HTMLDivElement },

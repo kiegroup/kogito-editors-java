@@ -36,6 +36,7 @@ import { Button, Modal } from "@patternfly/react-core";
 import { CopyIcon, PenIcon } from "@patternfly/react-icons";
 import "./lib/components/BoxedExpressionEditor/base-no-reset-wrapped.css";
 import ReactJson from "react-json-view";
+import { dataTypes, pmmlParams } from "./lib/__tests__/__mocks__";
 
 export const App: React.FunctionComponent = () => {
   //This definition comes directly from the decision node
@@ -43,34 +44,6 @@ export const App: React.FunctionComponent = () => {
     name: "Expression Name",
     dataType: DataType.Undefined,
   };
-
-  const pmmlParams = [
-    {
-      document: "mining pmml",
-      modelsFromDocument: [
-        {
-          model: "MiningModelSum",
-          parametersFromModel: [
-            { id: "i1", name: "input1", dataType: DataType.Any },
-            { id: "i2", name: "input2", dataType: DataType.Any },
-            { id: "i3", name: "input3", dataType: DataType.Any },
-          ],
-        },
-      ],
-    },
-    {
-      document: "regression pmml",
-      modelsFromDocument: [
-        {
-          model: "RegressionLinear",
-          parametersFromModel: [
-            { id: "i1", name: "i1", dataType: DataType.Number },
-            { id: "i2", name: "i2", dataType: DataType.Number },
-          ],
-        },
-      ],
-    },
-  ];
 
   const [expressionDefinition, setExpressionDefinition] = useState(selectedExpression);
 
@@ -129,6 +102,7 @@ export const App: React.FunctionComponent = () => {
         <BoxedExpressionEditor
           decisionNodeId="_00000000-0000-0000-0000-000000000000"
           expressionDefinition={expressionDefinition}
+          dataTypes={dataTypes}
           pmmlParams={pmmlParams}
         />
       </div>
