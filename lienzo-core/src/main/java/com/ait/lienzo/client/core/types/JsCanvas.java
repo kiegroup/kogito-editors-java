@@ -276,8 +276,8 @@ public class JsCanvas implements JsCanvasNodeLister {
 
         if (absoluteLocation != null) {
 
-            int width = layer.getViewport().getWidth();
-            int height = layer.getViewport().getHeight();
+            double width = layer.getViewport().getWidth();
+            double height = layer.getViewport().getHeight();
 
             NFastArrayList<Double> dimensions = getDimensions(UUID);
             double nodeWidth = 0;
