@@ -18,9 +18,9 @@ import { PopoverMenu } from "../PopoverMenu";
 import { Menu, MenuItem, MenuList } from "@patternfly/react-core";
 import * as _ from "lodash";
 import * as React from "react";
-import { useCallback, useContext } from "react";
+import { useCallback } from "react";
 import { useBoxedExpressionEditorI18n } from "../../i18n";
-import { BoxedExpressionGlobalContext } from "../../context";
+import { useBoxedExpression } from "../../context";
 import { FunctionKind } from "../../api";
 
 export interface FunctionKindSelectorProps {
@@ -35,11 +35,11 @@ export const FunctionKindSelector: React.FunctionComponent<FunctionKindSelectorP
   onFunctionKindSelect,
 }) => {
   const { i18n } = useBoxedExpressionEditorI18n();
-
-  const globalContext = useContext(BoxedExpressionGlobalContext);
+  const boxedExpression = useBoxedExpression();
 
   const functionKindSelectionCallback = useCallback(
     (hide: () => void) => (event?: React.MouseEvent, itemId?: string | number) => {
+      window.beeApi?.notifyUserAction();
       onFunctionKindSelect(itemId as FunctionKind);
       hide();
     },
@@ -59,7 +59,7 @@ export const FunctionKindSelector: React.FunctionComponent<FunctionKindSelectorP
   return (
     <PopoverMenu
       title={i18n.selectFunctionKind}
-      appendTo={globalContext.boxedExpressionEditorRef?.current ?? undefined}
+      appendTo={boxedExpression.editorRef?.current ?? undefined}
       className="function-kind-popover"
       hasAutoWidth
       body={(hide: () => void) => (

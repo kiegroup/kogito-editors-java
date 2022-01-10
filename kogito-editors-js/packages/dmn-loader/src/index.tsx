@@ -18,6 +18,7 @@ import {
   BoxedExpressionEditor,
   BoxedExpressionEditorProps,
   ContextProps,
+  DataTypeProps,
   DecisionTableProps,
   ExpressionProps,
   FunctionProps,
@@ -40,6 +41,7 @@ setupWire();
 const BoxedExpressionWrapper: React.FunctionComponent<BoxedExpressionEditorProps> = ({
   decisionNodeId,
   expressionDefinition,
+  dataTypes,
   clearSupportedOnRootExpression,
   pmmlParams,
 }: BoxedExpressionEditorProps) => {
@@ -55,6 +57,9 @@ const BoxedExpressionWrapper: React.FunctionComponent<BoxedExpressionEditorProps
   //The wrapper defines these function in order to keep expression definition state updated,
   //And to propagate such definition to DMN Editor (GWT world), by calling beeApiWrapper APIs
   window.beeApi = {
+    notifyUserAction(): void {
+      window.beeApiWrapper?.notifyUserAction();
+    },
     resetExpressionDefinition: (definition: ExpressionProps) => {
       setExpressionDefinition(definition);
       window.beeApiWrapper?.resetExpressionDefinition?.(definition);
@@ -93,6 +98,7 @@ const BoxedExpressionWrapper: React.FunctionComponent<BoxedExpressionEditorProps
     <BoxedExpressionEditor
       decisionNodeId={decisionNodeId}
       expressionDefinition={updatedDefinition}
+      dataTypes={dataTypes}
       clearSupportedOnRootExpression={clearSupportedOnRootExpression}
       pmmlParams={pmmlParams}
     />
@@ -103,6 +109,7 @@ const renderBoxedExpressionEditor = (
   selector: string,
   decisionNodeId: string,
   expressionDefinition: ExpressionProps,
+  dataTypes: DataTypeProps[],
   clearSupportedOnRootExpression: boolean,
   pmmlParams: PMMLParams
 ) => {
@@ -110,6 +117,7 @@ const renderBoxedExpressionEditor = (
     <BoxedExpressionWrapper
       decisionNodeId={decisionNodeId}
       expressionDefinition={expressionDefinition}
+      dataTypes={dataTypes}
       clearSupportedOnRootExpression={clearSupportedOnRootExpression}
       pmmlParams={pmmlParams}
     />,

@@ -18,6 +18,7 @@ import "./InvocationExpression.css";
 import * as React from "react";
 import { useCallback, useContext, useMemo } from "react";
 import {
+  ColumnsUpdateArgs,
   ContextEntries,
   ContextEntryRecord,
   DataType,
@@ -32,6 +33,7 @@ import {
   InvocationProps,
   LogicType,
   resetEntry,
+  RowsUpdateArgs,
   TableHeaderVisibility,
 } from "../../api";
 import { Table } from "../Table";
@@ -110,9 +112,12 @@ export const InvocationExpression: React.FunctionComponent<InvocationProps> = (i
 
   const onBlurCallback = useCallback(
     (event) => {
+      if (invocationProps.invokedFunction != event.target.value) {
+        window.beeApi?.notifyUserAction();
+      }
       spreadInvocationExpressionDefinition({ invokedFunction: event.target.value });
     },
-    [spreadInvocationExpressionDefinition]
+    [spreadInvocationExpressionDefinition, invocationProps.invokedFunction]
   );
 
   const headerCellElement = useMemo(
@@ -180,12 +185,12 @@ export const InvocationExpression: React.FunctionComponent<InvocationProps> = (i
   );
 
   const onColumnsUpdate = useCallback(
-    ([expressionColumn]: [ColumnInstance]) => {
-      invocationProps.onUpdatingNameAndDataType?.(expressionColumn.label as string, expressionColumn.dataType);
+    ({ columns: [column] }: ColumnsUpdateArgs<ColumnInstance>) => {
+      invocationProps.onUpdatingNameAndDataType?.(column.label as string, column.dataType);
 
       spreadInvocationExpressionDefinition({
-        name: expressionColumn.label as string,
-        dataType: expressionColumn.dataType,
+        name: column.label as string,
+        dataType: column.dataType,
       });
     },
     [invocationProps, spreadInvocationExpressionDefinition]
@@ -215,9 +220,9 @@ export const InvocationExpression: React.FunctionComponent<InvocationProps> = (i
     [invocationProps.isHeadless]
   );
 
-  const setRowsCallback = useCallback(
-    (entries) => {
-      spreadInvocationExpressionDefinition({ bindingEntries: [...entries] });
+  const onRowsUpdate = useCallback(
+    ({ rows }: RowsUpdateArgs<ContextEntryRecord>) => {
+      spreadInvocationExpressionDefinition({ bindingEntries: [...rows] });
     },
     [spreadInvocationExpressionDefinition]
   );
@@ -249,7 +254,7 @@ export const InvocationExpression: React.FunctionComponent<InvocationProps> = (i
         rows={(rows ?? []) as DataRecord[]}
         onColumnsUpdate={onColumnsUpdate}
         onRowAdding={onRowAdding}
-        onRowsUpdate={setRowsCallback}
+        onRowsUpdate={onRowsUpdate}
         handlerConfiguration={handlerConfiguration}
         getRowKey={getRowKeyCallback}
         resetRowCustomFunction={resetEntryCallback}

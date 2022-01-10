@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-.boxed-expression-editor + .kie-cell-selection-box .kie-selection-box {
+.kie-cell-selection-box .kie-selection-box {
   position: fixed;
   pointer-events: none;
   z-index: 1;
