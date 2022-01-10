@@ -18,6 +18,7 @@ package org.kie.workbench.common.dmn.client.js;
 
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
+import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.DataTypeProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.ExpressionProps;
 import org.kie.workbench.common.dmn.client.editors.expressions.jsinterop.props.PMMLParam;
 
