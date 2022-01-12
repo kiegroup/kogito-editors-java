@@ -260,12 +260,15 @@ public abstract class AbstractMultiPointShape<T extends AbstractMultiPointShape<
             private final AbstractMultiPointShape<?> shape;
             private SegmentXorYChanged handle;
             private HandleSegmentClick handleClick;
+            private static int MINIMUM_OFFSET_SIZE = 20;
 
             public static SegmentHandle build(int index, AbstractMultiPointShape<?> shape) {
                 SegmentHandle handle = new SegmentHandle(index, shape);
                 Point2D p0 = handle.getP0();
                 Point2D p1 = handle.getP1();
-                if (SegmentXorYChanged.isVertical(p0, p1) || SegmentXorYChanged.isHorizontal(p0, p1)) {
+
+                if ((SegmentXorYChanged.isVertical(p0, p1) && Math.abs(p1.getY() - p0.getY()) > MINIMUM_OFFSET_SIZE) ||
+                        (SegmentXorYChanged.isHorizontal(p0, p1) && Math.abs(p1.getX() - p0.getX()) > MINIMUM_OFFSET_SIZE)) {
                     return handle.init();
                 }
                 return null;
@@ -378,7 +381,6 @@ public abstract class AbstractMultiPointShape<T extends AbstractMultiPointShape<
             }
 
             @Override
-                //TODO handrey Change color of the handle here
             Shape<?> buildPrimitive() {
                 double px = isHorizontal() ? p0.getX() + (p1.getX() - p0.getX()) / 2 : p1.getX();
                 double py = isVertical() ? p0.getY() + (p1.getY() - p0.getY()) / 2 : p1.getY();
